@@ -1,0 +1,15 @@
+{
+    "compilerOptions": {
+        "module": "ESNext",
+        "target": "ESNEXT",
+        "allowJs": false,
+        "outDir": "build",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "sourceMap": true,
+        "typeRoots": ["./node_modules/@types"],
+        "moduleResolution": "node"
+    },
+    "exclude": ["node_modules"],
+    "include": ["src/**/*"]
+}

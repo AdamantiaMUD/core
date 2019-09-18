@@ -1,0 +1,26 @@
+{
+    "name": "@adamantiamud/adamantia-core",
+    "version": "0.0.1-alpha.1",
+    "description": "Core libraries for the AdamantiaMUD game engine",
+    "author": "Bill Parrott (https://chimericdream.com)",
+    "license": "MIT",
+    "repository": "github:adamantiamud/adamantia-core",
+    "bugs": "https://github.com/adamantiamud/adamantia-core/issues",
+    "type": "module",
+    "types": "index.d.ts",
+    "engines": {
+        "node": ">=12"
+    },
+    "scripts": {
+        "build": "npm run build:types && npm run build:ts",
+        "build:ts": "tsc",
+        "build:types": "tsc --emitDeclarationOnly",
+        "type-check": "tsc --noEmit",
+        "type-check:watch": "npm run type-check -- --watch"
+    },
+    "main": "build/index.js",
+    "dependencies": {},
+    "devDependencies": {
+        "typescript": "3.6.3"
+    }
+}
