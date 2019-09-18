@@ -1,0 +1,68 @@
+import DataSource from './sources/data-source';
+import DataSourceFactory from './sources/data-source-factory';
+import EntityLoader from './entity-loader';
+
+export interface EntityLoaderDefinition {
+    source: string;
+    config?: {[key: string]: any};
+}
+
+export interface EntityLoaderDefinitions {
+    [key: string]: EntityLoaderDefinition;
+}
+
+/**
+ * Holds instances of configured EntityLoaders
+ */
+export class EntityLoaderRegistry {
+    private readonly rootPath: string;
+
+    private dataSourceFactory: DataSourceFactory;
+    private loaders: Map<string, EntityLoader> = new Map();
+
+    public constructor(config: EntityLoaderDefinitions, rootPath: string) {
+        this.initLoaders(config);
+
+        this.dataSourceFactory = new DataSourceFactory(rootPath);
+        this.rootPath = rootPath;
+    }
+
+    // noinspection JSMethodCanBeStatic
+    private getDataSource(name: string, settings: EntityLoaderDefinition): DataSource {
+        const source = this.dataSourceFactory.getDataSource(name);
+
+        if (source === null) {
+            throw new Error(`Invalid source [${settings.source}] for entity [${name}]`);
+        }
+
+        return source;
+    }
+
+    private initLoaders(config: EntityLoaderDefinitions): void {
+        for (const [name, settings] of Object.entries(config)) {
+            this.validateLoader(name, settings);
+
+            const source = this.getDataSource(name, settings);
+            const sourceConfig = settings.config || {};
+
+            this.loaders.set(name, new EntityLoader(source, sourceConfig));
+        }
+    }
+
+    // noinspection JSMethodCanBeStatic
+    private validateLoader(name: string, settings: EntityLoaderDefinition): void {
+        if (!Object.prototype.hasOwnProperty.call(settings, 'source')) {
+            throw new Error(`EntityLoader [${name}] does not specify a 'source'`);
+        }
+
+        if (typeof settings.source !== 'string') {
+            throw new TypeError(`EntityLoader [${name}] has an invalid 'source'`);
+        }
+    }
+
+    public get(name: string): EntityLoader {
+        return this.loaders.get(name);
+    }
+}
+
+export default EntityLoaderRegistry;
