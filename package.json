@@ -7,18 +7,18 @@
     "repository": "github:adamantiamud/adamantia-core",
     "bugs": "https://github.com/adamantiamud/adamantia-core/issues",
     "type": "module",
+    "main": "build/index.js",
     "types": "index.d.ts",
     "engines": {
         "node": ">=12"
     },
     "scripts": {
-        "build": "npm run build:types && npm run build:ts",
-        "build:ts": "tsc",
-        "build:types": "tsc --emitDeclarationOnly",
+        "build": "tsc",
+        "clean": "rimraf build/*",
+        "prebuild": "npm run clean",
         "type-check": "tsc --noEmit",
         "type-check:watch": "npm run type-check -- --watch"
     },
-    "main": "build/index.js",
     "dependencies": {
         "commander": "3.0.1",
         "uuid": "3.3.3",
@@ -31,6 +31,7 @@
         "@typescript-eslint/eslint-plugin": "1.13.0",
         "@typescript-eslint/parser": "1.13.0",
         "eslint": "6.1.0",
+        "rimraf": "3.0.0",
         "typescript": "3.6.3"
     }
 }

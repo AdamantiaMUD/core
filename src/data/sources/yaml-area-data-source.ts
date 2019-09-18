@@ -61,7 +61,7 @@ class YamlAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for YamlAreaDataSource`);
         }
 
-        const source = new YamlDataSource({}, dirPath);
+        const source = new YamlDataSource(dirPath);
 
         return source.fetchAll({path: `${id}/manifest.yml`});
     }
@@ -82,7 +82,7 @@ class YamlAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for YamlAreaDataSource`);
         }
 
-        const source = new YamlDataSource({}, dirPath);
+        const source = new YamlDataSource(dirPath);
 
         return source.replace({path: `${id}/manifest.yml`}, data);
     }

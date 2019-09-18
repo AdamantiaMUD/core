@@ -62,7 +62,7 @@ class YamlDirectoryDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for YamlDirectoryDataSource`);
         }
 
-        const source = new YamlDataSource({}, dirPath);
+        const source = new YamlDataSource(dirPath);
 
         return source.fetchAll({path: `${id}.yml`});
     }
@@ -83,7 +83,7 @@ class YamlDirectoryDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for YamlDirectoryDataSource`);
         }
 
-        const source = new YamlDataSource({}, dirPath);
+        const source = new YamlDataSource(dirPath);
 
         return source.replace({path: `${id}.yml`}, data);
     }

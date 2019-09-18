@@ -1,26 +1,21 @@
-import winston from 'winston';
-
-const {ADAMANTIA_LOG_LOCATION} = process.env;
+import winston, {Logger} from 'winston';
 
 const transports = {
     console: new winston.transports.Console({
         format: winston.format.timestamp(),
     }),
-    file: new winston.transports.File({
-        filename: `${ADAMANTIA_LOG_LOCATION}/server.log`,
-        format: winston.format.timestamp(),
-    }),
+    file: null,
 };
 
-const logger = winston.createLogger({
+let logger: Logger = winston.createLogger({
     level: 'debug',
-    transports: [transports.console, transports.file],
+    transports: [transports.console],
 });
 
 /**
  * Wrapper around Winston
  */
-export class Logger {
+export class AppLogger {
     /*
      * Appends red "ERROR" to the start of logs.
      * Highest priority logging.
@@ -36,9 +31,21 @@ export class Logger {
         logger.log('info', msg, ...messages);
     }
 
-    public static setLevel(level): void {
+    public static setFileLogging(uri: string): void {
+        transports.file = new winston.transports.File({
+            filename: uri,
+            format: winston.format.timestamp(),
+        });
+
+        logger.add(transports.file);
+    }
+
+    public static setLevel(level: string): void {
         transports.console.level = level;
-        transports.file.level = level;
+
+        if (transports.file !== null) {
+            transports.file.level = level;
+        }
     }
 
     /*
@@ -57,4 +64,4 @@ export class Logger {
     }
 }
 
-export default Logger;
+export default AppLogger;
