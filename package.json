@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "commander": "3.0.1",
+        "rfdc": "1.1.4",
         "uuid": "3.3.3",
         "winston": "3.2.1"
     },
