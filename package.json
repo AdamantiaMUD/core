@@ -12,7 +12,8 @@
     "files": [
         "index.d.ts",
         "src/**/*",
-        "build/**/*"
+        "build/**/*",
+        "*.adoc"
     ],
     "engines": {
         "node": ">=12"
