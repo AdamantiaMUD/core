@@ -21,18 +21,18 @@ export class EntityLoaderRegistry {
     private loaders: Map<string, EntityLoader> = new Map();
 
     public constructor(config: EntityLoaderDefinitions, rootPath: string) {
-        this.initLoaders(config);
-
         this.dataSourceFactory = new DataSourceFactory(rootPath);
         this.rootPath = rootPath;
+
+        this.initLoaders(config);
     }
 
     // noinspection JSMethodCanBeStatic
-    private getDataSource(name: string, settings: EntityLoaderDefinition): DataSource {
-        const source = this.dataSourceFactory.getDataSource(name);
+    private getDataSource(entityName: string, settings: EntityLoaderDefinition): DataSource {
+        const source = this.dataSourceFactory.getDataSource(settings.source);
 
         if (source === null) {
-            throw new Error(`Invalid source [${settings.source}] for entity [${name}]`);
+            throw new Error(`Invalid source [${settings.source}] for entity [${entityName}]`);
         }
 
         return source;

@@ -15,6 +15,7 @@ export class BundleManager {
 
     public constructor(bundlePath: string, config: Config) {
         if (!bundlePath || !fs.existsSync(bundlePath)) {
+            Logger.error(`Bundle path "${bundlePath}" is not valid`);
             throw new Error('Invalid bundle path');
         }
 

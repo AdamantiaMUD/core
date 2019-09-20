@@ -35,7 +35,7 @@ export class GameState {
         }
 
         this.entityTickInterval = setInterval(
-            this.tickEntities,
+            () => this.tickEntities(),
             this.config.get('entityTickFrequency', DEFAULT_TICK_FREQUENCY)
         );
     }
@@ -46,7 +46,7 @@ export class GameState {
         }
 
         this.playerTickInterval = setInterval(
-            this.tickPlayers,
+            () => this.tickPlayers(),
             this.config.get('playerTickFrequency', DEFAULT_TICK_FREQUENCY)
         );
     }

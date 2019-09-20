@@ -1,7 +1,7 @@
 {
     "compilerOptions": {
-        "module": "ESNext",
-        "target": "ESNEXT",
+        "module": "CommonJS",
+        "target": "ESNext",
         "allowJs": false,
         "outDir": "build",
         "allowSyntheticDefaultImports": true,
