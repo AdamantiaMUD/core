@@ -3,9 +3,7 @@ import cloneFactory from 'rfdc';
 import Area from './area';
 import GameEntity from '../entities/game-entity';
 import GameState from '../game-state';
-import Logger from '../util/logger';
 import Player from '../players/player';
-import Serializable from '../data/serializable';
 import {SimpleMap} from '../../index';
 
 const clone = cloneFactory();
@@ -27,7 +25,7 @@ export interface RoomExitDefinition {
     roomId: string;
 }
 
-export class Room extends GameEntity implements Serializable {
+export class Room extends GameEntity {
     /* eslint-disable lines-between-class-members */
     public area: Area;
     public def: RoomDefinition;

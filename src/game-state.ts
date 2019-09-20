@@ -5,23 +5,25 @@ import Config from './util/config';
 import Data from './util/data';
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
+import AreaManager from './locations/area-manager';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
 export class GameState {
+    private readonly areaManager: AreaManager = null;
+    private readonly config: Config = null;
+    // private readonly itemManager
+    private readonly playerManager: PlayerManager = new PlayerManager();
+    private readonly server: GameServer = new GameServer();
+    private readonly serverEventManager: EventManager = new EventManager();
+
     private entityTickInterval = null;
     private playerTickInterval = null;
-
-    // public areaManager
-    public config: Config = null;
-    // public itemManager
-    public playerManager: PlayerManager = new PlayerManager();
-    public server: GameServer = new GameServer();
-    public serverEventManager: EventManager = new EventManager();
 
     public constructor(config: Config) {
         Data.setDataPath(config.get('dataPath'));
 
+        this.areaManager = new AreaManager(this);
         this.config = config;
     }
 
@@ -61,7 +63,7 @@ export class GameState {
     }
 
     public tickEntities(): void {
-
+        this.areaManager.emit('updateTick');
     }
 
     public tickPlayers(): void {
