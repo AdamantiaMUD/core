@@ -35,3 +35,5 @@ export class Area {
         return this._rooms;
     }
 }
+
+export default Area;

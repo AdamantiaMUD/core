@@ -9,6 +9,11 @@
     "type": "module",
     "main": "build/index.js",
     "types": "index.d.ts",
+    "files": [
+        "index.d.ts",
+        "src/**/*",
+        "build/**/*"
+    ],
     "engines": {
         "node": ">=12"
     },
@@ -16,10 +21,12 @@
         "build": "tsc",
         "clean": "rimraf build/*",
         "prebuild": "npm run clean",
+        "prepublishOnly": "npm run build",
         "type-check": "tsc --noEmit",
         "type-check:watch": "npm run type-check -- --watch"
     },
     "dependencies": {
+        "bcryptjs": "2.4.3",
         "commander": "3.0.1",
         "rfdc": "1.1.4",
         "uuid": "3.3.3",

@@ -16,6 +16,10 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public constructor(data: any = {}) {
         super();
 
+        if (typeof data.entityReference !== 'undefined') {
+            this.entityReference = data.entityReference;
+        }
+
         if (typeof data.metadata !== 'undefined') {
             this.metadata = clone(data.metadata);
         }

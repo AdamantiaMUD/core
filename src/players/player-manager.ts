@@ -1,10 +1,13 @@
 import EventEmitter from 'events';
 
+import Account from './account';
+import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
-import PlayerEventListener from './interfaces/PlayerEventListener';
 import EventManager from '../events/event-manager';
 import GameState from '../game-state';
 import Player from './player';
+
+export type PlayerEventListener = (player: Player, ...args: any[]) => void;
 
 /**
  * Keeps track of all active players in game
@@ -76,7 +79,7 @@ export class PlayerManager extends EventEmitter {
             throw new Error('No entity loader configured for players');
         }
 
-        const data: SerializedPlayer = await this.loader.fetch(username);
+        const data: any = await this.loader.fetch(username);
 
         data.name = username;
 
@@ -102,8 +105,6 @@ export class PlayerManager extends EventEmitter {
         }
 
         player.removeAllListeners();
-        player.removeFromCombat();
-        player.effects.clear();
 
         if (player.room) {
             player.room.removePlayer(player);
