@@ -2,7 +2,7 @@ import {AddressInfo} from 'net';
 
 import Sequences from './sequences';
 import TelnetSocket from './telnet-socket';
-import TransportStream from '../transport-stream';
+import TransportStream from '../../../lib/communication/transport-stream';
 
 /**
  * Thin wrapper around a @worldofpannotia/ranvier-telnet `TelnetSocket`

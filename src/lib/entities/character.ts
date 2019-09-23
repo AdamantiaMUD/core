@@ -1,4 +1,4 @@
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 import GameEntity from './game-entity';
 import Serializable from '../data/serializable';
 

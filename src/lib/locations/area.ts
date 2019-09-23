@@ -1,6 +1,6 @@
 import GameEntity from '../entities/game-entity';
 import Room from './room';
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 
 export interface AreaDefinition {
     bundle: string;

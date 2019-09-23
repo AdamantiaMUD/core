@@ -3,7 +3,7 @@ import cloneFactory from 'rfdc';
 
 import Metadatable from '../data/metadatable';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 

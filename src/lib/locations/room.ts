@@ -4,7 +4,7 @@ import Area from './area';
 import GameEntity from '../entities/game-entity';
 import GameState from '../game-state';
 import Player from '../players/player';
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 

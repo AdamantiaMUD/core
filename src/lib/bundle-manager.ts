@@ -30,12 +30,12 @@ export class BundleManager {
         this.loaderRegistry = new EntityLoaderRegistry(config.get('entityLoaders'), rootPath);
     }
 
-    private isValidBundle(bundle: string, bundlePath: string): boolean {
-        if (fs.statSync(bundlePath).isFile() || bundle === '.' || bundle === '..') {
-            return false;
-        }
+    private isBundleEnabled(bundle: string, prefix: string = ''): boolean {
+        return this.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
+    }
 
-        return this.config.get('bundles', []).indexOf(bundle) > -1;
+    private isValidBundle(bundle: string, bundlePath: string): boolean {
+        return !(fs.statSync(bundlePath).isFile() || bundle === '.' || bundle === '..');
     }
 
     private async loadArea(bundle: string, areaName: string, manifest: AreaManifest): Promise<void> {
@@ -83,6 +83,19 @@ export class BundleManager {
         Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
     }
 
+    private async loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
+        const bundles = fs.readdirSync(bundlesPath);
+
+        for (const bundle of bundles) {
+            const bundlePath = path.join(bundlesPath, bundle);
+
+            // only load bundles the user has configured to be loaded
+            if (this.isValidBundle(bundle, bundlePath) && this.isBundleEnabled(bundle, prefix)) {
+                await this.loadBundle(bundle, bundlePath);
+            }
+        }
+    }
+
     private async loadEntities<T extends EntityFactory<any, any>>(
         bundle: string,
         areaName: string,
@@ -112,16 +125,10 @@ export class BundleManager {
     public async loadBundles(): Promise<void> {
         Logger.verbose('LOAD: BUNDLES -- START');
 
-        const bundles = fs.readdirSync(this.bundlePath);
+        const coreBundlesDir = path.join(__dirname, '..', 'core-bundles');
 
-        for (const bundle of bundles) {
-            const bundlePath = this.bundlePath + bundle;
-
-            // only load bundles the user has configured to be loaded
-            if (this.isValidBundle(bundle, bundlePath)) {
-                await this.loadBundle(bundle, bundlePath);
-            }
-        }
+        await this.loadBundlesFromFolder(coreBundlesDir, 'core.');
+        await this.loadBundlesFromFolder(this.bundlePath);
 
         Logger.verbose('LOAD: BUNDLES -- END');
     }

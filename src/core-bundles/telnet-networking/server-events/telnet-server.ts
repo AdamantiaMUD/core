@@ -1,11 +1,11 @@
-import GameState from '../game-state';
-import Logger from '../util/logger';
-import Options from './telnet/options';
-import Sequences from './telnet/sequences';
-import TelnetServer from './telnet/server';
-import TelnetSocket from './telnet/telnet-socket';
-import TelnetStream from './telnet/telnet-stream';
-import {ServerEventListenersDefinition} from '../events/server-events';
+import GameState from '../../../lib/game-state';
+import Logger from '../../../lib/util/logger';
+import Options from '../lib/options';
+import Sequences from '../lib/sequences';
+import TelnetServer from '../lib/server';
+import TelnetSocket from '../lib/telnet-socket';
+import TelnetStream from '../lib/telnet-stream';
+import {ServerEventListenersDefinition} from '../../../lib/events/server-events';
 
 export const serverEvents: ServerEventListenersDefinition = {
     listeners: {

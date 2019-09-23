@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 
 import Data from '../util/data';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 
 const hashPassword = (pass: string): string => {
     const salt = bcrypt.genSaltSync(10);

@@ -2,7 +2,7 @@
 import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
-import AdamantiaSocket from '../adamantia-socket';
+import AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 import Options from './options';
 import Sequences from './sequences';
 

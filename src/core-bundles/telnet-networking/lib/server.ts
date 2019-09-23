@@ -1,6 +1,6 @@
 import {createServer, Server} from 'net';
 
-import AdamantiaSocket from '../adamantia-socket';
+import AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 
 class TelnetServer {
     public netServer: Server;

@@ -1,4 +1,4 @@
-import {SimpleMap} from '../../index';
+import {SimpleMap} from '../../../index';
 
 export interface Serializable {
     serialize(): SimpleMap | SimpleMap[];
