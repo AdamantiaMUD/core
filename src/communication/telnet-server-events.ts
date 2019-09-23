@@ -1,5 +1,3 @@
-// import {ServerEventListenersDefinition} from '@worldofpannotia/ranvier-core';
-
 import GameState from '../game-state';
 import Logger from '../util/logger';
 import Options from './telnet/options';
@@ -7,6 +5,7 @@ import Sequences from './telnet/sequences';
 import TelnetServer from './telnet/server';
 import TelnetSocket from './telnet/telnet-socket';
 import TelnetStream from './telnet/telnet-stream';
+import {ServerEventListenersDefinition} from '../events/server-events';
 
 export const serverEvents: ServerEventListenersDefinition = {
     listeners: {
@@ -43,7 +42,7 @@ export const serverEvents: ServerEventListenersDefinition = {
                 });
 
                 // Register all of the input events (login, etc.)
-                state.InputEventManager.attach(stream);
+                state.attachServerStream(stream);
 
                 stream.write('Connecting...\n');
                 Logger.log('User connected...');

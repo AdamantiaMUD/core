@@ -1,7 +1,8 @@
 /* eslint-disable no-magic-numbers */
 import EventEmitter from 'events';
-import {AddressInfo, Socket} from 'net';
+import {AddressInfo} from 'net';
 
+import AdamantiaSocket from '../adamantia-socket';
 import Options from './options';
 import Sequences from './sequences';
 
@@ -12,7 +13,7 @@ export class TelnetSocket extends EventEmitter {
     public echoing: boolean;
     public gaMode: Sequences;
     public maxInputLength: number;
-    public socket: Socket;
+    public socket: AdamantiaSocket;
     /* eslint-enable lines-between-class-members */
 
     public constructor(opts: {maxInputLength?: number; [key: string]: any} = {}) {
@@ -42,7 +43,7 @@ export class TelnetSocket extends EventEmitter {
 
     public write(data: Uint8Array | string, encoding?: string): void {
         if (!Buffer.isBuffer(data)) {
-            data = new Buffer(data, encoding);
+            data = new Buffer(data as string, encoding as BufferEncoding);
         }
 
         // escape IACs by duplicating
@@ -129,7 +130,7 @@ export class TelnetSocket extends EventEmitter {
         this.socket.write(Buffer.concat([seqStartBuffer, dataBuffer, seqEndBuffer], gmcpData.length + 5));
     }
 
-    public attach(connection: Socket): void {
+    public attach(connection: AdamantiaSocket): void {
         this.socket = connection;
 
         let inputbuf = new Buffer(this.maxInputLength),

@@ -1,6 +1,6 @@
 import {createServer, Server} from 'net';
 
-import Socket from '../socket';
+import AdamantiaSocket from '../adamantia-socket';
 
 class TelnetServer {
     public netServer: Server;
@@ -10,7 +10,7 @@ class TelnetServer {
      * @param {object}   options options for the stream @see TelnetSocket
      */
     public constructor(listener: Function, options = {}) {
-        this.netServer = createServer(options, (socket: Socket) => {
+        this.netServer = createServer(options, (socket: AdamantiaSocket) => {
             socket.fresh = true;
             listener(socket);
         });

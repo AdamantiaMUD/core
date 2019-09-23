@@ -6,6 +6,8 @@ import Data from './util/data';
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
 import AreaManager from './locations/area-manager';
+import EventEmitter from "events";
+import TransportStream from './communication/transport-stream';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
@@ -13,6 +15,7 @@ export class GameState {
     private readonly areaManager: AreaManager = null;
     private readonly config: Config = null;
     // private readonly itemManager
+    private readonly inputEventManager: EventManager = new EventManager();
     private readonly playerManager: PlayerManager = new PlayerManager();
     private readonly server: GameServer = new GameServer();
     private readonly serverEventManager: EventManager = new EventManager();
@@ -51,6 +54,10 @@ export class GameState {
             () => this.tickPlayers(),
             this.config.get('playerTickFrequency', DEFAULT_TICK_FREQUENCY)
         );
+    }
+
+    public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {
+        this.inputEventManager.attach(stream);
     }
 
     public startServer(commander: CommanderStatic): void {
