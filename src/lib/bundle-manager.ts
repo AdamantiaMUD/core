@@ -1,37 +1,39 @@
 import fs from 'fs';
 import path from 'path';
 
-import Config from './util/config';
+import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import EntityLoaderRegistry from './data/entity-loader-registry';
+import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
+import {ServerEventListenersDefinition} from './events/server-events';
 
 export class BundleManager {
     private readonly areas: string[] = [];
     private readonly bundlePath: string;
-    private readonly config: Config;
     private readonly loaderRegistry: EntityLoaderRegistry;
+    private readonly state: GameState;
 
-    public constructor(bundlePath: string, config: Config) {
+    public constructor(bundlePath: string, state: GameState) {
         if (!bundlePath || !fs.existsSync(bundlePath)) {
             Logger.error(`Bundle path "${bundlePath}" is not valid`);
             throw new Error('Invalid bundle path');
         }
 
-        const rootPath = config.get('rootPath', null);
+        const rootPath = state.config.get('rootPath', null);
 
         if (!rootPath || !fs.existsSync(rootPath)) {
             throw new Error('Invalid root path');
         }
 
         this.bundlePath = bundlePath;
-        this.config = config;
-        this.loaderRegistry = new EntityLoaderRegistry(config.get('entityLoaders'), rootPath);
+        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), rootPath);
+        this.state = state;
     }
 
     private isBundleEnabled(bundle: string, prefix: string = ''): boolean {
-        return this.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
+        return this.state.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
     }
 
     private isValidBundle(bundle: string, bundlePath: string): boolean {
@@ -78,6 +80,7 @@ export class BundleManager {
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
+        await this.loadServerEvents(bundle, bundlePath);
         await this.loadAreas(bundle);
 
         Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
@@ -113,6 +116,8 @@ export class BundleManager {
 
         const entities = await loader.fetchAll();
 
+        console.log(JSON.stringify(entities, null, 4));
+
         return entities.map(entity => {
             const ref = EntityFactory.createRef(areaName, entity.id);
 
@@ -120,6 +125,39 @@ export class BundleManager {
 
             return ref;
         });
+    }
+
+    private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'server-events');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.verbose('\tLOAD: Server Events...');
+
+        const files = fs.readdirSync(uri);
+
+        for (const eventsFile of files) {
+            const eventsPath = path.join(uri, eventsFile);
+
+            if (Data.isScriptFile(eventsPath, eventsFile)) {
+                const eventsName = path.basename(eventsFile, path.extname(eventsFile));
+
+                Logger.verbose(`\t\t\tLOAD: SERVER-EVENTS ${eventsName}...`);
+
+                const eventImport = await import(eventsPath);
+                const loader: ServerEventListenersDefinition = eventImport.default;
+
+                const {listeners} = loader;
+
+                for (const [eventName, listener] of Object.entries(listeners)) {
+                    this.state.serverEventManager.add(eventName, listener(this.state));
+                }
+            }
+        }
+
+        Logger.verbose('\tENDLOAD: Server Events...');
     }
 
     public async loadBundles(): Promise<void> {

@@ -7,11 +7,12 @@ import TelnetSocket from '../lib/telnet-socket';
 import TelnetStream from '../lib/telnet-stream';
 import {ServerEventListenersDefinition} from '../../../lib/events/server-events';
 
+const DEFAULT_TELNET_PORT = 4000;
+
 export const serverEvents: ServerEventListenersDefinition = {
     listeners: {
         startup: (state: GameState) => () => {
-            // const {port} = commander;
-            const port = 4000;
+            const port = state.config.get('port.telnet', DEFAULT_TELNET_PORT);
 
             /**
              * Effectively the 'main' game loop but not really because it's a REPL

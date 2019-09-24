@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import {CommanderStatic} from 'commander';
 
 export declare class BundleManager {
-    public constructor(bundlePath: string, config: Config);
+    public constructor(bundlePath: string, state: GameState);
 
     public loadBundles(): Promise<void>;
 }
