@@ -61,9 +61,9 @@ class JsonAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for JsonAreaDataSource`);
         }
 
-        const source = new JsonDataSource(dirPath);
+        const source = new JsonDataSource(this.paths);
 
-        return source.fetchAll({path: `${id}/manifest.json`});
+        return source.fetchAll({path: `${dirPath}/${id}/manifest.json`});
     }
 
     public replace(
@@ -82,9 +82,9 @@ class JsonAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for JsonAreaDataSource`);
         }
 
-        const source = new JsonDataSource(dirPath);
+        const source = new JsonDataSource(this.paths);
 
-        return source.replace({path: `${id}/manifest.json`}, data);
+        return source.replace({path: `${dirPath}/${id}/manifest.json`}, data);
     }
 }
 

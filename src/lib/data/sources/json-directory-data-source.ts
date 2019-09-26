@@ -62,9 +62,9 @@ class JsonDirectoryDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
         }
 
-        const source = new JsonDataSource(dirPath);
+        const source = new JsonDataSource(this.paths);
 
-        return source.fetchAll({path: `${id}.json`});
+        return source.fetchAll({path: `${dirPath}/${id}.json`});
     }
 
     public replace(
@@ -82,9 +82,9 @@ class JsonDirectoryDataSource extends FileDataSource {
         if (!fs.existsSync(dirPath)) {
             throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
         }
-        const source = new JsonDataSource(dirPath);
+        const source = new JsonDataSource(this.paths);
 
-        return source.replace({path: `${id}.json`}, data);
+        return source.replace({path: `${dirPath}/${id}.json`}, data);
     }
 }
 

@@ -1,4 +1,4 @@
-import DataSource from './sources/data-source';
+import DataSource, {DataPaths} from './sources/data-source';
 import DataSourceFactory from './sources/data-source-factory';
 import EntityLoader from './entity-loader';
 
@@ -15,14 +15,14 @@ export interface EntityLoaderDefinitions {
  * Holds instances of configured EntityLoaders
  */
 export class EntityLoaderRegistry {
-    private readonly rootPath: string;
+    private readonly paths: DataPaths;
 
     private dataSourceFactory: DataSourceFactory;
     private loaders: Map<string, EntityLoader> = new Map();
 
-    public constructor(config: EntityLoaderDefinitions, rootPath: string) {
-        this.dataSourceFactory = new DataSourceFactory(rootPath);
-        this.rootPath = rootPath;
+    public constructor(config: EntityLoaderDefinitions, paths: DataPaths) {
+        this.dataSourceFactory = new DataSourceFactory(paths);
+        this.paths = paths;
 
         this.initLoaders(config);
     }

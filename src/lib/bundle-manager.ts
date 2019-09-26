@@ -8,27 +8,40 @@ import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {ServerEventListenersDefinition} from './events/server-events';
+import {DataPaths} from './data/sources/data-source';
 
 export class BundleManager {
     private readonly areas: string[] = [];
-    private readonly bundlePath: string;
     private readonly loaderRegistry: EntityLoaderRegistry;
     private readonly state: GameState;
 
-    public constructor(bundlePath: string, state: GameState) {
+    public constructor(state: GameState) {
+        const bundlePath: string = state.config.get('bundlesPath', null);
+        const dataPath: string = state.config.get('dataPath', null);
+        const rootPath: string = state.config.get('rootPath', null);
+
         if (!bundlePath || !fs.existsSync(bundlePath)) {
             Logger.error(`Bundle path "${bundlePath}" is not valid`);
             throw new Error('Invalid bundle path');
         }
 
-        const rootPath = state.config.get('rootPath', null);
+        if (!dataPath || !fs.existsSync(dataPath)) {
+            Logger.error(`Data path "${dataPath}" is not valid`);
+            throw new Error('Invalid data path');
+        }
 
         if (!rootPath || !fs.existsSync(rootPath)) {
+            Logger.error(`Root path "${rootPath}" is not valid`);
             throw new Error('Invalid root path');
         }
 
-        this.bundlePath = bundlePath;
-        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), rootPath);
+        const loaderPaths: DataPaths = {
+            bundles: bundlePath,
+            data: dataPath,
+            root: rootPath,
+        };
+
+        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), loaderPaths);
         this.state = state;
     }
 
@@ -111,8 +124,12 @@ export class BundleManager {
         loader.setArea(areaName);
 
         if (!await loader.hasData()) {
+            Logger.verbose('loader does not have data');
+
             return [];
         }
+
+        Logger.verbose('loader has data');
 
         const entities = await loader.fetchAll();
 
@@ -164,9 +181,10 @@ export class BundleManager {
         Logger.verbose('LOAD: BUNDLES -- START');
 
         const coreBundlesDir = path.join(__dirname, '..', 'core-bundles');
+        const bundlePath: string = this.state.config.get('bundlesPath');
 
         await this.loadBundlesFromFolder(coreBundlesDir, 'core.');
-        await this.loadBundlesFromFolder(this.bundlePath);
+        await this.loadBundlesFromFolder(bundlePath);
 
         Logger.verbose('LOAD: BUNDLES -- END');
     }

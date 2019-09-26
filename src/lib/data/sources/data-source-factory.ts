@@ -1,4 +1,4 @@
-import DataSource from './data-source';
+import DataSource, {DataPaths} from './data-source';
 import JsonAreaDataSource from './json-area-data-source';
 import JsonDataSource from './json-data-source';
 import JsonDirectoryDataSource from './json-directory-data-source';
@@ -9,10 +9,10 @@ import YamlDirectoryDataSource from './yaml-directory-data-source';
 export class DataSourceFactory {
     private sources: Map<string, DataSource> = new Map();
 
-    private readonly rootPath: string;
+    private readonly paths: DataPaths;
 
-    public constructor(rootPath: string) {
-        this.rootPath = rootPath;
+    public constructor(paths: DataPaths) {
+        this.paths = paths;
     }
 
     public getDataSource(name: string): DataSource {
@@ -24,27 +24,27 @@ export class DataSourceFactory {
 
         switch (name) {
             case 'JsonArea':
-                source = new JsonAreaDataSource(this.rootPath);
+                source = new JsonAreaDataSource(this.paths);
                 break;
 
             case 'Json':
-                source = new JsonDataSource(this.rootPath);
+                source = new JsonDataSource(this.paths);
                 break;
 
             case 'JsonDirectory':
-                source = new JsonDirectoryDataSource(this.rootPath);
+                source = new JsonDirectoryDataSource(this.paths);
                 break;
 
             case 'YamlArea':
-                source = new YamlAreaDataSource(this.rootPath);
+                source = new YamlAreaDataSource(this.paths);
                 break;
 
             case 'Yaml':
-                source = new YamlDataSource(this.rootPath);
+                source = new YamlDataSource(this.paths);
                 break;
 
             case 'YamlDirectory':
-                source = new YamlDirectoryDataSource(this.rootPath);
+                source = new YamlDirectoryDataSource(this.paths);
                 break;
         }
 

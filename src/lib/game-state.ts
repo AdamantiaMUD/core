@@ -1,12 +1,13 @@
+import path from 'path';
 import {CommanderStatic} from 'commander';
-import PlayerManager from './players/player-manager';
 
+import AreaManager from './locations/area-manager';
 import Config from './util/config';
 import Data from './util/data';
+import EventEmitter from "events";
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
-import AreaManager from './locations/area-manager';
-import EventEmitter from "events";
+import PlayerManager from './players/player-manager';
 import TransportStream from './communication/transport-stream';
 
 const DEFAULT_TICK_FREQUENCY = 100;
@@ -25,6 +26,9 @@ export class GameState {
 
     public constructor(config: Config) {
         Data.setDataPath(config.get('dataPath'));
+
+        config.set('core.bundlesPath', path.join(__dirname, '..', 'core-bundles'));
+        config.set('core.rootPath', path.join(__dirname, '..'));
 
         this._areaManager = new AreaManager(this);
         this._config = config;
