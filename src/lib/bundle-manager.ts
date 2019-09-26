@@ -8,7 +8,6 @@ import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {ServerEventListenersDefinition} from './events/server-events';
-import {DataPaths} from './data/sources/data-source';
 
 export class BundleManager {
     private readonly areas: string[] = [];
@@ -35,13 +34,7 @@ export class BundleManager {
             throw new Error('Invalid root path');
         }
 
-        const loaderPaths: DataPaths = {
-            bundles: bundlePath,
-            data: dataPath,
-            root: rootPath,
-        };
-
-        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), loaderPaths);
+        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), state.config);
         this.state = state;
     }
 

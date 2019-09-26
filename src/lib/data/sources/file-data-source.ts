@@ -23,12 +23,22 @@ export class FileDataSource extends DataSource {
             throw new Error('No bundle configured for path with [BUNDLE]');
         }
 
+        let safeBundle = bundle,
+            bundlesPath = this.appConfig.get('bundlesPath'),
+            rootPath = this.appConfig.get('rootPath');
+
+        if (safeBundle.startsWith('core.')) {
+            bundlesPath = this.appConfig.get('core.bundlesPath');
+            rootPath = this.appConfig.get('core.rootPath');
+            safeBundle = safeBundle.replace('core.', '');
+        }
+
         return filePath
             .replace('[AREA]', area)
-            .replace('[BUNDLE]', bundle)
-            .replace('[BUNDLES]', this.paths.bundles)
-            .replace('[DATA]', this.paths.data)
-            .replace('[ROOT]', this.paths.root);
+            .replace('[BUNDLE]', safeBundle)
+            .replace('[BUNDLES]', bundlesPath)
+            .replace('[DATA]', this.appConfig.get('dataPath'))
+            .replace('[ROOT]', rootPath);
     }
 }
 

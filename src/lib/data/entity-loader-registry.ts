@@ -1,6 +1,7 @@
-import DataSource, {DataPaths} from './sources/data-source';
+import DataSource from './sources/data-source';
 import DataSourceFactory from './sources/data-source-factory';
 import EntityLoader from './entity-loader';
+import Config from '../util/config';
 
 export interface EntityLoaderDefinition {
     source: string;
@@ -15,16 +16,16 @@ export interface EntityLoaderDefinitions {
  * Holds instances of configured EntityLoaders
  */
 export class EntityLoaderRegistry {
-    private readonly paths: DataPaths;
+    private readonly config: Config;
 
     private dataSourceFactory: DataSourceFactory;
     private loaders: Map<string, EntityLoader> = new Map();
 
-    public constructor(config: EntityLoaderDefinitions, paths: DataPaths) {
-        this.dataSourceFactory = new DataSourceFactory(paths);
-        this.paths = paths;
+    public constructor(loaderConfig: EntityLoaderDefinitions, config: Config) {
+        this.config = config;
+        this.dataSourceFactory = new DataSourceFactory(config);
 
-        this.initLoaders(config);
+        this.initLoaders(loaderConfig);
     }
 
     // noinspection JSMethodCanBeStatic

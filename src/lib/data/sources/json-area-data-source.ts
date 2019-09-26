@@ -3,6 +3,7 @@ import fs from 'fs';
 import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
 import JsonDataSource from './json-data-source';
+import Logger from '../../util/logger';
 
 /**
  * Data source for areas stored in json. Looks for a directory structure like:
@@ -19,6 +20,9 @@ import JsonDataSource from './json-data-source';
 class JsonAreaDataSource extends FileDataSource {
     public hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const dirPath = this.resolvePath(config);
+
+        Logger.verbose(`checking json area '${dirPath}'`);
+        Logger.verbose(`checking json area config '${JSON.stringify(config)}'`);
 
         return Promise.resolve(fs.existsSync(dirPath));
     }
@@ -61,7 +65,7 @@ class JsonAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for JsonAreaDataSource`);
         }
 
-        const source = new JsonDataSource(this.paths);
+        const source = new JsonDataSource(this.appConfig);
 
         return source.fetchAll({path: `${dirPath}/${id}/manifest.json`});
     }
@@ -82,7 +86,7 @@ class JsonAreaDataSource extends FileDataSource {
             throw new Error(`Invalid path [${dirPath}] specified for JsonAreaDataSource`);
         }
 
-        const source = new JsonDataSource(this.paths);
+        const source = new JsonDataSource(this.appConfig);
 
         return source.replace({path: `${dirPath}/${id}/manifest.json`}, data);
     }

@@ -1,22 +1,17 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, prefer-promise-reject-errors */
 import DataSourceConfig from './data-source-config';
-
-export interface DataPaths {
-    bundles: string;
-    data: string;
-    root: string;
-}
+import Config from '../../util/config';
 
 export class DataSource {
     /* eslint-disable lines-between-class-members */
     public name: string = '';
 
+    protected readonly appConfig: Config;
     protected readonly config: DataSourceConfig;
-    protected readonly paths: DataPaths;
     /* eslint-enable lines-between-class-members */
 
-    public constructor(paths: DataPaths) {
-        this.paths = paths;
+    public constructor(appConfig: Config) {
+        this.appConfig = appConfig;
     }
 
     public hasData(config: DataSourceConfig): Promise<boolean> {

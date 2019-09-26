@@ -1,4 +1,5 @@
-import DataSource, {DataPaths} from './data-source';
+import Config from '../../util/config';
+import DataSource from './data-source';
 import JsonAreaDataSource from './json-area-data-source';
 import JsonDataSource from './json-data-source';
 import JsonDirectoryDataSource from './json-directory-data-source';
@@ -9,10 +10,10 @@ import YamlDirectoryDataSource from './yaml-directory-data-source';
 export class DataSourceFactory {
     private sources: Map<string, DataSource> = new Map();
 
-    private readonly paths: DataPaths;
+    private readonly config: Config;
 
-    public constructor(paths: DataPaths) {
-        this.paths = paths;
+    public constructor(config: Config) {
+        this.config = config;
     }
 
     public getDataSource(name: string): DataSource {
@@ -24,27 +25,27 @@ export class DataSourceFactory {
 
         switch (name) {
             case 'JsonArea':
-                source = new JsonAreaDataSource(this.paths);
+                source = new JsonAreaDataSource(this.config);
                 break;
 
             case 'Json':
-                source = new JsonDataSource(this.paths);
+                source = new JsonDataSource(this.config);
                 break;
 
             case 'JsonDirectory':
-                source = new JsonDirectoryDataSource(this.paths);
+                source = new JsonDirectoryDataSource(this.config);
                 break;
 
             case 'YamlArea':
-                source = new YamlAreaDataSource(this.paths);
+                source = new YamlAreaDataSource(this.config);
                 break;
 
             case 'Yaml':
-                source = new YamlDataSource(this.paths);
+                source = new YamlDataSource(this.config);
                 break;
 
             case 'YamlDirectory':
-                source = new YamlDirectoryDataSource(this.paths);
+                source = new YamlDirectoryDataSource(this.config);
                 break;
         }
 
