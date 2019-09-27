@@ -47,7 +47,7 @@ export class BundleManager {
     }
 
     private async loadArea(bundle: string, areaName: string, manifest: AreaManifest): Promise<void> {
-        Logger.verbose(`\t\tLOAD: AREA \`${areaName}\` -- START`);
+        Logger.verbose(`LOAD: AREA \`${areaName}\` -- START`);
 
         const definition: AreaDefinition = {
             bundle: bundle,
@@ -55,10 +55,17 @@ export class BundleManager {
             rooms: [],
         };
 
-        Logger.verbose(`\t\t\tAREA \`${areaName}\`: Rooms...`);
-        definition.rooms = await this.loadEntities(bundle, areaName, 'rooms', null);
+        Logger.verbose(`AREA \`${areaName}\`: Rooms...`);
+        definition.rooms = await this.loadEntities(
+            bundle,
+            areaName,
+            'rooms',
+            this.state.roomFactory
+        );
 
-        Logger.verbose(`\t\tLOAD: AREA \`${areaName}\` -- END`);
+        this.state.areaFactory.setDefinition(areaName, definition);
+
+        Logger.verbose(`LOAD: AREA \`${areaName}\` -- END`);
     }
 
     private async loadAreas(bundle: string): Promise<void> {
@@ -100,7 +107,7 @@ export class BundleManager {
 
             // only load bundles the user has configured to be loaded
             if (this.isValidBundle(bundle, bundlePath) && this.isBundleEnabled(bundle, prefix)) {
-                await this.loadBundle(bundle, bundlePath);
+                await this.loadBundle(`${prefix}${bundle}`, bundlePath);
             }
         }
     }
@@ -117,16 +124,10 @@ export class BundleManager {
         loader.setArea(areaName);
 
         if (!await loader.hasData()) {
-            Logger.verbose('loader does not have data');
-
             return [];
         }
 
-        Logger.verbose('loader has data');
-
         const entities = await loader.fetchAll();
-
-        console.log(JSON.stringify(entities, null, 4));
 
         return entities.map(entity => {
             const ref = EntityFactory.createRef(areaName, entity.id);
@@ -144,7 +145,7 @@ export class BundleManager {
             return Promise.resolve();
         }
 
-        Logger.verbose('\tLOAD: Server Events...');
+        Logger.verbose('LOAD: Server Events...');
 
         const files = fs.readdirSync(uri);
 
@@ -154,7 +155,7 @@ export class BundleManager {
             if (Data.isScriptFile(eventsPath, eventsFile)) {
                 const eventsName = path.basename(eventsFile, path.extname(eventsFile));
 
-                Logger.verbose(`\t\t\tLOAD: SERVER-EVENTS ${eventsName}...`);
+                Logger.verbose(`LOAD: SERVER-EVENTS ${eventsName}...`);
 
                 const eventImport = await import(eventsPath);
                 const loader: ServerEventListenersDefinition = eventImport.default;
@@ -167,7 +168,7 @@ export class BundleManager {
             }
         }
 
-        Logger.verbose('\tENDLOAD: Server Events...');
+        Logger.verbose('ENDLOAD: Server Events...');
     }
 
     public async loadBundles(): Promise<void> {

@@ -21,9 +21,6 @@ class JsonAreaDataSource extends FileDataSource {
     public hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const dirPath = this.resolvePath(config);
 
-        Logger.verbose(`checking json area '${dirPath}'`);
-        Logger.verbose(`checking json area config '${JSON.stringify(config)}'`);
-
         return Promise.resolve(fs.existsSync(dirPath));
     }
 

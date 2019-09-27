@@ -1,6 +1,7 @@
 import path from 'path';
 import {CommanderStatic} from 'commander';
 
+import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
 import Config from './util/config';
 import Data from './util/data';
@@ -8,16 +9,21 @@ import EventEmitter from "events";
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
 import PlayerManager from './players/player-manager';
+import RoomFactory from './locations/room-factory';
+import RoomManager from './locations/room-manager';
 import TransportStream from './communication/transport-stream';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
 export class GameState {
+    private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
     private readonly _config: Config;
     // private readonly itemManager
     private readonly _inputEventManager: EventManager = new EventManager();
     private readonly _playerManager: PlayerManager = new PlayerManager();
+    private readonly _roomFactory: RoomFactory = new RoomFactory();
+    private readonly _roomManager: RoomManager = new RoomManager();
     private readonly _server: GameServer = new GameServer();
     private readonly _serverEventManager: EventManager = new EventManager();
 
@@ -38,7 +44,7 @@ export class GameState {
         this.serverEventManager.attach(this._server);
     }
 
-    private startEntityTicker() {
+    private startEntityTicker(): void {
         if (this.entityTickInterval !== null) {
             clearInterval(this.entityTickInterval);
         }
@@ -49,7 +55,7 @@ export class GameState {
         );
     }
 
-    private startPlayerTicker() {
+    private startPlayerTicker(): void {
         if (this.playerTickInterval !== null) {
             clearInterval(this.playerTickInterval);
         }
@@ -60,23 +66,35 @@ export class GameState {
         );
     }
 
-    public get areaManager() {
+    public get areaFactory(): AreaFactory {
+        return this._areaFactory;
+    }
+
+    public get areaManager(): AreaManager {
         return this._areaManager;
     }
 
-    public get config() {
+    public get config(): Config {
         return this._config;
     }
 
-    public get inputEventManager() {
+    public get inputEventManager(): EventManager {
         return this._inputEventManager;
     }
 
-    public get playerManager() {
+    public get playerManager(): PlayerManager {
         return this._playerManager;
     }
 
-    public get serverEventManager() {
+    public get roomFactory(): RoomFactory {
+        return this._roomFactory;
+    }
+
+    public get roomManager(): RoomManager {
+        return this._roomManager;
+    }
+
+    public get serverEventManager(): EventManager {
         return this._serverEventManager;
     }
 

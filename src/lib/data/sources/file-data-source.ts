@@ -1,5 +1,3 @@
-import path from 'path';
-
 import DataSource from './data-source';
 import DataSourceConfig from './data-source-config';
 
@@ -27,7 +25,7 @@ export class FileDataSource extends DataSource {
             bundlesPath = this.appConfig.get('bundlesPath'),
             rootPath = this.appConfig.get('rootPath');
 
-        if (safeBundle.startsWith('core.')) {
+        if (safeBundle && safeBundle.startsWith('core.')) {
             bundlesPath = this.appConfig.get('core.bundlesPath');
             rootPath = this.appConfig.get('core.rootPath');
             safeBundle = safeBundle.replace('core.', '');

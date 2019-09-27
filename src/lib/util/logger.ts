@@ -1,21 +1,45 @@
-import winston, {Logger} from 'winston';
+import winston, {Logger as WinstonLogger} from 'winston';
 
-const transports = {
-    console: new winston.transports.Console({
-        format: winston.format.timestamp(),
+const {createLogger, format, transports} = winston;
+const {
+    colorize,
+    combine,
+    padLevels,
+    printf,
+    simple,
+    timestamp,
+} = format;
+
+const logTransports = {
+    console: new transports.Console({
+        format: combine(
+            format(data => ({
+                ...data,
+                level: data.level.toUpperCase(),
+            }))(),
+            colorize(),
+            timestamp(),
+            padLevels(),
+            simple(),
+            printf(data => {
+                const {level, message, timestamp} = data;
+
+                return `[${timestamp}] [${level}] ${message}`;
+            })
+        ),
     }),
     file: null,
 };
 
-let logger: Logger = winston.createLogger({
+let logger: WinstonLogger = createLogger({
     level: 'debug',
-    transports: [transports.console],
+    transports: [logTransports.console],
 });
 
 /**
  * Wrapper around Winston
  */
-export class AppLogger {
+export class Logger {
     /*
      * Appends red "ERROR" to the start of logs.
      * Highest priority logging.
@@ -32,19 +56,19 @@ export class AppLogger {
     }
 
     public static setFileLogging(uri: string): void {
-        transports.file = new winston.transports.File({
+        logTransports.file = new transports.File({
             filename: uri,
-            format: winston.format.timestamp(),
+            format: format.timestamp(),
         });
 
-        logger.add(transports.file);
+        logger.add(logTransports.file);
     }
 
     public static setLevel(level: string): void {
-        transports.console.level = level;
+        logTransports.console.level = level;
 
-        if (transports.file !== null) {
-            transports.file.level = level;
+        if (logTransports.file !== null) {
+            logTransports.file.level = level;
         }
     }
 
@@ -64,4 +88,4 @@ export class AppLogger {
     }
 }
 
-export default AppLogger;
+export default Logger;
