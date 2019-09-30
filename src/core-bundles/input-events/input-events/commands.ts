@@ -1,18 +1,25 @@
-import {EventEmitter} from 'events';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import CommandParser from '../../../lib/commands/command-parser';
+import CommandType from '../../../lib/commands/command-type';
+import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
+import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
-
-import CommandParser from '../../bundle-example-lib/lib/CommandParser';
-import InvalidCommandError from '../../bundle-example-lib/lib/InvalidCommandError';
-import RestrictedCommandError from '../../bundle-example-lib/lib/RestrictedCommandError';
-
-const {
-    NoPartyError,
-    NoRecipientError,
+import PlayerRole from '../../../lib/players/player-role';
+import TransportStream from '../../../lib/communication/transport-stream';
+import {EventEmitter} from 'events';
+import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands/command-errors';
+import {
     NoMessageError,
-} = ChannelErrors;
+    NoPartyError,
+    NoRecipientError
+} from '../../../lib/communication/channels/channel-errors';
+
+// const {
+//     NoPartyError,
+//     NoRecipientError,
+//     NoMessageError,
+// } = ChannelErrors;
 
 const {prompt, sayAt} = Broadcast;
 
@@ -63,59 +70,59 @@ export const commands: InputEventListenerDefinition = {
                         break;
                     }
 
-                    case CommandType.CHANNEL: {
-                        const {channel} = result;
+                    // case CommandType.CHANNEL: {
+                    //     const {channel} = result.payload;
+                    //
+                    //     if (
+                    //         channel.minRequiredRole !== null
+                    //         && channel.minRequiredRole > player.role
+                    //     ) {
+                    //         throw new RestrictedCommandError();
+                    //     }
+                    //
+                    //     // same with channels
+                    //     try {
+                    //         channel.send(state, player, result.args);
+                    //     }
+                    //     catch (error) {
+                    //         if (error instanceof NoPartyError) {
+                    //             sayAt(player, "You aren't in a group.");
+                    //         }
+                    //         else if (error instanceof NoRecipientError) {
+                    //             sayAt(player, 'Send the message to whom?');
+                    //         }
+                    //         else if (error instanceof NoMessageError) {
+                    //             sayAt(player, `\r\nChannel: ${channel.name}`);
+                    //             sayAt(player, `Syntax: ${channel.getUsage()}`);
+                    //
+                    //             if (channel.description) {
+                    //                 sayAt(player, channel.description);
+                    //             }
+                    //         }
+                    //     }
+                    //
+                    //     break;
+                    // }
 
-                        if (
-                            channel.minRequiredRole !== null
-                            && channel.minRequiredRole > player.role
-                        ) {
-                            throw new RestrictedCommandError();
-                        }
-
-                        // same with channels
-                        try {
-                            channel.send(state, player, result.args);
-                        }
-                        catch (error) {
-                            if (error instanceof NoPartyError) {
-                                sayAt(player, "You aren't in a group.");
-                            }
-                            else if (error instanceof NoRecipientError) {
-                                sayAt(player, 'Send the message to whom?');
-                            }
-                            else if (error instanceof NoMessageError) {
-                                sayAt(player, `\r\nChannel: ${channel.name}`);
-                                sayAt(player, `Syntax: ${channel.getUsage()}`);
-
-                                if (channel.description) {
-                                    sayAt(player, channel.description);
-                                }
-                            }
-                        }
-
-                        break;
-                    }
-
-                    case CommandType.SKILL: {
-                        /*
-                         * See bundles/ranvier-player-events/player-events.js
-                         * commandQueued and updateTick for when these actually
-                         * get executed
-                         */
-                        player.queueCommand(
-                            {
-                                execute: () => {
-                                    player.emit('useAbility', result.skill, result.args);
-                                },
-                                label: data,
-                                lag: 0,
-                            },
-                            result.skill.lag || state.Config.get('skillLag') || 1000
-                        );
-
-                        break;
-                    }
+                    // case CommandType.SKILL: {
+                    //     /*
+                    //      * See bundles/ranvier-player-events/player-events.js
+                    //      * commandQueued and updateTick for when these actually
+                    //      * get executed
+                    //      */
+                    //     player.queueCommand(
+                    //         {
+                    //             execute: () => {
+                    //                 player.emit('useAbility', result.skill, result.args);
+                    //             },
+                    //             label: data,
+                    //             lag: 0,
+                    //         },
+                    //         result.skill.lag || state.config.get('skillLag', 1000)
+                    //     );
+                    //
+                    //     break;
+                    // }
 
                     /* no default */
                 }

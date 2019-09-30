@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 
+import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';

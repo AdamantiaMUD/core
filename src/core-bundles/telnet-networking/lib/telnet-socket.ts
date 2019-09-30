@@ -162,7 +162,7 @@ export class TelnetSocket extends EventEmitter {
              * fresh makes sure that even if we haven't gotten a newline but the client
              * sent us some initial negotiations to still interpret them
              */
-            if (!databuf.toString().match(/[\r\n]/) && !connection.fresh) {
+            if (!databuf.toString().match(/[\r\n]/u) && !connection.fresh) {
                 return;
             }
 
@@ -189,7 +189,7 @@ export class TelnetSocket extends EventEmitter {
             inputlen = 0;
         });
 
-        connection.on('close', _ => {
+        connection.on('close', () => {
             /**
              * @event TelnetSocket#close
              */

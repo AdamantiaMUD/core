@@ -4,6 +4,15 @@ import Data from '../util/data';
 import Serializable from '../data/serializable';
 import {SimpleMap} from '../../../index';
 
+export interface SerializedAccount extends SimpleMap {
+    username: string;
+    characters: any[];
+    password: string;
+    metadata: SimpleMap;
+    deleted: boolean;
+    banned: boolean;
+}
+
 const hashPassword = (pass: string): string => {
     const salt = bcrypt.genSaltSync(10);
 
@@ -69,7 +78,7 @@ class Account implements Serializable {
         return this.characters.find(char => char.username === name) !== undefined;
     }
 
-    public restore(data: any): void {
+    public restore(data: SerializedAccount): void {
         this.banned = data.banned;
         this.characters = data.characters;
         this.deleted = data.deleted;
@@ -90,7 +99,7 @@ class Account implements Serializable {
     /**
      * Gather data from account object that will be persisted to disk
      */
-    public serialize(): SimpleMap {
+    public serialize(): SerializedAccount {
         const {
             username,
             characters,

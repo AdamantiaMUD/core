@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 
+import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';
@@ -46,7 +47,7 @@ export const changePassword: InputEventListenerDefinition = {
 
             // setPassword handles hashing
             args.account.setPassword(pass);
-            state.AccountManager.addAccount(args.account);
+            state.accountManager.addAccount(args.account);
             args.account.save();
 
             socket.emit('confirm-password', args);

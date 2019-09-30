@@ -7,6 +7,7 @@ import EntityLoaderRegistry from './data/entity-loader-registry';
 import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
+import {InputEventListenerDefinition} from './events/input-events';
 import {ServerEventListenersDefinition} from './events/server-events';
 
 export class BundleManager {
@@ -93,6 +94,7 @@ export class BundleManager {
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
+        await this.loadInputEvents(bundle, bundlePath);
         await this.loadServerEvents(bundle, bundlePath);
         await this.loadAreas(bundle);
 
@@ -136,6 +138,37 @@ export class BundleManager {
 
             return ref;
         });
+    }
+
+    private async loadInputEvents(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'input-events');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.verbose('\tLOAD: Input Events...');
+        const files = fs.readdirSync(uri);
+
+        for (const eventFile of files) {
+            const eventPath = path.join(uri, eventFile);
+
+            if (Data.isScriptFile(eventPath, eventFile)) {
+                const eventName = path.basename(eventFile, path.extname(eventFile));
+
+                const eventImport = await import(eventPath);
+                const loader: InputEventListenerDefinition = eventImport.default;
+
+                if (typeof loader.event !== 'function') {
+                    /* eslint-disable-next-line max-len */
+                    throw new Error(`Bundle ${bundle} has an invalid input event '${eventName}'. Expected a function, got: ${typeof loader.event}`);
+                }
+
+                this.state.inputEventManager.add(eventName, loader.event(this.state));
+            }
+        }
+
+        Logger.verbose('\tENDLOAD: Input Events...');
     }
 
     private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {

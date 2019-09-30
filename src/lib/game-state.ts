@@ -3,6 +3,8 @@ import {CommanderStatic} from 'commander';
 
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
+import AccountManager from './players/account-manager';
+import CommandManager from './commands/command-manager';
 import Config from './util/config';
 import Data from './util/data';
 import EventEmitter from "events";
@@ -16,8 +18,10 @@ import TransportStream from './communication/transport-stream';
 const DEFAULT_TICK_FREQUENCY = 100;
 
 export class GameState {
+    private readonly _accountManager: AccountManager = new AccountManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
+    private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
     // private readonly itemManager
     private readonly _inputEventManager: EventManager = new EventManager();
@@ -66,12 +70,20 @@ export class GameState {
         );
     }
 
+    public get accountManager(): AccountManager {
+        return this._accountManager;
+    }
+
     public get areaFactory(): AreaFactory {
         return this._areaFactory;
     }
 
     public get areaManager(): AreaManager {
         return this._areaManager;
+    }
+
+    public get commandManager(): CommandManager {
+        return this._commandManager;
     }
 
     public get config(): Config {

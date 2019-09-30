@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 
+import Account from '../../../lib/players/account';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import Logger from '../../../lib/util/logger';

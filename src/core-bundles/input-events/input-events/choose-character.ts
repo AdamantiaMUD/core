@@ -1,5 +1,7 @@
 import {EventEmitter} from 'events';
 
+import Account from '../../../lib/players/account';
+import Broadcast from '../../../lib/communication/broadcast';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';

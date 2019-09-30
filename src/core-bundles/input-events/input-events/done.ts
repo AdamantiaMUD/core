@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 
+import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
@@ -12,7 +13,7 @@ export const loginDone: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>, player: Player) => {
         player.setMeta('lastCommandTime', Date.now());
 
-        state.CommandManager
+        state.commandManager
             .get('look')
             .execute(null, player);
 

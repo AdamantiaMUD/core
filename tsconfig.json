@@ -12,8 +12,7 @@
             "./node_modules/@types"
         ],
         "moduleResolution": "node",
-        "resolveJsonModule": true,
-        "experimentalDecorators": true
+        "resolveJsonModule": true
     },
     "exclude": ["node_modules"],
     "include": [

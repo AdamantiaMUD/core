@@ -1,5 +1,6 @@
 import {EventEmitter} from 'events';
 
+import Account from '../../../lib/players/account';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
@@ -26,10 +27,10 @@ export const login: InputEventListenerDefinition = {
 
             name = name[0].toUpperCase() + name.slice(1);
 
-            let account = null;
+            let account: Account = null;
 
             try {
-                account = await state.AccountManager.loadAccount(name);
+                account = await state.accountManager.loadAccount(name);
             }
             catch (e) {
                 Logger.error(e.message);
