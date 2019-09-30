@@ -12,6 +12,8 @@ import {InputEventListenerDefinition} from '../../../lib/events/input-events';
  */
 export const intro: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
+        // MotD generated here:
+        // http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
         const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');
         const motdUri: string = state.config.get('motdUri', defaultMotdUri);
 
