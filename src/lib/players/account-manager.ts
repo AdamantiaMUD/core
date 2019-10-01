@@ -10,8 +10,8 @@ export class AccountManager {
     private loader: EntityLoader = null;
     /* eslint-enable lines-between-class-members */
 
-    public addAccount(acc: Account): void {
-        this.accounts.set(acc.username, acc);
+    public setAccount(username: string, acc: Account): void {
+        this.accounts.set(username, acc);
     }
 
     public getAccount(username: string): Account {
@@ -32,7 +32,7 @@ export class AccountManager {
 
         account.restore(data);
 
-        this.addAccount(account);
+        this.setAccount(username, account);
 
         return account;
     }

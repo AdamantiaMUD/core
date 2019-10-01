@@ -5,12 +5,12 @@ import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {InputEventListenerDefinition} from '../../../lib/events/input-events';
-import {validateAccountName} from '../../../lib/util/player';
+import {validateCharacterName} from '../../../lib/util/player';
 
 /**
  * Player creation event
  */
-export const createPlayer: InputEventListenerDefinition = {
+export const createCharacter: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>, account: Account) => {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
@@ -20,34 +20,32 @@ export const createPlayer: InputEventListenerDefinition = {
         socket.once('data', (buf: Buffer) => {
             say('');
 
-            let name = buf.toString().trim();
+            const name = buf.toString().trim();
 
             try {
-                validateAccountName(state.config, name);
+                validateCharacterName(state.config, name);
             }
             catch (err) {
                 say(err.message);
 
-                socket.emit('create-player', account);
+                socket.emit('create-character', account);
 
                 return;
             }
 
-            name = name[0].toUpperCase() + name.slice(1);
-
-            const exists = state.playerManager.exists(name);
+            const exists = state.playerManager.exists(name.toLowerCase());
 
             if (exists) {
                 say('That name is already taken.');
 
-                socket.emit('create-player', account);
+                socket.emit('create-character', account);
 
                 return;
             }
 
-            socket.emit('player-name-check', {account, name});
+            socket.emit('character-name-check', {account, name});
         });
     },
 };
 
-export default createPlayer;
+export default createCharacter;

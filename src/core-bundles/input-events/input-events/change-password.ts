@@ -17,6 +17,8 @@ export const changePassword: InputEventListenerDefinition = {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
 
+        const {account} = args;
+
         say('Your password must be at least 8 characters.');
         write('<cyan>Enter your account password:</cyan> ');
 
@@ -46,9 +48,9 @@ export const changePassword: InputEventListenerDefinition = {
             }
 
             // setPassword handles hashing
-            args.account.setPassword(pass);
-            state.accountManager.addAccount(args.account);
-            args.account.save();
+            account.setPassword(pass);
+            state.accountManager.setAccount(account.username, account);
+            account.save();
 
             socket.emit('confirm-password', args);
         });

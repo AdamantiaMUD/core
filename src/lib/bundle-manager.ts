@@ -147,7 +147,7 @@ export class BundleManager {
             return Promise.resolve();
         }
 
-        Logger.verbose('\tLOAD: Input Events...');
+        Logger.verbose('LOAD: Input Events...');
         const files = fs.readdirSync(uri);
 
         for (const eventFile of files) {
@@ -168,7 +168,7 @@ export class BundleManager {
             }
         }
 
-        Logger.verbose('\tENDLOAD: Input Events...');
+        Logger.verbose('ENDLOAD: Input Events...');
     }
 
     private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {

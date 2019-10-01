@@ -11,17 +11,18 @@ import {InputEventListenerDefinition} from '../../../lib/events/input-events';
  * Finish player creation. Add the character to the account then add the player
  * to the game world
  */
-export const finishPlayer: InputEventListenerDefinition = {
+export const finishCharacter: InputEventListenerDefinition = {
     event: (state: GameState) => {
-        const startingRoomRef = state.config.get('startingRoom');
+        let startingRoomRef = state.config.get('startingRoom');
 
         if (!startingRoomRef) {
-            Logger.error('No startingRoom defined in ranvier.json');
+            Logger.warn('No startingRoom defined in adamantia.json. Defaulting to "limbo:r0001".');
+            startingRoomRef = 'limbo:r0001';
         }
 
         return async (
             socket: TransportStream<EventEmitter>,
-            args: {account: Account; name: string; classChoice: string}
+            args: {account: Account; name: string}
         ) => {
             let player = new Player();
 
@@ -44,4 +45,4 @@ export const finishPlayer: InputEventListenerDefinition = {
     },
 };
 
-export default finishPlayer;
+export default finishCharacter;

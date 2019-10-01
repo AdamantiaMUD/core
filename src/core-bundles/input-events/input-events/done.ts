@@ -19,7 +19,7 @@ export const loginDone: InputEventListenerDefinition = {
 
         Broadcast.prompt(player);
 
-        // All that shit done, let them play!
+        // All done, let them play!
         player.socket.emit('commands', player);
 
         player.emit('login');

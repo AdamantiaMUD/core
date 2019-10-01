@@ -51,7 +51,7 @@ export const chooseCharacter: InputEventListenerDefinition = {
             options.push({
                 display: 'Create New Character',
                 onSelect: () => {
-                    socket.emit('create-player', account);
+                    socket.emit('create-character', account);
                 },
             });
         }
@@ -63,28 +63,28 @@ export const chooseCharacter: InputEventListenerDefinition = {
                 options.push({
                     display: char.username,
                     onSelect: async () => {
-                        let currentPlayer = mgr.getPlayer(char.username);
+                        let player = mgr.getPlayer(char.username);
 
-                        if (currentPlayer) {
+                        if (player) {
                             // kill old connection
-                            at(currentPlayer, 'Connection taken over by another client. Goodbye.');
-                            currentPlayer.socket.end();
+                            at(player, 'Connection taken over by another client. Goodbye.');
+                            player.socket.end();
 
                             // link new socket
-                            currentPlayer.socket = socket;
-                            at(currentPlayer, 'Taking over old connection. Welcome.');
-                            prompt(currentPlayer);
+                            player.socket = socket;
+                            at(player, 'Taking over old connection. Welcome.');
+                            prompt(player);
 
-                            currentPlayer.socket.emit('commands', currentPlayer);
+                            player.socket.emit('commands', player);
 
                             return;
                         }
 
-                        currentPlayer = await state.playerManager
+                        player = await state.playerManager
                             .loadPlayer(state, account, char.username);
-                        currentPlayer.socket = socket;
+                        player.socket = socket;
 
-                        socket.emit('done', currentPlayer);
+                        socket.emit('done', player);
                     },
                 });
             });

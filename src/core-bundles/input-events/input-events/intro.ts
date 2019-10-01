@@ -23,8 +23,7 @@ export const intro: InputEventListenerDefinition = {
             EventUtil.genSay(socket)(motd);
         }
 
-        // socket.emit('login');
-        socket.emit('commands');
+        socket.emit('login');
     },
 };
 

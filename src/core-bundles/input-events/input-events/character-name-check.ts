@@ -8,7 +8,7 @@ import {InputEventListenerDefinition} from '../../../lib/events/input-events';
 /**
  * Confirm new player name
  */
-export const playerNameCheck: InputEventListenerDefinition = {
+export const characterNameCheck: InputEventListenerDefinition = {
     event: () => (
         socket: TransportStream<EventEmitter>,
         args: {account: Account; name: string}
@@ -27,7 +27,7 @@ export const playerNameCheck: InputEventListenerDefinition = {
                 .toLowerCase();
 
             if (!(/[yn]/u).test(confirmation)) {
-                socket.emit('player-name-check', args);
+                socket.emit('character-name-check', args);
 
                 return;
             }
@@ -35,14 +35,14 @@ export const playerNameCheck: InputEventListenerDefinition = {
             if (confirmation === 'n') {
                 say("Let's try again...");
 
-                socket.emit('create-player', args.account);
+                socket.emit('create-character', args.account);
 
                 return;
             }
 
-            socket.emit('choose-class', args);
+            socket.emit('finish-character', args);
         });
     },
 };
 
-export default playerNameCheck;
+export default characterNameCheck;

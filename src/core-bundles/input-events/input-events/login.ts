@@ -9,10 +9,10 @@ import {validateAccountName} from '../../../lib/util/player';
 
 export const login: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
-        socket.write('Welcome, what is your name? ');
+        socket.write('Welcome, what is your username? ');
 
         socket.once('data', async (buf: Buffer) => {
-            let name = buf.toString().trim();
+            const name = buf.toString().trim().toLowerCase();
 
             try {
                 validateAccountName(state.config, name);
@@ -24,8 +24,6 @@ export const login: InputEventListenerDefinition = {
 
                 return;
             }
-
-            name = name[0].toUpperCase() + name.slice(1);
 
             let account: Account = null;
 
@@ -58,7 +56,7 @@ export const login: InputEventListenerDefinition = {
                 return;
             }
 
-            socket.emit('password', {welcome: true, account: account});
+            socket.emit('password', account);
         });
     },
 };

@@ -31,7 +31,7 @@ export const createAccount: InputEventListenerDefinition = {
 
                 socket.emit('change-password', {
                     account: newAccount,
-                    nextStage: 'create-player',
+                    nextStage: 'create-character',
                 });
 
                 return;

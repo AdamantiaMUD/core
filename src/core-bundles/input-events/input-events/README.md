@@ -8,11 +8,11 @@ Login event flow
         |                            |                     |
   change-password              choose-character      change-password
         |                            |
-  create-player                      |
+  create-character                      |
         |                            |
-  player-name-check                  |
+  character-name-check                  |
         |                            |
-  finish-player                      |
+  finish-character                      |
         |__________________________done (add player to game world)
                                      |
                                    commands

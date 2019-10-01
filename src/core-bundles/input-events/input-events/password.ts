@@ -12,13 +12,10 @@ const maxFailedAttempts = 2;
  * Account password event
  */
 export const password: InputEventListenerDefinition = {
-    event: () => (
-        socket: TransportStream<EventEmitter>,
-        args: {welcome: boolean; account: Account}
-    ) => {
+    event: () => (socket: TransportStream<EventEmitter>, account: Account) => {
         const write = EventUtil.genWrite(socket);
 
-        const name = args.account.username;
+        const name = account.username;
 
         if (!passwordAttempts[name]) {
             passwordAttempts[name] = 0;
@@ -33,24 +30,23 @@ export const password: InputEventListenerDefinition = {
             return;
         }
 
-        if (args.welcome) {
-            write('Enter your password: ');
-            socket.command('toggleEcho');
-        }
+        write('Enter your password: ');
+        socket.command('toggleEcho');
 
         socket.once('data', (buf: Buffer) => {
             socket.command('toggleEcho');
 
             const pass = buf.toString().trim();
 
-            if (!args.account.checkPassword(pass)) {
+            if (account.checkPassword(pass)) {
+                socket.emit('choose-character', account);
+            }
+            else {
                 write('<red>Incorrect password.</red>\r\n');
                 passwordAttempts[name] += 1;
 
-                socket.emit('password', args);
+                socket.emit('password', account);
             }
-
-            socket.emit('choose-character', args.account);
         });
     },
 };
