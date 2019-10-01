@@ -21,6 +21,7 @@
     "scripts": {
         "build": "tsc",
         "clean": "rimraf build/*",
+        "postbuild": "node scripts/copy-assets.js",
         "prebuild": "npm run clean",
         "prepublishOnly": "npm run build",
         "type-check": "tsc --noEmit",
