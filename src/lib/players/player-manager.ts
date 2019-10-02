@@ -31,8 +31,8 @@ export class PlayerManager extends EventEmitter {
         return this;
     }
 
-    public addPlayer(player: Player): void {
-        this.players.set(this.keyify(player), player);
+    public addPlayer(username: string, player: Player): void {
+        this.players.set(username, player);
     }
 
     public exists(name: string): boolean {
@@ -47,19 +47,12 @@ export class PlayerManager extends EventEmitter {
         return this.getPlayersAsArray();
     }
 
-    public getPlayer(name): Player {
+    public getPlayer(name: string): Player {
         return this.players.get(name.toLowerCase());
     }
 
     public getPlayersAsArray(): Player[] {
         return Array.from(this.players.values());
-    }
-
-    /**
-     * Turn player into a key used by this class's map
-     */
-    public keyify(player: Player): string {
-        return player.name.toLowerCase();
     }
 
     /**
@@ -88,7 +81,7 @@ export class PlayerManager extends EventEmitter {
         player.account = account;
 
         this.events.attach(player);
-        this.addPlayer(player);
+        this.addPlayer(username, player);
 
         return player;
     }
@@ -112,7 +105,7 @@ export class PlayerManager extends EventEmitter {
 
         player.__pruned = true;
 
-        this.players.delete(this.keyify(player));
+        this.players.delete(player.name.toLowerCase());
     }
 
     public async save(player: Player): Promise<void> {

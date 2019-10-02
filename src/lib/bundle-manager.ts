@@ -3,7 +3,6 @@ import path from 'path';
 
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
-import EntityLoaderRegistry from './data/entity-loader-registry';
 import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
@@ -12,7 +11,6 @@ import {ServerEventListenersDefinition} from './events/server-events';
 
 export class BundleManager {
     private readonly areas: string[] = [];
-    private readonly loaderRegistry: EntityLoaderRegistry;
     private readonly state: GameState;
 
     public constructor(state: GameState) {
@@ -35,7 +33,6 @@ export class BundleManager {
             throw new Error('Invalid root path');
         }
 
-        this.loaderRegistry = new EntityLoaderRegistry(state.config.get('entityLoaders'), state.config);
         this.state = state;
     }
 
@@ -72,7 +69,7 @@ export class BundleManager {
     private async loadAreas(bundle: string): Promise<void> {
         Logger.verbose('LOAD: AREAS -- START');
 
-        const loader = this.loaderRegistry.get('areas');
+        const loader = this.state.entityLoaderRegistry.get('areas');
 
         loader.setBundle(bundle);
 
@@ -120,7 +117,7 @@ export class BundleManager {
         type: string,
         factory: T
     ): Promise<string[]> {
-        const loader = this.loaderRegistry.get(type);
+        const loader = this.state.entityLoaderRegistry.get(type);
 
         loader.setBundle(bundle);
         loader.setArea(areaName);

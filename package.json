@@ -30,6 +30,7 @@
     "dependencies": {
         "bcryptjs": "2.4.3",
         "commander": "3.0.2",
+        "humanize-duration": "3.20.1",
         "rfdc": "1.1.4",
         "uuid": "3.3.3",
         "winston": "3.2.1",

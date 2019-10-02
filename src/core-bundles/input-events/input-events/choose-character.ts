@@ -63,7 +63,7 @@ export const chooseCharacter: InputEventListenerDefinition = {
                 options.push({
                     display: char.username,
                     onSelect: async () => {
-                        let player = mgr.getPlayer(char.username);
+                        let player = mgr.getPlayer(char.username.toLowerCase());
 
                         if (player) {
                             // kill old connection
@@ -81,7 +81,7 @@ export const chooseCharacter: InputEventListenerDefinition = {
                         }
 
                         player = await state.playerManager
-                            .loadPlayer(state, account, char.username);
+                            .loadPlayer(state, account, char.username.toLowerCase());
                         player.socket = socket;
 
                         socket.emit('done', player);

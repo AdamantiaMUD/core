@@ -4,12 +4,15 @@ import {CommanderStatic} from 'commander';
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
 import AccountManager from './players/account-manager';
+import ChannelManager from './communication/channels/channel-manager';
 import CommandManager from './commands/command-manager';
 import Config from './util/config';
 import Data from './util/data';
+import EntityLoaderRegistry from './data/entity-loader-registry';
 import EventEmitter from "events";
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
+import HelpManager from './help/help-manager';
 import PlayerManager from './players/player-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
@@ -21,8 +24,11 @@ export class GameState {
     private readonly _accountManager: AccountManager = new AccountManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
+    private readonly _channelManager: ChannelManager = new ChannelManager();
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
+    private readonly _entityLoaderRegistry: EntityLoaderRegistry;
+    private readonly _helpManager: HelpManager = new HelpManager();
     // private readonly itemManager
     private readonly _inputEventManager: EventManager = new EventManager();
     private readonly _playerManager: PlayerManager = new PlayerManager();
@@ -42,6 +48,10 @@ export class GameState {
 
         this._areaManager = new AreaManager(this);
         this._config = config;
+        this._entityLoaderRegistry = new EntityLoaderRegistry(config.get('entityLoaders'), config);
+
+        this._accountManager.setLoader(this._entityLoaderRegistry.get('accounts'));
+        this._playerManager.setLoader(this._entityLoaderRegistry.get('players'));
     }
 
     private attachServer(): void {
@@ -82,12 +92,24 @@ export class GameState {
         return this._areaManager;
     }
 
+    public get channelManager(): ChannelManager {
+        return this._channelManager;
+    }
+
     public get commandManager(): CommandManager {
         return this._commandManager;
     }
 
     public get config(): Config {
         return this._config;
+    }
+
+    public get entityLoaderRegistry(): EntityLoaderRegistry {
+        return this._entityLoaderRegistry;
+    }
+
+    public get helpManager(): HelpManager {
+        return this._helpManager;
     }
 
     public get inputEventManager(): EventManager {

@@ -21,6 +21,71 @@ interface ParsedCommand {
  */
 export class CommandParser {
     /**
+     * Determine if a player can leave the current room to a given direction
+     */
+    public static canGo(player: Player, direction: string): RoomExitDefinition {
+        if (!player.room) {
+            return undefined;
+        }
+
+        const dir = CommandParser.checkDirection(player, direction);
+
+        return player.room
+            .getExits()
+            .find(roomExit => roomExit.direction === dir);
+    }
+
+    public static checkDirection(player: Player, direction: string): string {
+        const primaryDirections = [
+            'north',
+            'south',
+            'east',
+            'west',
+            'up',
+            'down',
+        ];
+
+        for (const dir of primaryDirections) {
+            if (dir.indexOf(direction) === 0) {
+                return dir;
+            }
+        }
+
+        const secondaryDirections = [
+            {abbr: 'ne', name: 'northeast'},
+            {abbr: 'nw', name: 'northwest'},
+            {abbr: 'se', name: 'southeast'},
+            {abbr: 'sw', name: 'southwest'},
+        ];
+
+        for (const dir of secondaryDirections) {
+            if (dir.abbr === direction || dir.name.indexOf(direction) === 0) {
+                return dir.name;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check command for partial match on primary directions, or exact match on
+     * secondary name or abbreviation
+     */
+    public static checkMovement(player: Player, direction: string): string {
+        const exit = CommandParser.checkDirection(player, direction);
+
+        if (exit !== null) {
+            return exit;
+        }
+
+        const otherExit = player.room
+            .getExits()
+            .find(roomExit => roomExit.direction === direction);
+
+        return otherExit ? otherExit.direction : null;
+    }
+
+    /**
      * Parse a given string to find the resulting command/arguments
      */
     public static parse(state: GameState, raw: string, player: Player): ParsedCommand {
@@ -123,71 +188,6 @@ export class CommandParser {
         // }
 
         throw new InvalidCommandError();
-    }
-
-    public static checkDirection(player: Player, direction: string): string {
-        const primaryDirections = [
-            'north',
-            'south',
-            'east',
-            'west',
-            'up',
-            'down',
-        ];
-
-        for (const dir of primaryDirections) {
-            if (dir.indexOf(direction) === 0) {
-                return dir;
-            }
-        }
-
-        const secondaryDirections = [
-            {abbr: 'ne', name: 'northeast'},
-            {abbr: 'nw', name: 'northwest'},
-            {abbr: 'se', name: 'southeast'},
-            {abbr: 'sw', name: 'southwest'},
-        ];
-
-        for (const dir of secondaryDirections) {
-            if (dir.abbr === direction || dir.name.indexOf(direction) === 0) {
-                return dir.name;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * Check command for partial match on primary directions, or exact match on
-     * secondary name or abbreviation
-     */
-    public static checkMovement(player: Player, direction: string): string {
-        const exit = CommandParser.checkDirection(player, direction);
-
-        if (exit !== null) {
-            return exit;
-        }
-
-        const otherExit = player.room
-            .getExits()
-            .find(roomExit => roomExit.direction === direction);
-
-        return otherExit ? otherExit.direction : null;
-    }
-
-    /**
-     * Determine if a player can leave the current room to a given direction
-     */
-    public static canGo(player: Player, direction: string): RoomExitDefinition {
-        if (!player.room) {
-            return undefined;
-        }
-
-        const dir = CommandParser.checkDirection(player, direction);
-
-        return player.room
-            .getExits()
-            .find(roomExit => roomExit.direction === dir);
     }
 }
 

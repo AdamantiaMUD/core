@@ -1,4 +1,5 @@
 import CommandType from './command-type';
+import GameState from '../game-state';
 import Player from '../players/player';
 import PlayerRole from '../players/player-role';
 import {SimpleMap} from '../../../index';
@@ -6,6 +7,18 @@ import {SimpleMap} from '../../../index';
 export interface CommandDefinition {
     aliases?: string[];
     command: CommandExecutable;
+    metadata?: SimpleMap;
+    name: string;
+    requiredRole?: PlayerRole;
+    type?: CommandType;
+    usage?: string;
+}
+
+export type CommandDefinitionBuilder = (state?: GameState) => CommandDefinition;
+
+export interface CommandDefinitionFactory {
+    aliases?: string[];
+    command: (state?: GameState) => CommandExecutable;
     metadata?: SimpleMap;
     name: string;
     requiredRole?: PlayerRole;
