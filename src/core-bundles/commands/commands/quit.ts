@@ -7,11 +7,11 @@ export const cmd: CommandDefinitionFactory = {
     name: 'quit',
     usage: 'quit',
     command: state => (args, player) => {
-        if (player.isInCombat()) {
-            sayAt(player, "You're too busy fighting for your life!");
-
-            return;
-        }
+        // if (player.isInCombat()) {
+        //     sayAt(player, "You're too busy fighting for your life!");
+        //
+        //     return;
+        // }
 
         player.save(() => {
             sayAt(player, 'Goodbye!');

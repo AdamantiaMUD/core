@@ -16,7 +16,6 @@ export class Player extends Character implements Broadcastable {
 
     public account: Account;
     public extraPrompts: Map<string, PromptDefinition> = new Map();
-    public name: string;
     public prompt: string = '> ';
 
     public constructor(data: any = {}) {
@@ -55,7 +54,7 @@ export class Player extends Character implements Broadcastable {
     public interpolatePrompt(promptStr: string, extraData = {}): string {
         const attributeData = {};
 
-        // for (const [attr] of this.attributes) {
+        // for (const attr of this.getAttributeNames()) {
         //     attributeData[attr] = {
         //         current: this.getAttribute(attr),
         //         max: this.getMaxAttribute(attr),
@@ -99,6 +98,14 @@ export class Player extends Character implements Broadcastable {
 
     public removePrompt(id: string): void {
         this.extraPrompts.delete(id);
+    }
+
+    public save(callback?: Function): void {
+        if (!this.__hydrated) {
+            return;
+        }
+
+        this.emit('save', callback);
     }
 
     public serialize(): SimpleMap {

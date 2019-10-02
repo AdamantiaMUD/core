@@ -2,7 +2,7 @@ import Broadcast from '../broadcast';
 import ChannelAudience from '../audiences/channel-audience';
 import Character from '../../entities/character';
 import GameState from '../../game-state';
-import PartyAudience from '../audiences/party-audience';
+// import PartyAudience from '../audiences/party-audience';
 import Player from '../../players/player';
 import PlayerRole from '../../players/player-role';
 import PrivateAudience from '../audiences/private-audience';
@@ -175,9 +175,9 @@ export class Channel {
         this.audience.configure({state, sender, message});
         const targets = this.audience.getBroadcastTargets();
 
-        if (this.audience instanceof PartyAudience && !targets.length) {
-            throw new NoPartyError();
-        }
+        // if (this.audience instanceof PartyAudience && !targets.length) {
+        //     throw new NoPartyError();
+        // }
 
         // Allow audience to change message e.g., strip target name.
         message = this.audience.alterMessage(message);
