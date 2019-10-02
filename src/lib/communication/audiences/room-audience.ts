@@ -1,5 +1,5 @@
 import ChannelAudience from './channel-audience';
-import Character from '../../entities/character';
+import Player from '../../players/player';
 
 /**
  * Audience class representing other players in the same room as the sender
@@ -7,7 +7,7 @@ import Character from '../../entities/character';
  * just make them broadcastables.
  */
 export class RoomAudience extends ChannelAudience {
-    public getBroadcastTargets(): Character[] {
+    public getBroadcastTargets(): Player[] {
         return this.sender.room
             .getBroadcastTargets()
             .filter(target => target !== this.sender);

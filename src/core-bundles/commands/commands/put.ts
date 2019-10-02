@@ -1,5 +1,6 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
+import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
 

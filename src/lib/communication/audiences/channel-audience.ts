@@ -1,5 +1,6 @@
 import Character from '../../entities/character';
 import GameState from '../../game-state';
+import Player from '../../players/player';
 import {Broadcastable} from '../broadcast';
 
 /**
@@ -25,7 +26,7 @@ export class ChannelAudience implements Broadcastable {
         this.message = options.message;
     }
 
-    public getBroadcastTargets(): Character[] {
+    public getBroadcastTargets(): Player[] {
         return this.state.playerManager.getPlayersAsArray();
     }
 }

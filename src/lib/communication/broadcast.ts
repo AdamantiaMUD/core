@@ -3,14 +3,13 @@ import ansi from 'sty';
 import wrap from 'wrap-ansi';
 import {sprintf} from 'sprintf-js';
 
-import Character from '../entities/character';
 import Player from '../players/player';
 
 // force ansi on even when there isn't a tty for the server
 ansi.enable();
 
 export interface Broadcastable {
-    getBroadcastTargets(): Character[];
+    getBroadcastTargets(): Player[];
 }
 
 export type MessageFormatter = (target: Broadcastable, message: string) => string;
@@ -69,7 +68,7 @@ export class Broadcast {
     public static atExcept(
         source: Broadcastable,
         message: string = '',
-        excludes: Character | Character[] = [],
+        excludes: Player | Player[] = [],
         wrapWidth: number | boolean = false,
         useColor: boolean = true,
         formatter: MessageFormatter = NOOP_FORMATTER
@@ -134,7 +133,7 @@ export class Broadcast {
     public static sayAtExcept(
         source: Broadcastable,
         message: string = '',
-        excludes: Character | Character[] = [],
+        excludes: Player | Player[] = [],
         wrapWidth: number | boolean = false,
         useColor: boolean = true,
         formatter: MessageFormatter = NOOP_FORMATTER
@@ -167,13 +166,11 @@ export class Broadcast {
      * Render the player's prompt including any extra prompts
      */
     public static prompt(
-        character: Character,
+        player: Player,
         extra: {[key: string]: any} = {},
         wrapWidth: number | boolean = false,
         useColor: boolean = true
     ): void {
-        const player = character as Player;
-
         player.socket._prompted = false;
 
         Broadcast.at(

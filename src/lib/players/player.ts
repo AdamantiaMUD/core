@@ -1,7 +1,8 @@
 import Account from './account';
 import Character from '../entities/character';
+import CommandQueue, {ExecutableCommand} from '../commands/command-queue';
 import PlayerRole from './player-role';
-import Room from '../locations/room';
+import {Broadcastable} from '../communication/broadcast';
 import {SimpleMap} from '../../../index';
 
 export interface PromptDefinition {
@@ -9,19 +10,23 @@ export interface PromptDefinition {
     renderer: () => string;
 }
 
-export class Player extends Character {
+export class Player extends Character implements Broadcastable {
+    private readonly _commandQueue: CommandQueue = new CommandQueue();
     private readonly _role: PlayerRole;
 
     public account: Account;
     public extraPrompts: Map<string, PromptDefinition> = new Map();
     public name: string;
     public prompt: string = '> ';
-    public room: Room = null;
 
     public constructor(data: any = {}) {
         super(data);
 
         this._role = data.role || PlayerRole.PLAYER;
+    }
+
+    public get commandQueue(): CommandQueue {
+        return this._commandQueue;
     }
 
     public get role(): PlayerRole {
@@ -34,6 +39,10 @@ export class Player extends Character {
      */
     public addPrompt(id: string, renderer: () => string, removeOnRender: boolean = false): void {
         this.extraPrompts.set(id, {removeOnRender, renderer});
+    }
+
+    public getBroadcastTargets(): Player[] {
+        return [this];
     }
 
     public hasPrompt(id: string): boolean {
@@ -77,6 +86,15 @@ export class Player extends Character {
         }
 
         return prompt;
+    }
+
+    /**
+     * @see CommandQueue::enqueue
+     */
+    public queueCommand(command: ExecutableCommand, lag: number): void {
+        const index = this.commandQueue.enqueue(command, lag);
+
+        this.emit('commandQueued', index);
     }
 
     public removePrompt(id: string): void {

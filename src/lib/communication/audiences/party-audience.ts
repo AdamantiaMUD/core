@@ -1,11 +1,11 @@
 import ChannelAudience from './channel-audience';
-import Character from '../../entities/character';
+import Player from '../../players/player';
 
 /**
  * Audience class representing other players in the same group as the sender
  */
 export class PartyAudience extends ChannelAudience {
-    public getBroadcastTargets(): Character[] {
+    public getBroadcastTargets(): Player[] {
         if (!this.sender.party) {
             return [];
         }

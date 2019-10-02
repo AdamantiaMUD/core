@@ -1,5 +1,5 @@
 import ChannelAudience from './channel-audience';
-import Character from '../../entities/character';
+import Player from '../../players/player';
 
 /**
  * Audience class representing a specific targeted player.
@@ -16,7 +16,7 @@ export class PrivateAudience extends ChannelAudience {
             .join(' ');
     }
 
-    public getBroadcastTargets(): Character[] {
+    public getBroadcastTargets(): Player[] {
         const targetPlayerName = this.message.split(' ')[0];
         const targetPlayer = this.state.playerManager.getPlayer(targetPlayerName);
 

@@ -1,11 +1,11 @@
 import ChannelAudience from './channel-audience';
-import Character from '../../entities/character';
+import Player from '../../players/player';
 
 /**
  * Audience class representing characters in the same area as the sender
  */
 export class AreaAudience extends ChannelAudience {
-    public getBroadcastTargets(): Character[] {
+    public getBroadcastTargets(): Player[] {
         if (!this.sender.room) {
             return [];
         }

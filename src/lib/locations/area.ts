@@ -1,5 +1,7 @@
 import GameEntity from '../entities/game-entity';
+import Player from '../players/player';
 import Room from './room';
+import {Broadcastable} from '../communication/broadcast';
 import {SimpleMap} from '../../../index';
 
 export interface AreaDefinition {
@@ -13,7 +15,7 @@ export interface AreaManifest {
     name: string;
 }
 
-export class Area extends GameEntity {
+export class Area extends GameEntity implements Broadcastable {
     public readonly name: string;
     public readonly bundle: string;
 
@@ -56,6 +58,19 @@ export class Area extends GameEntity {
         this.rooms.set(room.id, room);
 
         this.emit('roomAdded', room);
+    }
+
+    /**
+     * Get all possible broadcast targets within an area. This includes all npcs,
+     * players, rooms, and the area itself
+     */
+    public getBroadcastTargets(): Player[] {
+        const roomTargets = [...this.rooms].reduce(
+            (acc, [, room]) => acc.concat(room.getBroadcastTargets()),
+            []
+        );
+
+        return [this, ...roomTargets];
     }
 }
 

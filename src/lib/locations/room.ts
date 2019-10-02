@@ -1,4 +1,5 @@
 import cloneFactory from 'rfdc';
+import {Broadcastable} from '../communication/broadcast';
 
 import Area from './area';
 import GameEntity from '../entities/game-entity';
@@ -25,7 +26,7 @@ export interface RoomExitDefinition {
     roomId: string;
 }
 
-export class Room extends GameEntity {
+export class Room extends GameEntity implements Broadcastable {
     /* eslint-disable lines-between-class-members */
     public area: Area;
     public def: RoomDefinition;
@@ -86,6 +87,10 @@ export class Room extends GameEntity {
     public findExit(exitName: string): RoomExitDefinition {
         return this.getExits()
             .find(ex => ex.direction.indexOf(exitName) === 0);
+    }
+
+    public getBroadcastTargets(): Player[] {
+        return [...this.players];
     }
 
     public getExits(): RoomExitDefinition[] {
