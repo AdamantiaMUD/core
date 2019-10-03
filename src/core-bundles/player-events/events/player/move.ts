@@ -1,7 +1,7 @@
 import Broadcast from '../../../../lib/communication/broadcast';
 import GameState from '../../../../lib/game-state';
 import Player from '../../../../lib/players/player';
-import {PlayerEventListener} from '../../../../lib/players/player-manager';
+import {PlayerEventListener, PlayerEventListenerFactory} from '../../../../lib/events/player-events';
 
 const {sayAt, sayAtExcept} = Broadcast;
 
@@ -22,7 +22,7 @@ export const evt: PlayerEventListenerFactory = (state: GameState): PlayerEventLi
         const nextRoom = state.roomManager.getRoom(roomExit.roomId);
         const oldRoom = player.room;
 
-        player.moveTo(nextRoom, () => {
+        player.moveTo(nextRoom, (): void => {
             state.commandManager.get('look').execute('', player);
         });
 

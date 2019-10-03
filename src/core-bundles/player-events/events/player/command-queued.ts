@@ -2,7 +2,7 @@ import {sprintf} from 'sprintf-js';
 
 import Broadcast from '../../../../lib/communication/broadcast';
 import Player from '../../../../lib/players/player';
-import {PlayerEventListener} from '../../../../lib/players/player-manager';
+import {PlayerEventListener, PlayerEventListenerFactory} from '../../../../lib/events/player-events';
 
 const {sayAt} = Broadcast;
 

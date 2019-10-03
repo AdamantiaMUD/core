@@ -1,11 +1,17 @@
 import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
+import GameState from '../game-state';
 import Metadatable from '../data/metadatable';
 import Serializable from '../data/serializable';
 import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
+
+export interface SerializedGameEntity {
+    entityReference?: string;
+    metadata?: SimpleMap;
+}
 
 export class GameEntity extends EventEmitter implements Metadatable, Serializable {
     public __pruned: boolean = false;
@@ -13,16 +19,9 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public entityReference: string = '';
     public metadata: SimpleMap = {};
 
-    public constructor(data: any = {}) {
-        super();
-
-        if (typeof data.entityReference !== 'undefined') {
-            this.entityReference = data.entityReference;
-        }
-
-        if (typeof data.metadata !== 'undefined') {
-            this.metadata = clone(data.metadata);
-        }
+    public deserialize(data: SerializedGameEntity = {}, state: GameState): void {
+        this.entityReference = data.entityReference ?? '';
+        this.metadata = clone(data.metadata ?? {});
     }
 
     /**
@@ -42,13 +41,19 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
         return key.split('.').reduce((obj, index) => obj && obj[index], base);
     }
 
-    public serialize(): SimpleMap {
+    public serialize(): SerializedGameEntity {
         const meta = clone(this.metadata);
 
         delete meta.class;
         delete meta.lastCommandTime;
 
-        return {metadata: meta};
+        const data: SerializedGameEntity = {metadata: meta};
+
+        if (this.entityReference !== '') {
+            data.entityReference = this.entityReference;
+        }
+
+        return data;
     }
 
     /**

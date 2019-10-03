@@ -1,5 +1,3 @@
-export const ident = (obj: any): any => obj;
-
 /**
  * Check to see if a given object is iterable
  */

@@ -3,6 +3,7 @@ import experienceListener from './events/player/experience';
 import moveListener from './events/player/move';
 import saveListener from './events/player/save';
 import updateTickListener from './events/player/update-tick';
+import {PlayerEventListenersDefinition} from '../../lib/events/player-events';
 
 export const playerEvents: PlayerEventListenersDefinition = {
     listeners: {

@@ -5,9 +5,8 @@ import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
 import EventManager from '../events/event-manager';
 import GameState from '../game-state';
-import Player from './player';
-
-export type PlayerEventListener = (player: Player, ...args: any[]) => void;
+import Player, {SerializedPlayer} from './player';
+import {PlayerEventListener} from '../events/player-events';
 
 /**
  * Keeps track of all active players in game
@@ -72,15 +71,11 @@ export class PlayerManager extends EventEmitter {
             throw new Error('No entity loader configured for players');
         }
 
-        const data: any = await this.loader.fetch(username);
+        const data: SerializedPlayer = await this.loader.fetch(username);
 
-        data.name = username;
+        const player = new Player();
 
-        const player = new Player(data);
-
-        player.account = account;
-
-        player.room = player.room ?? state.roomManager.getRoom('limbo:r0001');
+        player.deserialize(data, state);
 
         this.events.attach(player);
         this.addPlayer(username, player);

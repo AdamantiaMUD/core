@@ -5,18 +5,18 @@ import Room from './room';
  * Keeps track of all the individual rooms in the game
  */
 export class RoomManager {
-    public rooms: Map<string, Room> = new Map();
+    private _rooms: Map<string, Room> = new Map();
 
     public addRoom(room: Room): void {
-        this.rooms.set(room.entityReference, room);
+        this._rooms.set(room.entityReference, room);
     }
 
     public getRoom(entityRef: string): Room {
-        return this.rooms.get(entityRef);
+        return this._rooms.get(entityRef);
     }
 
     public removeRoom(room: Room): void {
-        this.rooms.delete(room.entityReference);
+        this._rooms.delete(room.entityReference);
     }
 }
 

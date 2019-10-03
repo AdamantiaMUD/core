@@ -1,7 +1,7 @@
 import Broadcast from '../../../../lib/communication/broadcast';
 import LevelUtil from '../../../../lib/util/level-util';
 import Player from '../../../../lib/players/player';
-import {PlayerEventListener} from '../../../../lib/players/player-manager';
+import {PlayerEventListener, PlayerEventListenerFactory} from '../../../../lib/events/player-events';
 
 const {progress, sayAt} = Broadcast;
 
@@ -30,15 +30,14 @@ export const evt: PlayerEventListenerFactory = (): PlayerEventListener => {
 
             while (player.experience + amt > nextTnl) {
                 amt = (player.experience + amt) - nextTnl;
-                player.level += 1;
-                player.experience = 0;
+                player.levelUp();
                 nextTnl = LevelUtil.expToLevel(player.level + 1);
                 sayAt(player, `<blue>You are now level <b>${player.level}</b>!</blue>`);
                 player.emit('level');
             }
         }
 
-        player.experience += amt;
+        player.addExperience(amt);
 
         player.save();
     };

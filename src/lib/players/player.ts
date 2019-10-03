@@ -1,35 +1,48 @@
-import Account from './account';
-import Character from '../entities/character';
+import Character, {SerializedCharacter} from '../entities/character';
 import CommandQueue, {ExecutableCommand} from '../commands/command-queue';
+import GameState from '../game-state';
 import PlayerRole from './player-role';
+import Room from '../locations/room';
 import {Broadcastable} from '../communication/broadcast';
-import {SimpleMap} from '../../../index';
+import {noop} from '../util/functions';
 
 export interface PromptDefinition {
     removeOnRender: boolean;
     renderer: () => string;
 }
 
+export interface SerializedPlayer extends SerializedCharacter {
+    experience: number;
+    prompt: string;
+    role: PlayerRole;
+}
+
 export class Player extends Character implements Broadcastable {
     private readonly _commandQueue: CommandQueue = new CommandQueue();
-    private readonly _role: PlayerRole;
+    private _experience: number = 0;
+    private _prompt: string = '> ';
+    private _role: PlayerRole = PlayerRole.PLAYER;
 
-    public account: Account;
     public extraPrompts: Map<string, PromptDefinition> = new Map();
-    public prompt: string = '> ';
-
-    public constructor(data: any = {}) {
-        super(data);
-
-        this._role = data.role || PlayerRole.PLAYER;
-    }
 
     public get commandQueue(): CommandQueue {
         return this._commandQueue;
     }
 
+    public get experience(): number {
+        return this._experience;
+    }
+
+    public get prompt(): string {
+        return this._prompt;
+    }
+
     public get role(): PlayerRole {
         return this._role;
+    }
+
+    public addExperience(exp: number): void {
+        this._experience += exp;
     }
 
     /**
@@ -38,6 +51,14 @@ export class Player extends Character implements Broadcastable {
      */
     public addPrompt(id: string, renderer: () => string, removeOnRender: boolean = false): void {
         this.extraPrompts.set(id, {removeOnRender, renderer});
+    }
+
+    public deserialize(data: SerializedPlayer, state: GameState): void {
+        super.deserialize(data, state);
+
+        this._experience = data.experience;
+        this._prompt = data.prompt;
+        this._role = data.role;
     }
 
     public getBroadcastTargets(): Player[] {
@@ -87,6 +108,50 @@ export class Player extends Character implements Broadcastable {
         return prompt;
     }
 
+    public levelUp(): void {
+        this._level += 1;
+        this._experience = 0;
+    }
+
+    /**
+     * Move the player to the given room, emitting events appropriately
+     *
+     * @fires Room#playerLeave
+     * @fires Room#playerEnter
+     * @fires Player#enterRoom
+     */
+    public moveTo(nextRoom: Room, onMoved = noop): void {
+        const prevRoom = this.room;
+
+        if (this.room && this.room !== nextRoom) {
+            /**
+             * @event Room#playerLeave
+             * @param {Player} player
+             * @param {Room} nextRoom
+             */
+            this.room.emit('playerLeave', this, nextRoom);
+            this.room.removePlayer(this);
+        }
+
+        this.room = nextRoom;
+        nextRoom.addPlayer(this);
+
+        onMoved();
+
+        /**
+         * @event Room#playerEnter
+         * @param {Player} player
+         * @param {Room} prevRoom
+         */
+        nextRoom.emit('playerEnter', this, prevRoom);
+
+        /**
+         * @event Player#enterRoom
+         * @param {Room} room
+         */
+        this.emit('enterRoom', nextRoom);
+    }
+
     /**
      * @see CommandQueue::enqueue
      */
@@ -108,12 +173,14 @@ export class Player extends Character implements Broadcastable {
         this.emit('save', callback);
     }
 
-    public serialize(): SimpleMap {
-        const data: SimpleMap = {
+    public serialize(): SerializedPlayer {
+        return {
             ...super.serialize(),
-        };
 
-        return data;
+            experience: this._experience,
+            prompt: this._prompt,
+            role: this._role,
+        };
     }
 }
 

@@ -1,27 +1,47 @@
 // import Attribute from '../attributes/attribute';
 // import CharacterAttributes from '../attributes/character-attributes';
 // import Inventory from '../equipment/inventory';
-import GameEntity from './game-entity';
+import GameEntity, {SerializedGameEntity} from './game-entity';
+import GameState from '../game-state';
 import Room from '../locations/room';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
-import {SimpleMap} from '../../../index';
+
+export interface SerializedCharacter extends SerializedGameEntity {
+    level: number;
+    name: string;
+    room: string;
+}
 
 export class Character extends GameEntity implements Serializable {
     // private readonly _attributes: CharacterAttributes = new CharacterAttributes();
     // private readonly _inventory: Inventory;
-    public name: string = '';
+    protected _level: number = 1;
+    protected _name: string = '';
     public room: Room = null;
     public socket: TransportStream<any> = null;
-
-    public constructor(data: any = {}) {
-        super(data);
-    }
 
     // public get attributes(): IterableIterator<[string, Attribute]> {
     //     return this._attributes.getAttributes();
     // }
-    //
+
+    public get level(): number {
+        return this._level;
+    }
+
+    public get name(): string {
+        return this._name;
+    }
+
+    public deserialize(data: SerializedCharacter, state: GameState): void {
+        super.deserialize(data, state);
+
+        this._level = data.level;
+        this._name = data.name;
+
+        this.room = state.roomManager.getRoom(data.room);
+    }
+
     // /**
     //  * Get the current value of an attribute (base modified by delta)
     //  */
@@ -86,12 +106,14 @@ export class Character extends GameEntity implements Serializable {
     //     return this._attributes.getAttributeNames();
     // }
 
-    public serialize(): SimpleMap {
-        const data: SimpleMap = {
+    public serialize(): SerializedCharacter {
+        return {
             ...super.serialize(),
-        };
 
-        return data;
+            level: this._level,
+            name: this._name,
+            room: this.room.entityReference,
+        };
     }
 }
 
