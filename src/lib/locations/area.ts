@@ -1,4 +1,5 @@
 import GameEntity from '../entities/game-entity';
+import GameState from '../game-state';
 import Player from '../players/player';
 import Room from './room';
 import {Broadcastable} from '../communication/broadcast';
@@ -21,7 +22,6 @@ export class Area extends GameEntity implements Broadcastable {
 
     private readonly _manifest: AreaManifest;
 
-    private _metadata: SimpleMap;
     private _rooms: Map<string, any> = new Map();
 
     public constructor(bundle: string, name: string, manifest: AreaManifest) {
@@ -46,10 +46,6 @@ export class Area extends GameEntity implements Broadcastable {
         }
     }
 
-    public get metadata(): SimpleMap {
-        return this._metadata;
-    }
-
     public get rooms(): Map<string, any> {
         return this._rooms;
     }
@@ -71,6 +67,24 @@ export class Area extends GameEntity implements Broadcastable {
         );
 
         return [this, ...roomTargets];
+    }
+
+    public hydrate(state: GameState): void {
+        const {rooms} = state.areaFactory.getDefinition(this.name);
+
+        for (const roomRef of rooms) {
+            const room = state.roomFactory.create(roomRef, this);
+
+            this.addRoom(room);
+            state.roomManager.addRoom(room);
+            room.hydrate(state);
+
+            /**
+             * Fires after the room is hydrated and added to its area
+             * @event Room#ready
+             */
+            room.emit('ready');
+        }
     }
 }
 

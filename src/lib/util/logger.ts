@@ -51,6 +51,13 @@ export class Logger {
     /*
      * Medium priority logging, default.
      */
+    public static info(msg: string, ...messages: string[]): void {
+        logger.log('info', msg, ...messages);
+    }
+
+    /*
+     * Medium priority logging, default.
+     */
     public static log(msg: string, ...messages: string[]): void {
         logger.log('info', msg, ...messages);
     }

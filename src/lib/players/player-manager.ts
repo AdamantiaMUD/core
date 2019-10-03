@@ -80,6 +80,8 @@ export class PlayerManager extends EventEmitter {
 
         player.account = account;
 
+        player.room = player.room ?? state.roomManager.getRoom('limbo:r0001');
+
         this.events.attach(player);
         this.addPlayer(username, player);
 

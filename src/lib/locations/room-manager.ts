@@ -1,3 +1,4 @@
+import Logger from '../util/logger';
 import Room from './room';
 
 /**

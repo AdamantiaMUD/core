@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import Command from './commands/command';
 
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
@@ -36,6 +37,32 @@ export class BundleManager {
         this.state = state;
     }
 
+    private async createCommand(uri: string, name: string, bundle: string): Promise<Command> {
+        const commandImport = await import(uri);
+        const loader = commandImport.default;
+
+        loader.command = loader.command(this.state);
+
+        return new Command(bundle, name, loader, uri);
+    }
+
+    private hydrateAreas(): void {
+        for (const areaRef of this.areas) {
+            const area = this.state.areaFactory.create(areaRef);
+
+            try {
+                area.hydrate(this.state);
+            }
+            catch (err) {
+                Logger.error(err.message);
+
+                throw new Error();
+            }
+
+            this.state.areaManager.addArea(area);
+        }
+    }
+
     private isBundleEnabled(bundle: string, prefix: string = ''): boolean {
         return this.state.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
     }
@@ -45,7 +72,7 @@ export class BundleManager {
     }
 
     private async loadArea(bundle: string, areaName: string, manifest: AreaManifest): Promise<void> {
-        Logger.verbose(`LOAD: AREA \`${areaName}\` -- START`);
+        Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- START`);
 
         const definition: AreaDefinition = {
             bundle: bundle,
@@ -53,7 +80,7 @@ export class BundleManager {
             rooms: [],
         };
 
-        Logger.verbose(`AREA \`${areaName}\`: Rooms...`);
+        Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);
         definition.rooms = await this.loadEntities(
             bundle,
             areaName,
@@ -63,11 +90,11 @@ export class BundleManager {
 
         this.state.areaFactory.setDefinition(areaName, definition);
 
-        Logger.verbose(`LOAD: AREA \`${areaName}\` -- END`);
+        Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- END`);
     }
 
     private async loadAreas(bundle: string): Promise<void> {
-        Logger.verbose('LOAD: AREAS -- START');
+        Logger.info(`LOAD: ${bundle} - Areas -- START`);
 
         const loader = this.state.entityLoaderRegistry.get('areas');
 
@@ -85,17 +112,18 @@ export class BundleManager {
             await this.loadArea(bundle, name, manifest);
         }
 
-        Logger.verbose('LOAD: AREAS -- END');
+        Logger.info(`LOAD: ${bundle} - Areas -- END`);
     }
 
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
-        Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
+        Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
+        await this.loadCommands(bundle, bundlePath);
         await this.loadInputEvents(bundle, bundlePath);
         await this.loadServerEvents(bundle, bundlePath);
         await this.loadAreas(bundle);
 
-        Logger.verbose(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
+        Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
     }
 
     private async loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
@@ -109,6 +137,33 @@ export class BundleManager {
                 await this.loadBundle(`${prefix}${bundle}`, bundlePath);
             }
         }
+    }
+
+    private async loadCommands(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'commands');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Commands -- START`);
+        const files = fs.readdirSync(uri);
+
+        for (const commandFile of files) {
+            const commandPath = path.join(uri, commandFile);
+
+            if (Data.isScriptFile(commandPath, commandFile)) {
+                const commandName = path.basename(commandFile, path.extname(commandFile));
+
+                Logger.verbose(`LOAD: ${bundle} - Commands -> ${commandName}`);
+
+                const command = await this.createCommand(commandPath, commandName, bundle);
+
+                this.state.commandManager.add(command);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Commands -- END`);
     }
 
     private async loadEntities<T extends EntityFactory<any, any>>(
@@ -144,7 +199,7 @@ export class BundleManager {
             return Promise.resolve();
         }
 
-        Logger.verbose('LOAD: Input Events...');
+        Logger.info(`LOAD: ${bundle} - Input Events -- START`);
         const files = fs.readdirSync(uri);
 
         for (const eventFile of files) {
@@ -152,6 +207,8 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 const eventName = path.basename(eventFile, path.extname(eventFile));
+
+                Logger.verbose(`LOAD: ${bundle} - Input Events -> ${eventName}`);
 
                 const eventImport = await import(eventPath);
                 const loader: InputEventListenerDefinition = eventImport.default;
@@ -165,7 +222,7 @@ export class BundleManager {
             }
         }
 
-        Logger.verbose('ENDLOAD: Input Events...');
+        Logger.info(`LOAD: ${bundle} - Input Events -- END`);
     }
 
     private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {
@@ -175,7 +232,7 @@ export class BundleManager {
             return Promise.resolve();
         }
 
-        Logger.verbose('LOAD: Server Events...');
+        Logger.info(`LOAD: ${bundle} - Server Events -- START`);
 
         const files = fs.readdirSync(uri);
 
@@ -185,7 +242,7 @@ export class BundleManager {
             if (Data.isScriptFile(eventsPath, eventsFile)) {
                 const eventsName = path.basename(eventsFile, path.extname(eventsFile));
 
-                Logger.verbose(`LOAD: SERVER-EVENTS ${eventsName}...`);
+                Logger.verbose(`LOAD: ${bundle} - Server Events -> ${eventsName}`);
 
                 const eventImport = await import(eventsPath);
                 const loader: ServerEventListenersDefinition = eventImport.default;
@@ -198,7 +255,7 @@ export class BundleManager {
             }
         }
 
-        Logger.verbose('ENDLOAD: Server Events...');
+        Logger.info(`LOAD: ${bundle} - Server Events -- END`);
     }
 
     public async loadBundles(): Promise<void> {
@@ -211,6 +268,12 @@ export class BundleManager {
         await this.loadBundlesFromFolder(bundlePath);
 
         Logger.verbose('LOAD: BUNDLES -- END');
+
+        /*
+         * Distribution is done after all areas are loaded in case items in one
+         * area depend on another area.
+         */
+        this.hydrateAreas();
     }
 }
 
