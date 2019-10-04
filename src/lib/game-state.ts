@@ -1,18 +1,21 @@
+import EventEmitter from 'events';
 import path from 'path';
 import {CommanderStatic} from 'commander';
 
+import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
-import AccountManager from './players/account-manager';
+import BehaviorManager from './behaviors/behavior-manager';
 import ChannelManager from './communication/channels/channel-manager';
 import CommandManager from './commands/command-manager';
 import Config from './util/config';
 import Data from './util/data';
 import EntityLoaderRegistry from './data/entity-loader-registry';
-import EventEmitter from "events";
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
 import HelpManager from './help/help-manager';
+import ItemFactory from './equipment/item-factory';
+import ItemManager from './equipment/item-manager';
 import PlayerManager from './players/player-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
@@ -22,6 +25,7 @@ const DEFAULT_TICK_FREQUENCY = 100;
 
 export class GameState {
     private readonly _accountManager: AccountManager = new AccountManager();
+    private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
     private readonly _channelManager: ChannelManager = new ChannelManager();
@@ -29,9 +33,13 @@ export class GameState {
     private readonly _config: Config;
     private readonly _entityLoaderRegistry: EntityLoaderRegistry;
     private readonly _helpManager: HelpManager = new HelpManager();
-    // private readonly itemManager
     private readonly _inputEventManager: EventManager = new EventManager();
+    private readonly _itemBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _itemManager: ItemManager = new ItemManager();
+    private readonly _itemFactory: ItemFactory = new ItemFactory();
+    private readonly _mobBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _playerManager: PlayerManager = new PlayerManager();
+    private readonly _roomBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _roomFactory: RoomFactory = new RoomFactory();
     private readonly _roomManager: RoomManager = new RoomManager();
     private readonly _server: GameServer = new GameServer();
@@ -84,6 +92,10 @@ export class GameState {
         return this._accountManager;
     }
 
+    public get areaBehaviorManager(): BehaviorManager {
+        return this._areaBehaviorManager;
+    }
+
     public get areaFactory(): AreaFactory {
         return this._areaFactory;
     }
@@ -116,8 +128,28 @@ export class GameState {
         return this._inputEventManager;
     }
 
+    public get itemBehaviorManager(): BehaviorManager {
+        return this._itemBehaviorManager;
+    }
+
+    public get itemFactory(): ItemFactory {
+        return this._itemFactory;
+    }
+
+    public get itemManager(): ItemManager {
+        return this._itemManager;
+    }
+
+    public get mobBehaviorManager(): BehaviorManager {
+        return this._mobBehaviorManager;
+    }
+
     public get playerManager(): PlayerManager {
         return this._playerManager;
+    }
+
+    public get roomBehaviorManager(): BehaviorManager {
+        return this._roomBehaviorManager;
     }
 
     public get roomFactory(): RoomFactory {

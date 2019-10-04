@@ -1,16 +1,19 @@
+import BehaviorManager from '../behaviors/behavior-manager';
+
 export abstract class EntityFactory<T, TDef> {
-    public entities: Map<string, TDef> = new Map();
+    protected _entities: Map<string, TDef> = new Map();
+    protected _scripts: BehaviorManager = new BehaviorManager();
 
     public static createRef(areaName: string, id: number): string {
         return `${areaName}:${id}`;
     }
 
     public getDefinition(ref: string): TDef {
-        return this.entities.get(ref);
+        return this._entities.get(ref);
     }
 
     public setDefinition(ref: string, def: TDef): void {
-        this.entities.set(ref, def);
+        this._entities.set(ref, def);
     }
 }
 
