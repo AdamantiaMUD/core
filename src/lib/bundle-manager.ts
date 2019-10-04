@@ -8,6 +8,7 @@ import GameState from './game-state';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {InputEventListenerDefinition} from './events/input-events';
+import {PlayerEventListenerFactory} from './events/player-events';
 import {ServerEventListenersDefinition} from './events/server-events';
 
 export class BundleManager {
@@ -118,9 +119,18 @@ export class BundleManager {
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
+        // await this.loadQuestGoals(bundle, bundlePath);
+        // await this.loadQuestRewards(bundle, bundlePath);
+        // await this.loadAttributes(bundle, bundlePath);
+        // await this.loadBehaviors(bundle, bundlePath);
+        // await this.loadChannels(bundle, bundlePath);
         await this.loadCommands(bundle, bundlePath);
+        // await this.loadEffects(bundle, bundlePath);
         await this.loadInputEvents(bundle, bundlePath);
         await this.loadServerEvents(bundle, bundlePath);
+        await this.loadPlayerEvents(bundle, bundlePath);
+        // await this.loadSkills(bundle, bundlePath);
+
         await this.loadAreas(bundle);
 
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
@@ -223,6 +233,35 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Input Events -- END`);
+    }
+
+    private async loadPlayerEvents(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'player-events');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Player Events -- START`);
+
+        const files = fs.readdirSync(uri);
+
+        for (const eventsFile of files) {
+            const eventsPath = path.join(uri, eventsFile);
+
+            if (Data.isScriptFile(eventsPath, eventsFile)) {
+                const eventName = path.basename(eventsFile, path.extname(eventsFile));
+
+                Logger.verbose(`LOAD: ${bundle} - Player Events -> ${eventName}`);
+
+                const eventImport = await import(eventsPath);
+                const event: PlayerEventListenerFactory = eventImport.default;
+
+                this.state.playerManager.addListener(event.name, event.listener(this.state));
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Player Events -- END`);
     }
 
     private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {

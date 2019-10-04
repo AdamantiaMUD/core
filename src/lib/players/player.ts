@@ -59,6 +59,8 @@ export class Player extends Character implements Broadcastable {
         this._experience = data.experience;
         this._prompt = data.prompt;
         this._role = data.role;
+
+        this.__hydrated = true;
     }
 
     public getBroadcastTargets(): Player[] {
@@ -158,7 +160,7 @@ export class Player extends Character implements Broadcastable {
     public queueCommand(command: ExecutableCommand, lag: number): void {
         const index = this.commandQueue.enqueue(command, lag);
 
-        this.emit('commandQueued', index);
+        this.emit('command-queued', index);
     }
 
     public removePrompt(id: string): void {

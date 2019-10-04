@@ -1,10 +1,10 @@
 import EventEmitter from 'events';
 
-import Account from './account';
 import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
 import EventManager from '../events/event-manager';
 import GameState from '../game-state';
+import Logger from '../util/logger';
 import Player, {SerializedPlayer} from './player';
 import {PlayerEventListener} from '../events/player-events';
 
@@ -21,7 +21,7 @@ export class PlayerManager extends EventEmitter {
     public constructor() {
         super();
 
-        this.on('updateTick', this.tickAll);
+        this.on('update-tick', this.tickAll);
     }
 
     public addListener(event: string | symbol, listener: PlayerEventListener): this {
@@ -59,7 +59,6 @@ export class PlayerManager extends EventEmitter {
      */
     public async loadPlayer(
         state: GameState,
-        account: Account,
         username: string,
         force: boolean = false
     ): Promise<Player> {
@@ -128,7 +127,7 @@ export class PlayerManager extends EventEmitter {
 
     public tickAll(): void {
         for (const [, player] of this.players.entries()) {
-            player.emit('updateTick');
+            player.emit('update-tick');
         }
     }
 }

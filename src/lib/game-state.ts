@@ -146,11 +146,11 @@ export class GameState {
     }
 
     public tickEntities(): void {
-        this._areaManager.emit('updateTick');
+        this._areaManager.emit('update-tick');
     }
 
     public tickPlayers(): void {
-        this._playerManager.emit('updateTick');
+        this._playerManager.emit('update-tick');
     }
 }
 

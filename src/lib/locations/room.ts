@@ -39,10 +39,7 @@ export class Room extends GameEntity implements Broadcastable {
     /* eslint-enable lines-between-class-members */
 
     public constructor(area: Area, def: RoomDefinition) {
-        super({
-            ...def,
-            entityReference: `${area.name}:${def.id}`,
-        });
+        super();
 
         this.area = area;
         this.def = def;
@@ -51,6 +48,11 @@ export class Room extends GameEntity implements Broadcastable {
         this.id = def.id;
         this.name = def.title;
         this.title = def.title;
+
+        super.deserialize({
+            metadata: def.metadata,
+            entityReference: `${area.name}:${def.id}`,
+        });
     }
 
     public addPlayer(player: Player): void {

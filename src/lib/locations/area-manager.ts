@@ -20,7 +20,7 @@ export class AreaManager extends EventEmitter {
 
         this.state = state;
 
-        this.on('updateTick', this.tickAll);
+        this.on('update-tick', this.tickAll);
     }
 
     private tickAll(): void {
@@ -29,7 +29,7 @@ export class AreaManager extends EventEmitter {
              * @see Area#update
              * @event Area#updateTick
              */
-            area.emit('updateTick', this.state);
+            area.emit('update-tick', this.state);
         }
     }
 

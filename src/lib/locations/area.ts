@@ -32,7 +32,7 @@ export class Area extends GameEntity implements Broadcastable {
 
         this._manifest = manifest;
 
-        this.on('updateTick', () => this.tickAll());
+        this.on('update-tick', () => this.tickAll());
     }
 
     /**
@@ -42,7 +42,7 @@ export class Area extends GameEntity implements Broadcastable {
      */
     private tickAll(): void {
         for (const [, room] of this.rooms) {
-            room.emit('updateTick');
+            room.emit('update-tick');
         }
     }
 

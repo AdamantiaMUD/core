@@ -17,7 +17,7 @@ export class Character extends GameEntity implements Serializable {
     // private readonly _attributes: CharacterAttributes = new CharacterAttributes();
     // private readonly _inventory: Inventory;
     protected _level: number = 1;
-    protected _name: string = '';
+    public name: string = '';
     public room: Room = null;
     public socket: TransportStream<any> = null;
 
@@ -29,17 +29,19 @@ export class Character extends GameEntity implements Serializable {
         return this._level;
     }
 
-    public get name(): string {
-        return this._name;
-    }
-
     public deserialize(data: SerializedCharacter, state: GameState): void {
-        super.deserialize(data, state);
+        super.deserialize(data);
 
         this._level = data.level;
-        this._name = data.name;
+        this.name = data.name;
 
-        this.room = state.roomManager.getRoom(data.room);
+        if (data.room) {
+            this.room = state.roomManager.getRoom(data.room);
+        }
+        else {
+            const startingRoom = state.config.get('startingRoom');
+            this.room = state.roomManager.getRoom(startingRoom);
+        }
     }
 
     // /**
@@ -111,7 +113,7 @@ export class Character extends GameEntity implements Serializable {
             ...super.serialize(),
 
             level: this._level,
-            name: this._name,
+            name: this.name,
             room: this.room.entityReference,
         };
     }

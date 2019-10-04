@@ -19,7 +19,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public entityReference: string = '';
     public metadata: SimpleMap = {};
 
-    public deserialize(data: SerializedGameEntity = {}, state: GameState): void {
+    public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
         this.entityReference = data.entityReference ?? '';
         this.metadata = clone(data.metadata ?? {});
     }

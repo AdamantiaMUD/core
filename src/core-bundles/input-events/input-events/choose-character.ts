@@ -80,8 +80,10 @@ export const chooseCharacter: InputEventListenerDefinition = {
                             return;
                         }
 
-                        player = await state.playerManager
-                            .loadPlayer(state, account, char.username.toLowerCase());
+                        player = await state.playerManager.loadPlayer(
+                            state,
+                            char.username.toLowerCase()
+                        );
                         player.socket = socket;
 
                         socket.emit('done', player);

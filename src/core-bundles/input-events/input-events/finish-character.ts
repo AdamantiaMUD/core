@@ -27,7 +27,6 @@ export const finishCharacter: InputEventListenerDefinition = {
             let player = new Player();
 
             player.name = args.name;
-            player.account = args.account;
 
             args.account.addCharacter(args.name);
             args.account.save();
@@ -37,7 +36,7 @@ export const finishCharacter: InputEventListenerDefinition = {
             await state.playerManager.save(player);
 
             // reload from manager so events are set
-            player = await state.playerManager.loadPlayer(state, player.account, player.name);
+            player = await state.playerManager.loadPlayer(state, player.name);
             player.socket = socket;
 
             socket.emit('done', player);
