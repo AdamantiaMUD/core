@@ -7,7 +7,7 @@ import {InvalidCommandError} from './command-errors';
 import {RoomExitDefinition} from '../locations/room';
 import {SimpleMap} from '../../../index';
 
-interface ParsedCommand {
+export interface ParsedCommand {
     args: string;
     command?: Command;
     originalCommand?: string;

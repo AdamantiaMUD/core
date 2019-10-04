@@ -1,6 +1,7 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
+import {ParsedCommand} from '../../../lib/commands/command-parser';
 import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
 
 const {sayAt, sayAtExcept} = Broadcast;
@@ -12,8 +13,8 @@ export const evt: PlayerEventListenerFactory = {
         /**
          * @listens Player#move
          */
-        return (player: Player, movementCommand) => {
-            const {roomExit} = movementCommand;
+        return (player: Player, movementCommand: ParsedCommand) => {
+            const {payload: {roomExit}} = movementCommand;
 
             if (!roomExit) {
                 sayAt(player, "You can't go that way!");
