@@ -8,6 +8,10 @@ import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 
+export interface GameEntityDefinition {
+    metadata?: SimpleMap;
+}
+
 export interface SerializedGameEntity {
     entityReference?: string;
     metadata?: SimpleMap;
@@ -18,6 +22,12 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public __hydrated: boolean = false;
     public entityReference: string = '';
     public metadata: SimpleMap = {};
+
+    public constructor(def: GameEntityDefinition) {
+        super();
+
+        this.metadata = clone(def.metadata ?? {});
+    }
 
     public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
         this.entityReference = data.entityReference ?? '';

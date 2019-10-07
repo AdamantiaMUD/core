@@ -1,8 +1,9 @@
 // import Attribute from '../attributes/attribute';
 // import CharacterAttributes from '../attributes/character-attributes';
-// import Inventory from '../equipment/inventory';
 import GameEntity, {SerializedGameEntity} from './game-entity';
 import GameState from '../game-state';
+import Inventory from '../equipment/inventory';
+import Item from '../equipment/item';
 import Room from '../locations/room';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
@@ -15,7 +16,7 @@ export interface SerializedCharacter extends SerializedGameEntity {
 
 export class Character extends GameEntity implements Serializable {
     // private readonly _attributes: CharacterAttributes = new CharacterAttributes();
-    // private readonly _inventory: Inventory;
+    protected _inventory: Inventory;
     protected _level: number = 1;
     public name: string = '';
     public room: Room = null;
@@ -99,14 +100,35 @@ export class Character extends GameEntity implements Serializable {
     // public hasAttribute(attr: string): boolean {
     //     return this._attributes.has(attr);
     // }
-    //
-    // public get inventory(): Inventory {
-    //     return this._inventory;
-    // }
-    //
+
+    public get inventory(): Inventory {
+        return this._inventory;
+    }
+
     // public getAttributeNames(): IterableIterator<string> {
     //     return this._attributes.getAttributeNames();
     // }
+
+    /**
+     * Remove an item from the character's inventory. Warning: This does not automatically place the
+     * item in any particular place. You will need to manually add it to the room or another
+     * character's inventory
+     */
+    public removeItem(item: Item): void {
+        this._inventory.removeItem(item);
+
+        /*
+         * if we removed the last item unset the inventory
+         * This ensures that when it's reloaded it won't try to set
+         * its default inventory. Instead it will persist the fact
+         * that all the items were removed from it
+         */
+        if (this._inventory.size === 0) {
+            this._inventory = null;
+        }
+
+        item.carriedBy = null;
+    }
 
     public serialize(): SerializedCharacter {
         return {

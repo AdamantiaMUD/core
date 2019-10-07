@@ -29,6 +29,10 @@ export class Inventory implements Serializable {
         return this._items.size >= this.maxSize;
     }
 
+    public get items(): Map<string, Item> {
+        return this._items;
+    }
+
     public get size(): number {
         return this._items.size;
     }

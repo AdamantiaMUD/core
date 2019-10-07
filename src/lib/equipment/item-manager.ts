@@ -21,7 +21,7 @@ export class ItemManager {
         }
 
         if (item.type === ItemType.CONTAINER && item.inventory) {
-            item.inventory.forEach(childItem => this.remove(childItem));
+            item.inventory.items.forEach(childItem => this.remove(childItem));
         }
 
         item.__pruned = true;
