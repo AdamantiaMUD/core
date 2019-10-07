@@ -20,11 +20,7 @@ export class RoomFactory extends EntityFactory<Room, RoomDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        const room = new Room(area, definition);
-
-        room.area = area;
-
-        return room;
+        return new Room(definition, area);
     }
 }
 

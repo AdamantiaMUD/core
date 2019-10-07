@@ -16,22 +16,14 @@ export class ItemFactory extends EntityFactory<Item, ItemDefinition> {
      * want it to also populate its default contents you must manually call
      * `item.hydrate(state)`
      */
-    public create(ref: string, area: Area): Item {
-        const definition = this.getDefinition(ref) as ItemDefinition;
+    public create(entityRef: string, area: Area): Item {
+        const definition = this.getDefinition(entityRef) as ItemDefinition;
 
         if (!definition) {
-            throw new Error(`No Entity definition found for ${ref}`);
+            throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        const item = new Item(ref, definition, area);
-
-        if (this._scripts.has(ref)) {
-            this._scripts.get(ref).attach(item);
-        }
-
-        item.area = area;
-
-        return item;
+        return new Item(definition, area);
     }
 }
 

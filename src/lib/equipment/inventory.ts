@@ -14,15 +14,21 @@ export interface SerializedInventory extends SimpleMap {
  */
 export class Inventory implements Serializable {
     private readonly _items: Map<string, Item> = new Map();
-
-    /* eslint-disable lines-between-class-members */
     public maxSize: number = Infinity;
 
-    private readonly serializedItems: SerializedInventory;
-    /* eslint-enable lines-between-class-members */
+    public deserialize(data: SerializedInventory, carriedBy: Character | Item, state?: GameState): void {
+        for (const [uuid, itemData] of Object.entries(data)) {
+            const area = state.areaManager.getAreaByReference(itemData.entityReference);
+            const newItem = state.itemFactory.create(itemData.entityReference, area);
 
-    public constructor(init: SerializedInventory = {}) {
-        this.serializedItems = init;
+            newItem.carriedBy = carriedBy;
+
+            newItem.deserialize(itemData, state);
+
+            this._items.set(uuid, newItem);
+
+            state.itemManager.add(newItem);
+        }
     }
 
     public get isFull(): boolean {
@@ -47,22 +53,6 @@ export class Inventory implements Serializable {
 
     public getMax(): number {
         return this.maxSize;
-    }
-
-    public hydrate(state: GameState, carriedBy: Character | Item): void {
-        for (const [uuid, def] of Object.entries(this.serializedItems)) {
-            const area = state.areaManager.getAreaByReference(def.entityReference);
-            const newItem = state.itemFactory.create(def.entityReference, area);
-
-            newItem.uuid = uuid;
-            newItem.carriedBy = carriedBy;
-            newItem.initializeInventory(def.inventory);
-            newItem.hydrate(state, def);
-
-            this._items.set(uuid, newItem);
-
-            state.itemManager.add(newItem);
-        }
     }
 
     public removeItem(item: Item): void {

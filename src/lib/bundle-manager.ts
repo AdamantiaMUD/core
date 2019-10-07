@@ -81,6 +81,14 @@ export class BundleManager {
             rooms: [],
         };
 
+        Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
+        definition.rooms = await this.loadEntities(
+            bundle,
+            areaName,
+            'items',
+            this.state.itemFactory
+        );
+
         Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);
         definition.rooms = await this.loadEntities(
             bundle,

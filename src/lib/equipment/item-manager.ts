@@ -1,5 +1,4 @@
 import Item from './item';
-import ItemType from './item-type';
 
 /**
  * Keep track of all items in game
@@ -12,20 +11,14 @@ export class ItemManager {
     }
 
     public remove(item: Item): void {
-        if (item.room) {
-            item.room.removeItem(item);
-        }
+        item.room?.removeItem(item);
+        item.carriedBy?.removeItem(item);
+        item.inventory?.items.forEach(childItem => this.remove(childItem));
 
-        if (item.carriedBy) {
-            item.carriedBy.removeItem(item);
-        }
-
-        if (item.type === ItemType.CONTAINER && item.inventory) {
-            item.inventory.items.forEach(childItem => this.remove(childItem));
-        }
+        item.removeAllListeners();
 
         item.__pruned = true;
-        item.removeAllListeners();
+
         this._items.delete(item);
     }
 

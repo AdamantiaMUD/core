@@ -2,7 +2,7 @@ import cloneFactory from 'rfdc';
 import Logger from '../util/logger';
 
 import Area from './area';
-import GameEntity from '../entities/game-entity';
+import GameEntity, {GameEntityDefinition} from '../entities/game-entity';
 import GameState from '../game-state';
 import Item from '../equipment/item';
 import Player from '../players/player';
@@ -11,11 +11,10 @@ import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 
-export interface RoomDefinition {
+export interface RoomDefinition extends GameEntityDefinition {
     description: string;
     exits?: RoomExitDefinition[];
     id: string;
-    metadata?: SimpleMap;
     title: string;
     // @TODO: should this be an enum?
     type?: string;
@@ -41,8 +40,8 @@ export class Room extends GameEntity implements Broadcastable {
     public title: string;
     /* eslint-enable lines-between-class-members */
 
-    public constructor(area: Area, def: RoomDefinition) {
-        super();
+    public constructor(def: RoomDefinition, area: Area) {
+        super(def);
 
         this.area = area;
         this.def = def;

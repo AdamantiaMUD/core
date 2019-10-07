@@ -1,12 +1,16 @@
 import uuid from 'uuid/v4';
 
+import Character from '../entities/character';
 import GameState from '../game-state';
+import Inventory from './inventory';
 import ItemType from './item-type';
+import Room from '../locations/room';
 import ScriptableEntity, {
     ScriptableEntityDefinition,
     SerializedScriptableEntity
 } from '../entities/scriptable-entity';
 import Serializable from '../data/serializable';
+import Area from '../locations/area';
 
 export interface ItemDefinition extends ScriptableEntityDefinition {
     description?: string;
@@ -18,23 +22,32 @@ export interface ItemDefinition extends ScriptableEntityDefinition {
     type: ItemType;
 }
 
-export interface SerializedItem extends SerializedScriptableEntity {}
+export interface SerializedItem extends SerializedScriptableEntity {
+    uuid: string;
+}
 
 export class Item extends ScriptableEntity implements Serializable {
+    public carriedBy: Character | Item = null;
+    public maxItems: number = Infinity;
+    public room: Room = null;
+
+    private readonly _area: Area;
     private readonly _definition: ItemDefinition;
     private readonly _description: string;
     private readonly _flags: string[];
+    private readonly _inventory: Inventory = new Inventory();
     private readonly _keywords: string[];
     private readonly _name: string;
     private readonly _roomDesc: string;
     private readonly _type: ItemType;
-    private readonly _uuid: string = uuid();
+    private _uuid: string = uuid();
 
-    public constructor(def: ItemDefinition) {
+    public constructor(def: ItemDefinition, area: Area) {
         super(def);
 
         this._definition = def;
 
+        this._area = area;
         this._description = def.description ?? '';
         this._flags = def.flags ?? [];
         this._keywords = def.keywords;
@@ -43,16 +56,70 @@ export class Item extends ScriptableEntity implements Serializable {
         this._type = def.type;
     }
 
+    public get area(): Area {
+        return this._area;
+    }
+
+    public get description(): string {
+        return this._description;
+    }
+
+    public get inventory(): Inventory {
+        if (this._type !== ItemType.CONTAINER) {
+            // @TODO: throw
+            return null;
+        }
+
+        return this._inventory;
+    }
+
+    public get name(): string {
+        return this._name;
+    }
+
+    public get roomDesc(): string {
+        return this._roomDesc;
+    }
+
+    public get type(): ItemType {
+        return this._type;
+    }
+
     public get uuid(): string {
         return this._uuid;
     }
 
+    public addItem(item: Item): void {
+        if (this._type !== ItemType.CONTAINER) {
+            // @TODO: throw
+            return;
+        }
+
+        item.carriedBy = this;
+        this._inventory.addItem(item);
+    }
+
     public deserialize(data: SerializedItem, state?: GameState): void {
         super.deserialize(data, state);
+
+        this._uuid = data.uuid;
+    }
+
+    public removeItem(item: Item): void {
+        if (this._type !== ItemType.CONTAINER) {
+            // @TODO: throw
+            return;
+        }
+
+        item.carriedBy = null;
+        this._inventory.removeItem(item);
     }
 
     public serialize(): SerializedItem {
-        return super.serialize();
+        return {
+            ...super.serialize(),
+            uuid: this._uuid,
+        };
     }
 }
 
