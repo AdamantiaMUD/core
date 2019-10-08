@@ -62,11 +62,11 @@ export class AreaManager extends EventEmitter {
             {name: 'Placeholder'}
         );
 
-        const placeholderRoom = new Room(this.placeholder, {
+        const placeholderRoom = new Room({
             id: 'placeholder',
             title: 'Placeholder',
             description: 'You are not in a valid room. Please contact an administrator.',
-        });
+        }, this.placeholder);
 
         this.placeholder.addRoom(placeholderRoom);
 

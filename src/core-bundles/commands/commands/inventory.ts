@@ -1,6 +1,7 @@
-import Broadcast from '../../../../lib/communication/broadcast';
-import Player from '../../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../../lib/commands/command';
+import Broadcast from '../../../lib/communication/broadcast';
+import ItemUtil from '../../../lib/util/items';
+import Player from '../../../lib/players/player';
+import {CommandDefinitionFactory} from '../../../lib/commands/command';
 
 /* eslint-disable-next-line id-length */
 const {at, sayAt} = Broadcast;
@@ -24,7 +25,7 @@ export const cmd: CommandDefinitionFactory = {
         sayAt(player, ':');
 
         // TODO: Implement grouping
-        for (const [, item] of player.inventory) {
+        for (const [, item] of player.inventory.items) {
             sayAt(player, ItemUtil.display(item));
         }
     },

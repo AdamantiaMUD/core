@@ -26,6 +26,10 @@ export class Character extends GameEntity implements Serializable {
     //     return this._attributes.getAttributes();
     // }
 
+    public get inventory(): Inventory {
+        return this._inventory;
+    }
+
     public get level(): number {
         return this._level;
     }
@@ -100,10 +104,6 @@ export class Character extends GameEntity implements Serializable {
     // public hasAttribute(attr: string): boolean {
     //     return this._attributes.has(attr);
     // }
-
-    public get inventory(): Inventory {
-        return this._inventory;
-    }
 
     // public getAttributeNames(): IterableIterator<string> {
     //     return this._attributes.getAttributeNames();

@@ -192,6 +192,12 @@ export class BundleManager {
     ): Promise<string[]> {
         const loader = this.state.entityLoaderRegistry.get(type);
 
+        if (loader === null) {
+            Logger.warn(`Could not find entity loader for type '${type}'`);
+
+            return Promise.resolve([]);
+        }
+
         loader.setBundle(bundle);
         loader.setArea(areaName);
 

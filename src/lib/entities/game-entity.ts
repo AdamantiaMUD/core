@@ -23,10 +23,10 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public entityReference: string = '';
     public metadata: SimpleMap = {};
 
-    public constructor(def: GameEntityDefinition) {
+    public constructor(def?: GameEntityDefinition) {
         super();
 
-        this.metadata = clone(def.metadata ?? {});
+        this.metadata = clone(def?.metadata ?? {});
     }
 
     public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
@@ -49,6 +49,10 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
         const base = this.metadata;
 
         return key.split('.').reduce((obj, index) => obj && obj[index], base);
+    }
+
+    public hydrate(state: GameState): void {
+        // no-op
     }
 
     public serialize(): SerializedGameEntity {

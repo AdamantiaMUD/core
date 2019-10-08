@@ -1,16 +1,17 @@
 import uuid from 'uuid/v4';
 
+import Area from '../locations/area';
 import Character from '../entities/character';
 import GameState from '../game-state';
 import Inventory from './inventory';
 import ItemType from './item-type';
+import Logger from '../util/logger';
 import Room from '../locations/room';
 import ScriptableEntity, {
     ScriptableEntityDefinition,
     SerializedScriptableEntity
 } from '../entities/scriptable-entity';
 import Serializable from '../data/serializable';
-import Area from '../locations/area';
 
 export interface ItemDefinition extends ScriptableEntityDefinition {
     description?: string;
@@ -30,6 +31,7 @@ export class Item extends ScriptableEntity implements Serializable {
     public carriedBy: Character | Item = null;
     public maxItems: number = Infinity;
     public room: Room = null;
+    public sourceRoom: Room = null;
 
     private readonly _area: Area;
     private readonly _definition: ItemDefinition;
@@ -103,6 +105,18 @@ export class Item extends ScriptableEntity implements Serializable {
         super.deserialize(data, state);
 
         this._uuid = data.uuid;
+
+        this.__hydrated = true;
+    }
+
+    public hydrate(state: GameState): void {
+        if (this.__hydrated) {
+            Logger.warn('Attempted to hydrate already hydrated item.');
+
+            return;
+        }
+
+        super.hydrate(state);
     }
 
     public removeItem(item: Item): void {

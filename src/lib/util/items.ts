@@ -135,26 +135,26 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
     buf += `${qualityColorize(item, `'${line(38)}'`)}\r\n`;
 
     // On use
-    const usable = item.getBehavior('usable');
-
-    if (usable && usable !== true) {
-        if (usable.spell) {
-            const useSpell = state.spellManager.get(usable.spell);
-
-            if (useSpell) {
-                useSpell.options = usable.options;
-                buf += `${wrap(`<b>On Use</b>: ${useSpell.info(useSpell, player)}`, 80)}\r\n`;
-            }
-        }
-
-        if (usable.effect && usable.config.description) {
-            buf += `${wrap(`<b>Effect</b>: ${usable.config.description}`, 80)}\r\n`;
-        }
-
-        if (usable.charges) {
-            buf += `${wrap(`${usable.charges} Charges`, 80)}\r\n`;
-        }
-    }
+    // const usable = item.getBehavior('usable');
+    //
+    // if (usable && usable !== true) {
+    //     if (usable.spell) {
+    //         const useSpell = state.spellManager.get(usable.spell);
+    //
+    //         if (useSpell) {
+    //             useSpell.options = usable.options;
+    //             buf += `${wrap(`<b>On Use</b>: ${useSpell.info(useSpell, player)}`, 80)}\r\n`;
+    //         }
+    //     }
+    //
+    //     if (usable.effect && usable.config.description) {
+    //         buf += `${wrap(`<b>Effect</b>: ${usable.config.description}`, 80)}\r\n`;
+    //     }
+    //
+    //     if (usable.charges) {
+    //         buf += `${wrap(`${usable.charges} Charges`, 80)}\r\n`;
+    //     }
+    // }
 
     // colorize border according to item quality
     buf = buf.replace(/\|/gu, qualityColorize(item, '|'));
