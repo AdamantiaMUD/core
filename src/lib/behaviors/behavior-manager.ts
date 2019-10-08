@@ -25,12 +25,16 @@ export class BehaviorManager {
         this._behaviors.get(behaviorName).add(event, listener);
     }
 
-    public get(name: string): EventManager {
-        return this._behaviors.get(name);
+    public get(behaviorName: string): EventManager {
+        if (!this._behaviors.has(behaviorName)) {
+            this._behaviors.set(behaviorName, new EventManager());
+        }
+
+        return this._behaviors.get(behaviorName);
     }
 
-    public has(name: string): boolean {
-        return this._behaviors.has(name);
+    public has(behaviorName: string): boolean {
+        return this._behaviors.has(behaviorName);
     }
 }
 

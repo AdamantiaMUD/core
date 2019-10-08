@@ -8,25 +8,33 @@ export class EventManager {
      * key: string - The name of the event
      * value: Set<Function> - The set of listeners to call when the event fires
      */
-    public events: Map<string, Set<Function>> = new Map();
+    private _events: Map<string, Set<Function>> = new Map();
+
+    // public get events(): Map<string, Set<Function>> {
+    //     return this._events;
+    // }
+
+    public get size(): number {
+        return this._events.size;
+    }
 
     /**
      * Add a new listener for the given event. If no listeners have been
      * previously added for the event, it is first initialized with an empty set.
      */
     public add(name: string, listener: Function): void {
-        if (!this.events.has(name)) {
-            this.events.set(name, new Set());
+        if (!this._events.has(name)) {
+            this._events.set(name, new Set());
         }
 
-        this.events.get(name).add(listener);
+        this._events.get(name).add(listener);
     }
 
     /**
      * Attach all currently added events to the given emitter
      */
     public attach(emitter: EventEmitter, config?: any): void {
-        for (const [event, listeners] of this.events) {
+        for (const [event, listeners] of this._events) {
             for (const listener of listeners) {
                 if (config) {
                     emitter.on(event, (...args: any[]) => listener(emitter, config, ...args));
@@ -56,7 +64,7 @@ export class EventManager {
             events = eventNames;
         }
         else if (!events) {
-            events = [...this.events.keys()];
+            events = [...this._events.keys()];
         }
         else if (!isIterable(events)) {
             throw new TypeError('events list passed to detach() is not iterable');
@@ -71,11 +79,11 @@ export class EventManager {
      * Fetch all listeners for a given event
      */
     public get(name: string): Set<Function> {
-        if (!this.events.has(name)) {
+        if (!this._events.has(name)) {
             return new Set();
         }
 
-        return this.events.get(name);
+        return this._events.get(name);
     }
 }
 
