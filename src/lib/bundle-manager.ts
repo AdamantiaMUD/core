@@ -2,6 +2,7 @@ import fs from 'fs';
 import path from 'path';
 import Command from './commands/command';
 
+import AttributeFormula from './attributes/attribute-formula';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import GameState from './game-state';
@@ -124,12 +125,60 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Areas -- END`);
     }
 
+    private async loadAttributes(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'attributes.js');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Attributes -- START`);
+
+        const attributeImport = await import(uri);
+        const attributes = attributeImport.default;
+
+        const error = `Attributes file [${uri}] from bundle [${bundle}]`;
+
+        if (!Array.isArray(attributes)) {
+            Logger.error(`${error} does not define an array of attributes`);
+
+            return;
+        }
+
+        for (const attribute of attributes) {
+            if (typeof attribute !== 'object') {
+                Logger.error(`${error} not an object`);
+            }
+            else if (!('name' in attribute) || !('base' in attribute)) {
+                Logger.error(`${error} does not include required properties name and base`);
+            }
+            else {
+                let formula = null;
+
+                if (attribute.formula) {
+                    formula = new AttributeFormula(
+                        attribute.formula.requires,
+                        attribute.formula.fn
+                    );
+                }
+
+                Logger.verbose(`LOAD: ${bundle} - Attributes -> ${attribute.name}`);
+
+                this.state
+                    .attributeFactory
+                    .add(attribute.name, attribute.base, formula, attribute.metadata);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Attributes -- END`);
+    }
+
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
         // await this.loadQuestGoals(bundle, bundlePath);
         // await this.loadQuestRewards(bundle, bundlePath);
-        // await this.loadAttributes(bundle, bundlePath);
+        await this.loadAttributes(bundle, bundlePath);
         // await this.loadBehaviors(bundle, bundlePath);
         // await this.loadChannels(bundle, bundlePath);
         await this.loadCommands(bundle, bundlePath);

@@ -20,6 +20,8 @@ import PlayerManager from './players/player-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
 import TransportStream from './communication/transport-stream';
+import AttributeFactory from './attributes/attribute-factory';
+import EffectFactory from './effects/effect-factory';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
@@ -28,9 +30,11 @@ export class GameState {
     private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
+    private readonly _attributeFactory: AttributeFactory = new AttributeFactory();
     private readonly _channelManager: ChannelManager = new ChannelManager();
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
+    private readonly _effectFactory: EffectFactory = new EffectFactory();
     private readonly _entityLoaderRegistry: EntityLoaderRegistry;
     private readonly _helpManager: HelpManager = new HelpManager();
     private readonly _inputEventManager: EventManager = new EventManager();
@@ -104,6 +108,10 @@ export class GameState {
         return this._areaManager;
     }
 
+    public get attributeFactory(): AttributeFactory {
+        return this._attributeFactory;
+    }
+
     public get channelManager(): ChannelManager {
         return this._channelManager;
     }
@@ -114,6 +122,10 @@ export class GameState {
 
     public get config(): Config {
         return this._config;
+    }
+
+    public get effectFactory(): EffectFactory {
+        return this._effectFactory;
     }
 
     public get entityLoaderRegistry(): EntityLoaderRegistry {
