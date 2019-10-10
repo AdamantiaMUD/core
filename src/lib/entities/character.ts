@@ -1,5 +1,6 @@
 import Attribute from '../attributes/attribute';
 import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
 import GameEntity, {SerializedGameEntity} from './game-entity';
 import GameState from '../game-state';
@@ -8,6 +9,7 @@ import Item from '../equipment/item';
 import Room from '../locations/room';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
+import CharacterCombat from '../combat/character-combat';
 
 export interface SerializedCharacter extends SerializedGameEntity {
     attributes: SerializedCharacterAttributes;
@@ -17,7 +19,8 @@ export interface SerializedCharacter extends SerializedGameEntity {
 }
 
 export class Character extends GameEntity implements Serializable {
-    protected readonly _attributes: CharacterAttributes = new CharacterAttributes();
+    protected readonly _attributes: CharacterAttributes;
+    protected readonly _combat: CharacterCombat;
     protected readonly _effects: EffectList;
     protected _inventory: Inventory;
     protected _level: number = 1;
@@ -28,11 +31,21 @@ export class Character extends GameEntity implements Serializable {
     constructor() {
         super();
 
+        this._attributes = new CharacterAttributes(this);
+        this._combat = new CharacterCombat(this);
         this._effects = new EffectList(this);
     }
 
-    public get attributes(): IterableIterator<[string, Attribute]> {
-        return this._attributes.getAttributes();
+    public get attributes(): CharacterAttributes {
+        return this._attributes;
+    }
+
+    public get combat(): CharacterCombat {
+        return this._combat;
+    }
+
+    public get effects(): EffectList {
+        return this._effects;
     }
 
     public get inventory(): Inventory {
@@ -41,6 +54,10 @@ export class Character extends GameEntity implements Serializable {
 
     public get level(): number {
         return this._level;
+    }
+
+    public addEffect(effect: Effect): boolean {
+        return this._effects.add(effect);
     }
 
     public deserialize(data: SerializedCharacter, state: GameState): void {
@@ -64,7 +81,7 @@ export class Character extends GameEntity implements Serializable {
      * Get the current value of an attribute (base modified by delta)
      */
     public getAttribute(attr: string, defaultValue: number = null): number {
-        if (!this.hasAttribute(attr)) {
+        if (!this._attributes.has(attr)) {
             if (defaultValue !== null) {
                 return defaultValue;
             }
@@ -73,6 +90,10 @@ export class Character extends GameEntity implements Serializable {
         }
 
         return this.getMaxAttribute(attr) + this._attributes.get(attr).delta;
+    }
+
+    public getAttributeNames(): IterableIterator<string> {
+        return this._attributes.getAttributeNames();
     }
 
     /**
@@ -88,7 +109,7 @@ export class Character extends GameEntity implements Serializable {
      * Get current maximum value of attribute (as modified by effects.)
      */
     public getMaxAttribute(attr: string): number {
-        if (!this.hasAttribute(attr)) {
+        if (!this._attributes.has(attr)) {
             throw new RangeError(`Character does not have attribute [${attr}]`);
         }
 
@@ -113,12 +134,12 @@ export class Character extends GameEntity implements Serializable {
         ]);
     }
 
-    public hasAttribute(attr: string): boolean {
-        return this._attributes.has(attr);
+    public hasEffectType(type: string): boolean {
+        return this._effects.hasEffectType(type);
     }
 
-    public getAttributeNames(): IterableIterator<string> {
-        return this._attributes.getAttributeNames();
+    public removeEffect(effect: Effect): void {
+        this._effects.remove(effect);
     }
 
     /**

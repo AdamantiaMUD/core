@@ -1,80 +1,80 @@
+import AbilityErrors from './ability-errors';
+import AbilityFlag from './ability-flag';
+import AbilityType from './ability-type';
 import Broadcast from '../communication/broadcast';
 import Character from '../entities/character';
 import Damage from '../combat/damage';
 import Effect from '../effects/effect';
-import {EffectDefinition} from '../effects/effect-factory';
 import GameState from '../game-state';
 import Player from '../players/player';
-import SkillErrors from './skill-errors';
-import SkillFlag from './skill-flag';
-import SkillType from './skill-type';
+import {EffectDefinition} from '../effects/effect-factory';
 import {SimpleMap} from '../../../index';
 
 const {sayAt} = Broadcast;
 
-export interface SkillDefinition {
+export interface AbilityDefinition {
     configureEffect?: (effect: Effect) => Effect;
     cooldown?: number | {group: string; length: number};
     effect?: string;
-    flags?: SkillFlag[];
-    info?: (skill?: Skill, player?: Player) => string;
+    flags?: AbilityFlag[];
+    info?: (skill?: Ability, player?: Player) => string;
     initiatesCombat: boolean;
     name: string;
     options: SimpleMap;
     requiresTarget: boolean;
-    resource?: SkillResource | SkillResource[];
-    run?: (state?: GameState) => SkillRunner;
+    resource?: AbilityResource | AbilityResource[];
+    run?: (state?: GameState) => AbilityRunner;
     targetSelf: boolean;
-    type: SkillType;
+    type: AbilityType;
 }
 
-export interface SkillResource {
+export interface AbilityResource {
     attribute: string;
     cost: number;
 }
 
-export type SkillRunner = (
-    skill: Skill,
+export type AbilityRunner = (
+    skill: Ability,
     args: string,
     source: Character,
     target?: Character
 ) => void | false;
 
-export class Skill {
+export class Ability {
     /* eslint-disable lines-between-class-members */
     public configureEffect: (effect: Effect) => Effect;
     public cooldownGroup: string;
     public cooldownLength: number;
     public effect: string;
-    public flags: SkillFlag[];
+    public flags: AbilityFlag[];
     public id: string;
-    public info: (skill?: Skill, player?: Character) => string;
+    public info: (skill?: Ability, player?: Character) => string;
     public initiatesCombat: boolean;
     public lag: number = -1;
     public name: string;
     public options: SimpleMap;
     public requiresTarget: boolean;
-    public resource: SkillResource | SkillResource[];
-    public run: SkillRunner;
+    public resource: AbilityResource | AbilityResource[];
+    public run: AbilityRunner;
     public state: GameState;
     public targetSelf: boolean;
-    public type: SkillType;
+    public type: AbilityType;
     /* eslint-enable lines-between-class-members */
 
-    public constructor(id: string, def: SkillDefinition, state: GameState) {
+    public constructor(id: string, def: AbilityDefinition, state: GameState) {
         const {
             configureEffect = a => a,
             cooldown = 0,
             effect = null,
             flags = [],
-            info = (skill: Skill, player: Character) => player.name,
+            info = (skill: Ability, player: Character) => player.name,
             initiatesCombat = false,
             name,
             requiresTarget = true,
             resource = null,
             run = () => false,
             targetSelf = false,
-            type = SkillType.SKILL,
+            type = AbilityType.SKILL,
             options = {},
         } = def;
 
@@ -104,8 +104,8 @@ export class Skill {
         this.type = type;
     }
 
-    public activate(player: Character): void {
-        if (!this.flags.includes(SkillFlag.PASSIVE)) {
+    public activate(character: Character): void {
+        if (!this.flags.includes(AbilityFlag.PASSIVE)) {
             return;
         }
 
@@ -119,17 +119,17 @@ export class Skill {
                 this.effect,
                 {
                     name: this.name,
-                    description: this.info(this, player),
+                    description: this.info(this, character),
                 },
                 this.state
             );
 
         effect = this.configureEffect(effect);
-        effect.skill = this;
+        effect.ability = this;
 
-        player.addEffect(effect);
+        character.addEffect(effect);
 
-        this.run(this, null, player);
+        this.run(this, null, character);
     }
 
     /**
@@ -164,7 +164,7 @@ export class Skill {
                 {cooldownId: this.getCooldownId()}
             );
 
-        effect.skill = this;
+        effect.ability = this;
 
         return effect;
     }
@@ -172,35 +172,35 @@ export class Skill {
     /**
      * perform an active skill
      */
-    public execute(args: string, player: Character, target: Character = null): void {
-        if (this.flags.includes(SkillFlag.PASSIVE)) {
-            throw new SkillErrors.PassiveError();
+    public execute(args: string, actor: Character, target: Character = null): void {
+        if (this.flags.includes(AbilityFlag.PASSIVE)) {
+            throw new AbilityErrors.PassiveError();
         }
 
-        const cdEffect = this.onCooldown(player);
+        const cdEffect = this.onCooldown(actor);
 
         if (this.cooldownLength && cdEffect) {
-            throw new SkillErrors.CooldownError(cdEffect);
+            throw new AbilityErrors.CooldownError(cdEffect);
         }
 
         if (this.resource) {
-            if (!this.hasEnoughResources(player)) {
-                throw new SkillErrors.NotEnoughResourcesError();
+            if (!this.hasEnoughResources(actor)) {
+                throw new AbilityErrors.NotEnoughResourcesError();
             }
         }
 
-        if (target !== player && this.initiatesCombat) {
-            player.initiateCombat(target);
+        if (target !== actor && this.initiatesCombat) {
+            actor.combat.initiate(target);
         }
 
-        // allow skills to not incur the cooldown if they return false in run
-        if (this.run(this, args, player, target) === false) {
+        // allow abilities to not incur the cooldown if they return false in run
+        if (this.run(this, args, actor, target) === false) {
             return;
         }
 
-        this.cooldown(player);
+        this.cooldown(actor);
         if (this.resource) {
-            this.payResourceCosts(player);
+            this.payResourceCosts(actor);
         }
     }
 
@@ -225,7 +225,7 @@ export class Skill {
                 effectDeactivated: (effect: Effect) => {
                     if (effect.target instanceof Player) {
                         /* eslint-disable-next-line max-len */
-                        sayAt(effect.target, `You may now use <b>${effect.skill.name}</b> again.`);
+                        sayAt(effect.target, `You may now use <b>${effect.ability.name}</b> again.`);
                     }
                 },
             },
@@ -233,13 +233,13 @@ export class Skill {
     }
 
     public hasEnoughResource(
-        char: Character,
+        character: Character,
         resource: {attribute: string; cost: number}
     ): boolean {
         return resource.cost === 0
             || (
-                char.hasAttribute(resource.attribute)
-                && char.getAttribute(resource.attribute) >= resource.cost
+                character.attributes.has(resource.attribute)
+                && character.getAttribute(resource.attribute) >= resource.cost
             );
     }
 
@@ -262,37 +262,37 @@ export class Skill {
     }
 
     // Helper to pay a single resource cost.
-    public payResourceCost(player: Character, resource): boolean {
+    public payResourceCost(character: Character, resource): boolean {
         /*
-         * Resource cost is calculated as the player damaging themselves, so
+         * Resource cost is calculated as the character damaging themselves, so
          * effects could potentially reduce resource costs
          */
         const damage = new Damage(
             resource.attribute,
             resource.cost,
-            player,
+            character,
             this,
             {hidden: true}
         );
 
-        damage.commit(player);
+        damage.commit(character);
 
         return true;
     }
 
-    public payResourceCosts(player: Character): boolean {
+    public payResourceCosts(character: Character): boolean {
         const hasMultipleResourceCosts = Array.isArray(this.resource);
 
         if (hasMultipleResourceCosts) {
             for (const resourceCost of this.resource as []) {
-                this.payResourceCost(player, resourceCost);
+                this.payResourceCost(character, resourceCost);
             }
 
             return true;
         }
 
-        return this.payResourceCost(player, this.resource);
+        return this.payResourceCost(character, this.resource);
     }
 }
 
-export default Skill;
+export default Ability;

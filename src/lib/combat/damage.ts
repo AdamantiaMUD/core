@@ -1,12 +1,12 @@
+import Ability from '../abilities/ability';
 import Character from '../entities/character';
 import Effect from '../effects/effect';
 import Item from '../equipment/item';
 import Room from '../locations/room';
-import Skill from '../skills/skill';
 import {SimpleMap} from '../../../index';
 
 // @TODO: make this an interface rather than a hard-coded list
-export type DamageSource = Character | Effect | Item | Room | Skill;
+export type DamageSource = Character | Effect | Item | Room | Ability;
 
 export class Damage {
     /* eslint-disable lines-between-class-members */
@@ -43,7 +43,7 @@ export class Damage {
     public commit(target: Character): void {
         const finalAmount = this.evaluate(target);
 
-        target.lowerAttribute(this.attribute, finalAmount);
+        target.attributes.lower(this.attribute, finalAmount);
 
         if (this.attacker) {
             /**
@@ -70,10 +70,10 @@ export class Damage {
         let amount = this.amount;
 
         if (this.attacker) {
-            amount = this.attacker.evaluateOutgoingDamage(this, amount);
+            amount = this.attacker.combat.evaluateOutgoingDamage(this, amount);
         }
 
-        return target.evaluateIncomingDamage(this, amount);
+        return target.combat.evaluateIncomingDamage(this, amount);
     }
 }
 

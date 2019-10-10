@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 import path from 'path';
 import {CommanderStatic} from 'commander';
 
+import AbilityManager from './abilities/ability-manager';
 import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
@@ -48,6 +49,8 @@ export class GameState {
     private readonly _roomManager: RoomManager = new RoomManager();
     private readonly _server: GameServer = new GameServer();
     private readonly _serverEventManager: EventManager = new EventManager();
+    private readonly _skillManager: AbilityManager = new AbilityManager();
+    private readonly _spellManager: AbilityManager = new AbilityManager();
 
     private entityTickInterval = null;
     private playerTickInterval = null;
@@ -174,6 +177,14 @@ export class GameState {
 
     public get serverEventManager(): EventManager {
         return this._serverEventManager;
+    }
+
+    public get skillManager(): AbilityManager {
+        return this._skillManager;
+    }
+
+    public get spellManager(): AbilityManager {
+        return this._spellManager;
     }
 
     public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {

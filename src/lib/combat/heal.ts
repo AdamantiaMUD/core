@@ -8,7 +8,7 @@ export class Heal extends Damage {
     public commit(target: Character): void {
         const finalAmount = this.evaluate(target);
 
-        target.raiseAttribute(this.attribute, finalAmount);
+        target.attributes.raise(this.attribute, finalAmount);
 
         if (this.attacker) {
             this.attacker.emit('heal', this, target, finalAmount);

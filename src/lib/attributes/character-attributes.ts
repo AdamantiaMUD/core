@@ -3,6 +3,7 @@ import GameState from '../game-state';
 import Logger from '../util/logger';
 import Serializable from '../data/serializable';
 import {SimpleMap} from '../../../index';
+import Character from '../entities/character';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;
@@ -13,7 +14,12 @@ export interface SerializedCharacterAttributes extends SimpleMap {
  */
 export class CharacterAttributes implements Serializable {
     private readonly _attributes: Map<string, Attribute> = new Map();
+    private readonly _target: Character;
     private readonly _unknownAttributes: Map<string, SerializedAttribute> = new Map();
+
+    public constructor(target: Character) {
+        this._target = target;
+    }
 
     public add(attribute: Attribute): void {
         this._attributes.set(attribute.name, attribute);
@@ -52,6 +58,26 @@ export class CharacterAttributes implements Serializable {
 
     public has(key: string): boolean {
         return this._attributes.has(key);
+    }
+
+    public lower(key: string, amount: number): void {
+        if (!this.has(key)) {
+            throw new Error(`Invalid attribute ${key}`);
+        }
+
+        this.get(key).lower(amount);
+
+        this._target.emit('attributeUpdate', key, this.get(key));
+    }
+
+    public raise(key: string, amount: number): void {
+        if (!this.has(key)) {
+            throw new Error(`Invalid attribute ${key}`);
+        }
+
+        this.get(key).raise(amount);
+
+        this._target.emit('attributeUpdate', key, this.get(key));
     }
 
     public reset(): void {

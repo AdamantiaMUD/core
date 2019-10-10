@@ -1,6 +1,7 @@
 import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
+import Ability from '../abilities/ability';
 import Character from '../entities/character';
 import Damage from '../combat/damage';
 import EffectFlag from './effect-flag';
@@ -32,11 +33,11 @@ export interface EffectState {
 }
 
 export interface SerializedEffect extends SimpleMap {
+    ability?: string;
     config: EffectConfig;
     elapsed: number;
     id: string;
     remaining: number;
-    skill?: string;
     state: EffectState;
 }
 
@@ -62,6 +63,7 @@ const clone = cloneFactory();
  */
 export class Effect extends EventEmitter implements Serializable {
     /* eslint-disable lines-between-class-members */
+    public ability: Ability = null;
     public active: boolean;
     public attacker: Character = null;
     public config: EffectConfig;
@@ -69,7 +71,6 @@ export class Effect extends EventEmitter implements Serializable {
     public id: string;
     public modifiers: EffectModifiers;
     public paused: number = 0;
-    public skill: Skill = null;
     public startedAt: number = 0;
     public state: EffectState;
     public target: Character;
@@ -214,8 +215,8 @@ export class Effect extends EventEmitter implements Serializable {
         }
         this.state = data.state;
 
-        if (data.skill) {
-            this.skill = state.skillManager.get(data.skill) || state.spellManager.get(data.skill);
+        if (data.ability) {
+            this.ability = state.skillManager.get(data.ability) || state.spellManager.get(data.ability);
         }
     }
 
@@ -292,11 +293,11 @@ export class Effect extends EventEmitter implements Serializable {
         }
 
         return {
+            ability: this.ability && this.ability.id,
             config: config,
             elapsed: this.elapsed,
             id: this.id,
             remaining: this.remaining,
-            skill: this.skill && this.skill.id,
             state: state,
         };
     }
