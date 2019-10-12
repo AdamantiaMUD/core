@@ -43,7 +43,7 @@ export class TelnetSocket extends EventEmitter {
 
     public write(data: Uint8Array | string, encoding?: string): void {
         if (!Buffer.isBuffer(data)) {
-            data = new Buffer(data as string, encoding as BufferEncoding);
+            data = Buffer.from(data as string, encoding as BufferEncoding);
         }
 
         // escape IACs by duplicating
@@ -56,7 +56,7 @@ export class TelnetSocket extends EventEmitter {
         }
 
         if (iacs) {
-            const b = new Buffer(data.length + iacs);
+            const b = Buffer.alloc(data.length + iacs);
 
             for (let i = 0, j = 0; i < data.length; i++) {
                 b[j] = data[i];
@@ -108,7 +108,7 @@ export class TelnetSocket extends EventEmitter {
             seq.push(command);
         }
 
-        this.socket.write(new Buffer(seq));
+        this.socket.write(Buffer.from(seq));
     }
 
     public toggleEcho(): void {
@@ -124,8 +124,8 @@ export class TelnetSocket extends EventEmitter {
     public sendGMCP(gmcpPackage: string, data: any): void {
         const gmcpData = `${gmcpPackage} ${JSON.stringify(data)}`;
         const dataBuffer = Buffer.from(gmcpData);
-        const seqStartBuffer = new Buffer([Sequences.IAC, Sequences.SB, Options.OPT_GMCP]);
-        const seqEndBuffer = new Buffer([Sequences.IAC, Sequences.SE]);
+        const seqStartBuffer = Buffer.from([Sequences.IAC, Sequences.SB, Options.OPT_GMCP]);
+        const seqEndBuffer = Buffer.from([Sequences.IAC, Sequences.SE]);
 
         this.socket.write(Buffer.concat([seqStartBuffer, dataBuffer, seqEndBuffer], gmcpData.length + 5));
     }
@@ -133,7 +133,7 @@ export class TelnetSocket extends EventEmitter {
     public attach(connection: AdamantiaSocket): void {
         this.socket = connection;
 
-        let inputbuf = new Buffer(this.maxInputLength),
+        let inputbuf = Buffer.alloc(this.maxInputLength),
             inputlen = 0;
 
         /**
@@ -185,7 +185,7 @@ export class TelnetSocket extends EventEmitter {
                 this.input(Buffer.from(bucket));
             }
 
-            inputbuf = new Buffer(this.maxInputLength);
+            inputbuf = Buffer.alloc(this.maxInputLength);
             inputlen = 0;
         });
 

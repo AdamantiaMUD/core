@@ -1,4 +1,3 @@
-import Attribute from '../attributes/attribute';
 import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
 import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
@@ -63,7 +62,7 @@ export class Character extends GameEntity implements Serializable {
     public deserialize(data: SerializedCharacter, state: GameState): void {
         super.deserialize(data);
 
-        this._attributes.deserialize(data.attributes, state);
+        this._attributes.deserialize(data.attributes ?? {}, state);
 
         this._level = data.level;
         this.name = data.name;
