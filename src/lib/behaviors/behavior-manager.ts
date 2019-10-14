@@ -1,14 +1,4 @@
 import EventManager from '../events/event-manager';
-import GameState from '../game-state';
-import {SimpleMap} from '../../../index';
-
-export type Behavior = (config: SimpleMap, ...args: any[]) => void;
-
-export interface BehaviorDefinition {
-    listeners: {
-        [key: string]: (state: GameState) => Behavior;
-    };
-}
 
 /**
  * BehaviorManager keeps a map of BehaviorName:EventManager which is used

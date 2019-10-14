@@ -3,6 +3,7 @@ import path from 'path';
 import Command from './commands/command';
 
 import AttributeFormula from './attributes/attribute-formula';
+import BehaviorManager from './behaviors/behavior-manager';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import GameState from './game-state';
@@ -11,6 +12,7 @@ import {AreaDefinition, AreaManifest} from './locations/area';
 import {InputEventListenerDefinition} from './events/input-events';
 import {PlayerEventListenerFactory} from './events/player-events';
 import {ServerEventListenersDefinition} from './events/server-events';
+import {BehaviorEventListenerDefinition} from './behaviors/behavior';
 
 export class BundleManager {
     private readonly areas: string[] = [];
@@ -173,16 +175,67 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Attributes -- END`);
     }
 
+    private async loadBehaviors(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'behaviors');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Behaviors -- START`);
+
+        const loadEntityBehaviors = async (
+            type: string,
+            manager: BehaviorManager,
+            state: GameState
+        ): Promise<void> => {
+            const typeDir = path.join(uri, type);
+
+            if (!fs.existsSync(typeDir)) {
+                return;
+            }
+
+            Logger.verbose(`LOAD: ${bundle} - Behaviors -> ${type}`);
+            const files = fs.readdirSync(typeDir);
+
+            for (const behaviorFile of files) {
+                const behaviorPath = typeDir + behaviorFile;
+
+                if (Data.isScriptFile(behaviorPath, behaviorFile)) {
+                    const behaviorName = path.basename(behaviorFile, path.extname(behaviorFile));
+
+                    Logger.verbose(`LOAD: ${bundle} - Behaviors -> ${type} -> ${behaviorName}`);
+
+                    const behaviorImport = await import(behaviorPath);
+                    const loader: BehaviorEventListenerDefinition = behaviorImport.default;
+
+                    const {listeners} = loader;
+
+                    for (const [eventName, listener] of Object.entries(listeners)) {
+                        manager.addListener(behaviorName, eventName, listener(state));
+                    }
+                }
+            }
+        };
+
+        await loadEntityBehaviors('area', this.state.areaBehaviorManager, this.state);
+        await loadEntityBehaviors('npc', this.state.mobBehaviorManager, this.state);
+        await loadEntityBehaviors('item', this.state.itemBehaviorManager, this.state);
+        await loadEntityBehaviors('room', this.state.roomBehaviorManager, this.state);
+
+        Logger.info(`LOAD: ${bundle} - Behaviors -- END`);
+    }
+
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
         // await this.loadQuestGoals(bundle, bundlePath);
         // await this.loadQuestRewards(bundle, bundlePath);
         await this.loadAttributes(bundle, bundlePath);
-        // await this.loadBehaviors(bundle, bundlePath);
+        await this.loadBehaviors(bundle, bundlePath);
         // await this.loadChannels(bundle, bundlePath);
         await this.loadCommands(bundle, bundlePath);
-        // await this.loadEffects(bundle, bundlePath);
+        await this.loadEffects(bundle, bundlePath);
         await this.loadInputEvents(bundle, bundlePath);
         await this.loadServerEvents(bundle, bundlePath);
         await this.loadPlayerEvents(bundle, bundlePath);
@@ -231,6 +284,36 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Commands -- END`);
+    }
+
+    private async loadEffects(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'effects');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Effects -- START`);
+        const files = fs.readdirSync(uri);
+
+        for (const effectFile of files) {
+            const effectPath = path.join(uri, effectFile);
+
+            if (Data.isScriptFile(effectPath, effectFile)) {
+                const effectName = path.basename(effectFile, path.extname(effectFile));
+
+                const effectImport = await import(effectPath);
+                const loader = effectImport.default;
+
+                Logger.verbose(`LOAD: ${bundle} - Effects -> ${effectName}`);
+
+                this.state
+                    .effectFactory
+                    .add(effectName, loader, this.state);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Effects -- END`);
     }
 
     private async loadEntities<T extends EntityFactory<any, any>>(
