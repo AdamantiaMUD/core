@@ -201,7 +201,7 @@ export class BundleManager {
             const files = fs.readdirSync(typeDir);
 
             for (const behaviorFile of files) {
-                const behaviorPath = typeDir + behaviorFile;
+                const behaviorPath = path.join(typeDir, behaviorFile);
 
                 if (Data.isScriptFile(behaviorPath, behaviorFile)) {
                     const behaviorName = path.basename(behaviorFile, path.extname(behaviorFile));
