@@ -1,12 +1,14 @@
-import fs from 'fs';
+import fs from 'fs-extra';
 import path from 'path';
-import Command from './commands/command';
+import yaml from 'js-yaml';
 
 import AttributeFormula from './attributes/attribute-formula';
 import BehaviorManager from './behaviors/behavior-manager';
+import Command from './commands/command';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import GameState from './game-state';
+import Helpfile, {HelpfileOptions} from './help/helpfile';
 import Logger from './util/logger';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {InputEventListenerDefinition} from './events/input-events';
@@ -240,6 +242,7 @@ export class BundleManager {
         await this.loadServerEvents(bundle, bundlePath);
         await this.loadPlayerEvents(bundle, bundlePath);
         // await this.loadSkills(bundle, bundlePath);
+        await this.loadHelp(bundle, bundlePath);
 
         await this.loadAreas(bundle);
 
@@ -267,7 +270,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Commands -- START`);
-        const files = fs.readdirSync(uri);
+        const files = await fs.readdir(uri);
 
         for (const commandFile of files) {
             const commandPath = path.join(uri, commandFile);
@@ -346,6 +349,34 @@ export class BundleManager {
 
             return ref;
         });
+    }
+
+    private async loadHelp(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'help');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Help -- START`);
+
+        const files = await fs.readdir(uri);
+
+        for (const helpFile of files) {
+            const helpName = path.basename(helpFile, path.extname(helpFile));
+            Logger.verbose(`LOAD: ${bundle} - Help -> ${helpName}`);
+
+            const helpPath = path.join(uri, helpFile);
+
+            const contents = await fs.readFile(helpPath, 'utf8');
+            const helpData: HelpfileOptions = yaml.load(contents);
+
+            const hfile = new Helpfile(bundle, helpName, helpData);
+
+            this.state.helpManager.add(hfile);
+        }
+
+        Logger.info(`LOAD: ${bundle} - Help -- END`);
     }
 
     private async loadInputEvents(bundle: string, bundlePath: string): Promise<void> {
