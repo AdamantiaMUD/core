@@ -107,7 +107,7 @@ import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
  */
 export const progressiveRespawn: BehaviorDefinition = {
     listeners: {
-//         updateTick: (state: GameState) => {
+//         'update-tick': (state: GameState) => {
 //             let lastRespawnTick = Date.now();
 //
 //             return function(area: Area, config) {
@@ -118,14 +118,14 @@ export const progressiveRespawn: BehaviorDefinition = {
 //                 if (sinceLastTick >= respawnInterval * 1000) {
 //                     lastRespawnTick = Date.now();
 //                     for (const [, room] of area.rooms) {
-//                         room.emit('respawnTick', state);
+//                         room.emit('respawn-tick', state);
 //                     }
 //                 }
 //             };
 //         },
 //
-//         roomAdded: () => (area: Area, config, room: Room) => {
-//             room.on('respawnTick', (state: GameState) => respawnRoom(room, state));
+//         'room-added': () => (area: Area, config, room: Room) => {
+//             room.on('respawn-tick', (state: GameState) => respawnRoom(room, state));
 //         },
     },
 };

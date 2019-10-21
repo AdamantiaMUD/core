@@ -113,7 +113,7 @@ export const commands: InputEventListenerDefinition = {
                     //     player.queueCommand(
                     //         {
                     //             execute: () => {
-                    //                 player.emit('useAbility', result.skill, result.args);
+                    //                 player.emit('use-ability', result.skill, result.args);
                     //             },
                     //             label: data,
                     //             lag: 0,

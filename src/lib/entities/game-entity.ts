@@ -102,7 +102,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
          * @param {*} newValue
          * @param {*} oldValue
          */
-        this.emit('metadataUpdated', key, value, oldValue);
+        this.emit('metadata-updated', key, value, oldValue);
     }
 }
 

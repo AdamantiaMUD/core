@@ -3,6 +3,10 @@
         "id": "r0001",
         "title": "Room 1",
         "description": "",
+        "script": "r0001",
+        "metadata": {
+            "commands": ["begin"]
+        },
         "exits": [
             {
                 "roomId": "dragonshade:r0003",
@@ -10026,7 +10030,12 @@
                 "roomId": "dragonshade:r0638",
                 "direction": "west"
             }
-        ]
+        ],
+        "doors": {
+            "dragonshade:r0681": {
+                "closed": true
+            }
+        }
     },
     {
         "id": "r0640",
@@ -10620,6 +10629,11 @@
                 "roomId": "dragonshade:r0639",
                 "direction": "south"
             }
-        ]
+        ],
+        "doors": {
+            "dragonshade:r0639": {
+                "closed": true
+            }
+        }
     }
 ]

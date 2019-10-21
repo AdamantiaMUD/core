@@ -21,7 +21,13 @@ export class AreaFactory extends EntityFactory<Area, AreaDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        return new Area(definition.bundle, entityRef, definition.manifest);
+        const area = new Area(definition.bundle, entityRef, definition.manifest);
+
+        if (this._scripts.has(entityRef)) {
+            this._scripts.get(entityRef).attach(area);
+        }
+
+        return area;
     }
 }
 

@@ -33,7 +33,7 @@ export class CharacterCombat {
          * @event Character#combatantAdded
          * @param {Character} target
          */
-        this._character.emit('combatantAdded', target);
+        this._character.emit('combatant-added', target);
     }
 
     public evaluateIncomingDamage(damage: Damage, currentAmount: number): number {
@@ -53,7 +53,7 @@ export class CharacterCombat {
              * Fired when Character#initiateCombat is called
              * @event Character#combatStart
              */
-            this._character.emit('combatStart');
+            this._character.emit('combat-start');
         }
 
         if (this.isInCombat(target)) {
@@ -95,13 +95,13 @@ export class CharacterCombat {
          * @event Character#combatantRemoved
          * @param {Character} target
          */
-        this._character.emit('combatantRemoved', target);
+        this._character.emit('combatant-removed', target);
 
         if (!this._combatants.size) {
             /**
              * @event Character#combatEnd
              */
-            this._character.emit('combatEnd');
+            this._character.emit('combat-end');
         }
     }
 

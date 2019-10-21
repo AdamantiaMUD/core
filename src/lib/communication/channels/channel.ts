@@ -221,7 +221,7 @@ export class Channel {
              * @param {Character} sender
              * @param {string} rawMessage
              */
-            target.emit('channelReceive', this, sender, rawMessage);
+            target.emit('channel-receive', this, sender, rawMessage);
         }
     }
 }

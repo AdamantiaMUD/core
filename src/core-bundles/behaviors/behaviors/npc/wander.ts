@@ -29,7 +29,7 @@ import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-//         updateTick: (state: GameState) => (npc: Npc, cfg: WanderConfig | true) => {
+//         'update-tick': (state: GameState) => (npc: Npc, cfg: WanderConfig | true) => {
 //             if (npc.isInCombat() || !npc.room) {
 //                 return;
 //             }

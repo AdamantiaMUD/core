@@ -23,7 +23,13 @@ export class ItemFactory extends EntityFactory<Item, ItemDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        return new Item(definition, area);
+        const item = new Item(definition, area);
+
+        if (this._scripts.has(entityRef)) {
+            this._scripts.get(entityRef).attach(item);
+        }
+
+        return item;
     }
 }
 

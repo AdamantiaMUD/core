@@ -1,6 +1,8 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
+import Npc from '../../../lib/mobs/npc';
 import Player from '../../../lib/players/player';
+import {Door} from '../../../lib/locations/room';
 import {ParsedCommand} from '../../../lib/commands/command-parser';
 import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
 
@@ -22,8 +24,30 @@ export const evt: PlayerEventListenerFactory = {
                 return;
             }
 
+            if (player.combat.isInCombat()) {
+                sayAt(player, 'You are in the middle of a fight!');
+
+                return;
+            }
+
             const nextRoom = state.roomManager.getRoom(roomExit.roomId);
             const oldRoom = player.room;
+
+            const door: Door = oldRoom.getDoor(nextRoom) ?? nextRoom.getDoor(oldRoom);
+
+            if (door) {
+                if (door.locked) {
+                    sayAt(player, 'The door is locked.');
+
+                    return;
+                }
+
+                if (door.closed) {
+                    sayAt(player, 'The door is closed.');
+
+                    return;
+                }
+            }
 
             player.moveTo(nextRoom, (): void => {
                 state.commandManager.get('look').execute('', player);
@@ -31,6 +55,19 @@ export const evt: PlayerEventListenerFactory = {
 
             sayAt(oldRoom, `${player.name} leaves.`);
             sayAtExcept(nextRoom, `${player.name} enters.`, player);
+
+            for (const follower of player.followers) {
+                if (!(follower.room !== oldRoom)) {
+                    if (follower.isNpc) {
+                        /* eslint-disable-next-line no-extra-parens */
+                        (follower as Npc).moveTo(nextRoom);
+                    }
+                    else {
+                        sayAt(follower as Player, `\r\nYou follow ${player.name} to ${nextRoom.title}.`);
+                        follower.emit('move', movementCommand);
+                    }
+                }
+            }
         };
     },
 };

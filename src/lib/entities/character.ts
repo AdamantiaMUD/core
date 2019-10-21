@@ -1,4 +1,5 @@
 import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import CharacterCombat from '../combat/character-combat';
 import CommandQueue from '../commands/command-queue';
 import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
@@ -6,23 +7,22 @@ import {
     EquipAlreadyEquippedError,
     EquipSlotTakenError
 } from '../equipment/equipment-errors';
-import GameEntity, {SerializedGameEntity} from './game-entity';
 import GameState from '../game-state';
 import Inventory from '../equipment/inventory';
 import Item from '../equipment/item';
 import Room from '../locations/room';
+import ScriptableEntity, {SerializedScriptableEntity} from './scriptable-entity';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
-import CharacterCombat from '../combat/character-combat';
 
-export interface SerializedCharacter extends SerializedGameEntity {
+export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
     level: number;
     name: string;
     room: string;
 }
 
-export class Character extends GameEntity implements Serializable {
+export class Character extends ScriptableEntity implements Serializable {
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
     protected readonly _commandQueue: CommandQueue = new CommandQueue();
@@ -60,6 +60,10 @@ export class Character extends GameEntity implements Serializable {
         return this._effects;
     }
 
+    public get followers(): Set<Character> {
+        return this._followers;
+    }
+
     public get equipment(): Map<string, Item> {
         return this._equipment;
     }
@@ -91,7 +95,7 @@ export class Character extends GameEntity implements Serializable {
          * @event Character#gainedFollower
          * @param {Character} follower
          */
-        this.emit('gainedFollower', follower);
+        this.emit('gained-follower', follower);
     }
 
     /**
@@ -205,6 +209,10 @@ export class Character extends GameEntity implements Serializable {
         return att && att.base;
     }
 
+    public getItem(itemRef: string): Item {
+        return this._inventory.items.get(itemRef);
+    }
+
     /**
      * Get current maximum value of attribute (as modified by effects.)
      */
@@ -242,6 +250,10 @@ export class Character extends GameEntity implements Serializable {
         return this._followers.has(target);
     }
 
+    public hasItem(itemRef: string): boolean {
+        return this._inventory.items.has(itemRef);
+    }
+
     public removeEffect(effect: Effect): void {
         this._effects.remove(effect);
     }
@@ -257,7 +269,7 @@ export class Character extends GameEntity implements Serializable {
          * @event Character#lostFollower
          * @param {Character} follower
          */
-        this.emit('lostFollower', follower);
+        this.emit('lost-follower', follower);
     }
 
     /**

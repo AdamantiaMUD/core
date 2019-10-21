@@ -38,7 +38,7 @@
 //         item.emit('drop', player);
 //
 //         for (const npc of player.room.npcs) {
-//             npc.emit('playerDropItem', player, item);
+//             npc.emit('player-drop-item', player, item);
 //         }
 //
 //         sayAt(player, `<green>You dropped: </green>${ItemUtil.display(item)}<green>.</green>`);

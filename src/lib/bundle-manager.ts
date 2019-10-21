@@ -17,7 +17,10 @@ import {AreaDefinition, AreaManifest} from './locations/area';
 import {InputEventListenerDefinition} from './events/input-events';
 import {PlayerEventListenerFactory} from './events/player-events';
 import {ServerEventListenersDefinition} from './events/server-events';
-import {BehaviorEventListenerDefinition} from './behaviors/behavior';
+import {
+    BehaviorDefinition,
+    BehaviorEventListenerDefinition
+} from './behaviors/behavior';
 
 export class BundleManager {
     private readonly areas: string[] = [];
@@ -55,6 +58,10 @@ export class BundleManager {
         return new Command(bundle, name, loader, uri);
     }
 
+    private getAreaScriptPath(bundlePath: string, areaName: string): string {
+        return path.join(bundlePath, 'areas', areaName, 'scripts');
+    }
+
     private hydrateAreas(): void {
         for (const areaRef of this.areas) {
             const area = this.state.areaFactory.create(areaRef);
@@ -80,7 +87,12 @@ export class BundleManager {
         return !(fs.statSync(bundlePath).isFile() || bundle === '.' || bundle === '..');
     }
 
-    private async loadArea(bundle: string, areaName: string, manifest: AreaManifest): Promise<void> {
+    private async loadArea(
+        bundle: string,
+        bundlePath: string,
+        areaName: string,
+        manifest: AreaManifest
+    ): Promise<void> {
         Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- START`);
 
         const definition: AreaDefinition = {
@@ -96,6 +108,7 @@ export class BundleManager {
         Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
         definition.rooms = await this.loadEntities(
             bundle,
+            bundlePath,
             areaName,
             'items',
             this.state.itemFactory
@@ -104,6 +117,7 @@ export class BundleManager {
         Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);
         definition.rooms = await this.loadEntities(
             bundle,
+            bundlePath,
             areaName,
             'rooms',
             this.state.roomFactory
@@ -114,7 +128,7 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- END`);
     }
 
-    private async loadAreas(bundle: string): Promise<void> {
+    private async loadAreas(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: ${bundle} - Areas -- START`);
 
         const loader = this.state.entityLoaderRegistry.get('areas');
@@ -130,7 +144,7 @@ export class BundleManager {
         for (const [name, manifest] of Object.entries(areas)) {
             this.areas.push(name);
 
-            await this.loadArea(bundle, name, manifest);
+            await this.loadArea(bundle, bundlePath, name, manifest);
         }
 
         Logger.info(`LOAD: ${bundle} - Areas -- END`);
@@ -251,7 +265,7 @@ export class BundleManager {
         // await this.loadSkills(bundle, bundlePath);
         await this.loadHelp(bundle, bundlePath);
 
-        await this.loadAreas(bundle);
+        await this.loadAreas(bundle, bundlePath);
 
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
     }
@@ -328,6 +342,7 @@ export class BundleManager {
 
     private async loadEntities<T extends EntityFactory<any, any>>(
         bundle: string,
+        bundlePath: string,
         areaName: string,
         type: string,
         factory: T
@@ -348,14 +363,49 @@ export class BundleManager {
         }
 
         const entities = await loader.fetchAll();
+        const scriptPath = this.getAreaScriptPath(bundlePath, areaName);
 
         return entities.map(entity => {
             const ref = EntityFactory.createRef(areaName, entity.id);
 
             factory.setDefinition(ref, entity);
 
+            if (entity.script) {
+                const scriptUri = path.join(scriptPath, type, entity.script);
+
+                Logger.verbose(`Loading entity script - [${ref}] -> ${entity.script}`);
+
+                try {
+                    this.loadEntityScript(factory, ref, scriptUri);
+                }
+                catch (e) {
+                    Logger.warn(`Missing entity script - [${ref}] -> ${entity.script}`);
+                }
+            }
+
             return ref;
         });
+    }
+
+    private async loadEntityScript(
+        factory: EntityFactory<any, any>,
+        ref: string,
+        scriptPath: string
+    ): Promise<void> {
+        const scriptImport = await import(scriptPath);
+        const loader: BehaviorDefinition = scriptImport.default;
+
+        const {listeners} = loader;
+
+        Logger.info(`LOAD: ${ref} - Script Listeners -- START`);
+
+        for (const [eventName, listener] of Object.entries(listeners)) {
+            Logger.verbose(`LOAD: ${ref} - Script Listeners -> ${eventName}`);
+
+            factory.addScriptListener(ref, eventName, listener(this.state));
+        }
+
+        Logger.info(`LOAD: ${ref} - Script Listeners -- END`);
     }
 
     private async loadHelp(bundle: string, bundlePath: string): Promise<void> {

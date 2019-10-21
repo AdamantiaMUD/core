@@ -20,7 +20,13 @@ export class RoomFactory extends EntityFactory<Room, RoomDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        return new Room(definition, area);
+        const room = new Room(definition, area);
+
+        if (this._scripts.has(entityRef)) {
+            this._scripts.get(entityRef).attach(room);
+        }
+
+        return room;
     }
 }
 

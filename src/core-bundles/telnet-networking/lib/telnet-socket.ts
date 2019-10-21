@@ -334,7 +334,7 @@ export class TelnetSocket extends EventEmitter {
                          * @param {number} cmd Command byte specified after IAC
                          * @param {number} opt Opt byte specified after command byte
                          */
-                        this.emit('unknownAction', cmd, opt);
+                        this.emit('unknown-action', cmd, opt);
 
                         i += 2;
                         break;

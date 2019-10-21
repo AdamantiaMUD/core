@@ -138,7 +138,7 @@ export class Player extends Character implements Broadcastable {
              * @param {Player} player
              * @param {Room} nextRoom
              */
-            this.room.emit('playerLeave', this, nextRoom);
+            this.room.emit('player-leave', this, nextRoom);
             this.room.removePlayer(this);
         }
 
@@ -152,13 +152,13 @@ export class Player extends Character implements Broadcastable {
          * @param {Player} player
          * @param {Room} prevRoom
          */
-        nextRoom.emit('playerEnter', this, prevRoom);
+        nextRoom.emit('player-enter', this, prevRoom);
 
         /**
          * @event Player#enterRoom
          * @param {Room} room
          */
-        this.emit('enterRoom', nextRoom);
+        this.emit('enter-room', nextRoom);
     }
 
     /**

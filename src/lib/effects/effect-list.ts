@@ -42,7 +42,7 @@ export class EffectList implements Serializable {
                      * @event Effect#effectStackAdded
                      * @param {Effect} effect The new effect that is trying to be added
                      */
-                    activeEffect.emit('effectStackAdded', effect);
+                    activeEffect.emit('effect-stack-added', effect);
 
                     return true;
                 }
@@ -52,7 +52,7 @@ export class EffectList implements Serializable {
                      * @event Effect#effectRefreshed
                      * @param {Effect} effect The new effect that is trying to be added
                      */
-                    activeEffect.emit('effectRefreshed', effect);
+                    activeEffect.emit('effect-refreshed', effect);
 
                     return true;
                 }
@@ -69,12 +69,12 @@ export class EffectList implements Serializable {
         /**
          * @event Effect#effectAdded
          */
-        effect.emit('effectAdded');
+        effect.emit('effect-added');
 
         /**
          * @event Character#effectAdded
          */
-        this._target.emit('effectAdded', effect);
+        this._target.emit('effect-added', effect);
         effect.on('remove', () => this.remove(effect));
 
         return true;
@@ -220,7 +220,7 @@ export class EffectList implements Serializable {
         /**
          * @event Character#effectRemoved
          */
-        this._target.emit('effectRemoved');
+        this._target.emit('effect-removed');
     }
 
     public serialize(): SerializedEffect[] {

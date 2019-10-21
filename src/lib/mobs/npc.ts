@@ -1,8 +1,6 @@
 import uuid from 'uuid/v4';
-import {sprintf} from 'sprintf-js';
 
 import Area from '../locations/area';
-import BehaviorManager from '../behaviors/behavior-manager';
 import Character from '../entities/character';
 import GameState from '../game-state';
 import Logger from '../util/logger';
@@ -34,8 +32,6 @@ export interface NpcDefinition {
 }
 
 export class Npc extends Character implements Scriptable, Serializable {
-    private _behaviors: Map<string, SimpleMap | true> = new Map();
-
     public area: Area;
     public corpseDesc: string;
     public defaultEquipment: {[key: string]: string};
@@ -78,10 +74,6 @@ export class Npc extends Character implements Scriptable, Serializable {
         this.uuid = data.uuid || uuid();
     }
 
-    public get behaviors(): Map<string, SimpleMap | true> {
-        return this._behaviors;
-    }
-
     public get isNpc(): boolean {
         return true;
     }
@@ -102,20 +94,10 @@ export class Npc extends Character implements Scriptable, Serializable {
         return super.emit(name, ...args);
     }
 
-    public getBehavior(name: string): SimpleMap | true {
-        return this._behaviors.get(name);
-    }
-
-    public hasBehavior(name: string): boolean {
-        return this._behaviors.has(name);
-    }
-
     public hydrate(state: GameState): boolean {
         super.hydrate(state);
 
         state.mobManager.add(this);
-
-        this.setupBehaviors(state.mobBehaviorManager);
 
         for (const defaultItemId of this.defaultItems) {
             Logger.verbose(`\tDIST: Adding item [${defaultItemId}] to npc [${this.name}]`);
@@ -157,7 +139,7 @@ export class Npc extends Character implements Scriptable, Serializable {
             /**
              * @event Room#npcLeave
              */
-            this.room.emit('npcLeave', this, nextRoom);
+            this.room.emit('npc-leave', this, nextRoom);
             this.room.removeNpc(this);
         }
 
@@ -169,35 +151,12 @@ export class Npc extends Character implements Scriptable, Serializable {
         /**
          * @event Room#npcEnter
          */
-        nextRoom.emit('npcEnter', this, prevRoom);
+        nextRoom.emit('npc-enter', this, prevRoom);
 
         /**
          * @event Npc#enterRoom
          */
-        this.emit('enterRoom', nextRoom);
-    }
-
-    /**
-     * Attach this entity's behaviors from the manager
-     */
-    public setupBehaviors(manager: BehaviorManager): void {
-        /* eslint-disable-next-line prefer-const */
-        for (let [name, config] of this.behaviors) {
-            const behavior = manager.get(name);
-
-            if (behavior) {
-                // behavior may be a boolean in which case it will be `behaviorName: true`
-                config = config === true ? {} : config;
-                behavior.attach(this, config);
-            }
-            else {
-                Logger.warn(sprintf(
-                    'No script found for [%1$s] behavior `%2$s`',
-                    this.constructor.name,
-                    name
-                ));
-            }
-        }
+        this.emit('enter-room', nextRoom);
     }
 }
 

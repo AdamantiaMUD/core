@@ -25,7 +25,7 @@ export class BountyGoal extends QuestGoal {
             delivered: false,
         };
 
-        this.on('enterRoom', this.enterRoom);
+        this.on('enter-room', this.enterRoom);
     }
 
     public getProgress(): {percent: number; display: string} {

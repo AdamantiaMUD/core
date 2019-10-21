@@ -1,12 +1,12 @@
-import GameEntity from '../entities/game-entity';
 import GameState from '../game-state';
 import Npc from '../mobs/npc';
 import Player from '../players/player';
 import Room from './room';
+import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 import {Broadcastable} from '../communication/broadcast';
 import {SimpleMap} from '../../../index';
 
-export interface AreaDefinition {
+export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
     manifest: AreaManifest;
     quests: string[];
@@ -18,7 +18,7 @@ export interface AreaManifest {
     name: string;
 }
 
-export class Area extends GameEntity implements Broadcastable {
+export class Area extends ScriptableEntity implements Broadcastable {
     public readonly name: string;
     public readonly bundle: string;
 
@@ -64,7 +64,7 @@ export class Area extends GameEntity implements Broadcastable {
     public addRoom(room: Room): void {
         this.rooms.set(room.id, room);
 
-        this.emit('roomAdded', room);
+        this.emit('room-added', room);
     }
 
     /**

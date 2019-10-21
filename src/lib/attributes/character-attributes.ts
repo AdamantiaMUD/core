@@ -67,7 +67,7 @@ export class CharacterAttributes implements Serializable {
 
         this.get(key).lower(amount);
 
-        this._target.emit('attributeUpdate', key, this.get(key));
+        this._target.emit('attribute-update', key, this.get(key));
     }
 
     public raise(key: string, amount: number): void {
@@ -77,7 +77,7 @@ export class CharacterAttributes implements Serializable {
 
         this.get(key).raise(amount);
 
-        this._target.emit('attributeUpdate', key, this.get(key));
+        this._target.emit('attribute-update', key, this.get(key));
     }
 
     public reset(): void {

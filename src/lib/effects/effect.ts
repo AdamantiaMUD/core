@@ -122,7 +122,7 @@ export class Effect extends EventEmitter implements Serializable {
         }
 
         if (this.config.autoActivate) {
-            this.on('effectAdded', this.activate);
+            this.on('effect-added', this.activate);
         }
     }
 
@@ -178,7 +178,7 @@ export class Effect extends EventEmitter implements Serializable {
         /**
          * @event Effect#effectActivated
          */
-        this.emit('effectActivated');
+        this.emit('effect-activated');
         this.active = true;
     }
 
@@ -194,7 +194,7 @@ export class Effect extends EventEmitter implements Serializable {
         /**
          * @event Effect#effectDeactivated
          */
-        this.emit('effectDeactivated');
+        this.emit('effect-deactivated');
         this.active = false;
     }
 

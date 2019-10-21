@@ -69,6 +69,10 @@ export class Item extends ScriptableEntity implements Serializable {
         return this._description;
     }
 
+    public get flags(): string[] {
+        return this._flags;
+    }
+
     public get inventory(): Inventory {
         if (this._type !== ItemType.CONTAINER) {
             // @TODO: throw
@@ -76,6 +80,10 @@ export class Item extends ScriptableEntity implements Serializable {
         }
 
         return this._inventory;
+    }
+
+    public get keywords(): string[] {
+        return this._keywords;
     }
 
     public get level(): number {

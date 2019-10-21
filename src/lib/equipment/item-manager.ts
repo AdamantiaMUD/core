@@ -30,7 +30,7 @@ export class ItemManager {
             /**
              * @event Item#updateTick
              */
-            item.emit('updateTick');
+            item.emit('update-tick');
         }
     }
 }

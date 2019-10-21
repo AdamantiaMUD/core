@@ -1,19 +1,27 @@
 import cloneFactory from 'rfdc';
-import Npc from '../mobs/npc';
-import Logger from '../util/logger';
 
 import Area from './area';
-import GameEntity, {GameEntityDefinition} from '../entities/game-entity';
 import GameState from '../game-state';
 import Item from '../equipment/item';
+import Logger from '../util/logger';
+import Npc from '../mobs/npc';
 import Player from '../players/player';
+import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 import {Broadcastable} from '../communication/broadcast';
 import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 
-export interface RoomDefinition extends GameEntityDefinition {
+export interface Door {
+    closed?: boolean;
+    locked?: boolean;
+    lockedBy?: string;
+    oneWay?: boolean;
+}
+
+export interface RoomDefinition extends ScriptableEntityDefinition {
     description: string;
+    doors?: {[key: string]: Door};
     exits?: RoomExitDefinition[];
     id: string;
     title: string;
@@ -28,7 +36,8 @@ export interface RoomExitDefinition {
     roomId: string;
 }
 
-export class Room extends GameEntity implements Broadcastable {
+export class Room extends ScriptableEntity implements Broadcastable {
+    private readonly _doors: Map<string, Door> = new Map();
     private readonly _npcs: Set<Npc> = new Set();
     private readonly _players: Set<Player> = new Set();
     private readonly _spawnedNpcs: Set<Npc> = new Set();
@@ -52,6 +61,12 @@ export class Room extends GameEntity implements Broadcastable {
         this.id = def.id;
         this.name = def.title;
         this.title = def.title;
+
+        const doors: {[key: string]: Door} = clone(def.doors ?? {});
+        Object.entries(doors)
+            .forEach(([dest, door]: [string, Door]) => {
+                this._doors.set(dest, door);
+            });
 
         super.deserialize({
             metadata: def.metadata,
@@ -82,6 +97,16 @@ export class Room extends GameEntity implements Broadcastable {
         this._players.add(player);
     }
 
+    public closeDoor(fromRoom: Room = null): void {
+        const door = this.getDoor(fromRoom);
+
+        if (door === null) {
+            return;
+        }
+
+        door.closed = true;
+    }
+
     /**
      * Emits event on self and proxies certain events to other entities in the room.
      */
@@ -89,8 +114,10 @@ export class Room extends GameEntity implements Broadcastable {
         const superReturn = super.emit(eventName, ...args);
 
         const proxiedEvents = [
-            'playerEnter',
-            'playerLeave',
+            'npc-enter',
+            'npc-leave',
+            'player-enter',
+            'player-leave',
         ];
 
         if (proxiedEvents.includes(eventName as string)) {
@@ -118,6 +145,14 @@ export class Room extends GameEntity implements Broadcastable {
         return [...this._players];
     }
 
+    public getDoor(fromRoom: Room = null): Door {
+        if (!fromRoom) {
+            return null;
+        }
+
+        return this._doors.get(fromRoom.entityReference);
+    }
+
     public getExits(): RoomExitDefinition[] {
         return clone(this.exits);
     }
@@ -130,6 +165,13 @@ export class Room extends GameEntity implements Broadcastable {
             .find(ex => ex.roomId === nextRoom.entityReference);
     }
 
+    /**
+     * Check to see if this room has a door preventing movement from `fromRoom` to here
+     */
+    public hasDoor(fromRoom): boolean {
+        return this._doors.has(fromRoom.entityReference);
+    }
+
     public hydrate(state: GameState): void {
         /**
          * Fires when the room is created but before it has hydrated its default
@@ -137,6 +179,40 @@ export class Room extends GameEntity implements Broadcastable {
          * @event Room#spawn
          */
         this.emit('spawn');
+    }
+
+    /**
+     * Check to see of the door for `fromRoom` is locked
+     */
+    public isDoorLocked(fromRoom: Room = null): boolean {
+        const door = this.getDoor(fromRoom);
+
+        if (door === null) {
+            return false;
+        }
+
+        return door.locked;
+    }
+
+    public lockDoor(fromRoom: Room = null): void {
+        const door = this.getDoor(fromRoom);
+
+        if (door === null) {
+            return;
+        }
+
+        this.closeDoor(fromRoom);
+        door.locked = true;
+    }
+
+    public openDoor(fromRoom: Room = null): void {
+        const door = this.getDoor(fromRoom);
+
+        if (door === null) {
+            return;
+        }
+
+        door.closed = false;
     }
 
     public removeItem(item: Item): void {
@@ -176,6 +252,16 @@ export class Room extends GameEntity implements Broadcastable {
         newItem.emit('spawn');
 
         return newItem;
+    }
+
+    public unlockDoor(fromRoom: Room = null): void {
+        const door = this.getDoor(fromRoom);
+
+        if (door === null) {
+            return;
+        }
+
+        door.locked = false;
     }
 }
 

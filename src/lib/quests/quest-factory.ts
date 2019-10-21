@@ -70,21 +70,21 @@ export class QuestFactory {
         }
 
         instance.on('progress', progress => {
-            player.emit('questProgress', instance, progress);
+            player.emit('quest-progress', instance, progress);
             player.save();
         });
 
         instance.on('start', () => {
-            player.emit('questStart', instance);
+            player.emit('quest-start', instance);
             instance.emit('progress', instance.getProgress());
         });
 
         instance.on('turn-in-ready', () => {
-            player.emit('questTurnInReady', instance);
+            player.emit('quest-turn-in-ready', instance);
         });
 
         instance.on('complete', () => {
-            player.emit('questComplete', instance);
+            player.emit('quest-complete', instance);
             player.questTracker.complete(instance.entityReference);
 
             if (!quest.config.rewards) {
@@ -102,7 +102,7 @@ export class QuestFactory {
                     }
 
                     rewardClass.reward(state, instance, reward.config, player);
-                    player.emit('questReward', reward);
+                    player.emit('quest-reward', reward);
                 }
                 catch (e) {
                     Logger.error(e.message);

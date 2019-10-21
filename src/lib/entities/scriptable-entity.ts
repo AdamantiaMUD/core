@@ -33,14 +33,14 @@ export class ScriptableEntity extends GameEntity implements Scriptable, Serializ
     protected _behaviors: Map<string, SimpleMap | true>;
     protected _script: string;
 
-    public constructor(def: ScriptableEntityDefinition) {
+    public constructor(def?: ScriptableEntityDefinition) {
         super(def);
 
-        this._behaviors = typeof def.behaviors === 'undefined'
+        this._behaviors = typeof def?.behaviors === 'undefined'
             ? new Map()
             : clone(def.behaviors);
 
-        this._script = def.script ?? null;
+        this._script = def?.script ?? null;
     }
 
     /**
