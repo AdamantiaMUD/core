@@ -16,8 +16,8 @@ export const finishCharacter: InputEventListenerDefinition = {
         let startingRoomRef = state.config.get('startingRoom');
 
         if (!startingRoomRef) {
-            Logger.warn('No startingRoom defined in adamantia.json. Defaulting to "limbo:r0001".');
-            startingRoomRef = 'limbo:r0001';
+            Logger.warn('No startingRoom defined in adamantia.json. Defaulting to "dragonshade:r0001".');
+            startingRoomRef = 'dragonshade:r0001';
         }
 
         return async (

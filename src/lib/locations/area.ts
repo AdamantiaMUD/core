@@ -1,5 +1,6 @@
 import GameEntity from '../entities/game-entity';
 import GameState from '../game-state';
+import Npc from '../mobs/npc';
 import Player from '../players/player';
 import Room from './room';
 import {Broadcastable} from '../communication/broadcast';
@@ -8,7 +9,8 @@ import {SimpleMap} from '../../../index';
 export interface AreaDefinition {
     bundle: string;
     manifest: AreaManifest;
-    rooms: any[];
+    quests: string[];
+    rooms: string[];
 }
 
 export interface AreaManifest {
@@ -22,7 +24,8 @@ export class Area extends GameEntity implements Broadcastable {
 
     private readonly _manifest: AreaManifest;
 
-    private _rooms: Map<string, any> = new Map();
+    private readonly _npcs: Set<Npc> = new Set();
+    private readonly _rooms: Map<string, any> = new Map();
 
     public constructor(bundle: string, name: string, manifest: AreaManifest) {
         super();
@@ -46,8 +49,16 @@ export class Area extends GameEntity implements Broadcastable {
         }
     }
 
+    public get npcs(): Set<Npc> {
+        return this._npcs;
+    }
+
     public get rooms(): Map<string, any> {
         return this._rooms;
+    }
+
+    public addNpc(npc: Npc): void {
+        this._npcs.add(npc);
     }
 
     public addRoom(room: Room): void {
@@ -85,6 +96,13 @@ export class Area extends GameEntity implements Broadcastable {
              */
             room.emit('ready');
         }
+    }
+
+    /**
+     * Removes an NPC from the area. NOTE: This must manually remove the NPC from its room as well
+     */
+    public removeNpc(npc: Npc): void {
+        this._npcs.delete(npc);
     }
 }
 

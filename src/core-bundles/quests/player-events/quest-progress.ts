@@ -1,5 +1,6 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
+import Quest from '../../../lib/quests/quest';
 import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
 
 const {sayAt} = Broadcast;

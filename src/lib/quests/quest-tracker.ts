@@ -1,23 +1,35 @@
+import {SimpleMap} from '../../../index';
 import GameState from '../game-state';
 import Player from '../players/player';
-import Quest from './quest';
+import Quest, {SerializedQuest} from './quest';
 import Serializable from '../data/serializable';
+
+export interface SerializedQuestTracker extends SimpleMap {
+    active: {[key: string]: SerializedQuest};
+    completed: {[key: string]: SerializedQuest};
+}
 
 /**
  * Keeps track of player quest progress
  */
 export class QuestTracker implements Serializable {
-    /* eslint-disable lines-between-class-members */
-    public activeQuests: Map<string, Quest>;
-    public completedQuests: Map<string, Quest>;
-    public player: Player;
-    /* eslint-enable lines-between-class-members */
+    private readonly _activeQuests: Map<string, Quest> = new Map();
+    private readonly _completedQuests: Map<string, Quest> = new Map();
+    private readonly _player: Player;
 
     public constructor(player: Player, active: any[] = [], completed: any[] = []) {
-        this.player = player;
+        this._player = player;
 
-        this.activeQuests = new Map(active);
-        this.completedQuests = new Map(completed);
+        // this.activeQuests = new Map(active);
+        // this.completedQuests = new Map(completed);
+    }
+
+    public get active(): Map<string, Quest> {
+        return this._activeQuests;
+    }
+
+    public get completed(): Map<string, Quest> {
+        return this._completedQuests;
     }
 
     public complete(qid: string): void {
@@ -29,15 +41,15 @@ export class QuestTracker implements Serializable {
 
         quest.completedAt = (new Date()).toJSON();
 
-        this.completedQuests.set(qid, quest);
-        this.activeQuests.delete(qid);
+        this._completedQuests.set(qid, quest);
+        this._activeQuests.delete(qid);
     }
 
     /**
      * Proxy events to all active quests
      */
     public emit(event: string | symbol, ...args: any[]): boolean {
-        for (const [, quest] of this.activeQuests) {
+        for (const [, quest] of this._activeQuests) {
             quest.emit(event, ...args);
         }
 
@@ -45,34 +57,34 @@ export class QuestTracker implements Serializable {
     }
 
     public get(qid: string): Quest {
-        return this.activeQuests.get(qid);
+        return this._activeQuests.get(qid);
     }
 
     public hydrate(state: GameState): void {
-        for (const [qid, data] of this.activeQuests) {
-            const quest = state.QuestFactory.create(state, qid, this.player, data.state);
+        for (const [qid, data] of this._activeQuests) {
+            const quest = state.questFactory.create(state, qid, this._player, data.state);
 
             quest.started = data.started;
             quest.hydrate();
 
-            this.activeQuests.set(qid, quest);
+            this._activeQuests.set(qid, quest);
         }
     }
 
     public isActive(qid: string): boolean {
-        return this.activeQuests.has(qid);
+        return this._activeQuests.has(qid);
     }
 
     public isComplete(qid: string): boolean {
-        return this.completedQuests.has(qid);
+        return this._completedQuests.has(qid);
     }
 
     public serialize(): SerializedQuestTracker {
         return {
-            completed: [...this.completedQuests]
+            completed: [...this._completedQuests]
                 .map(([qid, quest]) => [qid, quest.serialize()])
                 .reduce((acc, [qid, quest]) => ({...acc, [`${qid}`]: quest}), {}),
-            active: [...this.activeQuests]
+            active: [...this._activeQuests]
                 .map(([qid, quest]) => [qid, quest.serialize()])
                 .reduce((acc, [qid, quest]) => ({...acc, [`${qid}`]: quest}), {}),
         };
@@ -81,12 +93,12 @@ export class QuestTracker implements Serializable {
     public start(quest: Quest): void {
         const qid = quest.entityReference;
 
-        if (this.activeQuests.has(qid)) {
+        if (this._activeQuests.has(qid)) {
             throw new Error('Quest already started');
         }
 
         quest.started = (new Date()).toJSON();
-        this.activeQuests.set(qid, quest);
+        this._activeQuests.set(qid, quest);
         quest.emit('start');
     }
 }

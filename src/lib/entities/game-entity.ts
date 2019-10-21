@@ -18,20 +18,21 @@ export interface SerializedGameEntity {
 }
 
 export class GameEntity extends EventEmitter implements Metadatable, Serializable {
+    private _metadata: SimpleMap = {};
+
     public __pruned: boolean = false;
     public __hydrated: boolean = false;
     public entityReference: string = '';
-    public metadata: SimpleMap = {};
 
     public constructor(def?: GameEntityDefinition) {
         super();
 
-        this.metadata = clone(def?.metadata ?? {});
+        this._metadata = clone(def?.metadata ?? {});
     }
 
     public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
         this.entityReference = data.entityReference ?? '';
-        this.metadata = clone(data.metadata ?? {});
+        this._metadata = clone(data.metadata ?? {});
     }
 
     /**
@@ -42,11 +43,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
      * @throws Error
      */
     public getMeta(key: string): any {
-        if (!this.metadata) {
-            throw new Error('Class does not have metadata property');
-        }
-
-        const base = this.metadata;
+        const base = this._metadata;
 
         return key.split('.').reduce((obj, index) => obj && obj[index], base);
     }
@@ -56,7 +53,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     }
 
     public serialize(): SerializedGameEntity {
-        const meta = clone(this.metadata);
+        const meta = clone(this._metadata);
 
         delete meta.class;
         delete meta.lastCommandTime;
@@ -82,13 +79,9 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
      * @fires Metadatable#metadataUpdate
      */
     public setMeta(key: string, value: any): void {
-        if (!this.metadata) {
-            throw new Error('Class does not have metadata property');
-        }
-
         const parts = key.split('.');
         const property = parts.pop();
-        let base = this.metadata;
+        let base = this._metadata;
 
         while (parts.length) {
             const part = parts.shift();

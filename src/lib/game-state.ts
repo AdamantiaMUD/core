@@ -6,23 +6,28 @@ import AbilityManager from './abilities/ability-manager';
 import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
+import AttributeFactory from './attributes/attribute-factory';
 import BehaviorManager from './behaviors/behavior-manager';
 import ChannelManager from './communication/channels/channel-manager';
 import CommandManager from './commands/command-manager';
 import Config from './util/config';
 import Data from './util/data';
+import EffectFactory from './effects/effect-factory';
 import EntityLoaderRegistry from './data/entity-loader-registry';
 import EventManager from './events/event-manager';
 import GameServer from './game-server';
 import HelpManager from './help/help-manager';
 import ItemFactory from './equipment/item-factory';
 import ItemManager from './equipment/item-manager';
+import MobFactory from './mobs/mob-factory';
+import MobManager from './mobs/mob-manager';
 import PlayerManager from './players/player-manager';
+import QuestFactory from './quests/quest-factory';
+import QuestGoalManager from './quests/quest-goal-manager';
+import QuestRewardManager from './quests/quest-reward-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
 import TransportStream from './communication/transport-stream';
-import AttributeFactory from './attributes/attribute-factory';
-import EffectFactory from './effects/effect-factory';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
@@ -43,7 +48,12 @@ export class GameState {
     private readonly _itemManager: ItemManager = new ItemManager();
     private readonly _itemFactory: ItemFactory = new ItemFactory();
     private readonly _mobBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _mobFactory: MobFactory = new MobFactory();
+    private readonly _mobManager: MobManager = new MobManager();
     private readonly _playerManager: PlayerManager = new PlayerManager();
+    private readonly _questFactory: QuestFactory = new QuestFactory();
+    private readonly _questGoalManager: QuestGoalManager = new QuestGoalManager();
+    private readonly _questRewardManager: QuestRewardManager = new QuestRewardManager();
     private readonly _roomBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _roomFactory: RoomFactory = new RoomFactory();
     private readonly _roomManager: RoomManager = new RoomManager();
@@ -159,8 +169,28 @@ export class GameState {
         return this._mobBehaviorManager;
     }
 
+    public get mobFactory(): MobFactory {
+        return this._mobFactory;
+    }
+
+    public get mobManager(): MobManager {
+        return this._mobManager;
+    }
+
     public get playerManager(): PlayerManager {
         return this._playerManager;
+    }
+
+    public get questFactory(): QuestFactory {
+        return this._questFactory;
+    }
+
+    public get questGoalManager(): QuestGoalManager {
+        return this._questGoalManager;
+    }
+
+    public get questRewardManager(): QuestRewardManager {
+        return this._questRewardManager;
     }
 
     public get roomBehaviorManager(): BehaviorManager {

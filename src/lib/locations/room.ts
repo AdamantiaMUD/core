@@ -1,4 +1,5 @@
 import cloneFactory from 'rfdc';
+import Npc from '../mobs/npc';
 import Logger from '../util/logger';
 
 import Area from './area';
@@ -28,7 +29,10 @@ export interface RoomExitDefinition {
 }
 
 export class Room extends GameEntity implements Broadcastable {
-    /* eslint-disable lines-between-class-members */
+    private readonly _npcs: Set<Npc> = new Set();
+    private readonly _players: Set<Player> = new Set();
+    private readonly _spawnedNpcs: Set<Npc> = new Set();
+
     public area: Area;
     public def: RoomDefinition;
     public description: string;
@@ -36,9 +40,7 @@ export class Room extends GameEntity implements Broadcastable {
     public id: string;
     public items: Set<Item> = new Set();
     public name: string;
-    public players: Set<Player> = new Set();
     public title: string;
-    /* eslint-enable lines-between-class-members */
 
     public constructor(def: RoomDefinition, area: Area) {
         super(def);
@@ -57,13 +59,27 @@ export class Room extends GameEntity implements Broadcastable {
         });
     }
 
+    public get npcs(): Set<Npc> {
+        return this._npcs;
+    }
+
+    public get players(): Set<Player> {
+        return this._players;
+    }
+
     public addItem(item: Item): void {
         this.items.add(item);
         item.room = this;
     }
 
+    public addNpc(npc: Npc): void {
+        this._npcs.add(npc);
+        npc.room = this;
+        this.area.addNpc(npc);
+    }
+
     public addPlayer(player: Player): void {
-        this.players.add(player);
+        this._players.add(player);
     }
 
     /**
@@ -78,7 +94,7 @@ export class Room extends GameEntity implements Broadcastable {
         ];
 
         if (proxiedEvents.includes(eventName as string)) {
-            const entities = [...this.players];
+            const entities = [...this._players];
 
             for (const entity of entities) {
                 entity.emit(eventName, ...args);
@@ -99,7 +115,7 @@ export class Room extends GameEntity implements Broadcastable {
     }
 
     public getBroadcastTargets(): Player[] {
-        return [...this.players];
+        return [...this._players];
     }
 
     public getExits(): RoomExitDefinition[] {
@@ -128,8 +144,18 @@ export class Room extends GameEntity implements Broadcastable {
         item.room = null;
     }
 
+    public removeNpc(npc: Npc, removeSpawn: boolean = false): void {
+        this._npcs.delete(npc);
+
+        if (removeSpawn) {
+            this._spawnedNpcs.delete(npc);
+        }
+
+        npc.room = null;
+    }
+
     public removePlayer(player: Player): void {
-        this.players.delete(player);
+        this._players.delete(player);
     }
 
     public spawnItem(state: GameState, entityRef: string): Item {

@@ -1,6 +1,11 @@
 import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import CommandQueue from '../commands/command-queue';
 import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
+import {
+    EquipAlreadyEquippedError,
+    EquipSlotTakenError
+} from '../equipment/equipment-errors';
 import GameEntity, {SerializedGameEntity} from './game-entity';
 import GameState from '../game-state';
 import Inventory from '../equipment/inventory';
@@ -20,7 +25,11 @@ export interface SerializedCharacter extends SerializedGameEntity {
 export class Character extends GameEntity implements Serializable {
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
+    protected readonly _commandQueue: CommandQueue = new CommandQueue();
     protected readonly _effects: EffectList;
+    protected readonly _equipment: Map<string, Item> = new Map();
+    protected readonly _followers: Set<Character> = new Set();
+    protected _following: Character = null;
     protected _inventory: Inventory;
     protected _level: number = 1;
     public name: string = '';
@@ -43,12 +52,24 @@ export class Character extends GameEntity implements Serializable {
         return this._combat;
     }
 
+    public get commandQueue(): CommandQueue {
+        return this._commandQueue;
+    }
+
     public get effects(): EffectList {
         return this._effects;
     }
 
+    public get equipment(): Map<string, Item> {
+        return this._equipment;
+    }
+
     public get inventory(): Inventory {
         return this._inventory;
+    }
+
+    public get isNpc(): boolean {
+        return false;
     }
 
     public get level(): number {
@@ -57,6 +78,29 @@ export class Character extends GameEntity implements Serializable {
 
     public addEffect(effect: Effect): boolean {
         return this._effects.add(effect);
+    }
+
+    /**
+     * @fires Character#gainedFollower
+     */
+    public addFollower(follower: Character): void {
+        this._followers.add(follower);
+        follower.setFollowing(this);
+
+        /**
+         * @event Character#gainedFollower
+         * @param {Character} follower
+         */
+        this.emit('gainedFollower', follower);
+    }
+
+    /**
+     * Move an item to the character's inventory
+     */
+    public addItem(item: Item): void {
+        this._inventory.addItem(item);
+
+        item.carriedBy = this;
     }
 
     public deserialize(data: SerializedCharacter, state: GameState): void {
@@ -74,6 +118,63 @@ export class Character extends GameEntity implements Serializable {
             const startingRoom = state.config.get('startingRoom');
             this.room = state.roomManager.getRoom(startingRoom);
         }
+    }
+
+    /**
+     * @throws EquipSlotTakenError
+     * @throws EquipAlreadyEquippedError
+     * @fires Character#equip
+     * @fires Item#equip
+     */
+    public equip(item: Item, slot: string): void {
+        if (this._equipment.has(slot)) {
+            throw new EquipSlotTakenError();
+        }
+
+        if (item.getMeta('equippedBy')) {
+            throw new EquipAlreadyEquippedError();
+        }
+
+        if (this._inventory instanceof Inventory) {
+            this.removeItem(item);
+        }
+
+        this._equipment.set(slot, item);
+        item.setMeta('equippedBy', this);
+
+        /**
+         * @event Item#equip
+         * @param {Character} equipper
+         */
+        item.emit('equip', this);
+
+        /**
+         * @event Character#equip
+         * @param {string} slot
+         * @param {Item} item
+         */
+        this.emit('equip', slot, item);
+    }
+
+    /**
+     * Begin following another character. If the character follows itself they
+     * stop following.
+     */
+    public follow(target: Character): void {
+        if (target === this) {
+            this.unfollow();
+
+            return;
+        }
+
+        this._following = target;
+        target.addFollower(this);
+
+        /**
+         * @event Character#followed
+         * @param {Character} target
+         */
+        this.emit('followed', target);
     }
 
     /**
@@ -137,8 +238,26 @@ export class Character extends GameEntity implements Serializable {
         return this._effects.hasEffectType(type);
     }
 
+    public hasFollower(target: Character): boolean {
+        return this._followers.has(target);
+    }
+
     public removeEffect(effect: Effect): void {
         this._effects.remove(effect);
+    }
+
+    /**
+     * @fires Character#lostFollower
+     */
+    public removeFollower(follower: Character): void {
+        this._followers.delete(follower);
+        follower._following = null;
+
+        /**
+         * @event Character#lostFollower
+         * @param {Character} follower
+         */
+        this.emit('lostFollower', follower);
     }
 
     /**
@@ -171,6 +290,25 @@ export class Character extends GameEntity implements Serializable {
             name: this.name,
             room: this.room.entityReference,
         };
+    }
+
+    public setFollowing(target: Character): void {
+        this._following = target;
+    }
+
+    /**
+     * Stop following whoever the character was following
+     * @fires Character#unfollowed
+     */
+    public unfollow(): void {
+        this._following.removeFollower(this);
+
+        /**
+         * @event Character#unfollowed
+         * @param {Character} following
+         */
+        this.emit('unfollowed', this._following);
+        this._following = null;
     }
 }
 

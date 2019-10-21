@@ -1,9 +1,8 @@
-import GameState from '../GameState';
-import Logger from '../Logger';
-import Player from '../Player';
-import Quest from './Quest';
-import QuestDefinition from '../interfaces/QuestDefinition';
-import SimpleMap from '../interfaces/SimpleMap';
+import GameState from '../game-state';
+import Logger from '../util/logger';
+import Player from '../players/player';
+import Quest, {QuestDefinition} from './quest';
+import {SimpleMap} from '../../../index';
 
 interface AbstractQuest {
     area: string;
@@ -12,19 +11,12 @@ interface AbstractQuest {
     npc?: string;
 }
 
-/**
- * @property {Map} quests
- */
 export class QuestFactory {
-    /* eslint-disable lines-between-class-members */
-    public quests: Map<string, AbstractQuest> = new Map();
-    /* eslint-enable lines-between-class-members */
+    private readonly _quests: Map<string, AbstractQuest> = new Map();
 
-    public add(areaName: string, id: string, config: QuestDefinition): void {
-        const entityRef = this.makeQuestKey(areaName, id);
-
-        config.entityReference = entityRef;
-        this.quests.set(entityRef, {id: id, area: areaName, config: config});
+    public add(ref: string, areaName: string, id: string, config: QuestDefinition): void {
+        config.entityReference = ref;
+        this._quests.set(ref, {id: id, area: areaName, config: config});
     }
 
     /**
@@ -40,7 +32,7 @@ export class QuestFactory {
 
         const tracker = player.questTracker;
 
-        if (tracker.completedQuests.has(questRef) && !quest.config.repeatable) {
+        if (tracker.completed.has(questRef) && !quest.config.repeatable) {
             return false;
         }
 
@@ -61,7 +53,7 @@ export class QuestFactory {
         player: Player,
         questState: SimpleMap[] = []
     ): Quest {
-        const quest = this.quests.get(qid);
+        const quest = this._quests.get(qid);
 
         if (!quest) {
             throw new Error(`Trying to create invalid quest id [${qid}]`);
@@ -72,7 +64,7 @@ export class QuestFactory {
         instance.state = questState;
 
         for (const goal of quest.config.goals) {
-            const GoalType = state.QuestGoalManager.get(goal.type);
+            const GoalType = state.questGoalManager.get(goal.type);
 
             instance.addGoal(new GoalType(instance, goal.config, player));
         }
@@ -103,7 +95,7 @@ export class QuestFactory {
 
             for (const reward of quest.config.rewards) {
                 try {
-                    const rewardClass = state.QuestRewardManager.get(reward.type);
+                    const rewardClass = state.questRewardManager.get(reward.type);
 
                     if (!rewardClass) {
                         throw new Error(`Quest [${qid}] has invalid reward type ${reward.type}`);
@@ -127,15 +119,11 @@ export class QuestFactory {
      * Get a quest definition. Use `create` if you want an instance of a quest
      */
     public get(qid: string): AbstractQuest {
-        return this.quests.get(qid);
-    }
-
-    public makeQuestKey(area: string, id: number | string): string {
-        return `${area}:${id}`;
+        return this._quests.get(qid);
     }
 
     public set(qid: string, val: AbstractQuest): void {
-        this.quests.set(qid, val);
+        this._quests.set(qid, val);
     }
 }
 

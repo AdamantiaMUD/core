@@ -5,6 +5,9 @@ import yaml from 'js-yaml';
 import AttributeFormula from './attributes/attribute-formula';
 import BehaviorManager from './behaviors/behavior-manager';
 import Command from './commands/command';
+import {QuestDefinition} from './quests/quest';
+import QuestGoal from './quests/quest-goal';
+import QuestReward from './quests/quest-reward';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import GameState from './game-state';
@@ -83,8 +86,12 @@ export class BundleManager {
         const definition: AreaDefinition = {
             bundle: bundle,
             manifest: manifest,
+            quests: [],
             rooms: [],
         };
+
+        Logger.verbose(`LOAD: Area \`${areaName}\`: Quests...`);
+        definition.quests = await this.loadQuests(bundle, areaName);
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
         definition.rooms = await this.loadEntities(
@@ -231,8 +238,8 @@ export class BundleManager {
     private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
-        // await this.loadQuestGoals(bundle, bundlePath);
-        // await this.loadQuestRewards(bundle, bundlePath);
+        await this.loadQuestGoals(bundle, bundlePath);
+        await this.loadQuestRewards(bundle, bundlePath);
         await this.loadAttributes(bundle, bundlePath);
         await this.loadBehaviors(bundle, bundlePath);
         // await this.loadChannels(bundle, bundlePath);
@@ -439,6 +446,89 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Player Events -- END`);
+    }
+
+    private async loadQuestGoals(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'quests', 'goals');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Quest Goals -- START`);
+
+        const files = fs.readdirSync(uri);
+
+        for (const goalFile of files) {
+            const goalPath = path.join(uri, goalFile);
+
+            if (Data.isScriptFile(goalPath, goalFile)) {
+                const goalName = path.basename(goalFile, path.extname(goalFile));
+
+                const goalImport = await import(goalPath);
+                const loader: typeof QuestGoal = goalImport.default;
+
+                Logger.verbose(`LOAD: ${bundle} - Quest Goals -> ${goalName}`);
+
+                this.state.questGoalManager.set(goalName, loader);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Quest Goals -- END`);
+    }
+
+    private async loadQuestRewards(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'quests', 'rewards');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Quest Rewards -- START`);
+        const files = fs.readdirSync(uri);
+
+        for (const rewardFile of files) {
+            const rewardPath = path.join(uri, rewardFile);
+
+            if (Data.isScriptFile(rewardPath, rewardFile)) {
+                const rewardName = path.basename(rewardFile, path.extname(rewardFile));
+
+                const rewardImport = await import(rewardPath);
+                const loader: QuestReward = rewardImport.default;
+
+                Logger.verbose(`LOAD: ${bundle} - Quest Rewards -> ${rewardName}`);
+
+                this.state.questRewardManager.set(rewardName, loader);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Quest Rewards -- END`);
+    }
+
+    private async loadQuests(bundle: string, areaName: string): Promise<string[]> {
+        const loader = this.state.entityLoaderRegistry.get('quests');
+
+        loader.setBundle(bundle);
+        loader.setArea(areaName);
+
+        let quests: QuestDefinition[] = [];
+
+        try {
+            quests = await loader.fetchAll();
+        }
+        catch (err) {
+            // no-op
+        }
+
+        return quests.map(quest => {
+            const ref = `${areaName}:${quest.id}`;
+
+            Logger.verbose(`LOAD: ${bundle} - Areas -> ${areaName} -> Quests -> ${ref}`);
+
+            this.state.questFactory.add(ref, areaName, quest.id, quest);
+
+            return ref;
+        });
     }
 
     private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {

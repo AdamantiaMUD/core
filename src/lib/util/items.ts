@@ -44,7 +44,7 @@ export const findCarrier = (item: Item): Character | Item => {
  * Colorize the given string according to this item's quality
  */
 export const qualityColorize = (item: Item, string: string): string => {
-    const colors = qualityColors[item.metadata.quality || 'common'];
+    const colors = qualityColors[item.getMeta('quality') || 'common'];
     const open = `<${colors.join('><')}>`;
     const close = `</${colors.reverse().join('></')}>`;
 
@@ -64,19 +64,17 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
 
     buf += `| ${qualityColorize(item, sprintf('%-36s', item.name))} |\r\n`;
 
-    const props = item.metadata;
-
     buf += sprintf('| %-36s |\r\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
 
     switch (item.type) {
         case ItemType.WEAPON: {
             buf += sprintf(
                 '| %-18s%18s |\r\n',
-                `${props.minDamage} - ${props.maxDamage} Damage`,
-                `Speed ${props.speed}`
+                `${item.getMeta('minDamage')} - ${item.getMeta('maxDamage')} Damage`,
+                `Speed ${item.getMeta('speed')}`
             );
 
-            const dps = ((props.minDamage + props.maxDamage) / 2) / props.speed;
+            const dps = ((item.getMeta('minDamage') + item.getMeta('maxDamage')) / 2) / item.getMeta('speed');
 
             buf += sprintf('| %-36s |\r\n', `(${dps.toPrecision(2)} damage per second)`);
             break;
@@ -85,7 +83,7 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         case ItemType.ARMOR:
             buf += sprintf(
                 '| %-36s |\r\n',
-                item.metadata.slot[0].toUpperCase() + item.metadata.slot.slice(1)
+                item.getMeta('slot')[0].toUpperCase() + item.getMeta('slot').slice(1)
             );
             break;
 
@@ -97,7 +95,7 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
     }
 
     // copy stats to make sure we don't accidentally modify it
-    const stats = {...props.stats};
+    const stats = {...item.getMeta('stats')};
 
     // always show armor first
     if (stats.armor) {
@@ -116,8 +114,8 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
     }
 
     // custom special effect rendering
-    if (props.specialEffects) {
-        props.specialEffects.forEach(effectText => {
+    if (item.getMeta('specialEffects')) {
+        item.getMeta('specialEffects').forEach(effectText => {
             const text = wrap(effectText, 36).split(/\r\n/gu);
 
             text.forEach(textLine => {
@@ -126,10 +124,10 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         });
     }
 
-    if (props.level) {
-        const cantUse = props.level > player.level ? '<red>%-36s</red>' : '%-36s';
+    if (item.getMeta('level')) {
+        const cantUse = item.getMeta('level') > player.level ? '<red>%-36s</red>' : '%-36s';
 
-        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${props.level}`);
+        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${item.getMeta('level')}`);
     }
 
     buf += `${qualityColorize(item, `'${line(38)}'`)}\r\n`;

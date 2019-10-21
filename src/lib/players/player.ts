@@ -2,6 +2,7 @@ import Character, {SerializedCharacter} from '../entities/character';
 import CommandQueue, {ExecutableCommand} from '../commands/command-queue';
 import GameState from '../game-state';
 import PlayerRole from './player-role';
+import QuestTracker from '../quests/quest-tracker';
 import Room from '../locations/room';
 import {Broadcastable} from '../communication/broadcast';
 import {noop} from '../util/functions';
@@ -18,15 +19,17 @@ export interface SerializedPlayer extends SerializedCharacter {
 }
 
 export class Player extends Character implements Broadcastable {
-    private readonly _commandQueue: CommandQueue = new CommandQueue();
     private _experience: number = 0;
     private _prompt: string = '> ';
+    private readonly _questTracker: QuestTracker;
     private _role: PlayerRole = PlayerRole.PLAYER;
 
     public extraPrompts: Map<string, PromptDefinition> = new Map();
 
-    public get commandQueue(): CommandQueue {
-        return this._commandQueue;
+    public constructor() {
+        super();
+
+        this._questTracker = new QuestTracker(this);
     }
 
     public get experience(): number {
@@ -35,6 +38,10 @@ export class Player extends Character implements Broadcastable {
 
     public get prompt(): string {
         return this._prompt;
+    }
+
+    public get questTracker(): QuestTracker {
+        return this._questTracker;
     }
 
     public get role(): PlayerRole {

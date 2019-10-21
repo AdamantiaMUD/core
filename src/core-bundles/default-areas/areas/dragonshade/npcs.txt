@@ -1,0 +1,40 @@
+Aldarl: Female Halfling Illusionist, Neutral. Aldarl is short and willowy, with silver hair and hazel eyes. She wears gray robes and wields a quarterstaff. Aldarl is fascinated by death.
+Alin: Male Dwarf Craftsman, Neutral. Alin is willowy, with black hair and dark amber eyes. He wears travel-stained clothing and carries an oak staff.
+Alix: Female Human Priest, Evil. Alix has long blonde hair and brown eyes, and walks with a limp. She wears modest garments and a fox fur cape. Alix lost her reflection to a hag.
+Alyn Spage: Female Halfling Fighter, Good. Alyn has blonde hair and blue eyes. She wears chain mail and wields a flail and shield.
+Antan: Female Halfling Thief, Evil. Antan has cropped silver hair and sharp gray eyes. She wears leather armor and wields a long sword and dagger. Antan seeks revenge against the aristocrat who framed her.
+Ariel: Female Elf Fighter, Evil. Ariel has a long face, with red hair and light green eyes. She wears splint mail and wields a bastard sword.
+Braffolk: Male Human Mercenary, Neutral. Braffolk has white hair and dark gray eyes, and prominent ears. He wears chain mail and wields a long sword and shield. Braffolk is devout and foolhardy.
+Burga: Female Human Mercenary, Good. Burga has a narrow face, with tangled golden hair and gray eyes. She wears chain mail and wields a halberd. Burga is hunting the brigands who murdered her family.
+Burha: Female Human Fighter, Evil. Burha is pleasant in appearance, with thin red hair and large gray eyes. She wears chain mail and wields a mace. Burha is combative and aggressive.
+Ceannmha: Male Elf Ranger, Good. Ceannmha is tall, with thick red hair and blue eyes. He wears chain mail and wields a military pick. Ceannmha is fascinated by ancient history and civilizations.
+Cirdiore: Male Elf Soldier, Neutral. Cirdiore has matted gray hair and blue eyes. He wears studded leather and wields a battle axe. Cirdiore is dying and desperately seeks the secret of immortality.
+Elean: Female Human Servant, Good. Elean has a narrow face, with uneven silver hair and green eyes. She wears well-made clothing and a black cloak. Elean is only friendly towards other humans..
+Enwen: Female Elf Paladin, Good. Enwen has tangled auburn hair and soft gray eyes. She wears banded mail and wields a mace and shield. Enwen is thrifty and steadfast.
+Findalye: Female Elf Scofflaw, Evil. Findalye has golden hair and gray eyes, and sharpened teeth. She wears worn clothing and a wooden holy symbol. Findalye seeks to save her family from financial ruin.
+Gamil: Male Dwarf Fighter, Neutral. Gamil is heavyset, with messy white hair and gray eyes. He wears chain mail and wields a mace. Gamil is jealous and proud.
+Gedu: Female Dwarf Entertainer, Evil. Gedu is short and thin, with matted blonde hair and gray eyes. She wears well-made clothing and a rabbit fur cape.
+Godfri: Male Dwarf Craftsman, Evil. Godfri has long white hair and dark gray eyes, and numerous unusual tattoos. He wears simple clothing and carries a long knife.
+Halfo Tonell: Male Halfling Craftsman, Neutral. Halfo has a narrow face, with braided silver hair and large blue eyes. He wears sturdy clothing and a white cloak.
+Herda: Female Dwarf Necromancer, Evil. Herda has messy golden hair and brown eyes, and wears glasses with bronze rims. She wears well-made clothing and wields a short sword and dagger.
+Hildrga Orsteddotr: Female Dwarf Mercenary, Neutral. Hildrga is pleasant in appearance, with blonde hair and soft gray eyes. She wears chain mail and wields a mace and javelins. Hildrga is proud and flamboyant.
+Khainarv: Male Dwarf Ranger, Good. Khainarv is common in appearance, with auburn hair and amber eyes. He wears studded leather and wields a flail.
+Mary Barne: Female Human Druid, Neutral. Mary is exceptionally beautiful, with black hair and bright amber eyes. She wears leather armor and wields a scimitar and darts.
+Mithelye: Female Elf Fighter, Neutral. Mithelye is tall and slender, with silver hair and sharp green eyes. She wears splint mail and wields a military pick. Mithelye is cursed with wild tremors.
+Narder: Male Halfling Assassin, Good. Narder is tall and overweight, with red hair and brown eyes. He wears leather armor and wields a poisoned club and sling.
+Nelye: Female Elf Necromancer, Evil. Nelye has uneven copper hair and hazel eyes, and numerous horrific scars. She wears well-made clothing and wields a club and sling. Nelye has an arcane familiar, a vampire bat named Edhen.
+Nimrime: Female Elf Illusionist, Good. Nimrime is tall and slender, with white hair and dark amber eyes. She wears topaz robes and wields a quarterstaff and sling. Nimrime has an arcane familiar, a gray rat named Bele.
+Priely Gerop: Female Halfling Necromancer, Evil. Priely has braided auburn hair and light green eyes, and a maimed left hand. She wears dark robes and wields a long sword. Priely is craven and secretive.
+Randi Nareson: Male Dwarf Necromancer, Evil. Randi has a narrow face, with auburn hair and dark green eyes. He wears dark robes and wields a long sword and dagger.
+Reder: Male Human Cleric, Good. Reder has silver hair and light brown eyes, and a messy moustache. He wears splint mail and wields a mace. Reder is kind and shrewd.
+Riffolk: Male Halfling Fighter, Evil. Riffolk has long gray hair and narrow green eyes, and a magical tattoo on his arm. He wears plate mail and wields a glaive-guisarme. Riffolk has an animal companion, a gray wolf named Hado.
+Rithga: Female Dwarf Soldier, Neutral. Rithga has brown hair and blue eyes, and a round nose. She wears scale mail and wields a military pick and heavy crossbow.
+Robert Maycey: Male Human Fighter, Neutral. Robert has thin black hair and blue eyes, and a magical tattoo on his leg. He wears chain mail and wields a short sword. Robert suffers a paralyzing fear of open spaces.
+Sanzig: Female Dwarf Mercenary, Evil. Sanzig has tangled white hair and large brown eyes. She wears leather armor and wields a mace and javelins.
+Sunnga: Female Human Scofflaw, Neutral. Sunnga has red hair and green eyes, and a distinctive tattoo on her arm. She wears simple clothing and riding boots. Sunnga is gullible and jealous.
+Suse: Female Halfling Mercenary, Neutral. Suse has a narrow face, with white hair and dark amber eyes. She wears leather armor and wields a short sword and shield. Suse has an animal companion, a sable ferret named Mene.
+Tanaeli: Male Elf Merchant, Good. Tanaeli has silver hair and large green eyes. He wears sturdy clothing and carries a long knife.
+Tiny: Male Human Thief, Neutral. Tiny has blonde hair and amber eyes. He wears leather armor and wields a club. Tiny seeks only fame and glory.
+Tolme: Male Halfling Fighter, Neutral. Tolme has braided gray hair and dark green eyes, and small ears. He wears banded mail and wields a spear. Tolme is a pack-rat, and carries a satchel of random junk.
+Wine: Male Human Thief, Evil. Wine has a narrow face, with auburn hair and narrow brown eyes. He wears leather armor and wields a dagger.
+Wynney: Female Human Craftsman, Good. Wynney is elegant in appearance, with red hair and light brown eyes. She wears plain clothing and carries an elder staff. Wynney is kind and truthful.

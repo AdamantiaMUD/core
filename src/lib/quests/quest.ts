@@ -3,7 +3,10 @@ import cloneFactory from 'rfdc';
 
 import GameState from '../game-state';
 import Player from '../players/player';
-import QuestGoal, {QuestGoalDefinition} from './quest-goal';
+import QuestGoal, {
+    QuestGoalDefinition,
+    SerializedQuestGoal
+} from './quest-goal';
 import Serializable from '../data/serializable';
 import {SimpleMap} from '../../../index';
 import {QuestRewardDefinition} from './quest-reward';
@@ -23,6 +26,12 @@ export interface QuestDefinition {
     requires?: string[];
     rewards: QuestRewardDefinition[];
     title: string;
+}
+
+export interface SerializedQuest extends SimpleMap {
+    config: {desc: string; level: number; title: string};
+    progress: {percent: number; display: string};
+    state: SerializedQuestGoal[];
 }
 
 export class Quest extends EventEmitter implements Serializable {

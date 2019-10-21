@@ -13,6 +13,11 @@ export interface QuestGoalDefinition {
     type: string;
 }
 
+export interface SerializedQuestGoal extends SimpleMap {
+    config: SimpleMap;
+    state: SimpleMap;
+}
+
 /**
  * Representation of a goal of a quest.
  * The {@link http://ranviermud.com/extending/areas/quests/|Quest guide} has instructions on to
@@ -20,12 +25,10 @@ export interface QuestGoalDefinition {
  * @extends EventEmitter
  */
 export class QuestGoal extends EventEmitter implements Serializable {
-    /* eslint-disable lines-between-class-members */
     public config: SimpleMap;
     public player: Player;
     public quest: Quest;
     public state: SimpleMap = {};
-    /* eslint-enable lines-between-class-members */
 
     public constructor(quest: Quest, config: SimpleMap, player: Player) {
         super();
