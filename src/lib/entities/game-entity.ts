@@ -20,6 +20,8 @@ export interface SerializedGameEntity {
 export class GameEntity extends EventEmitter implements Metadatable, Serializable {
     private _metadata: SimpleMap = {};
 
+    protected _state: GameState;
+
     public __pruned: boolean = false;
     public __hydrated: boolean = false;
     public entityReference: string = '';

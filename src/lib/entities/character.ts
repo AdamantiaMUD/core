@@ -22,6 +22,8 @@ export interface SerializedCharacter extends SerializedScriptableEntity {
     room: string;
 }
 
+const DEFAULT_MAX_INVENTORY = 20;
+
 export class Character extends ScriptableEntity implements Serializable {
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
@@ -69,6 +71,18 @@ export class Character extends ScriptableEntity implements Serializable {
     }
 
     public get inventory(): Inventory {
+        if (!(this._inventory instanceof Inventory)) {
+            this._inventory = new Inventory();
+
+            if (!this.isNpc && !isFinite(this.inventory.getMax())) {
+                this.inventory
+                    .setMax(this._state.config.get(
+                        'maxPlayerInventory',
+                        DEFAULT_MAX_INVENTORY
+                    ));
+            }
+        }
+
         return this._inventory;
     }
 
