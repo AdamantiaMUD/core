@@ -98,6 +98,7 @@ export class BundleManager {
         const definition: AreaDefinition = {
             bundle: bundle,
             manifest: manifest,
+            npcs: [],
             quests: [],
             rooms: [],
         };
@@ -112,6 +113,15 @@ export class BundleManager {
             areaName,
             'items',
             this.state.itemFactory
+        );
+
+        Logger.verbose(`LOAD: Area \`${areaName}\`: NPCs...`);
+        definition.npcs = await this.loadEntities(
+            bundle,
+            bundlePath,
+            areaName,
+            'npcs',
+            this.state.mobFactory
         );
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);

@@ -21,6 +21,10 @@ export class CharacterCombat {
         this._roundStarted = 0;
     }
 
+    public get combatants(): Set<Character> {
+        return this._combatants;
+    }
+
     public addCombatant(target: Character): void {
         if (this.isInCombat(target)) {
             return;

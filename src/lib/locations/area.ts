@@ -9,6 +9,7 @@ import {SimpleMap} from '../../../index';
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
     manifest: AreaManifest;
+    npcs: string[];
     quests: string[];
     rooms: string[];
 }

@@ -1,5 +1,6 @@
 import Area from '../locations/area';
 import EntityFactory from '../entities/entity-factory';
+import Logger from '../util/logger';
 import Npc, {NpcDefinition} from './npc';
 
 /**
@@ -28,7 +29,7 @@ export class MobFactory extends EntityFactory<Npc, NpcDefinition> {
             this._scripts.get(entityRef).attach(npc);
         }
 
-        npc.area = area;
+        Logger.verbose(`Created NPC "${npc.entityReference}"`);
 
         return npc;
     }

@@ -24,9 +24,18 @@ export interface RoomDefinition extends ScriptableEntityDefinition {
     doors?: {[key: string]: Door};
     exits?: RoomExitDefinition[];
     id: string;
+    items?: RoomEntityDefinition[];
+    npcs?: RoomEntityDefinition[];
     title: string;
     // @TODO: should this be an enum?
     type?: string;
+}
+
+export interface RoomEntityDefinition {
+    id: string;
+    maxLoad?: number;
+    replaceOnRespawn?: boolean;
+    respawnChance?: number;
 }
 
 export interface RoomExitDefinition {
@@ -37,6 +46,8 @@ export interface RoomExitDefinition {
 }
 
 export class Room extends ScriptableEntity implements Broadcastable {
+    private readonly _defaultItems: RoomEntityDefinition[];
+    private readonly _defaultNpcs: RoomEntityDefinition[];
     private readonly _doors: Map<string, Door> = new Map();
     private readonly _npcs: Set<Npc> = new Set();
     private readonly _players: Set<Player> = new Set();
@@ -67,6 +78,9 @@ export class Room extends ScriptableEntity implements Broadcastable {
             .forEach(([dest, door]: [string, Door]) => {
                 this._doors.set(dest, door);
             });
+
+        this._defaultItems = def.items ?? [];
+        this._defaultNpcs = def.npcs ?? [];
 
         super.deserialize({
             metadata: def.metadata,
@@ -173,12 +187,30 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     public hydrate(state: GameState): void {
+        super.hydrate(state);
+
         /**
          * Fires when the room is created but before it has hydrated its default
          * contents. Use the `ready` event if you need default items to be there.
          * @event Room#spawn
          */
         this.emit('spawn');
+
+        this.items.clear();
+
+        /*
+         * NOTE: This method effectively defines the fact that items/npcs do not
+         * persist through reboot unless they're stored on a player.
+         * If you would like to change that functionality this is the place
+         */
+
+        this._defaultItems.forEach((item: RoomEntityDefinition): void => {
+            this.spawnItem(state, item.id);
+        });
+
+        this._defaultNpcs.forEach((npc: RoomEntityDefinition): void => {
+            this.spawnNpc(state, npc.id);
+        });
     }
 
     /**
@@ -235,7 +267,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     public spawnItem(state: GameState, entityRef: string): Item {
-        Logger.verbose(`\tSPAWN: Adding item [${entityRef}] to room [${this.title}]`);
+        Logger.verbose(`SPAWN: Adding item [${entityRef}] to room [${this.title}]`);
 
         const newItem = state.itemFactory.create(entityRef, this.area);
 
@@ -252,6 +284,27 @@ export class Room extends ScriptableEntity implements Broadcastable {
         newItem.emit('spawn');
 
         return newItem;
+    }
+
+    public spawnNpc(state: GameState, entityRef: string): Npc {
+        Logger.verbose(`SPAWN: Adding npc [${entityRef}] to room [${this.title}]`);
+        const newNpc = state.mobFactory.create(entityRef, this.area);
+
+        newNpc.hydrate(state);
+        newNpc.sourceRoom = this;
+
+        this.area.addNpc(newNpc);
+        this.addNpc(newNpc);
+        this._spawnedNpcs.add(newNpc);
+
+        Logger.verbose(`Spawned NPC "${newNpc.entityReference}"`);
+
+        /**
+         * @event Npc#spawn
+         */
+        newNpc.emit('spawn');
+
+        return newNpc;
     }
 
     public unlockDoor(fromRoom: Room = null): void {

@@ -24,6 +24,13 @@
                 "roomId": "dragonshade:r0005",
                 "direction": "west"
             }
+        ],
+        "npcs": [
+            {
+                "id": "dragonshade:m0001",
+                "respawnChance": 100,
+                "maxLoad": 1
+            }
         ]
     },
     {

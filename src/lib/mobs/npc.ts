@@ -45,7 +45,6 @@ export class Npc extends Character implements Scriptable, Serializable {
     public shortName: string;
     public sourceRoom: Room;
     public uuid: string;
-    /* eslint-enable lines-between-class-members */
 
     public constructor(area, data: NpcDefinition) {
         super();
@@ -100,7 +99,7 @@ export class Npc extends Character implements Scriptable, Serializable {
         state.mobManager.add(this);
 
         for (const defaultItemId of this.defaultItems) {
-            Logger.verbose(`\tDIST: Adding item [${defaultItemId}] to npc [${this.name}]`);
+            Logger.verbose(`DIST: Adding item [${defaultItemId}] to npc [${this.name}]`);
             const newItem = state.itemFactory.create(defaultItemId, this.area);
 
             newItem.hydrate(state);
@@ -110,7 +109,7 @@ export class Npc extends Character implements Scriptable, Serializable {
 
         for (const [slot, defaultEqId] of Object.entries(this.defaultEquipment)) {
             /* eslint-disable-next-line max-len */
-            Logger.verbose(`\tDIST: Equipping item [${defaultEqId}] to npc [${this.name}] in slot [${slot}]`);
+            Logger.verbose(`DIST: Equipping item [${defaultEqId}] to npc [${this.name}] in slot [${slot}]`);
 
             const newItem = state.itemFactory.create(defaultEqId, this.area);
 
