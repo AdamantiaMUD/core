@@ -297,8 +297,6 @@ export class Room extends ScriptableEntity implements Broadcastable {
         this.addNpc(newNpc);
         this._spawnedNpcs.add(newNpc);
 
-        Logger.verbose(`Spawned NPC "${newNpc.entityReference}"`);
-
         /**
          * @event Npc#spawn
          */

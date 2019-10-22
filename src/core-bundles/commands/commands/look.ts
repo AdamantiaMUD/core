@@ -149,7 +149,7 @@ const lookRoom = (state: GameState, player: Player): void => {
                 break;
         }
 
-        const desc = npc.roomDesc ?? npc.description;
+        const desc = npc.roomDesc || npc.description;
 
         sayAt(player, `[${npcLabel}] ${desc}${combatantsDisplay}`);
     });
@@ -202,6 +202,7 @@ const lookEntity = (state: GameState, player: Player, rawArgs: string): void => 
         return;
     }
 
+    sayAt(player, `You look at ${entity.name}\r\n`, 80);
     sayAt(player, entity.description, 80);
 
     if (entity.timeUntilDecay) {

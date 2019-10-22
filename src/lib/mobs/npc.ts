@@ -60,17 +60,18 @@ export class Npc extends Character implements Scriptable, Serializable {
 
         this.area = area;
         this.script = data.script;
-        this.corpseDesc = data.corpseDesc || '';
-        this.defaultEquipment = data.defaultEquipment || {};
-        this.defaultItems = data.items || [];
+        this.corpseDesc = data.corpseDesc ?? '';
+        this.defaultEquipment = data.defaultEquipment ?? {};
+        this.defaultItems = data.items ?? [];
         this.description = data.description;
         this.entityReference = data.entityReference;
         this.id = data.id;
         this.keywords = data.keywords;
-        this.quests = data.quests || [];
-        this.roomDesc = data.roomDesc || '';
-        this.shortName = data.shortName || '';
-        this.uuid = data.uuid || uuid();
+        this.name = data.name;
+        this.quests = data.quests ?? [];
+        this.roomDesc = data.roomDesc ?? '';
+        this.shortName = data.shortName ?? '';
+        this.uuid = data.uuid ?? uuid();
     }
 
     public get isNpc(): boolean {

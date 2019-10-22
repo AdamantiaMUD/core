@@ -23,13 +23,11 @@ export class MobFactory extends EntityFactory<Npc, NpcDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        const npc = new Npc(area, definition);
+        const npc = new Npc(area, {...definition, entityReference: entityRef});
 
         if (this._scripts.has(entityRef)) {
             this._scripts.get(entityRef).attach(npc);
         }
-
-        Logger.verbose(`Created NPC "${npc.entityReference}"`);
 
         return npc;
     }

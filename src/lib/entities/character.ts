@@ -220,7 +220,7 @@ export class Character extends ScriptableEntity implements Serializable {
     public getBaseAttribute(attr: string): number {
         const att = this._attributes.get(attr);
 
-        return att && att.base;
+        return att?.base;
     }
 
     public getItem(itemRef: string): Item {
