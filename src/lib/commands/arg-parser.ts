@@ -9,7 +9,7 @@ export class ArgParser {
      */
     public static parseDot(
         search: string,
-        list,
+        list: Iterable<any>,
         returnKey: boolean = false
     ): any {
         if (!list) {

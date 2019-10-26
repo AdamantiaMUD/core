@@ -46,7 +46,7 @@ export const serverEvents: ServerEventListenersDefinition = {
                 state.attachServerStream(stream);
 
                 stream.write('Connecting...\n');
-                Logger.log('User connected...');
+                Logger.info('User connected...');
 
                 // @see: bundles/ranvier-events/events/login.js
                 stream.emit('intro', stream);
@@ -74,7 +74,7 @@ export const serverEvents: ServerEventListenersDefinition = {
                     process.exit(1);
                 });
 
-            Logger.log(`Telnet server started on port: ${port}...`);
+            Logger.info(`Telnet server started on port: ${port}...`);
         },
 
         shutdown: () => () => {

@@ -60,22 +60,12 @@ export class CharacterAttributes implements Serializable {
         return this._attributes.has(key);
     }
 
-    public lower(key: string, amount: number): void {
+    public modify(key: string, amount: number): void {
         if (!this.has(key)) {
             throw new Error(`Invalid attribute ${key}`);
         }
 
-        this.get(key).lower(amount);
-
-        this._target.emit('attribute-update', key, this.get(key));
-    }
-
-    public raise(key: string, amount: number): void {
-        if (!this.has(key)) {
-            throw new Error(`Invalid attribute ${key}`);
-        }
-
-        this.get(key).raise(amount);
+        this.get(key).modify(amount);
 
         this._target.emit('attribute-update', key, this.get(key));
     }

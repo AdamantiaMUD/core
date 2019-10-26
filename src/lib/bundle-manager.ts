@@ -5,17 +5,19 @@ import yaml from 'js-yaml';
 import AttributeFormula from './attributes/attribute-formula';
 import BehaviorManager from './behaviors/behavior-manager';
 import Command from './commands/command';
-import {QuestDefinition} from './quests/quest';
-import QuestGoal from './quests/quest-goal';
-import QuestReward from './quests/quest-reward';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import GameState from './game-state';
 import Helpfile, {HelpfileOptions} from './help/helpfile';
 import Logger from './util/logger';
+import NpcClass from './classes/npc-class';
+import PlayerClass from './classes/player-class';
+import QuestGoal from './quests/quest-goal';
+import QuestReward from './quests/quest-reward';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {InputEventListenerDefinition} from './events/input-events';
 import {PlayerEventListenerFactory} from './events/player-events';
+import {QuestDefinition} from './quests/quest';
 import {ServerEventListenersDefinition} from './events/server-events';
 import {
     BehaviorDefinition,
@@ -267,6 +269,8 @@ export class BundleManager {
         await this.loadAttributes(bundle, bundlePath);
         await this.loadBehaviors(bundle, bundlePath);
         // await this.loadChannels(bundle, bundlePath);
+        await this.loadNpcClasses(bundle, bundlePath);
+        await this.loadPlayerClasses(bundle, bundlePath);
         await this.loadCommands(bundle, bundlePath);
         await this.loadEffects(bundle, bundlePath);
         await this.loadInputEvents(bundle, bundlePath);
@@ -477,6 +481,62 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Input Events -- END`);
+    }
+
+    private async loadNpcClasses(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'classes', 'npcs');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - NPC Classes -- START`);
+        const files = fs.readdirSync(uri);
+
+        for (const classFile of files) {
+            const classPath = path.join(uri, classFile);
+
+            if (Data.isScriptFile(classPath, classFile)) {
+                const className = path.basename(classFile, path.extname(classFile));
+
+                const classImport = await import(classPath);
+                const classDef: NpcClass = classImport.default;
+
+                Logger.verbose(`LOAD: ${bundle} - NPC Classes -> ${className}`);
+
+                this.state.npcClassManager.set(className, classDef);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - NPC Classes -- END`);
+    }
+
+    private async loadPlayerClasses(bundle: string, bundlePath: string): Promise<void> {
+        const uri = path.join(bundlePath, 'classes', 'players');
+
+        if (!fs.existsSync(uri)) {
+            return Promise.resolve();
+        }
+
+        Logger.info(`LOAD: ${bundle} - Player Classes -- START`);
+        const files = fs.readdirSync(uri);
+
+        for (const classFile of files) {
+            const classPath = path.join(uri, classFile);
+
+            if (Data.isScriptFile(classPath, classFile)) {
+                const className = path.basename(classFile, path.extname(classFile));
+
+                const classImport = await import(classPath);
+                const classDef: PlayerClass = classImport.default;
+
+                Logger.verbose(`LOAD: ${bundle} - Player Classes -> ${className}`);
+
+                this.state.playerClassManager.set(className, classDef);
+            }
+        }
+
+        Logger.info(`LOAD: ${bundle} - Player Classes -- END`);
     }
 
     private async loadPlayerEvents(bundle: string, bundlePath: string): Promise<void> {

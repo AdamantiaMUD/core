@@ -35,6 +35,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
     public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
         this.entityReference = data.entityReference ?? '';
         this._metadata = clone(data.metadata ?? {});
+        this._state = state;
     }
 
     /**

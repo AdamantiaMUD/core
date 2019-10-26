@@ -3,9 +3,6 @@
 // import Broadcast from '../../../lib/communication/broadcast';
 // import {CommandDefinitionFactory} from '../../../lib/commands/command';
 //
-// import Combat from '../../combat/lib/Combat';
-// import PlayerClass from '../../player-classes/lib/PlayerClass';
-//
 // const {
 //     /* eslint-disable-next-line id-length */
 //     at,

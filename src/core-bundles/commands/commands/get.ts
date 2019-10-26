@@ -21,6 +21,7 @@ const pickup = (item: Item, container: Item, player: Player): void => {
     else {
         player.room.removeItem(item);
     }
+
     player.addItem(item);
 
     sayAt(player, `<green>You receive loot: </green>${ItemUtil.display(item)}<green>.</green>`);

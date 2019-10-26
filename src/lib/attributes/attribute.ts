@@ -37,17 +37,30 @@ export class Attribute implements Serializable {
         this.metadata = metadata;
     }
 
+    private lower(amount: number): void {
+        this.raise(-1 * amount);
+    }
+
+    private raise(amount: number): void {
+        this.delta = Math.min(this.delta + amount, 0);
+    }
+
     public deserialize(data: SerializedAttribute): void {
         this.base = data.base;
         this.delta = data.delta ?? 0;
     }
 
-    public lower(amount: number): void {
-        this.raise(-1 * amount);
+    public modify(amount: number): void {
+        if (amount < 0) {
+            this.lower(amount);
+        }
+        else {
+            this.raise(amount);
+        }
     }
 
-    public raise(amount: number): void {
-        this.delta = Math.min(this.delta + amount, 0);
+    public reset(): void {
+        this.delta = 0;
     }
 
     public serialize(): SerializedAttribute {

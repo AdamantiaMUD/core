@@ -30,12 +30,12 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const fromList = player.inventory;
+        const fromList = player.inventory.items;
         const fromArg = parts[0];
         const toArg = parts[1];
         const item = dot(fromArg, fromList);
         const toContainer = dot(toArg, player.room.items)
-                        || dot(toArg, player.inventory)
+                        || dot(toArg, player.inventory.items)
                         || dot(toArg, player.equipment);
 
         if (!item) {

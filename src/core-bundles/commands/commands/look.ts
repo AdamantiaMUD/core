@@ -187,7 +187,7 @@ const lookEntity = (state: GameState, player: Player, rawArgs: string): void => 
 
     entity = entity || ArgParser.parseDot(search, room.players);
     entity = entity || ArgParser.parseDot(search, room.npcs);
-    entity = entity || ArgParser.parseDot(search, player.inventory);
+    entity = entity || ArgParser.parseDot(search, player.inventory.items);
 
     if (!entity) {
         sayAt(player, "You don't see anything like that here.");

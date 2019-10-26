@@ -1,10 +1,12 @@
+import Broadcast from '../communication/broadcast';
 import Character, {SerializedCharacter} from '../entities/character';
-import CommandQueue, {ExecutableCommand} from '../commands/command-queue';
 import GameState from '../game-state';
+import Party from '../groups/party';
 import PlayerRole from './player-role';
 import QuestTracker from '../quests/quest-tracker';
 import Room from '../locations/room';
 import {Broadcastable} from '../communication/broadcast';
+import {ExecutableCommand} from '../commands/command-queue';
 import {noop} from '../util/functions';
 
 export interface PromptDefinition {
@@ -20,6 +22,7 @@ export interface SerializedPlayer extends SerializedCharacter {
 
 export class Player extends Character implements Broadcastable {
     private _experience: number = 0;
+    private _party: Party = null;
     private _prompt: string = '> ';
     private readonly _questTracker: QuestTracker;
     private _role: PlayerRole = PlayerRole.PLAYER;
@@ -34,6 +37,10 @@ export class Player extends Character implements Broadcastable {
 
     public get experience(): number {
         return this._experience;
+    }
+
+    public get party(): Party {
+        return this._party;
     }
 
     public get prompt(): string {
@@ -190,6 +197,22 @@ export class Player extends Character implements Broadcastable {
             prompt: this._prompt,
             role: this._role,
         };
+    }
+
+    public setParty(party: Party): void {
+        this._party = party;
+    }
+
+    public setRole(role: PlayerRole, approver: Player): boolean {
+        if (approver.role !== PlayerRole.ADMIN) {
+            Broadcast.sayAt(approver, "You can't change other players' roles!");
+
+            return false;
+        }
+
+        this._role = role;
+
+        return true;
     }
 }
 

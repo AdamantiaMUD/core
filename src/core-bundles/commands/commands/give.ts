@@ -40,7 +40,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const item = dot(itemKey, player.inventory) as Item;
+        const item = dot(itemKey, player.inventory.items) as Item;
 
         if (!item) {
             sayAt(player, 'You don\'t have that.');
@@ -89,7 +89,7 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAt(player, `<green>You give <white>${target.name}</white>: ${ItemUtil.display(item)}.</green>`);
 
-        if (!target.isNpc) {
+        if (!target.isNpc()) {
             sayAt(target as Player, `<green>${player.name} gives you: ${ItemUtil.display(item)}.</green>`);
         }
     },

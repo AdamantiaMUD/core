@@ -1,6 +1,7 @@
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import Logger from '../../../lib/util/logger';
 
 export const evt: PlayerEventListenerFactory = {
     name: 'save',

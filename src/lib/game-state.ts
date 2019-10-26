@@ -3,12 +3,15 @@ import path from 'path';
 import {CommanderStatic} from 'commander';
 
 import AbilityManager from './abilities/ability-manager';
+import CombatEngine from './combat/combat-engine';
+import PartyManager from './groups/party-manager';
 import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
 import AreaManager from './locations/area-manager';
 import AttributeFactory from './attributes/attribute-factory';
 import BehaviorManager from './behaviors/behavior-manager';
 import ChannelManager from './communication/channels/channel-manager';
+import CharacterClassManager from './classes/character-class-manager';
 import CommandManager from './commands/command-manager';
 import Config from './util/config';
 import Data from './util/data';
@@ -38,6 +41,7 @@ export class GameState {
     private readonly _areaManager: AreaManager;
     private readonly _attributeFactory: AttributeFactory = new AttributeFactory();
     private readonly _channelManager: ChannelManager = new ChannelManager();
+    private _combat: CombatEngine = null;
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
     private readonly _effectFactory: EffectFactory = new EffectFactory();
@@ -50,6 +54,9 @@ export class GameState {
     private readonly _mobBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _mobFactory: MobFactory = new MobFactory();
     private readonly _mobManager: MobManager = new MobManager();
+    private readonly _npcClassManager: CharacterClassManager = new CharacterClassManager();
+    private readonly _partyManager: PartyManager = new PartyManager();
+    private readonly _playerClassManager: CharacterClassManager = new CharacterClassManager();
     private readonly _playerManager: PlayerManager = new PlayerManager();
     private readonly _questFactory: QuestFactory = new QuestFactory();
     private readonly _questGoalManager: QuestGoalManager = new QuestGoalManager();
@@ -129,6 +136,10 @@ export class GameState {
         return this._channelManager;
     }
 
+    public get combat(): CombatEngine {
+        return this._combat;
+    }
+
     public get commandManager(): CommandManager {
         return this._commandManager;
     }
@@ -177,6 +188,18 @@ export class GameState {
         return this._mobManager;
     }
 
+    public get npcClassManager(): CharacterClassManager {
+        return this._npcClassManager;
+    }
+
+    public get partyManager(): PartyManager {
+        return this._partyManager;
+    }
+
+    public get playerClassManager(): CharacterClassManager {
+        return this._playerClassManager;
+    }
+
     public get playerManager(): PlayerManager {
         return this._playerManager;
     }
@@ -219,6 +242,10 @@ export class GameState {
 
     public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {
         this._inputEventManager.attach(stream);
+    }
+
+    public setCombatEngine(engine: CombatEngine): void {
+        this._combat = engine;
     }
 
     public startServer(commander: CommanderStatic): void {

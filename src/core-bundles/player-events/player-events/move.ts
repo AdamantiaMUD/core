@@ -58,9 +58,8 @@ export const evt: PlayerEventListenerFactory = {
 
             for (const follower of player.followers) {
                 if (!(follower.room !== oldRoom)) {
-                    if (follower.isNpc) {
-                        /* eslint-disable-next-line no-extra-parens */
-                        (follower as Npc).moveTo(nextRoom);
+                    if (follower.isNpc()) {
+                        follower.moveTo(nextRoom);
                     }
                     else {
                         sayAt(follower as Player, `\r\nYou follow ${player.name} to ${nextRoom.title}.`);

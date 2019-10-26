@@ -43,7 +43,7 @@ export class Damage {
     public commit(target: Character): void {
         const finalAmount = this.evaluate(target);
 
-        target.attributes.lower(this.attribute, finalAmount);
+        target.attributes.modify(this.attribute, -1 * finalAmount);
 
         if (this.attacker) {
             /**

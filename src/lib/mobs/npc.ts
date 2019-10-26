@@ -74,10 +74,6 @@ export class Npc extends Character implements Scriptable, Serializable {
         this.uuid = data.uuid ?? uuid();
     }
 
-    public get isNpc(): boolean {
-        return true;
-    }
-
     public emit(name: string | symbol, ...args: any[]): boolean {
         /*
          * Squelch events on a pruned entity. Attempts to prevent the case
@@ -119,6 +115,10 @@ export class Npc extends Character implements Scriptable, Serializable {
             this.equip(newItem, slot);
         }
 
+        return true;
+    }
+
+    public isNpc(): this is Npc {
         return true;
     }
 

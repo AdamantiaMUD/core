@@ -22,7 +22,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const item: Item = ArgParser.parseDot(arg, player.inventory);
+        const item: Item = ArgParser.parseDot(arg, player.inventory.items);
 
         if (!item) {
             sayAt(player, "You aren't carrying anything like that.");

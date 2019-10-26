@@ -3,17 +3,18 @@ import CharacterCombat from '../combat/character-combat';
 import CommandQueue from '../commands/command-queue';
 import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
-import {
-    EquipAlreadyEquippedError,
-    EquipSlotTakenError
-} from '../equipment/equipment-errors';
 import GameState from '../game-state';
 import Inventory from '../equipment/inventory';
 import Item from '../equipment/item';
+import Npc from '../mobs/npc';
 import Room from '../locations/room';
 import ScriptableEntity, {SerializedScriptableEntity} from './scriptable-entity';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
+import {
+    EquipAlreadyEquippedError,
+    EquipSlotTakenError, InventoryFullError
+} from '../equipment/equipment-errors';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -32,7 +33,7 @@ export class Character extends ScriptableEntity implements Serializable {
     protected readonly _equipment: Map<string, Item> = new Map();
     protected readonly _followers: Set<Character> = new Set();
     protected _following: Character = null;
-    protected _inventory: Inventory;
+    protected _inventory: Inventory = null;
     protected _level: number = 1;
     public name: string = '';
     public room: Room = null;
@@ -66,16 +67,20 @@ export class Character extends ScriptableEntity implements Serializable {
         return this._followers;
     }
 
+    public get following(): Character {
+        return this._following;
+    }
+
     public get equipment(): Map<string, Item> {
         return this._equipment;
     }
 
     public get inventory(): Inventory {
-        if (!(this._inventory instanceof Inventory)) {
+        if (this._inventory === null) {
             this._inventory = new Inventory();
 
-            if (!this.isNpc && !isFinite(this.inventory.getMax())) {
-                this.inventory
+            if (!this.isNpc() && !isFinite(this._inventory.getMax())) {
+                this._inventory
                     .setMax(this._state.config.get(
                         'maxPlayerInventory',
                         DEFAULT_MAX_INVENTORY
@@ -84,10 +89,6 @@ export class Character extends ScriptableEntity implements Serializable {
         }
 
         return this._inventory;
-    }
-
-    public get isNpc(): boolean {
-        return false;
     }
 
     public get level(): number {
@@ -122,7 +123,7 @@ export class Character extends ScriptableEntity implements Serializable {
     }
 
     public deserialize(data: SerializedCharacter, state: GameState): void {
-        super.deserialize(data);
+        super.deserialize(data, state);
 
         this._attributes.deserialize(data.attributes ?? {}, state);
 
@@ -268,6 +269,19 @@ export class Character extends ScriptableEntity implements Serializable {
         return this._inventory.items.has(itemRef);
     }
 
+    public isNpc(): this is Npc {
+        return false;
+    }
+
+    public modifyAttribute(attr: string, amount: number): void {
+        if (!this._attributes.has(attr)) {
+            throw new Error(`Invalid attribute ${attr}`);
+        }
+
+        this._attributes.get(attr).modify(amount);
+        this.emit('attribute-update', attr, this.getAttribute(attr));
+    }
+
     public removeEffect(effect: Effect): void {
         this._effects.remove(effect);
     }
@@ -307,6 +321,16 @@ export class Character extends ScriptableEntity implements Serializable {
         item.carriedBy = null;
     }
 
+    public resetAttribute(attr: string): void {
+        if (!this._attributes.has(attr)) {
+            throw new Error(`Invalid attribute ${attr}`);
+        }
+
+        this._attributes.get(attr).reset();
+
+        this.emit('attribute-update', attr, this.getAttribute(attr));
+    }
+
     public serialize(): SerializedCharacter {
         return {
             ...super.serialize(),
@@ -320,6 +344,39 @@ export class Character extends ScriptableEntity implements Serializable {
 
     public setFollowing(target: Character): void {
         this._following = target;
+    }
+
+    /**
+     * Remove equipment in a given slot and move it to the character's inventory
+     *
+     * @throws InventoryFullError
+     * @fires Item#unequip
+     * @fires Character#unequip
+     */
+    public unequip(slot: string): void {
+        if (this._inventory.isFull) {
+            throw new InventoryFullError();
+        }
+
+        const item = this.equipment.get(slot);
+
+        item.setMeta('equippedBy', null);
+
+        this.equipment.delete(slot);
+
+        /**
+         * @event Item#unequip
+         * @param {Character} equipper
+         */
+        item.emit('unequip', this);
+
+        /**
+         * @event Character#unequip
+         * @param {string} slot
+         * @param {Item} item
+         */
+        this.emit('unequip', slot, item);
+        this.addItem(item);
     }
 
     /**

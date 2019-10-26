@@ -19,6 +19,7 @@ export interface ItemDefinition extends ScriptableEntityDefinition {
     id: string;
     keywords: string[];
     level?: number;
+    maxItems?: number;
     name: string;
     roomDesc: string;
     type: ItemType;
@@ -30,7 +31,6 @@ export interface SerializedItem extends SerializedScriptableEntity {
 
 export class Item extends ScriptableEntity implements Serializable {
     public carriedBy: Character | Item = null;
-    public maxItems: number = Infinity;
     public room: Room = null;
     public sourceRoom: Room = null;
 
@@ -41,6 +41,7 @@ export class Item extends ScriptableEntity implements Serializable {
     private readonly _inventory: Inventory = new Inventory();
     private readonly _keywords: string[];
     private readonly _level: number;
+    private readonly _maxItems: number;
     private readonly _name: string;
     private readonly _roomDesc: string;
     private readonly _type: ItemType;
@@ -56,6 +57,7 @@ export class Item extends ScriptableEntity implements Serializable {
         this._flags = def.flags ?? [];
         this._keywords = def.keywords;
         this._level = def.level ?? 0;
+        this._maxItems = def.maxItems ?? Infinity;
         this._name = def.name;
         this._roomDesc = def.roomDesc;
         this._type = def.type;
@@ -88,6 +90,10 @@ export class Item extends ScriptableEntity implements Serializable {
 
     public get level(): number {
         return this._level;
+    }
+
+    public get maxItems(): number {
+        return this._maxItems;
     }
 
     public get name(): string {

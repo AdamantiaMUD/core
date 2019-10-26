@@ -10,7 +10,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'inventory',
     usage: 'inventory',
     command: () => (args: string, player: Player) => {
-        if (!player.inventory || !player.inventory.size) {
+        if (player.inventory.size === 0) {
             sayAt(player, "You aren't carrying anything.");
 
             return;
