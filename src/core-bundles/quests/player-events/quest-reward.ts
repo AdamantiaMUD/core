@@ -1,6 +1,6 @@
 import Player from '../../../lib/players/player';
+import SimpleMap from '../../../lib/util/simple-map';
 import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
-import {SimpleMap} from '../../../../index';
 
 export const evt: PlayerEventListenerFactory = {
     name: 'quest-reward',

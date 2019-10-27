@@ -18,7 +18,7 @@ export const evt: PlayerEventListenerFactory = {
          * @listens Player#updateTick
          */
         return (player: Player) => {
-            if (!player.combat.isInCombat()) {
+            if (!player.combat.isFighting()) {
                 return;
             }
 

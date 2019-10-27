@@ -5,8 +5,8 @@ import Item from '../../../lib/equipment/item';
 import ItemUtil from '../../../lib/util/items';
 import Npc from '../../../lib/mobs/npc';
 import Player from '../../../lib/players/player';
+import SimpleMap from '../../../lib/util/simple-map';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
-import {SimpleMap} from '../../../../index';
 
 const dot = ArgParser.parseDot;
 

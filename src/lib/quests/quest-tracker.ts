@@ -1,8 +1,8 @@
-import {SimpleMap} from '../../../index';
 import GameState from '../game-state';
 import Player from '../players/player';
 import Quest, {SerializedQuest} from './quest';
 import Serializable from '../data/serializable';
+import SimpleMap from '../util/simple-map';
 
 export interface SerializedQuestTracker extends SimpleMap {
     active: {[key: string]: SerializedQuest};

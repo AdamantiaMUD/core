@@ -7,8 +7,8 @@ import Damage from '../combat/damage';
 import Effect from '../effects/effect';
 import GameState from '../game-state';
 import Player from '../players/player';
+import SimpleMap from '../util/simple-map';
 import {EffectDefinition} from '../effects/effect-factory';
-import {SimpleMap} from '../../../index';
 
 const {sayAt} = Broadcast;
 

@@ -1,11 +1,11 @@
 import cloneFactory from 'rfdc';
 
 import Effect, {EffectConfig} from './effect';
+import EffectFlag from './effect-flag';
 import EventManager from '../events/event-manager';
 import GameState from '../game-state';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 import {EffectModifiers} from './effect-modifiers';
-import EffectFlag from './effect-flag';
 
 const clone = cloneFactory();
 

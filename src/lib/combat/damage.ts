@@ -3,7 +3,7 @@ import Character from '../entities/character';
 import Effect from '../effects/effect';
 import Item from '../equipment/item';
 import Room from '../locations/room';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 // @TODO: make this an interface rather than a hard-coded list
 export type DamageSource = Character | Effect | Item | Room | Ability;

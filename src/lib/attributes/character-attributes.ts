@@ -1,9 +1,9 @@
 import Attribute, {SerializedAttribute} from './attribute';
+import Character from '../entities/character';
 import GameState from '../game-state';
 import Logger from '../util/logger';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
-import Character from '../entities/character';
+import SimpleMap from '../util/simple-map';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;

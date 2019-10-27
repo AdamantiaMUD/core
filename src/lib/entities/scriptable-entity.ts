@@ -6,10 +6,10 @@ import GameEntity, {
     GameEntityDefinition,
     SerializedGameEntity
 } from './game-entity';
+import GameState from '../game-state';
 import Logger from '../util/logger';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
-import GameState from '../game-state';
+import SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
 

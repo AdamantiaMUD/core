@@ -10,7 +10,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'flee',
     usage: 'flee [direction]',
     command: state => (direction, player) => {
-        if (!player.combat.isInCombat()) {
+        if (!player.combat.isFighting()) {
             sayAt(player, 'You jump at the sight of your own shadow.');
 
             return;
@@ -42,7 +42,7 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         sayAt(player, 'You cowardly flee from the battle!');
-        player.combat.removeFromCombat();
+        player.combat.disengage();
         player.emit('move', {roomExit});
     },
 };

@@ -1,8 +1,10 @@
 import fs from 'fs';
+import path from 'path';
 import yaml from 'js-yaml';
 
 import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
+import Logger from '../../util/logger';
 
 /**
  * Data source when you have all entities in a single yaml file
@@ -27,9 +29,29 @@ class YamlDataSource extends FileDataSource {
         return new Promise((resolve, reject) => {
             try {
                 const realPath = fs.realpathSync(filepath);
+                Logger.verbose(`Loading file '${realPath}'`);
+
                 const contents = fs.readFileSync(realPath, 'utf8');
 
-                resolve(yaml.load(contents));
+                const currentDirectory = path.dirname(realPath);
+
+                if (contents.trim().endsWith('.yml')) {
+                    const referencedPath = path.join(currentDirectory, contents);
+
+                    Logger.verbose(`Loading actual file '${referencedPath}'`);
+
+                    if (fs.existsSync(referencedPath)) {
+                        const referencedContents = fs.readFileSync(referencedPath, 'utf8');
+
+                        resolve(yaml.load(referencedContents));
+                    }
+                    else {
+                        reject(`The file [${realPath}] referenced another file [${referencedPath}], which did not exist.`);
+                    }
+                }
+                else {
+                    resolve(yaml.load(contents));
+                }
             }
             catch (err) {
                 reject(err);

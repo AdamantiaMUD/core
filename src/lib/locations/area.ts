@@ -3,8 +3,8 @@ import Npc from '../mobs/npc';
 import Player from '../players/player';
 import Room from './room';
 import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
+import SimpleMap from '../util/simple-map';
 import {Broadcastable} from '../communication/broadcast';
-import {SimpleMap} from '../../../index';
 
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;

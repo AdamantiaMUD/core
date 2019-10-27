@@ -4,7 +4,6 @@ import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
 import EventManager from '../events/event-manager';
 import GameState from '../game-state';
-import Logger from '../util/logger';
 import Player, {SerializedPlayer} from './player';
 import {PlayerEventListener} from '../events/player-events';
 

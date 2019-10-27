@@ -4,7 +4,7 @@ import cloneFactory from 'rfdc';
 import GameState from '../game-state';
 import Metadatable from '../data/metadatable';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
 

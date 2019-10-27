@@ -31,7 +31,7 @@ const defaultWanderConfig = {
 export const wander: BehaviorDefinition = {
     listeners: {
         'update-tick': (state: GameState) => (npc: Npc, cfg: WanderConfig | true) => {
-            if (npc.combat.isInCombat() || !npc.room) {
+            if (npc.combat.isFighting() || !npc.room) {
                 return;
             }
 

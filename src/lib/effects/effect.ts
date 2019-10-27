@@ -7,8 +7,8 @@ import Damage from '../combat/damage';
 import EffectFlag from './effect-flag';
 import GameState from '../game-state';
 import Serializable from '../data/serializable';
+import SimpleMap from '../util/simple-map';
 import {EffectModifiers} from './effect-modifiers';
-import {SimpleMap} from '../../../index';
 
 export interface EffectConfig {
     autoActivate?: boolean;

@@ -13,7 +13,7 @@ import {makeCorpse} from '../../../../lib/util/combat';
 export const combatListeners: BehaviorDefinition = {
     listeners: {
         updateTick: (state: GameState) => (npc: Npc) => {
-            if (npc.combat.isInCombat()) {
+            if (npc.combat.isFighting()) {
                 state.combat.updateRound(state, npc);
             }
         },
@@ -54,7 +54,7 @@ export const combatListeners: BehaviorDefinition = {
          * NPC killed a target
          */
         deathblow: (state: GameState) => (npc: Npc) => {
-            if (!npc.combat.isInCombat()) {
+            if (!npc.combat.isFighting()) {
                 state.combat.startRegeneration(state, npc);
             }
         },

@@ -5,6 +5,7 @@ import Party from '../groups/party';
 import PlayerRole from './player-role';
 import QuestTracker from '../quests/quest-tracker';
 import Room from '../locations/room';
+import SimpleMap from '../util/simple-map';
 import {Broadcastable} from '../communication/broadcast';
 import {ExecutableCommand} from '../commands/command-queue';
 import {noop} from '../util/functions';
@@ -88,7 +89,7 @@ export class Player extends Character implements Broadcastable {
     /**
      * Convert prompt tokens into actual data
      */
-    public interpolatePrompt(promptStr: string, extraData = {}): string {
+    public interpolatePrompt(promptStr: string, extraData: SimpleMap = {}): string {
         const attributeData = {};
 
         // for (const attr of this.getAttributeNames()) {
@@ -136,7 +137,7 @@ export class Player extends Character implements Broadcastable {
      * @fires Room#playerEnter
      * @fires Player#enterRoom
      */
-    public moveTo(nextRoom: Room, onMoved = noop): void {
+    public moveTo(nextRoom: Room, onMoved: Function = noop): void {
         const prevRoom = this.room;
 
         if (this.room && this.room !== nextRoom) {

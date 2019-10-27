@@ -8,7 +8,6 @@ import Npc from '../mobs/npc';
 import Player from '../players/player';
 import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 import {Broadcastable} from '../communication/broadcast';
-import {SimpleMap} from '../../../index';
 
 const clone = cloneFactory();
 

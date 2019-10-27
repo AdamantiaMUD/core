@@ -3,7 +3,7 @@ import Item from '../../../lib/equipment/item';
 import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
-import {SimpleMap} from '../../../../index';
+import SimpleMap from '../../../lib/util/simple-map';
 
 /**
  * A quest goal requiring the player picks up a certain number of a particular item

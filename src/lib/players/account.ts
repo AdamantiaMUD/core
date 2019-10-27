@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 
 import Data from '../util/data';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 export interface SerializedAccount extends SimpleMap {
     username: string;

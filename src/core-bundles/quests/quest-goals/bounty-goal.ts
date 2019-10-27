@@ -1,9 +1,9 @@
-import Room from '../../../lib/locations/room';
+import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
-import {SimpleMap} from '../../../../index';
-import Logger from '../../../lib/util/logger';
+import Room from '../../../lib/locations/room';
+import SimpleMap from '../../../lib/util/simple-map';
 
 export class BountyGoal extends QuestGoal {
     public constructor(quest: Quest, cfg: SimpleMap, player: Player) {

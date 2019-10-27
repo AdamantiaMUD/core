@@ -6,8 +6,8 @@ import GameState from '../game-state';
 import Logger from '../util/logger';
 import Room from '../locations/room';
 import Serializable from '../data/serializable';
+import SimpleMap from '../util/simple-map';
 import {Scriptable} from '../entities/scriptable-entity';
-import {SimpleMap} from '../../../index';
 import {noop} from '../util/functions';
 
 export interface NpcDefinition {
@@ -31,7 +31,7 @@ export interface NpcDefinition {
     uuid?: string;
 }
 
-export class Npc extends Character implements Scriptable, Serializable {
+export class Npc extends Character implements Serializable {
     public area: Area;
     public corpseDesc: string;
     public defaultEquipment: {[key: string]: string};
@@ -132,7 +132,7 @@ export class Npc extends Character implements Scriptable, Serializable {
      * @fires Room#npcEnter
      * @fires Npc#enterRoom
      */
-    public moveTo(nextRoom, onMoved = noop): void {
+    public moveTo(nextRoom: Room, onMoved: Function = noop): void {
         const prevRoom = this.room;
 
         if (this.room) {

@@ -439,7 +439,19 @@ export class BundleManager {
 
             const helpPath = path.join(uri, helpFile);
 
-            const contents = await fs.readFile(helpPath, 'utf8');
+            let contents = await fs.readFile(helpPath, 'utf8');
+
+            if (contents.trim().endsWith('.yml')) {
+                const referencedPath = path.join(uri, contents.trim());
+
+                if (fs.existsSync(referencedPath)) {
+                    contents = await fs.readFile(referencedPath, 'utf8');
+                }
+                else {
+                    // @TODO: Error
+                }
+            }
+
             const helpData: HelpfileOptions = yaml.load(contents);
 
             const hfile = new Helpfile(bundle, helpName, helpData);

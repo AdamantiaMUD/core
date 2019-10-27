@@ -2,8 +2,8 @@ import Character from '../entities/character';
 import GameState from '../game-state';
 import Item, {SerializedItem} from './item';
 import Serializable from '../data/serializable';
+import SimpleMap from '../util/simple-map';
 import {InventoryFullError} from './equipment-errors';
-import {SimpleMap} from '../../../index';
 
 export interface SerializedInventory extends SimpleMap {
     [key: string]: SerializedItem;

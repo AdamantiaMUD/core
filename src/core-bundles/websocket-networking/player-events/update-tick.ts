@@ -27,7 +27,7 @@ export const evt: PlayerEventListenerFactory = {
                 player.socket.command('sendData', 'effects', effects);
             }
 
-            if (!player.combat.isInCombat()) {
+            if (!player.combat.isFighting()) {
                 return;
             }
 

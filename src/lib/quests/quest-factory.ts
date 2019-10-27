@@ -2,7 +2,7 @@ import GameState from '../game-state';
 import Logger from '../util/logger';
 import Player from '../players/player';
 import Quest, {QuestDefinition} from './quest';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 interface AbstractQuest {
     area: string;

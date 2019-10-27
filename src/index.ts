@@ -1,11 +1,22 @@
-import BundleManager from './lib/bundle-manager';
-import Config from './lib/util/config';
-import GameState from './lib/game-state';
-import Logger from './lib/util/logger';
-
-module.exports = {
-    BundleManager,
-    Config,
-    GameState,
-    Logger,
-};
+export * from './lib/abilities';
+export * from './lib/attributes';
+export * from './lib/behaviors';
+export * from './lib/classes';
+export * from './lib/combat';
+export * from './lib/commands';
+export * from './lib/communication';
+export * from './lib/data';
+export * from './lib/effects';
+export * from './lib/entities';
+export * from './lib/equipment';
+export * from './lib/events';
+export * from './lib/groups';
+export * from './lib/help';
+export * from './lib/locations';
+export * from './lib/mobs';
+export * from './lib/players';
+export * from './lib/quests';
+export * from './lib/util';
+export * from './lib/bundle-manager';
+export * from './lib/game-server';
+export * from './lib/game-state';

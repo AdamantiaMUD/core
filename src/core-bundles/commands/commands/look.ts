@@ -120,7 +120,7 @@ const lookRoom = (state: GameState, player: Player): void => {
 
         let combatantsDisplay = '';
 
-        if (npc.combat.isInCombat()) {
+        if (npc.combat.isFighting()) {
             combatantsDisplay = getCombatantsDisplay(npc);
         }
 
@@ -162,7 +162,7 @@ const lookRoom = (state: GameState, player: Player): void => {
 
         let combatantsDisplay = '';
 
-        if (otherPlayer.combat.isInCombat()) {
+        if (otherPlayer.combat.isFighting()) {
             combatantsDisplay = getCombatantsDisplay(otherPlayer);
         }
 

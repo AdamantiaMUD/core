@@ -1,6 +1,6 @@
 import AttributeFormula from './attribute-formula';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 export interface SerializedAttribute extends SimpleMap {
     base: number;

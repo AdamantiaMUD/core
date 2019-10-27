@@ -64,8 +64,8 @@ export const cmd: CommandDefinitionFactory = {
             }
         });
 
-        if (player.combat.isInCombat()) {
-            player.combat.removeFromCombat();
+        if (player.combat.isFighting()) {
+            player.combat.disengage();
         }
 
         const oldRoom = player.room;

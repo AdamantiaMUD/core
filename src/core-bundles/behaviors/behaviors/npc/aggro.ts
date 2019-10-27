@@ -70,7 +70,7 @@ export const aggro: BehaviorDefinition = {
             // setup default configs
             const config = {...defaultAggroConfig, ...cfg};
 
-            if (npc.combat.isInCombat()) {
+            if (npc.combat.isFighting()) {
                 return;
             }
 

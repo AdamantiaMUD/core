@@ -1,18 +1,19 @@
 {
     "compilerOptions": {
-        "module": "CommonJS",
-        "target": "ES2019",
         "allowJs": false,
-        "outDir": "build",
         "allowSyntheticDefaultImports": true,
+        "declaration": false,
         "esModuleInterop": true,
+        "module": "CommonJS",
+        "moduleResolution": "node",
+        "outDir": "build",
+        "resolveJsonModule": true,
         "sourceMap": true,
+        "target": "ES2019",
         "typeRoots": [
             "./types",
             "./node_modules/@types"
-        ],
-        "moduleResolution": "node",
-        "resolveJsonModule": true
+        ]
     },
     "exclude": ["node_modules"],
     "include": [

@@ -3,9 +3,9 @@ import CommandType from './command-type';
 import GameState from '../game-state';
 import Player from '../players/player';
 import PlayerRole from '../players/player-role';
+import SimpleMap from '../util/simple-map';
 import {InvalidCommandError} from './command-errors';
 import {RoomExitDefinition} from '../locations/room';
-import {SimpleMap} from '../../../index';
 
 export interface ParsedCommand {
     args: string;

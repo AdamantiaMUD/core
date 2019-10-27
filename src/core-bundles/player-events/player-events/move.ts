@@ -24,7 +24,7 @@ export const evt: PlayerEventListenerFactory = {
                 return;
             }
 
-            if (player.combat.isInCombat()) {
+            if (player.combat.isFighting()) {
                 sayAt(player, 'You are in the middle of a fight!');
 
                 return;

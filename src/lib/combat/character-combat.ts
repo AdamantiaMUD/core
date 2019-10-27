@@ -26,7 +26,7 @@ export class CharacterCombat {
     }
 
     public addCombatant(target: Character): void {
-        if (this.isInCombat(target)) {
+        if (this.isFighting(target)) {
             return;
         }
 
@@ -40,6 +40,21 @@ export class CharacterCombat {
         this._character.emit('combatant-added', target);
     }
 
+    /**
+     * Fully remove this character from combat
+     */
+    public disengage(): void {
+        if (!this.isFighting()) {
+            return;
+        }
+
+        for (const combatant of this._combatants) {
+            this.removeCombatant(combatant);
+        }
+
+        this.reset();
+    }
+
     public evaluateIncomingDamage(damage: Damage, currentAmount: number): number {
         return Math.floor(this._character.effects.evaluateIncomingDamage(damage, currentAmount));
     }
@@ -49,7 +64,7 @@ export class CharacterCombat {
     }
 
     public initiate(target: Character, lag: number = 0): void {
-        if (!this.isInCombat()) {
+        if (!this.isFighting()) {
             this._lag = lag;
             this._roundStarted = Date.now();
 
@@ -60,7 +75,7 @@ export class CharacterCombat {
             this._character.emit('combat-start');
         }
 
-        if (this.isInCombat(target)) {
+        if (this.isFighting(target)) {
             return;
         }
 
@@ -69,7 +84,7 @@ export class CharacterCombat {
          * adds this to the target's combatants list as well
          */
         this._combatants.add(target);
-        if (!target.combat.isInCombat()) {
+        if (!target.combat.isFighting()) {
             // TODO: This hardcoded 2.5 second lag on the target needs to be refactored
             target.combat.initiate(this._character, 2500);
         }
@@ -77,7 +92,7 @@ export class CharacterCombat {
         target.combat.addCombatant(this._character);
     }
 
-    public isInCombat(target: Character = null): boolean {
+    public isFighting(target: Character = null): boolean {
         return target
             ? this._combatants.has(target)
             : this._combatants.size > 0;
@@ -107,21 +122,6 @@ export class CharacterCombat {
              */
             this._character.emit('combat-end');
         }
-    }
-
-    /**
-     * Fully remove this character from combat
-     */
-    public removeFromCombat(): void {
-        if (!this.isInCombat()) {
-            return;
-        }
-
-        for (const combatant of this._combatants) {
-            this.removeCombatant(combatant);
-        }
-
-        this.reset();
     }
 }
 

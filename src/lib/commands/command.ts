@@ -2,7 +2,7 @@ import CommandType from './command-type';
 import GameState from '../game-state';
 import Player from '../players/player';
 import PlayerRole from '../players/player-role';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 export interface CommandDefinition {
     aliases?: string[];

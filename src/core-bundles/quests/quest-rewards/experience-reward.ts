@@ -3,7 +3,7 @@ import LevelUtil from '../../../lib/util/level-util';
 import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestReward from '../../../lib/quests/quest-reward';
-import {SimpleMap} from '../../../../index';
+import SimpleMap from '../../../lib/util/simple-map';
 
 interface ExperienceRewardConfig extends SimpleMap {
     amount?: number;

@@ -2,7 +2,7 @@ import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestReward from '../../../lib/quests/quest-reward';
-import {SimpleMap} from '../../../../index';
+import SimpleMap from '../../../lib/util/simple-map';
 
 interface CurrencyRewardConfig extends SimpleMap {
     currency: string;

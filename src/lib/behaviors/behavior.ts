@@ -2,7 +2,7 @@ import {EventEmitter} from "events";
 
 import GameState from '../game-state';
 import TransportStream from '../communication/transport-stream';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 export type Behavior = (config: SimpleMap, ...args: any[]) => void;
 

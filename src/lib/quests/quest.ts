@@ -8,7 +8,7 @@ import QuestGoal, {
     SerializedQuestGoal
 } from './quest-goal';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 import {QuestRewardDefinition} from './quest-reward';
 
 const clone = cloneFactory();

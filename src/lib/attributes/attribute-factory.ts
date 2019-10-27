@@ -2,7 +2,7 @@ import {sprintf} from 'sprintf-js';
 
 import Attribute from './attribute';
 import AttributeFormula from './attribute-formula';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 export type AttributeDefinition = {
     base: number;

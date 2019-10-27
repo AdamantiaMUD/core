@@ -4,7 +4,7 @@ import cloneFactory from 'rfdc';
 import Player from '../players/player';
 import Quest from './quest';
 import Serializable from '../data/serializable';
-import {SimpleMap} from '../../../index';
+import SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
 
