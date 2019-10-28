@@ -1,7 +1,6 @@
 import EventEmitter from 'events';
-import Logger from '../util/logger';
 
-import {isIterable} from '../util/objects';
+import {isIterable} from '../util';
 
 export class EventManager {
     /**
@@ -9,10 +8,6 @@ export class EventManager {
      * value: Set<Function> - The set of listeners to call when the event fires
      */
     private _events: Map<string, Set<Function>> = new Map();
-
-    // public get events(): Map<string, Set<Function>> {
-    //     return this._events;
-    // }
 
     public get size(): number {
         return this._events.size;
