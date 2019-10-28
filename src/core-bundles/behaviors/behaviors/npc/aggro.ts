@@ -62,7 +62,7 @@ const defaultAggroConfig = {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        updateTick: () => (npc: Npc, cfg: AggroConfig) => {
+        'update-tick': () => (npc: Npc, cfg: AggroConfig) => {
             if (!npc.room) {
                 return;
             }
