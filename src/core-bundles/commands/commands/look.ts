@@ -196,7 +196,7 @@ const lookEntity = (state: GameState, player: Player, rawArgs: string): void => 
     }
 
     if (entity instanceof Player) {
-        // TODO: Show player equipment
+        // @TODO: Show player equipment
         sayAt(player, `You see fellow player ${entity.name}.`);
 
         return;

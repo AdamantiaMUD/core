@@ -15,14 +15,11 @@ import PlayerClass from './classes/player-class';
 import QuestGoal from './quests/quest-goal';
 import QuestReward from './quests/quest-reward';
 import {AreaDefinition, AreaManifest} from './locations/area';
+import {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
 import {InputEventListenerDefinition} from './events/input-events';
 import {PlayerEventListenerFactory} from './events/player-events';
 import {QuestDefinition} from './quests/quest';
 import {ServerEventListenersDefinition} from './events/server-events';
-import {
-    BehaviorDefinition,
-    BehaviorEventListenerDefinition
-} from './behaviors/behavior';
 
 export class BundleManager {
     private readonly areas: string[] = [];

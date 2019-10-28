@@ -669,6 +669,7 @@ export declare class Room extends ScriptableEntity implements Broadcastable {
     name: string;
     title: string;
 
+    readonly doors: Map<string, Door>;
     readonly npcs: Set<Npc>;
     readonly players: Set<Player>;
 

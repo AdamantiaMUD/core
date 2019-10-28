@@ -24,7 +24,7 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAt(player, ':');
 
-        // TODO: Implement grouping
+        // @TODO: Implement grouping
         for (const [, item] of player.inventory.items) {
             sayAt(player, ItemUtil.display(item));
         }

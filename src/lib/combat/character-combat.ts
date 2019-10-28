@@ -85,7 +85,7 @@ export class CharacterCombat {
          */
         this._combatants.add(target);
         if (!target.combat.isFighting()) {
-            // TODO: This hardcoded 2.5 second lag on the target needs to be refactored
+            // @TODO: This hardcoded 2.5 second lag on the target needs to be refactored
             target.combat.initiate(this._character, 2500);
         }
 

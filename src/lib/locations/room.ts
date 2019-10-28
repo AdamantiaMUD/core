@@ -48,6 +48,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
     private readonly _defaultItems: RoomEntityDefinition[];
     private readonly _defaultNpcs: RoomEntityDefinition[];
     private readonly _doors: Map<string, Door> = new Map();
+    private readonly _items: Set<Item> = new Set();
     private readonly _npcs: Set<Npc> = new Set();
     private readonly _players: Set<Player> = new Set();
     private readonly _spawnedNpcs: Set<Npc> = new Set();
@@ -57,7 +58,6 @@ export class Room extends ScriptableEntity implements Broadcastable {
     public description: string;
     public exits: RoomExitDefinition[];
     public id: string;
-    public items: Set<Item> = new Set();
     public name: string;
     public title: string;
 
@@ -72,11 +72,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
         this.name = def.title;
         this.title = def.title;
 
-        const doors: {[key: string]: Door} = clone(def.doors ?? {});
-        Object.entries(doors)
-            .forEach(([dest, door]: [string, Door]) => {
-                this._doors.set(dest, door);
-            });
+        this.setDoorsFromDef(clone(def.doors ?? {}));
 
         this._defaultItems = def.items ?? [];
         this._defaultNpcs = def.npcs ?? [];
@@ -87,6 +83,29 @@ export class Room extends ScriptableEntity implements Broadcastable {
         });
     }
 
+    private setDoorsFromDef(doors: {[key: string]: Door}): void {
+        Object.entries(doors)
+            .forEach(([dest, door]: [string, Door]) => {
+                this._doors.set(dest, door);
+            });
+    }
+
+    public get defaultItems(): RoomEntityDefinition[] {
+        return this._defaultItems;
+    }
+
+    public get defaultNpcs(): RoomEntityDefinition[] {
+        return this._defaultNpcs;
+    }
+
+    public get doors(): Map<string, Door> {
+        return this._doors;
+    }
+
+    public get items(): Set<Item> {
+        return this._items;
+    }
+
     public get npcs(): Set<Npc> {
         return this._npcs;
     }
@@ -95,8 +114,12 @@ export class Room extends ScriptableEntity implements Broadcastable {
         return this._players;
     }
 
+    public get spawnedNpcs(): Set<Npc> {
+        return this._spawnedNpcs;
+    }
+
     public addItem(item: Item): void {
-        this.items.add(item);
+        this._items.add(item);
         item.room = this;
     }
 
@@ -195,7 +218,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
          */
         this.emit('spawn');
 
-        this.items.clear();
+        this._items.clear();
 
         /*
          * NOTE: This method effectively defines the fact that items/npcs do not
@@ -247,7 +270,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     public removeItem(item: Item): void {
-        this.items.delete(item);
+        this._items.delete(item);
         item.room = null;
     }
 
@@ -263,6 +286,11 @@ export class Room extends ScriptableEntity implements Broadcastable {
 
     public removePlayer(player: Player): void {
         this._players.delete(player);
+    }
+
+    public resetDoors(): void {
+        this._doors.clear();
+        this.setDoorsFromDef(clone(this.def.doors ?? {}));
     }
 
     public spawnItem(state: GameState, entityRef: string): Item {
