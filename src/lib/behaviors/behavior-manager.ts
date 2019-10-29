@@ -1,23 +1,24 @@
-import EventManager from '../events/event-manager';
+import MudEventManager from '../events/mud-event-manager';
+import {MudEventListener} from '../events/mud-event';
 
 /**
  * BehaviorManager keeps a map of BehaviorName:EventManager which is used
  * during Item and NPC hydrate() methods to attach events
  */
 export class BehaviorManager {
-    private readonly _behaviors: Map<string, EventManager> = new Map();
+    private readonly _behaviors: Map<string, MudEventManager> = new Map();
 
-    public addListener(behaviorName: string, event: string, listener: Function): void {
+    public addListener(behaviorName: string, event: string, listener: MudEventListener<unknown>): void {
         if (!this._behaviors.has(behaviorName)) {
-            this._behaviors.set(behaviorName, new EventManager());
+            this._behaviors.set(behaviorName, new MudEventManager());
         }
 
         this._behaviors.get(behaviorName).add(event, listener);
     }
 
-    public get(behaviorName: string): EventManager {
+    public get(behaviorName: string): MudEventManager {
         if (!this._behaviors.has(behaviorName)) {
-            this._behaviors.set(behaviorName, new EventManager());
+            this._behaviors.set(behaviorName, new MudEventManager());
         }
 
         return this._behaviors.get(behaviorName);

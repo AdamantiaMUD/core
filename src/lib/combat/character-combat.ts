@@ -1,5 +1,34 @@
 import Character from '../entities/character';
 import Damage from './damage';
+import {MudEvent, MudEventConstructor} from '../events/mud-event';
+
+interface CombatantAddedPayload {
+    target: Character;
+}
+
+export const CombatantAddedEvent: MudEventConstructor<CombatantAddedPayload> = class extends MudEvent<CombatantAddedPayload> {
+    public NAME: string = 'combatant-added';
+
+    public target: Character;
+};
+
+interface CombatantRemovedPayload {
+    target: Character;
+}
+
+export const CombatantRemovedEvent: MudEventConstructor<CombatantRemovedPayload> = class extends MudEvent<CombatantRemovedPayload> {
+    public NAME: string = 'combatant-removed';
+
+    public target: Character;
+};
+
+export const CombatEndEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+    public NAME: string = 'combat-end';
+};
+
+export const CombatStartEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+    public NAME: string = 'combat-start';
+};
 
 export class CharacterCombat {
     private readonly _character: Character;
@@ -37,7 +66,7 @@ export class CharacterCombat {
          * @event Character#combatantAdded
          * @param {Character} target
          */
-        this._character.emit('combatant-added', target);
+        this._character.dispatch(new CombatantAddedEvent({target}));
     }
 
     /**
@@ -72,7 +101,7 @@ export class CharacterCombat {
              * Fired when Character#initiateCombat is called
              * @event Character#combatStart
              */
-            this._character.emit('combat-start');
+            this._character.dispatch(new CombatStartEvent());
         }
 
         if (this.isFighting(target)) {
@@ -114,13 +143,13 @@ export class CharacterCombat {
          * @event Character#combatantRemoved
          * @param {Character} target
          */
-        this._character.emit('combatant-removed', target);
+        this._character.dispatch(new CombatantRemovedEvent({target}));
 
         if (!this._combatants.size) {
             /**
              * @event Character#combatEnd
              */
-            this._character.emit('combat-end');
+            this._character.dispatch(new CombatEndEvent());
         }
     }
 }

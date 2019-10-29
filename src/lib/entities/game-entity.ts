@@ -1,10 +1,10 @@
-import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
 import GameState from '../game-state';
-import Metadatable from '../data/metadatable';
+import Metadatable, {MetadataUpdatedEvent} from '../data/metadatable';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import {MudEventEmitter} from '../events/mud-event';
 
 const clone = cloneFactory();
 
@@ -17,7 +17,7 @@ export interface SerializedGameEntity {
     metadata?: SimpleMap;
 }
 
-export class GameEntity extends EventEmitter implements Metadatable, Serializable {
+export class GameEntity extends MudEventEmitter implements Metadatable, Serializable {
     private _metadata: SimpleMap = {};
 
     protected _state: GameState;
@@ -76,12 +76,12 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
      * objects if they don't exist
      *
      * @param {string} key   Key to set. Supports dot notation e.g., `"foo.bar"`
-     * @param {*}      value Value must be JSON.stringify-able
+     * @param {*}      newValue Value must be JSON.stringify-able
      * @throws Error
      * @throws RangeError
-     * @fires Metadatable#metadataUpdate
+     * @fires MetadataUpdatedEvent
      */
-    public setMeta(key: string, value: any): void {
+    public setMeta(key: string, newValue: any): void {
         const parts = key.split('.');
         const property = parts.pop();
         let base = this._metadata;
@@ -97,7 +97,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
 
         const oldValue = base[property];
 
-        base[property] = value;
+        base[property] = newValue;
 
         /**
          * @event Metadatable#metadataUpdate
@@ -105,7 +105,7 @@ export class GameEntity extends EventEmitter implements Metadatable, Serializabl
          * @param {*} newValue
          * @param {*} oldValue
          */
-        this.emit('metadata-updated', key, value, oldValue);
+        this.dispatch(new MetadataUpdatedEvent({key, newValue, oldValue}));
     }
 }
 

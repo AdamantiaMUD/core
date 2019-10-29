@@ -15,7 +15,6 @@ const clone = cloneFactory();
 
 export interface Scriptable {
     behaviors: Map<string, SimpleMap | true>;
-    emit: (name: string | symbol, ...args: any[]) => boolean;
     getBehavior: (name: string) => SimpleMap | true;
     hasBehavior: (name: string) => boolean;
 }
@@ -69,22 +68,6 @@ export class ScriptableEntity extends GameEntity implements Scriptable, Serializ
 
     public get behaviors(): Map<string, SimpleMap | true> {
         return this._behaviors;
-    }
-
-    public emit(name: string | symbol, ...args: any[]): boolean {
-        /*
-         * Squelch events on a pruned entity. Attempts to prevent the case
-         * where an entity has been effectively removed from the game but
-         * somehow still triggered a listener. Set by respective
-         * EntityManager class
-         */
-        if (this.__pruned) {
-            this.removeAllListeners();
-
-            return false;
-        }
-
-        return super.emit(name, ...args);
     }
 
     public getBehavior(name: string): SimpleMap | true {
