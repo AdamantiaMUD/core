@@ -1,10 +1,10 @@
-import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
 import Player from '../players/player';
 import Quest from './quest';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import {MudEventEmitter} from '../events/mud-event';
 
 const clone = cloneFactory();
 
@@ -24,7 +24,7 @@ export interface SerializedQuestGoal extends SimpleMap {
  * create new quest goals for quests
  * @extends EventEmitter
  */
-export class QuestGoal extends EventEmitter implements Serializable {
+export class QuestGoal extends MudEventEmitter implements Serializable {
     public config: SimpleMap;
     public player: Player;
     public quest: Quest;

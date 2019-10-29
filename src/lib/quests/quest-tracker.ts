@@ -3,6 +3,7 @@ import Player from '../players/player';
 import Quest, {SerializedQuest} from './quest';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import {QuestStartedEvent} from './quest-events';
 
 export interface SerializedQuestTracker extends SimpleMap {
     active: {[key: string]: SerializedQuest};
@@ -48,13 +49,13 @@ export class QuestTracker implements Serializable {
     /**
      * Proxy events to all active quests
      */
-    public emit(event: string | symbol, ...args: any[]): boolean {
-        for (const [, quest] of this._activeQuests) {
-            quest.emit(event, ...args);
-        }
-
-        return true;
-    }
+    // public emit(event: string | symbol, ...args: any[]): boolean {
+    //     for (const [, quest] of this._activeQuests) {
+    //         quest.emit(event, ...args);
+    //     }
+    //
+    //     return true;
+    // }
 
     public get(qid: string): Quest {
         return this._activeQuests.get(qid);
@@ -99,7 +100,7 @@ export class QuestTracker implements Serializable {
 
         quest.started = (new Date()).toJSON();
         this._activeQuests.set(qid, quest);
-        quest.emit('start');
+        quest.dispatch(new QuestStartedEvent());
     }
 }
 

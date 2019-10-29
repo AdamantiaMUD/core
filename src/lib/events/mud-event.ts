@@ -18,17 +18,22 @@ export class MudEvent<T> {
             this[key] = props[key];
         }
     }
+
+    getName(): string {
+        return this.NAME;
+    }
 }
 
 export interface MudEventConstructor<T> {
     new (props?: T);
+    getName?: () => string;
 }
 
 export class MudEventEmitter {
     protected _emitter: EventEmitter = new EventEmitter();
 
     public dispatch(event: MudEvent<unknown>): void {
-        this._emitter.emit(event.NAME, event);
+        this._emitter.emit(event.getName(), event);
     }
 
     public listen<T>(eventKey: string, listener: MudEventListener<T>, config?: any): void {

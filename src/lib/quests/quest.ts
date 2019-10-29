@@ -1,4 +1,3 @@
-import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
 import GameState from '../game-state';
@@ -9,6 +8,13 @@ import QuestGoal, {
 } from './quest-goal';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import {MudEventEmitter} from '../events/mud-event';
+import {
+    QuestCompletedEvent,
+    QuestProgressEvent,
+    QuestProgressPayload,
+    QuestTurnInReadyEvent,
+} from './quest-events';
 import {QuestRewardDefinition} from './quest-reward';
 
 const clone = cloneFactory();
@@ -28,13 +34,18 @@ export interface QuestDefinition {
     title: string;
 }
 
+export interface QuestProgress {
+    display: string;
+    percent: number;
+}
+
 export interface SerializedQuest extends SimpleMap {
     config: {desc: string; level: number; title: string};
-    progress: {percent: number; display: string};
+    progress: QuestProgress;
     state: SerializedQuestGoal[];
 }
 
-export class Quest extends EventEmitter implements Serializable {
+export class Quest extends MudEventEmitter implements Serializable {
     /* eslint-disable lines-between-class-members */
     public GameState: GameState;
     public completedAt: string = '';
@@ -74,19 +85,14 @@ export class Quest extends EventEmitter implements Serializable {
         this.GameState = state;
     }
 
-    public addGoal(goal): void {
+    public addGoal(goal: QuestGoal): void {
         this.goals.push(goal);
-        goal.on('progress', () => this.onProgressUpdated());
+        goal.listen<QuestProgressPayload>(QuestProgressEvent.getName(), () => this.onProgressUpdated());
     }
 
-    /**
-     * @fires Quest#complete
-     */
     public complete(): void {
-        /**
-         * @event Quest#complete
-         */
-        this.emit('complete');
+        this.dispatch(new QuestCompletedEvent());
+
         for (const goal of this.goals) {
             goal.complete();
         }
@@ -95,22 +101,22 @@ export class Quest extends EventEmitter implements Serializable {
     /**
      * Proxy all events to all the goals
      */
-    public emit(event: string | symbol, ...args: any[]): boolean {
-        super.emit(event, ...args);
+    // public emit(event: string | symbol, ...args: any[]): boolean {
+    //     super.emit(event, ...args);
+    //
+    //     if (event === 'progress') {
+    //         // don't proxy progress event
+    //         return false;
+    //     }
+    //
+    //     this.goals.forEach(goal => {
+    //         goal.emit(event, ...args);
+    //     });
+    //
+    //     return true;
+    // }
 
-        if (event === 'progress') {
-            // don't proxy progress event
-            return false;
-        }
-
-        this.goals.forEach(goal => {
-            goal.emit(event, ...args);
-        });
-
-        return true;
-    }
-
-    public getProgress(): {percent: number; display: string} {
+    public getProgress(): QuestProgress {
         let overallPercent = 0;
         const overallDisplay = [];
 
@@ -133,10 +139,6 @@ export class Quest extends EventEmitter implements Serializable {
         });
     }
 
-    /**
-     * @fires Quest#turn-in-ready
-     * @fires Quest#progress
-     */
     public onProgressUpdated(): void {
         const progress = this.getProgress();
 
@@ -145,20 +147,13 @@ export class Quest extends EventEmitter implements Serializable {
                 this.complete();
             }
             else {
-                /**
-                 * @event Quest#turn-in-ready
-                 */
-                this.emit('turn-in-ready');
+                this.dispatch(new QuestTurnInReadyEvent());
             }
 
             return;
         }
 
-        /**
-         * @event Quest#progress
-         * @param {object} progress
-         */
-        this.emit('progress', progress);
+        this.dispatch(new QuestProgressEvent({progress}));
     }
 
     /**

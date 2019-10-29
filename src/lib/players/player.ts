@@ -8,6 +8,8 @@ import Room from '../locations/room';
 import SimpleMap from '../util/simple-map';
 import {Broadcastable} from '../communication/broadcast';
 import {ExecutableCommand} from '../commands/command-queue';
+import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './player-events';
+import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/room-events';
 import {noop} from '../util/functions';
 
 export interface PromptDefinition {
@@ -132,21 +134,12 @@ export class Player extends Character implements Broadcastable {
 
     /**
      * Move the player to the given room, emitting events appropriately
-     *
-     * @fires Room#playerLeave
-     * @fires Room#playerEnter
-     * @fires Player#enterRoom
      */
     public moveTo(nextRoom: Room, onMoved: Function = noop): void {
         const prevRoom = this.room;
 
         if (this.room && this.room !== nextRoom) {
-            /**
-             * @event Room#playerLeave
-             * @param {Player} player
-             * @param {Room} nextRoom
-             */
-            this.room.emit('player-leave', this, nextRoom);
+            this.room.dispatch(new RoomPlayerLeaveEvent({player: this, nextRoom: nextRoom}));
             this.room.removePlayer(this);
         }
 
@@ -155,27 +148,18 @@ export class Player extends Character implements Broadcastable {
 
         onMoved();
 
-        /**
-         * @event Room#playerEnter
-         * @param {Player} player
-         * @param {Room} prevRoom
-         */
-        nextRoom.emit('player-enter', this, prevRoom);
+        nextRoom.dispatch(new RoomPlayerEnterEvent({player: this, prevRoom: prevRoom}));
 
-        /**
-         * @event Player#enterRoom
-         * @param {Room} room
-         */
-        this.emit('enter-room', nextRoom);
+        this.dispatch(new PlayerEnterRoomEvent({room: nextRoom}));
     }
 
     /**
      * @see CommandQueue::enqueue
      */
     public queueCommand(command: ExecutableCommand, lag: number): void {
-        const index = this.commandQueue.enqueue(command, lag);
+        const idx = this.commandQueue.enqueue(command, lag);
 
-        this.emit('command-queued', index);
+        this.dispatch(new PlayerCommandQueuedEvent({idx}));
     }
 
     public removePrompt(id: string): void {
@@ -187,7 +171,7 @@ export class Player extends Character implements Broadcastable {
             return;
         }
 
-        this.emit('save', callback);
+        this.dispatch(new PlayerSaveEvent({callback}));
     }
 
     public serialize(): SerializedPlayer {

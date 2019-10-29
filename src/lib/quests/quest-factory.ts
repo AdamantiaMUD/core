@@ -3,6 +3,20 @@ import Logger from '../util/logger';
 import Player from '../players/player';
 import Quest, {QuestDefinition} from './quest';
 import SimpleMap from '../util/simple-map';
+import {
+    PlayerQuestCompletedEvent,
+    PlayerQuestProgressEvent,
+    PlayerQuestStartedEvent,
+    PlayerQuestTurnInReadyEvent,
+} from '../players/player-events';
+import {
+    QuestCompletedEvent,
+    QuestProgressEvent,
+    QuestProgressPayload,
+    QuestRewardEvent,
+    QuestStartedEvent,
+    QuestTurnInReadyEvent,
+} from './quest-events';
 
 interface AbstractQuest {
     area: string;
@@ -53,47 +67,47 @@ export class QuestFactory {
         player: Player,
         questState: SimpleMap[] = []
     ): Quest {
-        const quest = this._quests.get(qid);
+        const questData = this._quests.get(qid);
 
-        if (!quest) {
+        if (!questData) {
             throw new Error(`Trying to create invalid quest id [${qid}]`);
         }
 
-        const instance = new Quest(state, quest.id, quest.config, player);
+        const quest = new Quest(state, questData.id, questData.config, player);
 
-        instance.state = questState;
+        quest.state = questState;
 
-        for (const goal of quest.config.goals) {
+        for (const goal of questData.config.goals) {
             const GoalType = state.questGoalManager.get(goal.type);
 
-            instance.addGoal(new GoalType(instance, goal.config, player));
+            quest.addGoal(new GoalType(quest, goal.config, player));
         }
 
-        instance.on('progress', progress => {
-            player.emit('quest-progress', instance, progress);
+        quest.listen<QuestProgressPayload>(QuestProgressEvent.getName(), (qst: Quest, {progress}) => {
+            player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));
             player.save();
         });
 
-        instance.on('start', () => {
-            player.emit('quest-start', instance);
-            instance.emit('progress', instance.getProgress());
+        quest.listen<{}>(QuestStartedEvent.getName(), (qst: Quest) => {
+            player.dispatch(new PlayerQuestStartedEvent({quest: qst}));
+            qst.dispatch(new QuestProgressEvent({progress: qst.getProgress()}));
         });
 
-        instance.on('turn-in-ready', () => {
-            player.emit('quest-turn-in-ready', instance);
+        quest.listen<{}>(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
+            player.dispatch(new PlayerQuestTurnInReadyEvent({quest: qst}));
         });
 
-        instance.on('complete', () => {
-            player.emit('quest-complete', instance);
-            player.questTracker.complete(instance.entityReference);
+        quest.listen<{}>(QuestCompletedEvent.getName(), (qst: Quest) => {
+            player.dispatch(new PlayerQuestCompletedEvent({quest: qst}));
+            player.questTracker.complete(qst.entityReference);
 
-            if (!quest.config.rewards) {
+            if (!questData.config.rewards) {
                 player.save();
 
                 return;
             }
 
-            for (const reward of quest.config.rewards) {
+            for (const reward of questData.config.rewards) {
                 try {
                     const rewardClass = state.questRewardManager.get(reward.type);
 
@@ -101,8 +115,8 @@ export class QuestFactory {
                         throw new Error(`Quest [${qid}] has invalid reward type ${reward.type}`);
                     }
 
-                    rewardClass.reward(state, instance, reward.config, player);
-                    player.emit('quest-reward', reward);
+                    rewardClass.reward(state, qst, reward.config, player);
+                    player.dispatch(new QuestRewardEvent({reward}));
                 }
                 catch (e) {
                     Logger.error(e.message);
@@ -112,7 +126,7 @@ export class QuestFactory {
             player.save();
         });
 
-        return instance;
+        return quest;
     }
 
     /**

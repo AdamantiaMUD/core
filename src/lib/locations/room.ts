@@ -146,28 +146,28 @@ export class Room extends ScriptableEntity implements Broadcastable {
     /**
      * Emits event on self and proxies certain events to other entities in the room.
      */
-    public emit(eventName: string | symbol, ...args: any[]): boolean {
-        const superReturn = super.emit(eventName, ...args);
-
-        const proxiedEvents = [
-            'npc-enter',
-            'npc-leave',
-            'player-enter',
-            'player-leave',
-        ];
-
-        if (proxiedEvents.includes(eventName as string)) {
-            const entities = [...this._players];
-
-            for (const entity of entities) {
-                entity.emit(eventName, ...args);
-            }
-
-            return true;
-        }
-
-        return superReturn;
-    }
+    // public emit(eventName: string | symbol, ...args: any[]): boolean {
+    //     const superReturn = super.emit(eventName, ...args);
+    //
+    //     const proxiedEvents = [
+    //         'npc-enter',
+    //         'npc-leave',
+    //         'player-enter',
+    //         'player-leave',
+    //     ];
+    //
+    //     if (proxiedEvents.includes(eventName as string)) {
+    //         const entities = [...this._players];
+    //
+    //         for (const entity of entities) {
+    //             entity.emit(eventName, ...args);
+    //         }
+    //
+    //         return true;
+    //     }
+    //
+    //     return superReturn;
+    // }
 
     /**
      * Get the exit definition of a room's exit by searching the exit name
