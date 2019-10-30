@@ -1,6 +1,6 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/entities/character';
+import Character from '../../../lib/characters/character';
 import GameState from '../../../lib/game-state';
 import ItemUtil from '../../../lib/util/items';
 import Logger from '../../../lib/util/logger';

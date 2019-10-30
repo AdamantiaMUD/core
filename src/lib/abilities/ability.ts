@@ -2,7 +2,7 @@ import AbilityErrors from './ability-errors';
 import AbilityFlag from './ability-flag';
 import AbilityType from './ability-type';
 import Broadcast from '../communication/broadcast';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Damage from '../combat/damage';
 import Effect from '../effects/effect';
 import GameState from '../game-state';

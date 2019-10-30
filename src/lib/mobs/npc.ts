@@ -1,13 +1,14 @@
 import uuid from 'uuid/v4';
 
 import Area from '../locations/area';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import Logger from '../util/logger';
 import Room from '../locations/room';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
-import {Scriptable} from '../entities/scriptable-entity';
+import {NpcEnterRoomEvent} from './npc-events';
+import {RoomNpcEnterEvent, RoomNpcLeaveEvent} from '../locations/room-events';
 import {noop} from '../util/functions';
 
 export interface NpcDefinition {
@@ -74,21 +75,21 @@ export class Npc extends Character implements Serializable {
         this.uuid = data.uuid ?? uuid();
     }
 
-    public emit(name: string | symbol, ...args: any[]): boolean {
-        /*
-         * Squelch events on a pruned entity. Attempts to prevent the case
-         * where an entity has been effectively removed from the game but
-         * somehow still triggered a listener. Set by respective
-         * EntityManager class
-         */
-        if (this.__pruned) {
-            this.removeAllListeners();
-
-            return false;
-        }
-
-        return super.emit(name, ...args);
-    }
+    // public emit(name: string | symbol, ...args: any[]): boolean {
+    //     /*
+    //      * Squelch events on a pruned entity. Attempts to prevent the case
+    //      * where an entity has been effectively removed from the game but
+    //      * somehow still triggered a listener. Set by respective
+    //      * EntityManager class
+    //      */
+    //     if (this.__pruned) {
+    //         this.stopListening();
+    //
+    //         return false;
+    //     }
+    //
+    //     return super.emit(name, ...args);
+    // }
 
     public hydrate(state: GameState): boolean {
         super.hydrate(state);
@@ -139,7 +140,7 @@ export class Npc extends Character implements Serializable {
             /**
              * @event Room#npcLeave
              */
-            this.room.emit('npc-leave', this, nextRoom);
+            this.room.dispatch(new RoomNpcLeaveEvent({npc: this, nextRoom: nextRoom}));
             this.room.removeNpc(this);
         }
 
@@ -148,15 +149,9 @@ export class Npc extends Character implements Serializable {
 
         onMoved();
 
-        /**
-         * @event Room#npcEnter
-         */
-        nextRoom.emit('npc-enter', this, prevRoom);
+        nextRoom.dispatch(new RoomNpcEnterEvent({npc: this, prevRoom: prevRoom}));
 
-        /**
-         * @event Npc#enterRoom
-         */
-        this.emit('enter-room', nextRoom);
+        this.dispatch(new NpcEnterRoomEvent({nextRoom}));
     }
 }
 

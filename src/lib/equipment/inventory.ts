@@ -1,4 +1,4 @@
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import Item, {SerializedItem} from './item';
 import Serializable from '../data/serializable';

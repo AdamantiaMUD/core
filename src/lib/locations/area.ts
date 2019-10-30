@@ -4,7 +4,10 @@ import Player from '../players/player';
 import Room from './room';
 import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 import SimpleMap from '../util/simple-map';
+import {AreaRoomAddedEvent} from './area-events';
 import {Broadcastable} from '../communication/broadcast';
+import {RoomReadyEvent} from './room-events';
+import {UpdateTickEvent} from '../common/common-events';
 
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
@@ -26,7 +29,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
     private readonly _manifest: AreaManifest;
 
     private readonly _npcs: Set<Npc> = new Set();
-    private readonly _rooms: Map<string, any> = new Map();
+    private readonly _rooms: Map<string, Room> = new Map();
 
     public constructor(bundle: string, name: string, manifest: AreaManifest) {
         super();
@@ -36,7 +39,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
 
         this._manifest = manifest;
 
-        this.on('update-tick', () => this.tickAll());
+        this.listen(UpdateTickEvent.getName(), this.tickAll);
     }
 
     /**
@@ -46,7 +49,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
      */
     private tickAll(): void {
         for (const [, room] of this.rooms) {
-            room.emit('update-tick');
+            room.dispatch(new UpdateTickEvent());
         }
     }
 
@@ -54,7 +57,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
         return this._npcs;
     }
 
-    public get rooms(): Map<string, any> {
+    public get rooms(): Map<string, Room> {
         return this._rooms;
     }
 
@@ -65,7 +68,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
     public addRoom(room: Room): void {
         this.rooms.set(room.id, room);
 
-        this.emit('room-added', room);
+        this.dispatch(new AreaRoomAddedEvent({room}));
     }
 
     /**
@@ -93,9 +96,8 @@ export class Area extends ScriptableEntity implements Broadcastable {
 
             /**
              * Fires after the room is hydrated and added to its area
-             * @event Room#ready
              */
-            room.emit('ready');
+            room.dispatch(new RoomReadyEvent());
         }
     }
 

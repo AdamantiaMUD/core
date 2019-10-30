@@ -20,6 +20,15 @@ export const PlayerEnterRoomEvent: MudEventConstructor<PlayerEnterRoomPayload> =
     public room: Room;
 };
 
+export interface PlayerExperiencePayload {
+    amount: number;
+}
+
+export const PlayerExperienceEvent: MudEventConstructor<PlayerExperiencePayload> = class extends MudEvent<PlayerExperiencePayload> {
+    public NAME: string = 'experience';
+    public amount: number;
+};
+
 export interface PlayerQuestCompletedPayload {
     quest: Quest;
 }
@@ -65,4 +74,8 @@ export interface PlayerSavePayload {
 export const PlayerSaveEvent: MudEventConstructor<PlayerSavePayload> = class extends MudEvent<PlayerSavePayload> {
     public static NAME: string = 'save';
     public callback?: Function;
+};
+
+export const PlayerSavedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+    public static NAME: string = 'saved';
 };

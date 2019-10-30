@@ -1,8 +1,7 @@
-import {EventEmitter} from "events";
-
 import GameState from '../game-state';
 import TransportStream from '../communication/transport-stream';
 import SimpleMap from '../util/simple-map';
+import {MudEventEmitter} from '../events/mud-event';
 
 export type Behavior = (config: SimpleMap, ...args: any[]) => void;
 
@@ -12,7 +11,7 @@ export interface BehaviorDefinition {
     };
 }
 
-export type BehaviorEventListener = (socket: TransportStream<EventEmitter>, ...args: any[]) => void;
+export type BehaviorEventListener = (socket: TransportStream<MudEventEmitter>, ...args: any[]) => void;
 
 export type BehaviorEventListenerFactory = (state?: GameState) => BehaviorEventListener;
 

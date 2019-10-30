@@ -1,9 +1,10 @@
 import Inventory from '../../../lib/equipment/inventory';
 import Item from '../../../lib/equipment/item';
 import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
+import Quest, {QuestProgress} from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
 import SimpleMap from '../../../lib/util/simple-map';
+import {QuestProgressEvent} from '../../../lib/quests/quest-events';
 
 /**
  * A quest goal requiring the player picks up a certain number of a particular item
@@ -28,7 +29,7 @@ export class FetchGoal extends QuestGoal {
         this.on('start', this.checkInventory);
     }
 
-    public getProgress(): {percent: number; display: string} {
+    public getProgress(): QuestProgress {
         const amount = Math.min(this.config.count, this.state.count);
         const percent = (amount / this.config.count) * 100;
         const display = `${this.config.title}: [${amount}/${this.config.count}]`;
@@ -70,7 +71,7 @@ export class FetchGoal extends QuestGoal {
             return;
         }
 
-        this.emit('progress', this.getProgress());
+        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
     private dropItem(item: Item): void {
@@ -84,7 +85,7 @@ export class FetchGoal extends QuestGoal {
             return;
         }
 
-        this.emit('progress', this.getProgress());
+        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
     private checkInventory(): void {

@@ -1,8 +1,15 @@
 import Attribute from '../attributes/attribute';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Damage from '../combat/damage';
 import Effect, {SerializedEffect} from './effect';
 import Serializable from '../data/serializable';
+import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/character-events';
+import {
+    EffectStackAddedEvent,
+    EffectRefreshedEvent,
+    EffectRemoveEvent,
+    EffectAddedEvent
+} from './effect-events';
 
 /**
  * Self-managing list of effects for a target
@@ -38,21 +45,13 @@ export class EffectList implements Serializable {
                 if (activeEffect.config.maxStacks && activeEffect.state.stacks < activeEffect.config.maxStacks) {
                     activeEffect.state.stacks = Math.min(activeEffect.config.maxStacks, activeEffect.state.stacks + 1);
 
-                    /**
-                     * @event Effect#effectStackAdded
-                     * @param {Effect} effect The new effect that is trying to be added
-                     */
-                    activeEffect.emit('effect-stack-added', effect);
+                    activeEffect.dispatch(new EffectStackAddedEvent({effect}));
 
                     return true;
                 }
 
                 if (activeEffect.config.refreshes) {
-                    /**
-                     * @event Effect#effectRefreshed
-                     * @param {Effect} effect The new effect that is trying to be added
-                     */
-                    activeEffect.emit('effect-refreshed', effect);
+                    activeEffect.dispatch(new EffectRefreshedEvent({effect}));
 
                     return true;
                 }
@@ -66,16 +65,11 @@ export class EffectList implements Serializable {
         this._effects.add(effect);
         effect.target = this._target;
 
-        /**
-         * @event Effect#effectAdded
-         */
-        effect.emit('effect-added');
+        effect.dispatch(new EffectAddedEvent());
 
-        /**
-         * @event Character#effectAdded
-         */
-        this._target.emit('effect-added', effect);
-        effect.on('remove', () => this.remove(effect));
+        this._target.dispatch(new CharacterEffectAddedEvent({effect}));
+
+        effect.listen(EffectRemoveEvent.getName(), (eff: Effect) => this.remove(eff));
 
         return true;
     }
@@ -90,40 +84,40 @@ export class EffectList implements Serializable {
     /**
      * Proxy an event to all effects
      */
-    public emit(event: string | symbol, ...args: any[]): boolean {
-        this.validateEffects();
-
-        if (event === 'effectAdded' || event === 'effectRemoved') {
-            /*
-             * don't forward these events on from the player as it would cause
-             * confusion between Character#effectAdded and Effect#effectAdded.
-             * The former being when any effect gets added to a character, the
-             * later is fired on an effect when it is added to a character
-             */
-            return false;
-        }
-
-        let hadListeners = false;
-
-        for (const effect of this._effects) {
-            if (!effect.paused && event === 'updateTick' && effect.config.tickInterval) {
-                const sinceLastTick = Date.now() - effect.state.lastTick;
-
-                if (sinceLastTick >= effect.config.tickInterval * 1000) {
-                    effect.state.lastTick = Date.now();
-                    effect.state.ticks += 1;
-                }
-            }
-
-            if (!effect.paused) {
-                const effectHadListeners = effect.emit(event, ...args);
-
-                hadListeners = hadListeners || effectHadListeners;
-            }
-        }
-
-        return hadListeners;
-    }
+    // public emit(event: string | symbol, ...args: any[]): boolean {
+    //     this.validateEffects();
+    //
+    //     if (event === 'effectAdded' || event === 'effectRemoved') {
+    //         /*
+    //          * don't forward these events on from the player as it would cause
+    //          * confusion between Character#effectAdded and Effect#effectAdded.
+    //          * The former being when any effect gets added to a character, the
+    //          * later is fired on an effect when it is added to a character
+    //          */
+    //         return false;
+    //     }
+    //
+    //     let hadListeners = false;
+    //
+    //     for (const effect of this._effects) {
+    //         if (!effect.paused && event === 'updateTick' && effect.config.tickInterval) {
+    //             const sinceLastTick = Date.now() - effect.state.lastTick;
+    //
+    //             if (sinceLastTick >= effect.config.tickInterval * 1000) {
+    //                 effect.state.lastTick = Date.now();
+    //                 effect.state.ticks += 1;
+    //             }
+    //         }
+    //
+    //         if (!effect.paused) {
+    //             const effectHadListeners = effect.emit(event, ...args);
+    //
+    //             hadListeners = hadListeners || effectHadListeners;
+    //         }
+    //     }
+    //
+    //     return hadListeners;
+    // }
 
     /**
      * Get current list of effects as an array
@@ -217,10 +211,7 @@ export class EffectList implements Serializable {
         effect.deactivate();
         this._effects.delete(effect);
 
-        /**
-         * @event Character#effectRemoved
-         */
-        this._target.emit('effect-removed');
+        this._target.dispatch(new CharacterEffectRemovedEvent({effect}));
     }
 
     public serialize(): SerializedEffect[] {

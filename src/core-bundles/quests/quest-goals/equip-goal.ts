@@ -1,7 +1,15 @@
+import Character from '../../../lib/characters/character';
 import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
+import Quest, {QuestProgress} from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
 import SimpleMap from '../../../lib/util/simple-map';
+import {
+    CharacterEquipItemEvent,
+    CharacterEquipItemPayload,
+    CharacterUnequipItemEvent,
+    CharacterUnequipItemPayload,
+} from '../../../lib/characters/character-events';
+import {QuestProgressEvent} from '../../../lib/quests/quest-events';
 
 /**
  * A quest goal requiring the player equip something to a particular slot
@@ -18,33 +26,37 @@ export class EquipGoal extends QuestGoal {
 
         this.state = {equipped: false};
 
-        this.on('equip', this.equipItem);
-        this.on('unequip', this.unequipItem);
+        this.listen(CharacterEquipItemEvent.getName(), this.equipItem);
+        this.listen(CharacterUnequipItemEvent.getName(), this.unequipItem);
     }
 
-    public getProgress(): {percent: number; display: string} {
+    public getProgress(): QuestProgress {
         const percent = this.state.equipped ? 100 : 0;
         const display = `${this.config.title}: ${this.state.equipped ? '' : 'Not '}Equipped`;
 
         return {percent, display};
     }
 
-    private equipItem(slot): void {
+    private equipItem(character: Character, payload: CharacterEquipItemPayload): void {
+        const {slot} = payload;
+
         if (slot !== this.config.slot) {
             return;
         }
 
         this.state.equipped = true;
-        this.emit('progress', this.getProgress());
+        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
-    private unequipItem(slot): void {
+    private unequipItem(character: Character, payload: CharacterUnequipItemPayload): void {
+        const {slot} = payload;
+
         if (slot !== this.config.slot) {
             return;
         }
 
         this.state.equipped = false;
-        this.emit('progress', this.getProgress());
+        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 }
 

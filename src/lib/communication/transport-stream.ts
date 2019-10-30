@@ -1,10 +1,13 @@
 import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
+import {MudEventEmitter} from '../events/mud-event';
+import { SocketCloseEvent } from './socket-events';
+
 /**
  * Base class for anything that should be sending or receiving data from the player
  */
-export abstract class TransportStream<T extends EventEmitter> extends EventEmitter {
+export abstract class TransportStream<T extends MudEventEmitter> extends EventEmitter {
     /* eslint-disable lines-between-class-members */
     public socket: T;
     public _prompted: boolean = false;
@@ -37,7 +40,7 @@ export abstract class TransportStream<T extends EventEmitter> extends EventEmitt
      */
     public attach(socket: T): void {
         this.socket = socket;
-        this.socket.on('close', () => this.emit('close'));
+        this.socket.listen(SocketCloseEvent.getName(), () => this.emit('close'));
     }
 
     /**

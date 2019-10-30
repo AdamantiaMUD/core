@@ -1,5 +1,5 @@
 import Broadcast from '../communication/broadcast';
-import Character, {SerializedCharacter} from '../entities/character';
+import Character, {SerializedCharacter} from '../characters/character';
 import GameState from '../game-state';
 import Party from '../groups/party';
 import PlayerRole from './player-role';

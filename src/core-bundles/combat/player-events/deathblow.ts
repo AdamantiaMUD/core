@@ -1,22 +1,21 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/entities/character';
 import LevelUtil from '../../../lib/util/level-util';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterDeathblowEvent, CharacterDeathblowPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerExperienceEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'deathblow',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
+    name: CharacterDeathblowEvent.getName(),
+    listener: (): MudEventListener<CharacterDeathblowPayload> => {
         /**
          * @listens Player#deathblow
          */
-        return (player: Player, target: Character, skipParty: boolean = false) => {
+        return (player: Player, payload: CharacterDeathblowPayload) => {
+            const {target, skipParty = false} = payload;
+
             /* eslint-disable-next-line id-length */
             const xp = LevelUtil.mobExp(target.level);
 
@@ -29,7 +28,7 @@ export const evt: PlayerEventListenerFactory = {
                  */
                 for (const member of player.party) {
                     if (member.room === player.room) {
-                        member.emit('deathblow', target, true);
+                        member.dispatch(new CharacterDeathblowEvent({skipParty: true, target: target}));
                     }
                 }
 
@@ -40,7 +39,7 @@ export const evt: PlayerEventListenerFactory = {
                 sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
             }
 
-            player.emit('experience', xp);
+            player.dispatch(new PlayerExperienceEvent({amount: xp}));
         };
     },
 };

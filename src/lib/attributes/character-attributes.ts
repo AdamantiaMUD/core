@@ -1,9 +1,10 @@
 import Attribute, {SerializedAttribute} from './attribute';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import Logger from '../util/logger';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import { CharacterAttributeUpdateEvent } from '../characters/character-events';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;
@@ -67,7 +68,7 @@ export class CharacterAttributes implements Serializable {
 
         this.get(key).modify(amount);
 
-        this._target.emit('attribute-update', key, this.get(key));
+        this._target.dispatch(new CharacterAttributeUpdateEvent({attr: key, value: this.get(key)}));
     }
 
     public reset(): void {

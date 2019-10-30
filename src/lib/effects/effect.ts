@@ -1,14 +1,20 @@
-import EventEmitter from 'events';
 import cloneFactory from 'rfdc';
 
 import Ability from '../abilities/ability';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Damage from '../combat/damage';
 import EffectFlag from './effect-flag';
 import GameState from '../game-state';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import {
+    EffectActivatedEvent,
+    EffectAddedEvent,
+    EffectDeactivatedEvent,
+    EffectRemoveEvent,
+} from './effect-events';
 import {EffectModifiers} from './effect-modifiers';
+import {MudEventEmitter} from '../events/mud-event';
 
 export interface EffectConfig {
     autoActivate?: boolean;
@@ -61,7 +67,7 @@ const clone = cloneFactory();
  *
  * @listens Effect#effectAdded
  */
-export class Effect extends EventEmitter implements Serializable {
+export class Effect extends MudEventEmitter implements Serializable {
     /* eslint-disable lines-between-class-members */
     public ability: Ability = null;
     public active: boolean;
@@ -122,7 +128,7 @@ export class Effect extends EventEmitter implements Serializable {
         }
 
         if (this.config.autoActivate) {
-            this.on('effect-added', this.activate);
+            this.listen(EffectAddedEvent.getName(), this.activate);
         }
     }
 
@@ -175,10 +181,7 @@ export class Effect extends EventEmitter implements Serializable {
 
         this.startedAt = Date.now() - this.elapsed;
 
-        /**
-         * @event Effect#effectActivated
-         */
-        this.emit('effect-activated');
+        this.dispatch(new EffectActivatedEvent());
         this.active = true;
     }
 
@@ -191,10 +194,7 @@ export class Effect extends EventEmitter implements Serializable {
             return;
         }
 
-        /**
-         * @event Effect#effectDeactivated
-         */
-        this.emit('effect-deactivated');
+        this.dispatch(new EffectDeactivatedEvent());
         this.active = false;
     }
 
@@ -262,7 +262,7 @@ export class Effect extends EventEmitter implements Serializable {
         /**
          * @event Effect#remove
          */
-        this.emit('remove');
+        this.dispatch(new EffectRemoveEvent());
     }
 
     /**

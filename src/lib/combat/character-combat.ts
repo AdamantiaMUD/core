@@ -1,4 +1,4 @@
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Damage from './damage';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 

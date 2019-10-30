@@ -1,5 +1,6 @@
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Damage from './damage';
+import {CharacterHealEvent, CharacterHealedEvent} from '../characters/character-events';
 
 /**
  * Heal is `Damage` that raises an attribute instead of lowering it
@@ -11,10 +12,10 @@ export class Heal extends Damage {
         target.attributes.modify(this.attribute, finalAmount);
 
         if (this.attacker) {
-            this.attacker.emit('heal', this, target, finalAmount);
+            this.attacker.dispatch(new CharacterHealEvent({amount: finalAmount, source: this, target: target}));
         }
 
-        target.emit('healed', this, finalAmount);
+        target.dispatch(new CharacterHealedEvent({amount: finalAmount, source: this}));
     }
 }
 

@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import SimpleMap from '../util/simple-map';
 
@@ -40,7 +40,7 @@ export class MudEventEmitter {
         this._emitter.on(eventKey, (data: T) => listener(this, data, config));
     }
 
-    public stopListening(eventKey: string): void {
+    public stopListening(eventKey?: string): void {
         this._emitter.removeAllListeners(eventKey);
     };
 }
@@ -51,15 +51,3 @@ export interface MudEventListenerFactory<T> {
     name: string;
     listener: (state?: GameState) => MudEventListener<T>;
 }
-
-const ExperienceEvent: MudEventConstructor<{amount: number}> = class extends MudEvent<{amount: number}> {
-    public NAME: string = 'experience';
-    public amount: number;
-};
-
-type ExperienceEventListener = MudEventListener<{amount: number}>;
-
-const GainedFollowerEvent: MudEventConstructor<{follower: Character}> = class extends MudEvent<{follower: Character}> {
-    public NAME: string = 'gained-follower';
-    public follower: Character;
-};

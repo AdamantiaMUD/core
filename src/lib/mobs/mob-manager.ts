@@ -24,7 +24,7 @@ export class MobManager {
         }
 
         mob.__pruned = true;
-        mob.removeAllListeners();
+        mob.stopListening();
         this._mobs.delete(mob.uuid);
     }
 }

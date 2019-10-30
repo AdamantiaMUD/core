@@ -8,6 +8,9 @@ import Npc from '../mobs/npc';
 import Player from '../players/player';
 import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 import {Broadcastable} from '../communication/broadcast';
+import {ItemSpawnEvent} from '../equipment/item-events';
+import {NpcSpawnEvent} from '../mobs/npc-events';
+import {RoomSpawnEvent} from './room-events';
 
 const clone = cloneFactory();
 
@@ -214,9 +217,8 @@ export class Room extends ScriptableEntity implements Broadcastable {
         /**
          * Fires when the room is created but before it has hydrated its default
          * contents. Use the `ready` event if you need default items to be there.
-         * @event Room#spawn
          */
-        this.emit('spawn');
+        this.dispatch(new RoomSpawnEvent());
 
         this._items.clear();
 
@@ -305,10 +307,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
 
         this.addItem(newItem);
 
-        /**
-         * @event Item#spawn
-         */
-        newItem.emit('spawn');
+        newItem.dispatch(new ItemSpawnEvent());
 
         return newItem;
     }
@@ -324,10 +323,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
         this.addNpc(newNpc);
         this._spawnedNpcs.add(newNpc);
 
-        /**
-         * @event Npc#spawn
-         */
-        newNpc.emit('spawn');
+        newNpc.dispatch(new NpcSpawnEvent());
 
         return newNpc;
     }

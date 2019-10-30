@@ -1,9 +1,10 @@
 import Ability from '../abilities/ability';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import Effect from '../effects/effect';
 import Item from '../equipment/item';
 import Room from '../locations/room';
 import SimpleMap from '../util/simple-map';
+import {CharacterDamagedEvent, CharacterHitEvent} from '../characters/character-events';
 
 // @TODO: make this an interface rather than a hard-coded list
 export type DamageSource = Character | Effect | Item | Room | Ability;
@@ -46,21 +47,10 @@ export class Damage {
         target.attributes.modify(this.attribute, -1 * finalAmount);
 
         if (this.attacker) {
-            /**
-             * @event Character#hit
-             * @param {Damage} damage
-             * @param {Character} target
-             * @param {Number} finalAmount
-             */
-            this.attacker.emit('hit', this, target, finalAmount);
+            this.attacker.dispatch(new CharacterHitEvent({amount: finalAmount, source: this, target: target}));
         }
 
-        /**
-         * @event Character#damaged
-         * @param {Damage} damage
-         * @param {Number} finalAmount
-         */
-        target.emit('damaged', this, finalAmount);
+        target.dispatch(new CharacterDamagedEvent({amount: finalAmount, source: this}));
     }
 
     /**

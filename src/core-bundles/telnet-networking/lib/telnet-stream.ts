@@ -1,4 +1,8 @@
 import {AddressInfo} from 'net';
+import {
+    SocketDataEvent,
+    SocketErrorEvent
+} from '../../../lib/communication/socket-events';
 
 import Sequences from './sequences';
 import TelnetSocket from './telnet-socket';
@@ -15,16 +19,16 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
     public attach(socket: TelnetSocket): void {
         super.attach(socket);
 
-        socket.on('data', message => {
+        socket.listen(SocketDataEvent.getName(), (sock: TelnetSocket, message: string) => {
             this.emit('data', message);
         });
 
-        socket.on('error', err => {
+        socket.listen(SocketErrorEvent.getName(), (sock: TelnetSocket, err: string) => {
             this.emit('error', err);
         });
 
-        this.socket.on('DO', opt => {
-            this.socket.telnetCommand(Sequences.WONT, opt);
+        this.socket.listen('DO', (sock: TelnetSocket, opt: number | number[]) => {
+            sock.telnetCommand(Sequences.WONT, opt);
         });
     }
 

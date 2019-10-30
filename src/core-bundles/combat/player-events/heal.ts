@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/entities/character';
+import Character from '../../../lib/characters/character';
 import Heal from '../../../lib/combat/heal';
 import Player from '../../../lib/players/player';
 import {

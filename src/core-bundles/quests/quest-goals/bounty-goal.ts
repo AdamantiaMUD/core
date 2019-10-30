@@ -1,9 +1,13 @@
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
+import Quest, {QuestProgress} from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
-import Room from '../../../lib/locations/room';
 import SimpleMap from '../../../lib/util/simple-map';
+import {
+    PlayerEnterRoomEvent,
+    PlayerEnterRoomPayload
+} from '../../../lib/players/player-events';
+import {QuestProgressEvent} from '../../../lib/quests/quest-events';
 
 export class BountyGoal extends QuestGoal {
     public constructor(quest: Quest, cfg: SimpleMap, player: Player) {
@@ -25,34 +29,18 @@ export class BountyGoal extends QuestGoal {
             delivered: false,
         };
 
-        this.on('enter-room', this.enterRoom);
+        this.listen(PlayerEnterRoomEvent.getName(), this.enterRoom);
     }
 
-    public getProgress(): {percent: number; display: string} {
-        // Has target been located?
-        let percent = this.state.found ? 50 : 0;
+    private enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {
+        const {room} = payload;
 
-        if (this.config.home) {
-            // Has target been returned home?
-            percent += this.state.delivered ? 50 : 0;
-        }
-        else {
-            // No return location necessary.
-            percent += 50;
-        }
-
-        const display = this.state.found ? 'Complete' : 'Not Complete';
-
-        return {percent, display};
-    }
-
-    private enterRoom(room: Room): void {
         if (this.state.found) {
             if (room.entityReference === this.config.home) {
                 // Check if we have taken the NPC home
                 this.state.delivered = true;
             }
-            this.emit('progress', this.getProgress());
+            this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
         }
         else {
             let located = false;
@@ -75,8 +63,26 @@ export class BountyGoal extends QuestGoal {
                 this.state.found = true;
             }
 
-            this.emit('progress', this.getProgress());
+            this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
         }
+    }
+
+    public getProgress(): QuestProgress {
+        // Has target been located?
+        let percent = this.state.found ? 50 : 0;
+
+        if (this.config.home) {
+            // Has target been returned home?
+            percent += this.state.delivered ? 50 : 0;
+        }
+        else {
+            // No return location necessary.
+            percent += 50;
+        }
+
+        const display = this.state.found ? 'Complete' : 'Not Complete';
+
+        return {percent, display};
     }
 }
 

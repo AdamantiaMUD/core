@@ -8,6 +8,7 @@ import CommandManager from '../../../lib/commands/command-manager';
 import GameState from '../../../lib/game-state';
 import Npc from '../../../lib/mobs/npc';
 import Player from '../../../lib/players/player';
+import { QuestProgressEvent } from '../../../lib/quests/quest-events';
 
 const {
     /* eslint-disable-next-line id-length */
@@ -208,7 +209,7 @@ const completeLoader: CommandDefinitionBuilder = (state: GameState): CommandDefi
 
         if (quest.getProgress().percent < 100) {
             sayAt(player, `${quest.config.title} isn't complete yet.`);
-            quest.emit('progress', quest.getProgress());
+            quest.dispatch(new QuestProgressEvent({progress: quest.getProgress()}));
 
             return;
         }

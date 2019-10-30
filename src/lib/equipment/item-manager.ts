@@ -1,4 +1,5 @@
 import Item from './item';
+import {UpdateTickEvent} from '../common/common-events';
 
 /**
  * Keep track of all items in game
@@ -15,22 +16,16 @@ export class ItemManager {
         item.carriedBy?.removeItem(item);
         item.inventory?.items.forEach(childItem => this.remove(childItem));
 
-        item.removeAllListeners();
+        item.stopListening();
 
         item.__pruned = true;
 
         this._items.delete(item);
     }
 
-    /**
-     * @fires Item#updateTick
-     */
     public tickAll(): void {
         for (const item of this._items) {
-            /**
-             * @event Item#updateTick
-             */
-            item.emit('update-tick');
+            item.dispatch(new UpdateTickEvent());
         }
     }
 }

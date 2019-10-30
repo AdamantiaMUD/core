@@ -1,4 +1,4 @@
-import Character from '../../../../lib/entities/character';
+import Character from '../../../../lib/characters/character';
 import Item, {ItemDefinition} from '../../../../lib/equipment/item';
 import Logger from '../../../../lib/util/logger';
 import LootTable from '../../../../lib/combat/loot-table';

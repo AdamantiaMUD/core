@@ -1,12 +1,13 @@
 import Broadcast from '../broadcast';
 import ChannelAudience from '../audiences/channel-audience';
-import Character from '../../entities/character';
+import Character from '../../characters/character';
 import GameState from '../../game-state';
 // import PartyAudience from '../audiences/party-audience';
 import Player from '../../players/player';
 import PlayerRole from '../../players/player-role';
 import PrivateAudience from '../audiences/private-audience';
 import WorldAudience from '../audiences/world-audience';
+import {ChannelReceiveEvent} from './channel-events';
 import {NoMessageError, NoPartyError, NoRecipientError} from './channel-errors';
 
 const {sayAt, sayAtFormatted} = Broadcast;
@@ -215,13 +216,8 @@ export class Channel {
             /**
              * Docs limit this to be for ScriptableEntity (Area/Room/Item), but
              * also applies to NPC and Player
-             *
-             * @event ScriptableEntity#channelReceive
-             * @param {Channel} channel
-             * @param {Character} sender
-             * @param {string} rawMessage
              */
-            target.emit('channel-receive', this, sender, rawMessage);
+            target.dispatch(new ChannelReceiveEvent({channel: this, message: rawMessage, sender: sender}));
         }
     }
 }

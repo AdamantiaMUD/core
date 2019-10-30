@@ -1,18 +1,19 @@
-import EventEmitter from 'events';
-
 import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
-import EventManager from '../events/event-manager';
 import GameState from '../game-state';
+import MudEventManager from '../events/mud-event-manager';
 import Player, {SerializedPlayer} from './player';
+import {MudEventEmitter} from '../events/mud-event';
 import {PlayerEventListener} from '../events/player-events';
+import {PlayerSavedEvent} from './player-events';
+import {UpdateTickEvent} from '../common/common-events';
 
 /**
  * Keeps track of all active players in game
  */
-export class PlayerManager extends EventEmitter {
+export class PlayerManager extends MudEventEmitter {
     /* eslint-disable lines-between-class-members */
-    public events: EventManager = new EventManager();
+    public events: MudEventManager = new MudEventManager();
     public loader: EntityLoader = null;
     public players: Map<string, Player> = new Map();
     /* eslint-enable lines-between-class-members */
@@ -20,7 +21,7 @@ export class PlayerManager extends EventEmitter {
     public constructor() {
         super();
 
-        this.on('update-tick', this.tickAll);
+        this.listen(UpdateTickEvent.getName(), this.tickAll);
     }
 
     public addListener(event: string | symbol, listener: PlayerEventListener): this {
@@ -92,7 +93,7 @@ export class PlayerManager extends EventEmitter {
             player.socket.end();
         }
 
-        player.removeAllListeners();
+        player.stopListening();
 
         if (player.room) {
             player.room.removePlayer(player);
@@ -110,7 +111,7 @@ export class PlayerManager extends EventEmitter {
 
         await this.loader.update(player.name, player.serialize());
 
-        player.emit('saved');
+        player.dispatch(new PlayerSavedEvent());
     }
 
     public async saveAll(): Promise<void> {
@@ -126,7 +127,7 @@ export class PlayerManager extends EventEmitter {
 
     public tickAll(): void {
         for (const [, player] of this.players.entries()) {
-            player.emit('update-tick');
+            player.dispatch(new UpdateTickEvent());
         }
     }
 }

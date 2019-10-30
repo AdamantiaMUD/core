@@ -2,7 +2,9 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
+import {CharacterPutItemEvent} from '../../../lib/characters/character-events';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {ItemPutAwayEvent} from '../../../lib/equipment/item-events';
 
 const dot = ArgParser.parseDot;
 
@@ -74,8 +76,8 @@ export const cmd: CommandDefinitionFactory = {
         /* eslint-disable-next-line max-len */
         sayAt(player, `<green>You put </green>${ItemUtil.display(item)}<green> into </green>${ItemUtil.display(toContainer)}<green>.</green>`);
 
-        item.emit('put', player, toContainer);
-        player.emit('put', item, toContainer);
+        item.dispatch(new ItemPutAwayEvent({character: player, container: toContainer}));
+        player.dispatch(new CharacterPutItemEvent({container: toContainer, item: item}));
     },
 };
 

@@ -4,7 +4,7 @@
 import {sprintf} from 'sprintf-js';
 
 import Broadcast from '../communication/broadcast';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import Item from '../equipment/item';
 import ItemType from '../equipment/item-type';

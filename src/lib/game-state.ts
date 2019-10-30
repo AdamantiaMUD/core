@@ -1,4 +1,3 @@
-import EventEmitter from 'events';
 import path from 'path';
 import {CommanderStatic} from 'commander';
 
@@ -31,6 +30,8 @@ import QuestRewardManager from './quests/quest-reward-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
 import TransportStream from './communication/transport-stream';
+import {MudEventEmitter} from './events/mud-event';
+import {UpdateTickEvent} from './common/common-events';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
@@ -240,7 +241,7 @@ export class GameState {
         return this._spellManager;
     }
 
-    public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {
+    public attachServerStream<S extends TransportStream<T>, T extends MudEventEmitter>(stream: S): void {
         this._inputEventManager.attach(stream);
     }
 
@@ -258,11 +259,11 @@ export class GameState {
     }
 
     public tickEntities(): void {
-        this._areaManager.emit('update-tick');
+        this._areaManager.dispatch(new UpdateTickEvent());
     }
 
     public tickPlayers(): void {
-        this._playerManager.emit('update-tick');
+        this._playerManager.dispatch(new UpdateTickEvent());
     }
 }
 

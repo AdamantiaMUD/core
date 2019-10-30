@@ -2,8 +2,8 @@ import cloneFactory from 'rfdc';
 
 import Effect, {EffectConfig} from './effect';
 import EffectFlag from './effect-flag';
-import EventManager from '../events/event-manager';
 import GameState from '../game-state';
+import MudEventManager from '../events/mud-event-manager';
 import SimpleMap from '../util/simple-map';
 import {EffectModifiers} from './effect-modifiers';
 
@@ -31,7 +31,7 @@ export class EffectFactory {
     /* eslint-disable lines-between-class-members */
     public effects: Map<
         string,
-        {definition: EffectDefinition; eventManager: EventManager}
+        {definition: EffectDefinition; eventManager: MudEventManager}
         > = new Map();
     /* eslint-enable lines-between-class-members */
 
@@ -49,7 +49,7 @@ export class EffectFactory {
             listeners = listeners(state);
         }
 
-        const eventManager = new EventManager();
+        const eventManager = new MudEventManager();
 
         for (const event in listeners) {
             eventManager.add(event, listeners[event]);
@@ -84,7 +84,7 @@ export class EffectFactory {
     /**
      * Get a effect definition. Use `create` if you want an instance of a effect
      */
-    public get(id: string): {definition: EffectDefinition; eventManager: EventManager} {
+    public get(id: string): {definition: EffectDefinition; eventManager: MudEventManager} {
         return this.effects.get(id);
     }
 

@@ -1,7 +1,7 @@
 import uuid from 'uuid/v4';
 
 import Area from '../locations/area';
-import Character from '../entities/character';
+import Character from '../characters/character';
 import GameState from '../game-state';
 import Inventory from './inventory';
 import ItemType from './item-type';

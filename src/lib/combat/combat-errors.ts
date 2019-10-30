@@ -1,4 +1,4 @@
-import Character from '../entities/character';
+import Character from '../characters/character';
 
 export class CombatError extends Error {}
 

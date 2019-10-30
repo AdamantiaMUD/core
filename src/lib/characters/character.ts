@@ -8,13 +8,24 @@ import Inventory from '../equipment/inventory';
 import Item from '../equipment/item';
 import Npc from '../mobs/npc';
 import Room from '../locations/room';
-import ScriptableEntity, {SerializedScriptableEntity} from './scriptable-entity';
+import ScriptableEntity, {SerializedScriptableEntity} from '../entities/scriptable-entity';
 import Serializable from '../data/serializable';
 import TransportStream from '../communication/transport-stream';
 import {
+    CharacterAttributeUpdateEvent,
+    CharacterEquipItemEvent,
+    CharacterFollowedTargetEvent,
+    CharacterGainedFollowerEvent,
+    CharacterLostFollowerEvent,
+    CharacterUnequipItemEvent,
+    CharacterUnfollowedTargetEvent,
+} from './character-events';
+import {
     EquipAlreadyEquippedError,
-    EquipSlotTakenError, InventoryFullError
+    EquipSlotTakenError,
+    InventoryFullError,
 } from '../equipment/equipment-errors';
+import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/item-events';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -110,7 +121,7 @@ export class Character extends ScriptableEntity implements Serializable {
          * @event Character#gainedFollower
          * @param {Character} follower
          */
-        this.emit('gained-follower', follower);
+        this.dispatch(new CharacterGainedFollowerEvent({follower}));
     }
 
     /**
@@ -149,7 +160,6 @@ export class Character extends ScriptableEntity implements Serializable {
         if (this._equipment.has(slot)) {
             throw new EquipSlotTakenError();
         }
-
         if (item.getMeta('equippedBy')) {
             throw new EquipAlreadyEquippedError();
         }
@@ -161,18 +171,9 @@ export class Character extends ScriptableEntity implements Serializable {
         this._equipment.set(slot, item);
         item.setMeta('equippedBy', this);
 
-        /**
-         * @event Item#equip
-         * @param {Character} equipper
-         */
-        item.emit('equip', this);
+        item.dispatch(new ItemEquippedEvent({wearer: this}));
 
-        /**
-         * @event Character#equip
-         * @param {string} slot
-         * @param {Item} item
-         */
-        this.emit('equip', slot, item);
+        this.dispatch(new CharacterEquipItemEvent({item, slot}));
     }
 
     /**
@@ -189,11 +190,7 @@ export class Character extends ScriptableEntity implements Serializable {
         this._following = target;
         target.addFollower(this);
 
-        /**
-         * @event Character#followed
-         * @param {Character} target
-         */
-        this.emit('followed', target);
+        this.dispatch(new CharacterFollowedTargetEvent({target}));
     }
 
     /**
@@ -279,25 +276,18 @@ export class Character extends ScriptableEntity implements Serializable {
         }
 
         this._attributes.get(attr).modify(amount);
-        this.emit('attribute-update', attr, this.getAttribute(attr));
+        this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
     }
 
     public removeEffect(effect: Effect): void {
         this._effects.remove(effect);
     }
 
-    /**
-     * @fires Character#lostFollower
-     */
     public removeFollower(follower: Character): void {
         this._followers.delete(follower);
         follower._following = null;
 
-        /**
-         * @event Character#lostFollower
-         * @param {Character} follower
-         */
-        this.emit('lost-follower', follower);
+        this.dispatch(new CharacterLostFollowerEvent({follower}));
     }
 
     /**
@@ -328,7 +318,7 @@ export class Character extends ScriptableEntity implements Serializable {
 
         this._attributes.get(attr).reset();
 
-        this.emit('attribute-update', attr, this.getAttribute(attr));
+        this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
     }
 
     public serialize(): SerializedCharacter {
@@ -364,33 +354,19 @@ export class Character extends ScriptableEntity implements Serializable {
 
         this.equipment.delete(slot);
 
-        /**
-         * @event Item#unequip
-         * @param {Character} equipper
-         */
-        item.emit('unequip', this);
+        item.dispatch(new ItemUnequippedEvent({wearer: this}));
 
-        /**
-         * @event Character#unequip
-         * @param {string} slot
-         * @param {Item} item
-         */
-        this.emit('unequip', slot, item);
+        this.dispatch(new CharacterUnequipItemEvent({item, slot}));
         this.addItem(item);
     }
 
     /**
      * Stop following whoever the character was following
-     * @fires Character#unfollowed
      */
     public unfollow(): void {
         this._following.removeFollower(this);
 
-        /**
-         * @event Character#unfollowed
-         * @param {Character} following
-         */
-        this.emit('unfollowed', this._following);
+        this.dispatch(new CharacterUnfollowedTargetEvent({target: this._following}));
         this._following = null;
     }
 }
