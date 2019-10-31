@@ -5,6 +5,8 @@ import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
 import Player from '../../../lib/players/player';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {ItemPickedUpEvent} from '../../../lib/equipment/item-events';
+import {PlayerGetItemEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
@@ -26,8 +28,8 @@ const pickup = (item: Item, container: Item, player: Player): void => {
 
     sayAt(player, `<green>You receive loot: </green>${ItemUtil.display(item)}<green>.</green>`);
 
-    item.emit('get', player);
-    player.emit('get', item);
+    item.dispatch(new ItemPickedUpEvent({character: player}));
+    player.dispatch(new PlayerGetItemEvent({item}));
 };
 
 export const cmd: CommandDefinitionFactory = {

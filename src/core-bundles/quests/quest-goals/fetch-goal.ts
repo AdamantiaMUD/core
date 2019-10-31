@@ -4,6 +4,11 @@ import Player from '../../../lib/players/player';
 import Quest, {QuestProgress} from '../../../lib/quests/quest';
 import QuestGoal from '../../../lib/quests/quest-goal';
 import SimpleMap from '../../../lib/util/simple-map';
+import {
+    PlayerGetItemEvent,
+    PlayerDropItemEvent,
+    PlayerQuestStartedEvent
+} from '../../../lib/players/player-events';
 import {QuestProgressEvent} from '../../../lib/quests/quest-events';
 
 /**
@@ -23,10 +28,10 @@ export class FetchGoal extends QuestGoal {
 
         this.state = {count: 0};
 
-        this.on('get', this.getItem);
-        this.on('drop', this.dropItem);
+        this.listen(PlayerGetItemEvent.getName(), this.getItem);
+        this.listen(PlayerDropItemEvent.getName(), this.dropItem);
         this.on('decay', this.dropItem);
-        this.on('start', this.checkInventory);
+        this.listen(PlayerQuestStartedEvent.getName(), this.checkInventory);
     }
 
     public getProgress(): QuestProgress {
@@ -60,7 +65,7 @@ export class FetchGoal extends QuestGoal {
         super.complete();
     }
 
-    private getItem(item: Item): void {
+    private getItem(player: Player, item: Item): void {
         if (item.entityReference !== this.config.item) {
             return;
         }
@@ -74,7 +79,7 @@ export class FetchGoal extends QuestGoal {
         this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
-    private dropItem(item: Item): void {
+    private dropItem(player: Player, item: Item): void {
         if (!this.state.count || item.entityReference !== this.config.item) {
             return;
         }
@@ -95,7 +100,7 @@ export class FetchGoal extends QuestGoal {
         }
 
         for (const [, item] of this.player.inventory.items) {
-            this.getItem(item);
+            this.getItem(this.player, item);
         }
     }
 }

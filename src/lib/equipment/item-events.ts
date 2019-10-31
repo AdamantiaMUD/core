@@ -2,6 +2,15 @@ import Character from '../characters/character';
 import Item from './item';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
+export interface ItemDroppedPayload {
+    character: Character;
+}
+
+export const ItemDroppedEvent: MudEventConstructor<ItemDroppedPayload> = class extends MudEvent<ItemDroppedPayload> {
+    public static NAME: string = 'item-dropped';
+    public character: Character;
+};
+
 export interface ItemEquippedPayload {
     wearer: Character;
 }
@@ -9,6 +18,15 @@ export interface ItemEquippedPayload {
 export const ItemEquippedEvent: MudEventConstructor<ItemEquippedPayload> = class extends MudEvent<ItemEquippedPayload> {
     public static NAME: string = 'equip';
     public wearer: Character;
+};
+
+export interface ItemPickedUpPayload {
+    character: Character;
+}
+
+export const ItemPickedUpEvent: MudEventConstructor<ItemPickedUpPayload> = class extends MudEvent<ItemPickedUpPayload> {
+    public static NAME: string = 'item-picked-up';
+    public character: Character;
 };
 
 export interface ItemPutAwayPayload {

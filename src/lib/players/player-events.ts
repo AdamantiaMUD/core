@@ -1,3 +1,4 @@
+import Item from '../equipment/item';
 import Quest, {QuestProgress} from '../quests/quest';
 import Room from '../locations/room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
@@ -9,6 +10,15 @@ export interface PlayerCommandQueuedPayload {
 export const PlayerCommandQueuedEvent: MudEventConstructor<PlayerCommandQueuedPayload> = class extends MudEvent<PlayerCommandQueuedPayload> {
     public static NAME: string = 'command-queued';
     public idx: number;
+};
+
+export interface PlayerDropItemPayload {
+    item: Item;
+}
+
+export const PlayerDropItemEvent: MudEventConstructor<PlayerDropItemPayload> = class extends MudEvent<PlayerDropItemPayload> {
+    public static NAME: string = 'drop';
+    public item: Item;
 };
 
 export interface PlayerEnterRoomPayload {
@@ -27,6 +37,15 @@ export interface PlayerExperiencePayload {
 export const PlayerExperienceEvent: MudEventConstructor<PlayerExperiencePayload> = class extends MudEvent<PlayerExperiencePayload> {
     public NAME: string = 'experience';
     public amount: number;
+};
+
+export interface PlayerGetItemPayload {
+    item: Item;
+}
+
+export const PlayerGetItemEvent: MudEventConstructor<PlayerGetItemPayload> = class extends MudEvent<PlayerGetItemPayload> {
+    public static NAME: string = 'get';
+    public item: Item;
 };
 
 export interface PlayerQuestCompletedPayload {

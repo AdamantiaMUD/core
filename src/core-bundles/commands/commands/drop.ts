@@ -3,6 +3,8 @@ import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
 import Player from '../../../lib/players/player';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {ItemDroppedEvent} from '../../../lib/equipment/item-events';
+import {PlayerDropItemEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
@@ -34,8 +36,9 @@ export const cmd: CommandDefinitionFactory = {
 
         player.removeItem(item);
         player.room.addItem(item);
-        player.emit('drop', item);
-        item.emit('drop', player);
+
+        player.dispatch(new PlayerDropItemEvent({item}));
+        item.dispatch(new ItemDroppedEvent({character: player}));
 
         for (const npc of player.room.npcs) {
             npc.emit('player-drop-item', player, item);
