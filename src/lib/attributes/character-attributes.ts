@@ -4,7 +4,7 @@ import GameState from '../game-state';
 import Logger from '../util/logger';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
-import { CharacterAttributeUpdateEvent } from '../characters/character-events';
+import {CharacterAttributeUpdateEvent} from '../characters/character-events';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;

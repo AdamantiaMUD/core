@@ -1,8 +1,8 @@
 import Area from './area';
 import GameState from '../game-state';
 import Room from './room';
-import {AreaUpdateTickEvent} from './area-events';
 import {MudEventEmitter} from '../events/mud-event';
+import {UpdateTickEvent} from '../common/common-events';
 
 /**
  * Stores references to, and handles distribution of, active areas
@@ -20,12 +20,12 @@ export class AreaManager extends MudEventEmitter {
 
         this.state = state;
 
-        this.listen(AreaUpdateTickEvent.getName(), this.tickAll);
+        this.listen(UpdateTickEvent.getName(), this.tickAll);
     }
 
     private tickAll(): void {
         for (const [, area] of this.areas) {
-            area.dispatch(new AreaUpdateTickEvent({state: this.state}));
+            area.dispatch(new UpdateTickEvent({state: this.state}));
         }
     }
 

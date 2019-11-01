@@ -110,23 +110,13 @@ export class Character extends ScriptableEntity implements Serializable {
         return this._effects.add(effect);
     }
 
-    /**
-     * @fires Character#gainedFollower
-     */
     public addFollower(follower: Character): void {
         this._followers.add(follower);
         follower.setFollowing(this);
 
-        /**
-         * @event Character#gainedFollower
-         * @param {Character} follower
-         */
         this.dispatch(new CharacterGainedFollowerEvent({follower}));
     }
 
-    /**
-     * Move an item to the character's inventory
-     */
     public addItem(item: Item): void {
         this._inventory.addItem(item);
 
@@ -150,12 +140,6 @@ export class Character extends ScriptableEntity implements Serializable {
         }
     }
 
-    /**
-     * @throws EquipSlotTakenError
-     * @throws EquipAlreadyEquippedError
-     * @fires Character#equip
-     * @fires Item#equip
-     */
     public equip(item: Item, slot: string): void {
         if (this._equipment.has(slot)) {
             throw new EquipSlotTakenError();
@@ -176,10 +160,6 @@ export class Character extends ScriptableEntity implements Serializable {
         this.dispatch(new CharacterEquipItemEvent({item, slot}));
     }
 
-    /**
-     * Begin following another character. If the character follows itself they
-     * stop following.
-     */
     public follow(target: Character): void {
         if (target === this) {
             this.unfollow();
@@ -338,10 +318,6 @@ export class Character extends ScriptableEntity implements Serializable {
 
     /**
      * Remove equipment in a given slot and move it to the character's inventory
-     *
-     * @throws InventoryFullError
-     * @fires Item#unequip
-     * @fires Character#unequip
      */
     public unequip(slot: string): void {
         if (this._inventory.isFull) {

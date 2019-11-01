@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
 import {MudEventEmitter} from '../events/mud-event';
-import { SocketCloseEvent } from './socket-events';
+import {SocketCloseEvent} from './socket-events';
 
 /**
  * Base class for anything that should be sending or receiving data from the player

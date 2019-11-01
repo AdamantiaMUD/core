@@ -2,7 +2,6 @@ import Npc from '../mobs/npc';
 import Player from '../players/player';
 import Room from './room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
-import GameState from '../game-state';
 
 export interface RoomNpcEnterPayload {
     npc: Npc;

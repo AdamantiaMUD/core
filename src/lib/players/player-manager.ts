@@ -3,8 +3,7 @@ import EntityLoader from '../data/entity-loader';
 import GameState from '../game-state';
 import MudEventManager from '../events/mud-event-manager';
 import Player, {SerializedPlayer} from './player';
-import {MudEventEmitter} from '../events/mud-event';
-import {PlayerEventListener} from '../events/player-events';
+import {MudEventEmitter, MudEventListener} from '../events/mud-event';
 import {PlayerSavedEvent} from './player-events';
 import {UpdateTickEvent} from '../common/common-events';
 
@@ -24,7 +23,7 @@ export class PlayerManager extends MudEventEmitter {
         this.listen(UpdateTickEvent.getName(), this.tickAll);
     }
 
-    public addListener(event: string | symbol, listener: PlayerEventListener): this {
+    public addListener(event: string | symbol, listener: MudEventListener<unknown>): this {
         this.events.add(event as string, listener);
 
         return this;

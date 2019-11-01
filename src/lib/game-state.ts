@@ -16,13 +16,13 @@ import Config from './util/config';
 import Data from './util/data';
 import EffectFactory from './effects/effect-factory';
 import EntityLoaderRegistry from './data/entity-loader-registry';
-import EventManager from './events/event-manager';
 import GameServer from './game-server';
 import HelpManager from './help/help-manager';
 import ItemFactory from './equipment/item-factory';
 import ItemManager from './equipment/item-manager';
 import MobFactory from './mobs/mob-factory';
 import MobManager from './mobs/mob-manager';
+import MudEventManager from './events/mud-event-manager';
 import PlayerManager from './players/player-manager';
 import QuestFactory from './quests/quest-factory';
 import QuestGoalManager from './quests/quest-goal-manager';
@@ -48,7 +48,7 @@ export class GameState {
     private readonly _effectFactory: EffectFactory = new EffectFactory();
     private readonly _entityLoaderRegistry: EntityLoaderRegistry;
     private readonly _helpManager: HelpManager = new HelpManager();
-    private readonly _inputEventManager: EventManager = new EventManager();
+    private readonly _inputEventManager: MudEventManager = new MudEventManager();
     private readonly _itemBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _itemManager: ItemManager = new ItemManager();
     private readonly _itemFactory: ItemFactory = new ItemFactory();
@@ -66,7 +66,7 @@ export class GameState {
     private readonly _roomFactory: RoomFactory = new RoomFactory();
     private readonly _roomManager: RoomManager = new RoomManager();
     private readonly _server: GameServer = new GameServer();
-    private readonly _serverEventManager: EventManager = new EventManager();
+    private readonly _serverEventManager: MudEventManager = new MudEventManager();
     private readonly _skillManager: AbilityManager = new AbilityManager();
     private readonly _spellManager: AbilityManager = new AbilityManager();
 
@@ -161,7 +161,7 @@ export class GameState {
         return this._helpManager;
     }
 
-    public get inputEventManager(): EventManager {
+    public get inputEventManager(): MudEventManager {
         return this._inputEventManager;
     }
 
@@ -229,7 +229,7 @@ export class GameState {
         return this._roomManager;
     }
 
-    public get serverEventManager(): EventManager {
+    public get serverEventManager(): MudEventManager {
         return this._serverEventManager;
     }
 

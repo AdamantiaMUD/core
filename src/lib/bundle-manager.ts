@@ -16,10 +16,8 @@ import QuestGoal from './quests/quest-goal';
 import QuestReward from './quests/quest-reward';
 import {AreaDefinition, AreaManifest} from './locations/area';
 import {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
-import {InputEventListenerDefinition} from './events/input-events';
-import {PlayerEventListenerFactory} from './events/player-events';
+import {MudEventListenerFactory} from './events/mud-event';
 import {QuestDefinition} from './quests/quest';
-import {ServerEventListenersDefinition} from './events/server-events';
 
 export class BundleManager {
     private readonly areas: string[] = [];
@@ -473,19 +471,12 @@ export class BundleManager {
             const eventPath = path.join(uri, eventFile);
 
             if (Data.isScriptFile(eventPath, eventFile)) {
-                const eventName = path.basename(eventFile, path.extname(eventFile));
-
-                Logger.verbose(`LOAD: ${bundle} - Input Events -> ${eventName}`);
-
                 const eventImport = await import(eventPath);
-                const loader: InputEventListenerDefinition = eventImport.default;
+                const inputEvent: MudEventListenerFactory<unknown> = eventImport.default;
 
-                if (typeof loader.event !== 'function') {
-                    /* eslint-disable-next-line max-len */
-                    throw new Error(`Bundle ${bundle} has an invalid input event '${eventName}'. Expected a function, got: ${typeof loader.event}`);
-                }
+                Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
 
-                this.state.inputEventManager.add(eventName, loader.event(this.state));
+                this.state.inputEventManager.add(inputEvent.name, inputEvent.listener(this.state));
             }
         }
 
@@ -559,18 +550,16 @@ export class BundleManager {
 
         const files = fs.readdirSync(uri);
 
-        for (const eventsFile of files) {
-            const eventsPath = path.join(uri, eventsFile);
+        for (const eventFile of files) {
+            const eventPath = path.join(uri, eventFile);
 
-            if (Data.isScriptFile(eventsPath, eventsFile)) {
-                const eventName = path.basename(eventsFile, path.extname(eventsFile));
+            if (Data.isScriptFile(eventPath, eventFile)) {
+                const eventImport = await import(eventPath);
+                const playerEvent: MudEventListenerFactory<unknown> = eventImport.default;
 
-                Logger.verbose(`LOAD: ${bundle} - Player Events -> ${eventName}`);
+                Logger.verbose(`LOAD: ${bundle} - Player Events -> ${playerEvent.name}`);
 
-                const eventImport = await import(eventsPath);
-                const event: PlayerEventListenerFactory = eventImport.default;
-
-                this.state.playerManager.addListener(event.name, event.listener(this.state));
+                this.state.playerManager.addListener(playerEvent.name, playerEvent.listener(this.state));
             }
         }
 
@@ -671,22 +660,16 @@ export class BundleManager {
 
         const files = fs.readdirSync(uri);
 
-        for (const eventsFile of files) {
-            const eventsPath = path.join(uri, eventsFile);
+        for (const eventFile of files) {
+            const eventPath = path.join(uri, eventFile);
 
-            if (Data.isScriptFile(eventsPath, eventsFile)) {
-                const eventsName = path.basename(eventsFile, path.extname(eventsFile));
+            if (Data.isScriptFile(eventPath, eventFile)) {
+                const eventImport = await import(eventPath);
+                const serverEvent: MudEventListenerFactory<unknown> = eventImport.default;
 
-                Logger.verbose(`LOAD: ${bundle} - Server Events -> ${eventsName}`);
+                Logger.verbose(`LOAD: ${bundle} - Server Events -> ${serverEvent.name}`);
 
-                const eventImport = await import(eventsPath);
-                const loader: ServerEventListenersDefinition = eventImport.default;
-
-                const {listeners} = loader;
-
-                for (const [eventName, listener] of Object.entries(listeners)) {
-                    this.state.serverEventManager.add(eventName, listener(this.state));
-                }
+                this.state.serverEventManager.add(serverEvent.name, serverEvent.listener(this.state));
             }
         }
 

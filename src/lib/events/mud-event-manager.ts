@@ -1,5 +1,5 @@
 import {MudEventEmitter, MudEventListener} from './mud-event';
-import {isIterable} from '../util';
+import {isIterable} from '../util/objects';
 
 export class MudEventManager {
     /**

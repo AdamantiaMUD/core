@@ -1,6 +1,5 @@
 import Area from '../locations/area';
 import EntityFactory from '../entities/entity-factory';
-import Logger from '../util/logger';
 import Npc, {NpcDefinition} from './npc';
 
 /**

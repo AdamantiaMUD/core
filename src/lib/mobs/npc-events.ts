@@ -1,7 +1,7 @@
 import Item from '../equipment/item';
+import Player from '../players/player';
 import Room from '../locations/room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
-import Player from '../players/player';
 
 export interface NpcEnterRoomPayload {
     nextRoom: Room;

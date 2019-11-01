@@ -1,6 +1,5 @@
 import EventEmitter from 'events';
 
-import Character from '../characters/character';
 import GameState from '../game-state';
 import SimpleMap from '../util/simple-map';
 
