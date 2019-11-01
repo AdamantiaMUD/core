@@ -2,7 +2,7 @@ import {MudEvent, MudEventConstructor} from '../events/mud-event';
 import {QuestRewardDefinition} from './quest-reward';
 import {QuestProgress} from './quest';
 
-export const QuestCompletedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export const QuestCompletedEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public NAME: string = 'complete';
 };
 
@@ -24,10 +24,10 @@ export const QuestRewardEvent: MudEventConstructor<QuestRewardPayload> = class e
     public reward: QuestRewardDefinition;
 };
 
-export const QuestStartedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export const QuestStartedEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public NAME: string = 'start';
 };
 
-export const QuestTurnInReadyEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export const QuestTurnInReadyEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public NAME: string = 'turn-in-ready';
 };

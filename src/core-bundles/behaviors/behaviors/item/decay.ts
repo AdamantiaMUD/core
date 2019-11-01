@@ -1,16 +1,25 @@
 import Broadcast from '../../../../lib/communication/broadcast';
+import {MudEvent, MudEventConstructor} from '../../../../lib/events/mud-event';
 import GameState from '../../../../lib/game-state';
 import Item from '../../../../lib/equipment/item';
 import Logger from '../../../../lib/util/logger';
 import Player from '../../../../lib/players/player';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import {
+    UpdateTickEvent,
+    UpdateTickPayload
+} from '../../../../lib/common/common-events';
 import {findCarrier} from '../../../../lib/util/items';
 
 const {sayAt} = Broadcast;
 
+export const ItemDecayEvent: MudEventConstructor<never> = class extends MudEvent<never> {
+    public static NAME: string = 'item-decay';
+};
+
 export const decay: BehaviorDefinition = {
     listeners: {
-        'update-tick': () => (item: Item, config) => {
+        [UpdateTickEvent.getName()]: () => <UpdateTickPayload>(item: Item, {config}) => {
             const now = Date.now();
 
             let {duration = 60} = config;
@@ -24,7 +33,7 @@ export const decay: BehaviorDefinition = {
             item.setMeta('decays-at', decaysAt);
 
             if (now >= decaysAt) {
-                item.emit('decay');
+                item.dispatch(new ItemDecayEvent());
             }
             else {
                 item.setMeta('time-until-decay', decaysAt - now);

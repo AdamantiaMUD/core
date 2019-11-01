@@ -95,6 +95,6 @@ export const PlayerSaveEvent: MudEventConstructor<PlayerSavePayload> = class ext
     public callback?: Function;
 };
 
-export const PlayerSavedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export const PlayerSavedEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public static NAME: string = 'saved';
 };

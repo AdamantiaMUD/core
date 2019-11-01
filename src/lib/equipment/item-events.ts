@@ -40,7 +40,7 @@ export const ItemPutAwayEvent: MudEventConstructor<ItemPutAwayPayload> = class e
     public container: Item;
 };
 
-export const ItemSpawnEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export const ItemSpawnEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public NAME: string = 'spawn';
 };
 

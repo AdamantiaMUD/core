@@ -4,6 +4,7 @@ import ItemUtil from '../../../lib/util/items';
 import Player from '../../../lib/players/player';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
 import {ItemDroppedEvent} from '../../../lib/equipment/item-events';
+import {NpcPlayerDropItemEvent} from '../../../lib/mobs/npc-events';
 import {PlayerDropItemEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
@@ -41,7 +42,7 @@ export const cmd: CommandDefinitionFactory = {
         item.dispatch(new ItemDroppedEvent({character: player}));
 
         for (const npc of player.room.npcs) {
-            npc.emit('player-drop-item', player, item);
+            npc.dispatch(new NpcPlayerDropItemEvent({item, player}));
         }
 
         sayAt(player, `<green>You dropped: </green>${ItemUtil.display(item)}<green>.</green>`);

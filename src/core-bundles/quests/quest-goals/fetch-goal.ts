@@ -10,6 +10,7 @@ import {
     PlayerQuestStartedEvent
 } from '../../../lib/players/player-events';
 import {QuestProgressEvent} from '../../../lib/quests/quest-events';
+import {ItemDecayEvent} from '../../behaviors/behaviors/item/decay';
 
 /**
  * A quest goal requiring the player picks up a certain number of a particular item
@@ -30,7 +31,7 @@ export class FetchGoal extends QuestGoal {
 
         this.listen(PlayerGetItemEvent.getName(), this.getItem);
         this.listen(PlayerDropItemEvent.getName(), this.dropItem);
-        this.on('decay', this.dropItem);
+        this.listen(ItemDecayEvent.getName(), this.dropItem);
         this.listen(PlayerQuestStartedEvent.getName(), this.checkInventory);
     }
 
@@ -79,7 +80,7 @@ export class FetchGoal extends QuestGoal {
         this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
-    private dropItem(player: Player, item: Item): void {
+    private dropItem(emitter: Item | Player, item: Item): void {
         if (!this.state.count || item.entityReference !== this.config.item) {
             return;
         }
