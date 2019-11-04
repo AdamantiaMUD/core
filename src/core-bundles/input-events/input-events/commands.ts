@@ -14,6 +14,8 @@ import {
     NoPartyError,
     NoRecipientError
 } from '../../../lib/communication/channels/channel-errors';
+import {PlayerMoveEvent} from '../../../lib/players/player-events';
+import {RoomCommandEvent} from '../../../lib/locations/room-events';
 
 // const {
 //     NoPartyError,
@@ -54,7 +56,7 @@ export const evt: MudEventListenerFactory<> = {
 
                 switch (result.type) {
                     case CommandType.MOVEMENT:
-                        player.emit('move', result);
+                        player.dispatch(new PlayerMoveEvent({cmd: result}));
 
                         break;
 
@@ -135,7 +137,11 @@ export const evt: MudEventListenerFactory<> = {
                     const [commandName, ...args] = data.split(' ');
 
                     if (roomCommands && roomCommands.includes(commandName)) {
-                        player.room.emit('command', player, commandName, args.join(' '));
+                        player.room.dispatch(new RoomCommandEvent({
+                            args: args.join(' '),
+                            name: commandName,
+                            player: player,
+                        }));
                     }
                     else {
                         sayAt(player, 'Huh?');

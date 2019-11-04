@@ -1,25 +1,20 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerCurrencyGainedEvent, PlayerCurrencyGainedPayload} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'currency',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#currency
-         */
-        return (player: Player, currency: string, amount: number) => {
-            const friendlyName = currency
+export const evt: MudEventListenerFactory<PlayerCurrencyGainedPayload> = {
+    name: PlayerCurrencyGainedEvent.getName(),
+    listener: (): MudEventListener<PlayerCurrencyGainedPayload> => {
+        return (player: Player, {denomination, amount}) => {
+            const friendlyName = denomination
                 .replace('_', ' ')
                 .replace(/\b\w/gu, str => str.toUpperCase());
 
-            const key = `currencies.${currency}`;
+            const key = `currencies.${denomination}`;
 
             if (!player.getMeta('currencies')) {
                 player.setMeta('currencies', {});

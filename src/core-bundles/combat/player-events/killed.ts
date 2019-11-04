@@ -3,17 +3,14 @@ import Character from '../../../lib/characters/character';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {prompt, sayAt, sayAtExcept} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
+export const evt: MudEventListenerFactory = {
     name: 'killed',
-    listener: (state: GameState): PlayerEventListener => {
+    listener: (state: GameState): MudEventListener => {
         const startingRoomRef = state.config.get('startingRoom');
 
         if (!startingRoomRef) {

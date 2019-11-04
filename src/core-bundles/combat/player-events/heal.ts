@@ -1,38 +1,31 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/characters/character';
-import Heal from '../../../lib/combat/heal';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterHealEvent, CharacterHealPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'heal',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#heal
-         */
-        return (player: Player, heal: Heal, target: Character, finalAmount: number) => {
-            if (heal.metadata.hidden) {
+export const evt: MudEventListenerFactory<CharacterHealPayload> = {
+    name: CharacterHealEvent.getName(),
+    listener: (): MudEventListener<CharacterHealPayload> => {
+        return (player: Player, {source, target, amount}) => {
+            if (source.metadata.hidden) {
                 return;
             }
 
             if (target !== player) {
                 let buf = '';
 
-                if (heal.source === player) {
+                if (source.source === player) {
                     buf = 'You heal';
                 }
                 else {
-                    buf = `Your <b>${heal.source.name}</b> healed`;
+                    buf = `Your <b>${source.source.name}</b> healed`;
                 }
 
                 /* eslint-disable-next-line max-len */
-                buf += `<b> ${target.name}</b> for <b><green>${finalAmount}</green></b> ${heal.attribute}.`;
+                buf += `<b> ${target.name}</b> for <b><green>${amount}</green></b> ${source.attribute}.`;
                 sayAt(player, buf);
             }
 
@@ -45,15 +38,15 @@ export const evt: PlayerEventListenerFactory = {
                 if (!(member === player || member.room !== player.room)) {
                     let buf = '';
 
-                    if (heal.source === player) {
+                    if (source.source === player) {
                         buf = `${player.name} healed`;
                     }
                     else {
-                        buf = `${player.name} <b>${heal.source.name}</b> healed`;
+                        buf = `${player.name} <b>${source.source.name}</b> healed`;
                     }
 
                     buf += ` <b>${target.name}</b>`;
-                    buf += ` for <b><green>${finalAmount}</green></b> ${heal.attribute}.`;
+                    buf += ` for <b><green>${amount}</green></b> ${source.attribute}.`;
                     sayAt(member, buf);
                 }
             }

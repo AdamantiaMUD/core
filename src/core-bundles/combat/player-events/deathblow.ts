@@ -10,9 +10,6 @@ const {sayAt} = Broadcast;
 export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
     name: CharacterDeathblowEvent.getName(),
     listener: (): MudEventListener<CharacterDeathblowPayload> => {
-        /**
-         * @listens Player#deathblow
-         */
         return (player: Player, payload: CharacterDeathblowPayload) => {
             const {target, skipParty = false} = payload;
 

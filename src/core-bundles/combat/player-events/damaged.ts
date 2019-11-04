@@ -1,42 +1,35 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Damage from '../../../lib/combat/damage';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterDamagedEvent, CharacterDamagedPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'damaged',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#damaged
-         */
-        return (player: Player, damage: Damage, finalAmount: number) => {
-            if (damage.metadata.hidden || damage.attribute !== 'hp') {
+export const evt: MudEventListenerFactory<CharacterDamagedPayload> = {
+    name: CharacterDamagedEvent.getName(),
+    listener: (state: GameState): MudEventListener<CharacterDamagedPayload> => {
+        return (player: Player, {source, amount}) => {
+            if (source.metadata.hidden || source.attribute !== 'hp') {
                 return;
             }
 
             let buf = '';
 
-            if (damage.attacker) {
-                buf = `<b>${damage.attacker.name}</b>`;
+            if (source.attacker) {
+                buf = `<b>${source.attacker.name}</b>`;
             }
 
-            if (damage.source !== damage.attacker) {
-                buf += `${damage.attacker ? "'s " : ' '}<b>${damage.source.name}</b>`;
+            if (source.source !== source.attacker) {
+                buf += `${source.attacker ? "'s " : ' '}<b>${source.source.name}</b>`;
             }
-            else if (!damage.attacker) {
+            else if (!source.attacker) {
                 buf += 'Something';
             }
 
-            buf += ` hit <b>you</b> for <b><red>${finalAmount}</red></b> damage.`;
+            buf += ` hit <b>you</b> for <b><red>${amount}</red></b> damage.`;
 
-            if (damage.metadata.critical) {
+            if (source.metadata.critical) {
                 buf += ' <red><b>(Critical)</b></red>';
             }
 
@@ -48,26 +41,26 @@ export const evt: PlayerEventListenerFactory = {
                     if (!(member === player || member.room !== player.room)) {
                         buf = '';
 
-                        if (damage.attacker) {
-                            buf = `<b>${damage.attacker.name}</b>`;
+                        if (source.attacker) {
+                            buf = `<b>${source.attacker.name}</b>`;
                         }
 
-                        if (damage.source !== damage.attacker) {
-                            buf += `${damage.attacker ? "'s " : ' '}<b>${damage.source.name}</b>`;
+                        if (source.source !== source.attacker) {
+                            buf += `${source.attacker ? "'s " : ' '}<b>${source.source.name}</b>`;
                         }
-                        else if (!damage.attacker) {
+                        else if (!source.attacker) {
                             buf += 'Something';
                         }
 
                         /* eslint-disable-next-line max-len */
-                        buf += ` hit <b>${player.name}</b> for <b><red>${finalAmount}</red></b> damage`;
+                        buf += ` hit <b>${player.name}</b> for <b><red>${amount}</red></b> damage`;
                         sayAt(member, buf);
                     }
                 }
             }
 
             if (player.getAttribute('hp') <= 0) {
-                state.combat.handleDeath(state, player, damage.attacker);
+                state.combat.handleDeath(state, player, source.attacker);
             }
         };
     },

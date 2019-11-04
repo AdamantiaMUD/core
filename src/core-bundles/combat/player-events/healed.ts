@@ -1,58 +1,51 @@
-import Heal from '../../../lib/combat/heal';
 import Broadcast from '../../../lib/communication/broadcast';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
 import Player from '../../../lib/players/player';
+import {CharacterHealedEvent, CharacterHealedPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'healed',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#healed
-         */
-        return (player: Player, heal: Heal, finalAmount: number) => {
-            if (heal.metadata.hidden) {
+export const evt: MudEventListenerFactory<CharacterHealedPayload> = {
+    name: CharacterHealedEvent.getName(),
+    listener: (): MudEventListener<CharacterHealedPayload> => {
+        return (player: Player, {source, amount}) => {
+            if (source.metadata.hidden) {
                 return;
             }
 
             let buf = '',
                 attacker = '',
-                source = '';
+                sourceName = '';
 
-            if (heal.attacker && heal.attacker !== player) {
-                attacker = `<b>${heal.attacker.name}</b> `;
+            if (source.attacker && source.attacker !== player) {
+                attacker = `<b>${source.attacker.name}</b> `;
             }
 
-            if (heal.source !== heal.attacker) {
+            if (source.source !== source.attacker) {
                 attacker = attacker ? `${attacker}'s ` : '';
-                source = `<b>${heal.source.name}</b>`;
+                sourceName = `<b>${source.source.name}</b>`;
             }
-            else if (!heal.attacker) {
-                source = 'Something';
+            else if (!source.attacker) {
+                sourceName = 'Something';
             }
 
-            if (heal.attribute === 'hp') {
-                buf = `${attacker}${source} heals you for <b><red>${finalAmount}</red></b>.`;
+            if (source.attribute === 'hp') {
+                buf = `${attacker}${sourceName} heals you for <b><red>${amount}</red></b>.`;
             }
             else {
-                buf = `${attacker}${source} restores <b>${finalAmount}</b> ${heal.attribute}.`;
+                buf = `${attacker}${sourceName} restores <b>${amount}</b> ${source.attribute}.`;
             }
             sayAt(player, buf);
 
             // show heal to party members only if it's to hp and not restoring a different pool
-            if (!player.party || heal.attribute !== 'hp') {
+            if (!player.party || source.attribute !== 'hp') {
                 return;
             }
 
             for (const member of player.party) {
                 if (!(member === player || member.room !== player.room)) {
                     /* eslint-disable-next-line max-len */
-                    buf = `${attacker}${source} heals ${player.name} for <b><red>${finalAmount}</red></b>.`;
+                    buf = `${attacker}${sourceName} heals ${player.name} for <b><red>${amount}</red></b>.`;
 
                     sayAt(member, buf);
                 }

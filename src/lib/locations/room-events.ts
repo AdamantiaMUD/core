@@ -3,6 +3,19 @@ import Player from '../players/player';
 import Room from './room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
+export interface RoomCommandPayload {
+    args?: string;
+    name: string;
+    player: Player;
+}
+
+export const RoomCommandEvent: MudEventConstructor<RoomCommandPayload> = class extends MudEvent<RoomCommandPayload> {
+    public static NAME: string = 'room-command';
+    public args?: string;
+    public name: string;
+    public player: Player;
+};
+
 export interface RoomNpcEnterPayload {
     npc: Npc;
     prevRoom: Room;

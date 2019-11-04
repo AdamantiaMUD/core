@@ -3,20 +3,15 @@ import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import WebsocketStream from '../../websocket-networking/lib/WebsocketStream';
 import {CombatInvalidTargetError} from '../../../lib/combat/combat-errors';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-events';
 
 const {prompt, sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'update-tick',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#updateTick
-         */
+export const evt: MudEventListenerFactory<UpdateTickPayload> = {
+    name: UpdateTickEvent.getName(),
+    listener: (state: GameState): MudEventListener<UpdateTickPayload> => {
         return (player: Player) => {
             if (!player.combat.isFighting()) {
                 return;

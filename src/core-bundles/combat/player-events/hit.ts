@@ -1,45 +1,38 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/characters/character';
-import Damage from '../../../lib/combat/damage';
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterHitEvent, CharacterHitPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'hit',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#hit
-         */
-        return (player: Player, damage: Damage, target: Character, finalAmount: number) => {
-            if (damage.metadata.hidden) {
+export const evt: MudEventListenerFactory<CharacterHitPayload> = {
+    name: CharacterHitEvent.getName(),
+    listener: (): MudEventListener<CharacterHitPayload> => {
+        return (player: Player, {source, target, amount}) => {
+            if (source.metadata.hidden) {
                 return;
             }
 
             let buf = '';
 
-            if (damage.source === player) {
+            if (source.source === player) {
                 buf = 'You hit';
             }
             else {
-                buf = `Your <b>${damage.source.name}</b> hit`;
+                buf = `Your <b>${source.source.name}</b> hit`;
             }
 
-            buf += ` <b>${target.name}</b> for <b>${finalAmount}</b> damage.`;
+            buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
 
-            if (damage.metadata.critical) {
+            if (source.metadata.critical) {
                 buf += ' <red><b>(Critical)</b></red>';
             }
 
             sayAt(player, buf);
 
             if (player.equipment.has('wield')) {
-                player.equipment.get('wield').emit('hit', damage, target, finalAmount);
+                player.equipment.get('wield').emit('hit', source, target, amount);
             }
 
             // show damage to party members
@@ -51,14 +44,14 @@ export const evt: PlayerEventListenerFactory = {
                 if (!(member === player || member.room !== player.room)) {
                     buf = '';
 
-                    if (damage.source === player) {
+                    if (source.source === player) {
                         buf = `${player.name} hit`;
                     }
                     else {
-                        buf = `${player.name} <b>${damage.source.name}</b> hit`;
+                        buf = `${player.name} <b>${source.source.name}</b> hit`;
                     }
 
-                    buf += ` <b>${target.name}</b> for <b>${finalAmount}</b> damage.`;
+                    buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
                     sayAt(member, buf);
                 }
             }

@@ -6,7 +6,7 @@ export type Behavior = (config: SimpleMap, ...args: any[]) => void;
 
 export interface BehaviorDefinition {
     listeners: {
-        [key: string]: <T>(state: GameState) => MudEventListener<T>;
+        [key: string]: (state: GameState) => MudEventListener<unknown>;
     };
 }
 

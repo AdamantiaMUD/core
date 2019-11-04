@@ -1,14 +1,14 @@
 /* eslint-disable no-magic-numbers */
+import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
 import AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 import Options from './options';
 import Sequences from './sequences';
-import {MudEventEmitter} from '../../../lib/events/mud-event';
 
 export type Willingness = Sequences.WILL | Sequences.WONT | Sequences.DO | Sequences.DONT;
 
-export class TelnetSocket extends MudEventEmitter {
+export class TelnetSocket extends EventEmitter {
     public echoing: boolean;
     public gaMode: Sequences;
     public maxInputLength: number;
@@ -73,7 +73,7 @@ export class TelnetSocket extends MudEventEmitter {
             }
         }
         catch (e) {
-            this._emitter.emit('error', e);
+            this.emit('error', e);
         }
     }
 
@@ -138,7 +138,7 @@ export class TelnetSocket extends MudEventEmitter {
          * @event TelnetSocket#error
          * @param {Error} err
          */
-        connection.on('error', err => this._emitter.emit('error', err));
+        connection.on('error', err => this.emit('error', err));
 
         this.socket.write('\r\n');
 
@@ -191,7 +191,7 @@ export class TelnetSocket extends MudEventEmitter {
             /**
              * @event TelnetSocket#close
              */
-            this._emitter.emit('close');
+            this.emit('close');
         });
     }
 
@@ -239,7 +239,7 @@ export class TelnetSocket extends MudEventEmitter {
                              * @event TelnetSocket#DO
                              * @param {number} opt
                              */
-                            this._emitter.emit('DO', opt);
+                            this.emit('DO', opt);
                         }
 
                         i += 3;
@@ -254,7 +254,7 @@ export class TelnetSocket extends MudEventEmitter {
                              * @event TelnetSocket#DONT
                              * @param {number} opt
                              */
-                            this._emitter.emit('DONT', opt);
+                            this.emit('DONT', opt);
                         }
 
                         i += 3;
@@ -265,7 +265,7 @@ export class TelnetSocket extends MudEventEmitter {
                          * @event TelnetSocket#WILL
                          * @param {number} opt
                          */
-                        this._emitter.emit('WILL', opt);
+                        this.emit('WILL', opt);
 
                         i += 3;
                         break;
@@ -276,7 +276,7 @@ export class TelnetSocket extends MudEventEmitter {
                          * @event TelnetSocket#WONT
                          * @param {number} opt
                          */
-                        this._emitter.emit('WONT', opt);
+                        this.emit('WONT', opt);
 
                         i += 3;
                         break;
@@ -312,7 +312,7 @@ export class TelnetSocket extends MudEventEmitter {
                              * @param {string} gmcpPackage
                              * @param {*} gmcpData
                              */
-                            this._emitter.emit('GMCP', gmcpPackage, gmcpData);
+                            this.emit('GMCP', gmcpPackage, gmcpData);
                         }
                         else {
                             /**
@@ -320,7 +320,7 @@ export class TelnetSocket extends MudEventEmitter {
                              * @param {number} subnegOpt SB option
                              * @param {Buffer} subnegBuffer Buffer of data inside subnegotiation package
                              */
-                            this._emitter.emit('SUBNEG', subnegOpt, subnegBuffer);
+                            this.emit('SUBNEG', subnegOpt, subnegBuffer);
                         }
 
                         i += 2;
@@ -332,7 +332,7 @@ export class TelnetSocket extends MudEventEmitter {
                          * @param {number} cmd Command byte specified after IAC
                          * @param {number} opt Opt byte specified after command byte
                          */
-                        this._emitter.emit('unknown-action', cmd, opt);
+                        this.emit('unknown-action', cmd, opt);
 
                         i += 2;
                         break;
@@ -350,7 +350,7 @@ export class TelnetSocket extends MudEventEmitter {
          * @event TelnetSocket#data
          * @param {Buffer} data
          */
-        this._emitter.emit('data', cleanbuf.slice(0, cleanlen - 1));
+        this.emit('data', cleanbuf.slice(0, cleanlen - 1));
     }
 }
 

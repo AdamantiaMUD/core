@@ -12,7 +12,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
  */
 export const evt: MudEventListenerFactory<> = {
 export const intro: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
+    event: (state: GameState) => (socket: TransportStream) => {
         // MotD generated here:
         // http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
         const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');

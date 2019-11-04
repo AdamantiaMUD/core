@@ -1,15 +1,12 @@
 import GameState from '../../../lib/game-state';
-import Item from '../../../lib/equipment/item';
 import Player from '../../../lib/players/player';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {CharacterEquipItemEvent, CharacterEquipItemPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'equip',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#equip
-         */
-        return (player: Player, slot: string, item: Item) => {
+export const evt: MudEventListenerFactory<CharacterEquipItemPayload> = {
+    name: CharacterEquipItemEvent.getName(),
+    listener: (state: GameState): MudEventListener<CharacterEquipItemPayload> => {
+        return (player: Player, {slot, item}) => {
             if (!item.getMeta('stats')) {
                 return;
             }

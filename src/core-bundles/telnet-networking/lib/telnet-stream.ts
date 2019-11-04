@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 import {AddressInfo} from 'net';
 import {
     SocketDataEvent,
@@ -19,15 +21,15 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
     public attach(socket: TelnetSocket): void {
         super.attach(socket);
 
-        socket.listen(SocketDataEvent.getName(), (sock: TelnetSocket, message: string) => {
+        socket.on(SocketDataEvent.getName(), (sock: TelnetSocket, message: string) => {
             this.emit('data', message);
         });
 
-        socket.listen(SocketErrorEvent.getName(), (sock: TelnetSocket, err: string) => {
+        socket.on(SocketErrorEvent.getName(), (sock: TelnetSocket, err: string) => {
             this.emit('error', err);
         });
 
-        this.socket.listen('DO', (sock: TelnetSocket, opt: number | number[]) => {
+        this.socket.on('DO', (sock: TelnetSocket, opt: number | number[]) => {
             sock.telnetCommand(Sequences.WONT, opt);
         });
     }
