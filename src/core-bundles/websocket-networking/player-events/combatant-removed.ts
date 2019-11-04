@@ -1,14 +1,12 @@
 import Player from '../../../lib/players/player';
 import updateTargets from '../util/update-targets';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CombatantRemovedEvent, CombatantRemovedPayload} from '../../../lib/combat/combat-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'combatant-removed',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<CombatantRemovedPayload> = {
+    name: CombatantRemovedEvent.getName(),
+    listener: (): MudEventListener<CombatantRemovedPayload> => {
         /**
          * @listens Player#combatantRemoved
          */

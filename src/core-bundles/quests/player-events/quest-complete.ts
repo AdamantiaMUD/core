@@ -1,16 +1,14 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerQuestCompletedEvent, PlayerQuestCompletedPayload} from '../../../lib/players/player-events';
 
 const {line, sayAt} = Broadcast;
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'quest-complete',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#questComplete
-         */
-        return (player: Player, quest) => {
+export const evt: MudEventListenerFactory<PlayerQuestCompletedPayload> = {
+    name: PlayerQuestCompletedEvent.getName(),
+    listener: (): MudEventListener<PlayerQuestCompletedPayload> => {
+        return (player: Player, {quest}) => {
             sayAt(player, `<b><yellow>Quest Complete: ${quest.config.title}!</yellow></b>`);
 
             if (quest.config.completionMessage) {

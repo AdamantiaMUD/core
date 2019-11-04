@@ -2,9 +2,9 @@
 import {AddressInfo} from 'net';
 
 import AdamantiaSocket from '../../../lib/communication/adamantia-socket';
-import {MudEventEmitter} from '../../../lib/events/mud-event';
 import Options from './options';
 import Sequences from './sequences';
+import {MudEventEmitter} from '../../../lib/events/mud-event';
 
 export type Willingness = Sequences.WILL | Sequences.WONT | Sequences.DO | Sequences.DONT;
 

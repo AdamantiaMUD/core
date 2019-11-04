@@ -142,5 +142,6 @@ export * from './lib/util/time';
 export * from './lib/bundle-manager';
 
 export * from './lib/game-server';
+export * from './lib/game-server-events';
 
 export * from './lib/game-state';

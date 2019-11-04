@@ -1,15 +1,11 @@
 import Player from '../../../lib/players/player';
-import SimpleMap from '../../../lib/util/simple-map';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {QuestRewardEvent, QuestRewardPayload} from '../../../lib/quests/quest-events';
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'quest-reward',
-    listener: (): PlayerEventListener => {
-        /* eslint-disable @typescript-eslint/no-unused-vars */
-        /**
-         * @listens Player#questReward
-         */
-        return (player: Player, reward: SimpleMap) => {
+export const evt: MudEventListenerFactory<QuestRewardPayload> = {
+    name: QuestRewardEvent.getName(),
+    listener: (): MudEventListener<QuestRewardPayload> => {
+        return (player: Player, {reward}) => {
             /*
              * do stuff when the player receives a quest reward. Generally the Reward instance
              * will emit an event that will be handled elsewhere and display its own message

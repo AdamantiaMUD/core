@@ -1,7 +1,9 @@
-import EventEmitter from 'events';
 import {CommanderStatic} from 'commander';
 
-export class GameServer extends EventEmitter {
+import {GameServerShutdownEvent, GameServerStartupEvent} from './game-server-events';
+import {MudEventEmitter} from './events/mud-event';
+
+export class GameServer extends MudEventEmitter {
     /**
      * @fires GameServer#shutdown
      */
@@ -9,7 +11,7 @@ export class GameServer extends EventEmitter {
         /**
          * @event GameServer#shutdown
          */
-        this.emit('shutdown');
+        this.dispatch(new GameServerShutdownEvent());
     }
 
     /**
@@ -20,7 +22,7 @@ export class GameServer extends EventEmitter {
          * @event GameServer#startup
          * @param {CommanderStatic} commander
          */
-        this.emit('startup', commander);
+        this.dispatch(new GameServerStartupEvent({commander}));
     }
 }
 

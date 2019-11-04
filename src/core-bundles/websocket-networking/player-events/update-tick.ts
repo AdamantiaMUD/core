@@ -1,14 +1,11 @@
 import Player from '../../../lib/players/player';
 import updateTargets from '../util/update-targets';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-events';
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'update-tick',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<UpdateTickPayload> = {
+    name: UpdateTickEvent.getName(),
+    listener: (): MudEventListener<UpdateTickPayload> => {
         /**
          * @listens Player#updateTick
          */

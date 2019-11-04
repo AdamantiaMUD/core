@@ -4,11 +4,12 @@ import Account from '../../../lib/players/account';
 import Logger from '../../../lib/util/logger';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /**
  * Delete character event
  */
+export const evt: MudEventListenerFactory<> = {
 export const deleteCharacter: InputEventListenerDefinition = {
     event: () => (socket: TransportStream<EventEmitter>, account: Account) => {
         const say = EventUtil.genSay(socket);

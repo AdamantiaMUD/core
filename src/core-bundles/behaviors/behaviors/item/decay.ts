@@ -5,10 +5,7 @@ import Item from '../../../../lib/equipment/item';
 import Logger from '../../../../lib/util/logger';
 import Player from '../../../../lib/players/player';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import {
-    UpdateTickEvent,
-    UpdateTickPayload
-} from '../../../../lib/common/common-events';
+import {UpdateTickEvent} from '../../../../lib/common/common-events';
 import {findCarrier} from '../../../../lib/util/items';
 
 const {sayAt} = Broadcast;

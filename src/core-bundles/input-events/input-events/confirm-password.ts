@@ -3,27 +3,37 @@ import {EventEmitter} from 'events';
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import Player from '../../../lib/players/player';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    PlayerChangePasswordEvent,
+    PlayerConfirmPasswordEvent,
+    PlayerConfirmPasswordPayload,
+} from '../../../lib/players/player-events';
 
 /**
  * Account password confirmation station
  */
-export const confirmPassword: InputEventListenerDefinition = {
-    event: () => (socket: TransportStream<EventEmitter>, args: {account: Account; nextStage: string}) => {
-        const write = EventUtil.genWrite(socket);
-        const say = EventUtil.genSay(socket);
+export const evt: MudEventListenerFactory<PlayerConfirmPasswordPayload> = {
+    name: PlayerConfirmPasswordEvent.getName(),
+    listener: (): MudEventListener<PlayerConfirmPasswordPayload> => (
+        player: Player,
+        args: PlayerConfirmPasswordPayload
+    ) => {
+        const write = EventUtil.genWrite(player);
+        const say = EventUtil.genSay(player);
 
         write('<cyan>Confirm your password:</cyan> ');
 
-        socket.command('toggleEcho');
+        player.socket.command('toggleEcho');
 
-        socket.once('data', pass => {
-            socket.command('toggleEcho');
+        player.socket.once('data', pass => {
+            player.socket.command('toggleEcho');
 
             if (!args.account.checkPassword(pass.toString().trim())) {
                 say('<red>Passwords do not match.</red>');
 
-                socket.emit('change-password', args);
+                player.dispatch(new PlayerChangePasswordEvent(args));
 
                 return;
             }

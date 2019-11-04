@@ -1,7 +1,40 @@
+import Account from './account';
 import Item from '../equipment/item';
 import Quest, {QuestProgress} from '../quests/quest';
 import Room from '../locations/room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
+import {ParsedCommand} from '../../lib/commands/command-parser';
+
+export interface PlayerChangePasswordPayload {
+    account: Account;
+    nextStage: string;
+}
+
+export const PlayerChangePasswordEvent: MudEventConstructor<PlayerChangePasswordPayload> = class extends MudEvent<PlayerChangePasswordPayload> {
+    public static NAME: string = 'change-password';
+    public account: Account;
+    public nextStage: string;
+};
+
+export interface PlayerCharacterNameCheckPayload {
+    account: Account;
+    name: string;
+}
+
+export const PlayerCharacterNameCheckEvent: MudEventConstructor<PlayerCharacterNameCheckPayload> = class extends MudEvent<PlayerCharacterNameCheckPayload> {
+    public static NAME: string = 'character-name-check';
+    public account: Account;
+    public name: string;
+};
+
+export interface PlayerChooseCharacterPayload {
+    account: Account;
+}
+
+export const PlayerChooseCharacterEvent: MudEventConstructor<PlayerChooseCharacterPayload> = class extends MudEvent<PlayerChooseCharacterPayload> {
+    public static NAME: string = 'choose-character';
+    public account: Account;
+};
 
 export interface PlayerCommandQueuedPayload {
     idx: number;
@@ -10,6 +43,37 @@ export interface PlayerCommandQueuedPayload {
 export const PlayerCommandQueuedEvent: MudEventConstructor<PlayerCommandQueuedPayload> = class extends MudEvent<PlayerCommandQueuedPayload> {
     public static NAME: string = 'command-queued';
     public idx: number;
+};
+
+export interface PlayerConfirmPasswordPayload {
+    account: Account;
+    nextStage: string;
+}
+
+export const PlayerConfirmPasswordEvent: MudEventConstructor<PlayerConfirmPasswordPayload> = class extends MudEvent<PlayerConfirmPasswordPayload> {
+    public static NAME: string = 'confirm-password';
+    public account: Account;
+    public nextStage: string;
+};
+
+export interface PlayerCreateCharacterPayload {
+    account: Account;
+}
+
+export const PlayerCreateCharacterEvent: MudEventConstructor<PlayerCreateCharacterPayload> = class extends MudEvent<PlayerCreateCharacterPayload> {
+    public static NAME: string = 'create-character';
+    public account: Account;
+};
+
+export interface PlayerCurrencyGainedPayload {
+    amount: number;
+    denomination: string;
+}
+
+export const PlayerCurrencyGainedEvent: MudEventConstructor<PlayerCurrencyGainedPayload> = class extends MudEvent<PlayerCurrencyGainedPayload> {
+    public static NAME: string = 'currency-gained';
+    public amount: number;
+    public denomination: string;
 };
 
 export interface PlayerDropItemPayload {
@@ -39,6 +103,17 @@ export const PlayerExperienceEvent: MudEventConstructor<PlayerExperiencePayload>
     public amount: number;
 };
 
+export interface PlayerFinishCharacterPayload {
+    account: Account;
+    name: string;
+}
+
+export const PlayerFinishCharacterEvent: MudEventConstructor<PlayerFinishCharacterPayload> = class extends MudEvent<PlayerFinishCharacterPayload> {
+    public static NAME: string = 'finish-character';
+    public account: Account;
+    public name: string;
+};
+
 export interface PlayerGetItemPayload {
     item: Item;
 }
@@ -46,6 +121,23 @@ export interface PlayerGetItemPayload {
 export const PlayerGetItemEvent: MudEventConstructor<PlayerGetItemPayload> = class extends MudEvent<PlayerGetItemPayload> {
     public static NAME: string = 'get';
     public item: Item;
+};
+
+export const PlayerLevelUpEvent: MudEventConstructor<never> = class extends MudEvent<never> {
+    public static NAME: string = 'level-up';
+};
+
+export const PlayerLoginEvent: MudEventConstructor<never> = class extends MudEvent<never> {
+    public static NAME: string = 'login';
+};
+
+export interface PlayerMovePayload {
+    cmd: ParsedCommand;
+}
+
+export const PlayerMoveEvent: MudEventConstructor<PlayerMovePayload> = class extends MudEvent<PlayerMovePayload> {
+    public static NAME: string = 'move';
+    public cmd: ParsedCommand;
 };
 
 export interface PlayerQuestCompletedPayload {

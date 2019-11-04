@@ -4,6 +4,7 @@ import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestReward from '../../../lib/quests/quest-reward';
 import SimpleMap from '../../../lib/util/simple-map';
+import {PlayerExperienceEvent} from '../../../lib/players/player-events';
 
 interface ExperienceRewardConfig extends SimpleMap {
     amount?: number;
@@ -66,7 +67,7 @@ export class ExperienceReward implements QuestReward {
     ): void {
         const amount = this.getAmount(quest, config, player);
 
-        player.emit('experience', amount);
+        player.dispatch(new PlayerExperienceEvent({amount}));
     }
 }
 

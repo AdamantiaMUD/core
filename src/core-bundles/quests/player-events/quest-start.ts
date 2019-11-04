@@ -1,19 +1,15 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerQuestStartedEvent, PlayerQuestStartedPayload} from '../../../lib/players/player-events';
 
 const {center, line, sayAt} = Broadcast;
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'quest-start',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#questStart
-         */
-        return (player: Player, quest: Quest) => {
-            /* eslint-disable-next-line max-len */
+export const evt: MudEventListenerFactory<PlayerQuestStartedPayload> = {
+    name: PlayerQuestStartedEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerQuestStartedPayload> => {
+        return (player: Player, {quest}) => {
             sayAt(player, `\r\n<b><yellow>Quest Started: ${quest.config.title}!</yellow></b>`);
 
             if (quest.config.description) {

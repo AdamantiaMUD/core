@@ -1,20 +1,17 @@
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
-import Logger from '../../../lib/util/logger';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerSaveEvent, PlayerSavePayload} from '../../../lib/players/player-events';
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'save',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#save
-         */
-        return async (player: Player, callback: Function = null) => {
+export const evt: MudEventListenerFactory<PlayerSavePayload> = {
+    name: PlayerSaveEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerSavePayload> => {
+        return async (player: Player, payload) => {
             await state.playerManager.save(player);
 
-            if (typeof callback === 'function') {
+            if (typeof payload?.callback === 'function') {
                 /* eslint-disable-next-line callback-return */
-                callback();
+                payload.callback();
             }
         };
     },

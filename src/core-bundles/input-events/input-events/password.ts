@@ -3,7 +3,7 @@ import {EventEmitter} from 'events';
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const passwordAttempts = {};
 const maxFailedAttempts = 2;
@@ -11,6 +11,7 @@ const maxFailedAttempts = 2;
 /**
  * Account password event
  */
+export const evt: MudEventListenerFactory<> = {
 export const password: InputEventListenerDefinition = {
     event: () => (socket: TransportStream<EventEmitter>, account: Account) => {
         const write = EventUtil.genWrite(socket);

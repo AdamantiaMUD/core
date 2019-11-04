@@ -1,12 +1,10 @@
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterEffectRemovedEvent, CharacterEffectRemovedPayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'effect-removed',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<CharacterEffectRemovedPayload> = {
+    name: CharacterEffectRemovedEvent.getName(),
+    listener: (): MudEventListener<CharacterEffectRemovedPayload> => {
         /**
          * @listens Player#effectRemoved
          */

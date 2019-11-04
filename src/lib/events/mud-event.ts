@@ -44,7 +44,7 @@ export class MudEventEmitter {
     };
 }
 
-export type MudEventListener<T> = (emitter: MudEventEmitter, args: T, config?: SimpleMap) => void;
+export type MudEventListener<T> = (emitter: MudEventEmitter, args?: T, config?: SimpleMap) => void;
 
 export interface MudEventListenerFactory<T> {
     name: string;

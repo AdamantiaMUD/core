@@ -4,11 +4,12 @@ import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /**
  * Login is done, allow the player to actually execute commands
  */
+export const evt: MudEventListenerFactory<> = {
 export const loginDone: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>, player: Player) => {
         player.setMeta('lastCommandTime', Date.now());

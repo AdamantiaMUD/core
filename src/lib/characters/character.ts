@@ -26,6 +26,7 @@ import {
     InventoryFullError,
 } from '../equipment/equipment-errors';
 import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/item-events';
+import {MudEventEmitter} from '../../lib/events/mud-event';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -48,7 +49,7 @@ export class Character extends ScriptableEntity implements Serializable {
     protected _level: number = 1;
     public name: string = '';
     public room: Room = null;
-    public socket: TransportStream<any> = null;
+    public socket: TransportStream<MudEventEmitter> = null;
 
     constructor() {
         super();

@@ -4,9 +4,10 @@ import Account from '../../../lib/players/account';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {validateAccountName} from '../../../lib/util/player';
 
+export const evt: MudEventListenerFactory<> = {
 export const login: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
         socket.write('Welcome, what is your username? ');

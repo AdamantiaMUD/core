@@ -5,8 +5,14 @@ import Broadcast from '../../../lib/communication/broadcast';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
+import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    PlayerChangePasswordEvent,
+    PlayerChooseCharacterEvent,
+    PlayerChooseCharacterPayload,
+} from '../../../lib/players/player-events';
 
 /* eslint-disable-next-line id-length */
 const {at, prompt} = Broadcast;
@@ -14,10 +20,14 @@ const {at, prompt} = Broadcast;
 /**
  * Account character selection event
  */
-export const chooseCharacter: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>, account: Account) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
+    name: PlayerChooseCharacterEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerChooseCharacterPayload> => (
+        player: Player,
+        {account}: PlayerChooseCharacterPayload
+    ) => {
+        const say = EventUtil.genSay(player);
+        const write = EventUtil.genWrite(player);
         const mgr = state.playerManager;
 
         /*
@@ -40,9 +50,11 @@ export const chooseCharacter: InputEventListenerDefinition = {
         options.push({
             display: 'Change Password',
             onSelect: () => {
-                socket.emit(
-                    'change-password',
-                    {account: account, nextStage: 'choose-character'}
+                player.dispatch(
+                    new PlayerChangePasswordEvent({
+                        account: account,
+                        nextStage: 'choose-character',
+                    })
                 );
             },
         });
@@ -51,7 +63,7 @@ export const chooseCharacter: InputEventListenerDefinition = {
             options.push({
                 display: 'Create New Character',
                 onSelect: () => {
-                    socket.emit('create-character', account);
+                    player.dispatch(new PlayerCreateCharacterEvent({account}));
                 },
             });
         }

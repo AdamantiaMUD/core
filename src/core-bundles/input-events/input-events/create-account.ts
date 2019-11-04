@@ -3,11 +3,12 @@ import {EventEmitter} from 'events';
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /**
  * Account creation event
  */
+export const evt: MudEventListenerFactory<> = {
 export const createAccount: InputEventListenerDefinition = {
     event: () => (socket: TransportStream<EventEmitter>, name: string) => {
         const write = EventUtil.genWrite(socket);

@@ -1,18 +1,15 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import LevelUtil from '../../../lib/util/level-util';
 import Player from '../../../lib/players/player';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerExperienceEvent, PlayerExperiencePayload, PlayerLevelUpEvent} from '../../../lib/players/player-events';
 
 const {progress, sayAt} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'experience',
-    listener: (): PlayerEventListener => {
-        /**
-         * @listens Player#experience
-         */
-        return (player: Player, amount: number) => {
+export const evt: MudEventListenerFactory<PlayerExperiencePayload> = {
+    name: PlayerExperienceEvent.getName(),
+    listener: (): MudEventListener<PlayerExperiencePayload> => {
+        return (player: Player, {amount}) => {
             sayAt(player, `<blue>You gained <b>${amount}</b> experience!</blue>`);
 
             const totalTnl = LevelUtil.expToLevel(player.level + 1);
@@ -35,7 +32,7 @@ export const evt: PlayerEventListenerFactory = {
                     player.levelUp();
                     nextTnl = LevelUtil.expToLevel(player.level + 1);
                     sayAt(player, `<blue>You are now level <b>${player.level}</b>!</blue>`);
-                    player.emit('level');
+                    player.dispatch(new PlayerLevelUpEvent());
                 }
             }
 

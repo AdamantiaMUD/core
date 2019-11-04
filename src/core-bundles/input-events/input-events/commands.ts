@@ -7,8 +7,8 @@ import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {EventEmitter} from 'events';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
 import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands/command-errors';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {
     NoMessageError,
     NoPartyError,
@@ -27,8 +27,9 @@ const {prompt, sayAt} = Broadcast;
  * Main command loop. All player input after login goes through here.
  * If you want to swap out the command parser this is the place to do it
  */
-export const commands: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>, player: Player) => {
+export const evt: MudEventListenerFactory<> = {
+    name: 'commands',
+    listener: (state: GameState) => (socket: TransportStream<EventEmitter>, player: Player) => {
         socket.once('data', (buf: Buffer) => {
             const loop = (): void => {
                 socket.emit('commands', player);

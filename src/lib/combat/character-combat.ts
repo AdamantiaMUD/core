@@ -1,34 +1,11 @@
 import Character from '../characters/character';
 import Damage from './damage';
-import {MudEvent, MudEventConstructor} from '../events/mud-event';
-
-interface CombatantAddedPayload {
-    target: Character;
-}
-
-export const CombatantAddedEvent: MudEventConstructor<CombatantAddedPayload> = class extends MudEvent<CombatantAddedPayload> {
-    public NAME: string = 'combatant-added';
-
-    public target: Character;
-};
-
-interface CombatantRemovedPayload {
-    target: Character;
-}
-
-export const CombatantRemovedEvent: MudEventConstructor<CombatantRemovedPayload> = class extends MudEvent<CombatantRemovedPayload> {
-    public NAME: string = 'combatant-removed';
-
-    public target: Character;
-};
-
-export const CombatEndEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public NAME: string = 'combat-end';
-};
-
-export const CombatStartEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public NAME: string = 'combat-start';
-};
+import {
+    CombatantAddedEvent,
+    CombatantRemovedEvent,
+    CombatEndEvent,
+    CombatStartEvent,
+} from './combat-events';
 
 export class CharacterCombat {
     private readonly _character: Character;

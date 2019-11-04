@@ -3,6 +3,7 @@ import Player from '../../../lib/players/player';
 import Quest from '../../../lib/quests/quest';
 import QuestReward from '../../../lib/quests/quest-reward';
 import SimpleMap from '../../../lib/util/simple-map';
+import {PlayerCurrencyGainedEvent} from '../../../lib/players/player-events';
 
 interface CurrencyRewardConfig extends SimpleMap {
     currency: string;
@@ -46,7 +47,10 @@ export class CurrencyReward implements QuestReward {
     ): void {
         const amount = this.getAmount(quest, config);
 
-        player.emit('currency', config.currency, amount);
+        player.dispatch(new PlayerCurrencyGainedEvent({
+            amount: amount,
+            denomination: config.currency,
+        }));
     }
 }
 

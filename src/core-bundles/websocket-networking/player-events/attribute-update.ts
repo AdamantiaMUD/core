@@ -1,14 +1,12 @@
 import Player from '../../../lib/players/player';
 import updateAttributes from '../util/update-attributes';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {CharacterAttributeUpdateEvent, CharacterAttributeUpdatePayload} from '../../../lib/characters/character-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'attribute-update',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<CharacterAttributeUpdatePayload> = {
+    name: CharacterAttributeUpdateEvent.getName(),
+    listener: (): MudEventListener<CharacterAttributeUpdatePayload> => {
         /**
          * @listens Player#attributeUpdate
          */

@@ -1,12 +1,10 @@
 import Player from '../../../lib/players/player';
-import {
-    PlayerEventListener,
-    PlayerEventListenerFactory
-} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {QuestProgressEvent, QuestProgressPayload} from '../../../lib/quests/quest-events';
 
-export const evt: PlayerEventListenerFactory = {
-    name: 'quest-progress',
-    listener: (): PlayerEventListener => {
+export const evt: MudEventListenerFactory<QuestProgressPayload> = {
+    name: QuestProgressEvent.getName(),
+    listener: (): MudEventListener<QuestProgressPayload> => {
         /**
          * @listens Player#questProgress
          */

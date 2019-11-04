@@ -5,12 +5,13 @@ import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /**
  * Finish player creation. Add the character to the account then add the player
  * to the game world
  */
+export const evt: MudEventListenerFactory<> = {
 export const finishCharacter: InputEventListenerDefinition = {
     event: (state: GameState) => {
         let startingRoomRef = state.config.get('startingRoom');

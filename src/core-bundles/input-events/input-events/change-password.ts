@@ -1,31 +1,34 @@
-import {EventEmitter} from 'events';
-
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import Player from '../../../lib/players/player';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    PlayerChangePasswordEvent,
+    PlayerChangePasswordPayload,
+    PlayerConfirmPasswordEvent,
+} from '../../../lib/players/player-events';
 
 /**
  * Change password event
  */
-export const changePassword: InputEventListenerDefinition = {
-    event: (state: GameState) => (
-        socket: TransportStream<EventEmitter>,
-        args: {account: Account; nextStage: string}
+export const evt: MudEventListenerFactory<PlayerChangePasswordPayload> = {
+    name: PlayerChangePasswordEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerChangePasswordPayload> => (
+        player: Player,
+        args: PlayerChangePasswordPayload
     ) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(player);
+        const write = EventUtil.genWrite(player);
 
         const {account} = args;
 
         say('Your password must be at least 8 characters.');
         write('<cyan>Enter your account password:</cyan> ');
 
-        socket.command('toggleEcho');
+        player.socket.command('toggleEcho');
 
-        socket.once('data', (buf: Buffer) => {
-            socket.command('toggleEcho');
+        player.socket.once('data', (buf: Buffer) => {
+            player.socket.command('toggleEcho');
 
             say('');
 
@@ -34,7 +37,7 @@ export const changePassword: InputEventListenerDefinition = {
             if (!pass) {
                 say('You must use a password.');
 
-                socket.emit('change-password', args);
+                player.dispatch(new PlayerChangePasswordEvent(args));
 
                 return;
             }
@@ -42,7 +45,7 @@ export const changePassword: InputEventListenerDefinition = {
             if (pass.length < 8) {
                 say('Your password is not long enough.');
 
-                socket.emit('change-password', args);
+                player.dispatch(new PlayerChangePasswordEvent(args));
 
                 return;
             }
@@ -52,7 +55,7 @@ export const changePassword: InputEventListenerDefinition = {
             state.accountManager.setAccount(account.username, account);
             account.save();
 
-            socket.emit('confirm-password', args);
+            player.dispatch(new PlayerConfirmPasswordEvent(args));
         });
     },
 };

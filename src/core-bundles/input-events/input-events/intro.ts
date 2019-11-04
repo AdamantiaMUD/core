@@ -5,11 +5,12 @@ import {EventEmitter} from 'events';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 /**
  * MOTD event
  */
+export const evt: MudEventListenerFactory<> = {
 export const intro: InputEventListenerDefinition = {
     event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
         // MotD generated here:

@@ -1,22 +1,17 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
-import Npc from '../../../lib/mobs/npc';
 import Player from '../../../lib/players/player';
 import {Door} from '../../../lib/locations/room';
-import {ParsedCommand} from '../../../lib/commands/command-parser';
-import {PlayerEventListener, PlayerEventListenerFactory} from '../../../lib/events/player-events';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerMoveEvent, PlayerMovePayload} from '../../../lib/players/player-events';
 
 const {sayAt, sayAtExcept} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: PlayerEventListenerFactory = {
-    name: 'move',
-    listener: (state: GameState): PlayerEventListener => {
-        /**
-         * @listens Player#move
-         */
-        return (player: Player, movementCommand: ParsedCommand) => {
-            const {payload: {roomExit}} = movementCommand;
+export const evt: MudEventListenerFactory<PlayerMovePayload> = {
+    name: PlayerMoveEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerMovePayload> => {
+        return (player: Player, {cmd}) => {
+            const {payload: {roomExit}} = cmd;
 
             if (!roomExit) {
                 sayAt(player, "You can't go that way!");
@@ -63,7 +58,7 @@ export const evt: PlayerEventListenerFactory = {
                     }
                     else {
                         sayAt(follower as Player, `\r\nYou follow ${player.name} to ${nextRoom.title}.`);
-                        follower.emit('move', movementCommand);
+                        follower.dispatch(new PlayerMoveEvent({cmd}));
                     }
                 }
             }

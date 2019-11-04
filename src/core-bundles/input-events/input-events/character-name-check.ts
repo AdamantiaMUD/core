@@ -1,25 +1,29 @@
-import {EventEmitter} from 'events';
-
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {InputEventListenerDefinition} from '../../../lib/events/input-events';
+import Player from '../../../lib/players/player';
+import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    PlayerCharacterNameCheckEvent,
+    PlayerCharacterNameCheckPayload,
+    PlayerCreateCharacterEvent,
+    PlayerFinishCharacterEvent,
+} from '../../../lib/players/player-events';
 
 /**
  * Confirm new player name
  */
-export const characterNameCheck: InputEventListenerDefinition = {
-    event: () => (
-        socket: TransportStream<EventEmitter>,
-        args: {account: Account; name: string}
+export const evt: MudEventListenerFactory<PlayerCharacterNameCheckPayload> = {
+    name: PlayerCharacterNameCheckEvent.getName(),
+    listener: (): MudEventListener<PlayerCharacterNameCheckPayload> => (
+        player: Player,
+        args: PlayerCharacterNameCheckPayload
     ) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(player);
+        const write = EventUtil.genWrite(player);
 
         /* eslint-disable-next-line max-len */
         write(`<b>${args.name} doesn't exist, would you like to create it?</b> <cyan>[y/n]</cyan> `);
 
-        socket.once('data', (buf: Buffer) => {
+        player.socket.once('data', (buf: Buffer) => {
             say('');
 
             const confirmation = buf.toString()
@@ -27,7 +31,7 @@ export const characterNameCheck: InputEventListenerDefinition = {
                 .toLowerCase();
 
             if (!(/[yn]/u).test(confirmation)) {
-                socket.emit('character-name-check', args);
+                player.dispatch(new PlayerCharacterNameCheckEvent(args));
 
                 return;
             }
@@ -35,12 +39,12 @@ export const characterNameCheck: InputEventListenerDefinition = {
             if (confirmation === 'n') {
                 say("Let's try again...");
 
-                socket.emit('create-character', args.account);
+                player.dispatch(new PlayerCreateCharacterEvent({account: args.account}));
 
                 return;
             }
 
-            socket.emit('finish-character', args);
+            player.dispatch(new PlayerFinishCharacterEvent(args));
         });
     },
 };
