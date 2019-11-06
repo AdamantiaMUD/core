@@ -1,4 +1,5 @@
 import Character from '../characters/character';
+import Damage from '../combat/damage';
 import Item from './item';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
@@ -18,6 +19,19 @@ export interface ItemEquippedPayload {
 export const ItemEquippedEvent: MudEventConstructor<ItemEquippedPayload> = class extends MudEvent<ItemEquippedPayload> {
     public static NAME: string = 'equip';
     public wearer: Character;
+};
+
+export interface ItemHitPayload {
+    amount: number;
+    source: Damage;
+    target: Character;
+}
+
+export const ItemHitEvent: MudEventConstructor<ItemHitPayload> = class extends MudEvent<ItemHitPayload> {
+    public static NAME: string = 'item-hit';
+    public amount: number;
+    public source: Damage;
+    public target: Character;
 };
 
 export interface ItemPickedUpPayload {

@@ -1,15 +1,20 @@
-import Character from '../../../../lib/characters/character';
+import GameState from '../../../../lib/game-state';
 import Item, {ItemDefinition} from '../../../../lib/equipment/item';
 import Logger from '../../../../lib/util/logger';
 import LootTable from '../../../../lib/combat/loot-table';
 import Npc from '../../../../lib/mobs/npc';
 import Player from '../../../../lib/players/player';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import {MudEventListener} from '../../../../lib/events/mud-event';
+import {NpcKilledEvent, NpcKilledPayload} from '../../../../lib/mobs/npc-events';
+import {PlayerCurrencyGainedEvent} from '../../../../lib/players/player-events';
 import {makeCorpse} from '../../../../lib/util/combat';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
-        killed: state => async function(npc: Npc, config, killer: Character) {
+        [NpcKilledEvent.getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => async function(npc: Npc, payload, config) {
+            const killer = payload?.killer ?? null;
+
             const {room, area} = npc;
 
             const lootTable = new LootTable(state, config);
@@ -38,7 +43,7 @@ export const lootable: BehaviorDefinition = {
 
             state.itemManager.add(corpse);
 
-            if (killer && killer instanceof Player) {
+            if (killer !== null && killer instanceof Player) {
                 if (currencies) {
                     currencies.forEach(currency => {
                         // distribute currency among group members in the same room
@@ -59,7 +64,7 @@ export const lootable: BehaviorDefinition = {
 
                             remaining -= amount;
 
-                            recipient.emit('currency', currency.name, amount);
+                            recipient.dispatch(new PlayerCurrencyGainedEvent({amount: amount, denomination: currency.name}));
 
                             state.commandManager.get('look').execute(corpse.uuid, recipient);
                         }

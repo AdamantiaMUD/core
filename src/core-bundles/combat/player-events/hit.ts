@@ -1,6 +1,7 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
 import {CharacterHitEvent, CharacterHitPayload} from '../../../lib/characters/character-events';
+import {ItemHitEvent} from '../../../lib/equipment/item-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
@@ -32,7 +33,9 @@ export const evt: MudEventListenerFactory<CharacterHitPayload> = {
             sayAt(player, buf);
 
             if (player.equipment.has('wield')) {
-                player.equipment.get('wield').emit('hit', source, target, amount);
+                player.equipment
+                    .get('wield')
+                    .dispatch(new ItemHitEvent({amount, source, target}));
             }
 
             // show damage to party members

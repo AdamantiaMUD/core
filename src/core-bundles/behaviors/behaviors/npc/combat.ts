@@ -3,6 +3,17 @@ import Item, {ItemDefinition} from '../../../../lib/equipment/item';
 import Logger from '../../../../lib/util/logger';
 import Npc from '../../../../lib/mobs/npc';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import {
+    CharacterDamagedEvent,
+    CharacterDamagedPayload,
+    CharacterDeathblowEvent,
+    CharacterDeathblowPayload,
+    CharacterHitEvent,
+    CharacterHitPayload,
+} from '../../../../lib/characters/character-events';
+import {MudEventListener} from '../../../../lib/events/mud-event';
+import {NpcKilledEvent, NpcKilledPayload} from '../../../../lib/mobs/npc-events';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
 import {makeCorpse} from '../../../../lib/util/combat';
 
 /**
@@ -12,7 +23,7 @@ import {makeCorpse} from '../../../../lib/util/combat';
  */
 export const combatListeners: BehaviorDefinition = {
     listeners: {
-        updateTick: (state: GameState) => (npc: Npc) => {
+        [UpdateTickEvent.getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc) => {
             if (npc.combat.isFighting()) {
                 state.combat.updateRound(state, npc);
             }
@@ -21,7 +32,7 @@ export const combatListeners: BehaviorDefinition = {
         /**
          * NPC was killed
          */
-        killed: (state: GameState) => (npc: Npc) => {
+        [NpcKilledEvent.getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => (npc: Npc) => {
             if (npc.hasBehavior('lootable')) {
                 return;
             }
@@ -42,18 +53,18 @@ export const combatListeners: BehaviorDefinition = {
         /**
          * NPC hit another character
          */
-        hit: () => () => {},
+        [CharacterHitEvent.getName()]: (): MudEventListener<CharacterHitPayload> => () => {},
 
-        damaged: (state: GameState) => (npc: Npc, config, damage) => {
+        [CharacterDamagedEvent.getName()]: (state: GameState): MudEventListener<CharacterDamagedPayload> => (npc: Npc, {source}) => {
             if (npc.getAttribute('hp') <= 0) {
-                state.combat.handleDeath(state, npc, damage.attacker);
+                state.combat.handleDeath(state, npc, source.attacker);
             }
         },
 
         /**
          * NPC killed a target
          */
-        deathblow: (state: GameState) => (npc: Npc) => {
+        [CharacterDeathblowEvent.getName()]: (state: GameState): MudEventListener<CharacterDeathblowPayload> => (npc: Npc) => {
             if (!npc.combat.isFighting()) {
                 state.combat.startRegeneration(state, npc);
             }

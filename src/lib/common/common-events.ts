@@ -2,7 +2,7 @@ import GameState from '../game-state';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
 export interface UpdateTickPayload {
-    config?: {[key: string]: any};
+    config?: true | {[key: string]: any};
     state?: GameState;
 }
 

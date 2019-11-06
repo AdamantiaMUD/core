@@ -5,6 +5,8 @@ import GameState from '../../../../lib/game-state';
 import Logger from '../../../../lib/util/logger';
 import Npc from '../../../../lib/mobs/npc';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import {MudEventListener} from '../../../../lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
 
 const {sayAt} = Broadcast;
 
@@ -30,10 +32,12 @@ const defaultWanderConfig = {
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-        'update-tick': (state: GameState) => (npc: Npc, cfg: WanderConfig | true) => {
+        [UpdateTickEvent.getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
             if (npc.combat.isFighting() || !npc.room) {
                 return;
             }
+
+            const cfg = payload?.config ?? defaultWanderConfig;
 
             let config: WanderConfig = null;
 

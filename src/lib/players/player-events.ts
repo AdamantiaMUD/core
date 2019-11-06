@@ -1,4 +1,5 @@
 import Account from './account';
+import Character from '../characters/character';
 import Item from '../equipment/item';
 import Quest, {QuestProgress} from '../quests/quest';
 import Room from '../locations/room';
@@ -121,6 +122,15 @@ export interface PlayerGetItemPayload {
 export const PlayerGetItemEvent: MudEventConstructor<PlayerGetItemPayload> = class extends MudEvent<PlayerGetItemPayload> {
     public static NAME: string = 'get';
     public item: Item;
+};
+
+export interface PlayerKilledPayload {
+    killer?: Character;
+}
+
+export const PlayerKilledEvent: MudEventConstructor<PlayerKilledPayload> = class extends MudEvent<PlayerKilledPayload> {
+    public static NAME: string = 'player-killed';
+    public killer?: Character;
 };
 
 export const PlayerLevelUpEvent: MudEventConstructor<never> = class extends MudEvent<never> {

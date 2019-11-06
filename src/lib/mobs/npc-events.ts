@@ -1,3 +1,4 @@
+import Character from '../../lib/characters/character';
 import Item from '../equipment/item';
 import Player from '../players/player';
 import Room from '../locations/room';
@@ -10,6 +11,15 @@ export interface NpcEnterRoomPayload {
 export const NpcEnterRoomEvent: MudEventConstructor<NpcEnterRoomPayload> = class extends MudEvent<NpcEnterRoomPayload> {
     public NAME: string = 'enter-room';
     public nextRoom: Room;
+};
+
+export interface NpcKilledPayload {
+    killer?: Character;
+}
+
+export const NpcKilledEvent: MudEventConstructor<NpcKilledPayload> = class extends MudEvent<NpcKilledPayload> {
+    public static NAME: string = 'npc-killed';
+    public killer?: Character;
 };
 
 export interface NpcPlayerDropItemPayload {

@@ -2,6 +2,8 @@ import Broadcast from '../../../../lib/communication/broadcast';
 import Logger from '../../../../lib/util/logger';
 import Npc from '../../../../lib/mobs/npc';
 import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import {MudEventListener} from '../../../../lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
 
 const {sayAt} = Broadcast;
 
@@ -62,7 +64,9 @@ const defaultAggroConfig = {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        'update-tick': () => (npc: Npc, cfg: AggroConfig) => {
+        [UpdateTickEvent.getName()]: (): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
+            const cfg = (payload?.config ?? {}) as AggroConfig;
+
             if (!npc.room) {
                 return;
             }

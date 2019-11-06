@@ -1,16 +1,16 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/characters/character';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {PlayerKilledEvent, PlayerKilledPayload} from '../../../lib/players/player-events';
 
 const {prompt, sayAt, sayAtExcept} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerFactory = {
-    name: 'killed',
-    listener: (state: GameState): MudEventListener => {
+export const evt: MudEventListenerFactory<PlayerKilledPayload> = {
+    name: PlayerKilledEvent.getName(),
+    listener: (state: GameState): MudEventListener<PlayerKilledPayload> => {
         const startingRoomRef = state.config.get('startingRoom');
 
         if (!startingRoomRef) {
@@ -20,10 +20,12 @@ export const evt: MudEventListenerFactory = {
         /**
          * @listens Player#killed
          */
-        return (player: Player, killer?: Character) => {
+        return (player: Player, payload) => {
+            const killer = payload?.killer ?? null;
+
             player.removePrompt('combat');
 
-            const othersDeathMessage = killer
+            const othersDeathMessage = killer !== null
                 /* eslint-disable-next-line max-len */
                 ? `<b><red>${player.name} collapses to the ground, dead at the hands of ${killer.name}.</b></red>`
                 : `<b><red>${player.name} collapses to the ground, dead</b></red>`;
