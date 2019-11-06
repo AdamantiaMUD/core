@@ -1,15 +1,25 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {StreamAccountPasswordEvent} from './password';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 import {validateAccountName} from '../../../lib/util/player';
 
-export const evt: MudEventListenerFactory<> = {
-export const login: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>) => {
+export const StreamLoginEvent: StreamEventConstructor<never> = class extends StreamEvent<never> {
+    public static NAME: string = 'stream-login';
+};
+
+export const evt: StreamEventListenerFactory<never> = {
+    name: StreamLoginEvent.getName(),
+    listener: (state: GameState): StreamEventListener<never> => (socket: TransportStream<EventEmitter>) => {
         socket.write('Welcome, what is your username? ');
 
         socket.once('data', async (buf: Buffer) => {
@@ -21,7 +31,7 @@ export const login: InputEventListenerDefinition = {
             catch (err) {
                 socket.write(`${err.message}\r\n`);
 
-                socket.emit('login');
+                socket.dispatch(new StreamLoginEvent());
 
                 return;
             }
@@ -38,7 +48,7 @@ export const login: InputEventListenerDefinition = {
             if (!account) {
                 Logger.error(`No account found as ${name}.`);
 
-                socket.emit('create-account', name);
+                socket.dispatch(new StreamCreateAccountEvent({name}));
 
                 return;
             }
@@ -57,7 +67,7 @@ export const login: InputEventListenerDefinition = {
                 return;
             }
 
-            socket.emit('password', account);
+            socket.dispatch(new StreamAccountPasswordEvent({account}));
         });
     },
 };

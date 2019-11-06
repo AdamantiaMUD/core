@@ -1,12 +1,19 @@
+import EventEmitter from 'events';
+
 import EventUtil from '../../../lib/events/event-util';
 import Player from '../../../lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {
     PlayerCharacterNameCheckEvent,
     PlayerCharacterNameCheckPayload,
     PlayerCreateCharacterEvent,
     PlayerFinishCharacterEvent,
 } from '../../../lib/players/player-events';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 
 /**
  * Confirm new player name

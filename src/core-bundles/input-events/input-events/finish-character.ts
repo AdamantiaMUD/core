@@ -1,11 +1,16 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 
 /**
  * Finish player creation. Add the character to the account then add the player

@@ -6,17 +6,6 @@ import Room from '../locations/room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 import {ParsedCommand} from '../../lib/commands/command-parser';
 
-export interface PlayerChangePasswordPayload {
-    account: Account;
-    nextStage: string;
-}
-
-export const PlayerChangePasswordEvent: MudEventConstructor<PlayerChangePasswordPayload> = class extends MudEvent<PlayerChangePasswordPayload> {
-    public static NAME: string = 'change-password';
-    public account: Account;
-    public nextStage: string;
-};
-
 export interface PlayerCharacterNameCheckPayload {
     account: Account;
     name: string;
@@ -44,26 +33,6 @@ export interface PlayerCommandQueuedPayload {
 export const PlayerCommandQueuedEvent: MudEventConstructor<PlayerCommandQueuedPayload> = class extends MudEvent<PlayerCommandQueuedPayload> {
     public static NAME: string = 'command-queued';
     public idx: number;
-};
-
-export interface PlayerConfirmPasswordPayload {
-    account: Account;
-    nextStage: string;
-}
-
-export const PlayerConfirmPasswordEvent: MudEventConstructor<PlayerConfirmPasswordPayload> = class extends MudEvent<PlayerConfirmPasswordPayload> {
-    public static NAME: string = 'confirm-password';
-    public account: Account;
-    public nextStage: string;
-};
-
-export interface PlayerCreateCharacterPayload {
-    account: Account;
-}
-
-export const PlayerCreateCharacterEvent: MudEventConstructor<PlayerCreateCharacterPayload> = class extends MudEvent<PlayerCreateCharacterPayload> {
-    public static NAME: string = 'create-character';
-    public account: Account;
 };
 
 export interface PlayerCurrencyGainedPayload {

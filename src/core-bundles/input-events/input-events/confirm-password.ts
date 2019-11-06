@@ -1,15 +1,26 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
 import Player from '../../../lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {
-    PlayerChangePasswordEvent,
-    PlayerConfirmPasswordEvent,
-    PlayerConfirmPasswordPayload,
-} from '../../../lib/players/player-events';
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
+
+export interface PlayerConfirmPasswordPayload {
+    account: Account;
+    nextStage: string;
+}
+
+export const PlayerConfirmPasswordEvent: MudEventConstructor<PlayerConfirmPasswordPayload> = class extends MudEvent<PlayerConfirmPasswordPayload> {
+    public static NAME: string = 'confirm-password';
+    public account: Account;
+    public nextStage: string;
+};
 
 /**
  * Account password confirmation station

@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 
 import GameState from '../game-state';
-import SimpleMap from '../util/simple-map';
+import TransportStream from '../communication/transport-stream';
 
 export class StreamEvent<T> {
     public NAME: string = '';
@@ -28,23 +28,7 @@ export interface StreamEventConstructor<T> {
     getName?: () => string;
 }
 
-export class StreamEventEmitter {
-    protected _emitter: EventEmitter = new EventEmitter();
-
-    public dispatch(event: StreamEvent<unknown>): void {
-        this._emitter.emit(event.getName(), event);
-    }
-
-    public listen<T>(eventKey: string, listener: StreamEventListener<T>, config?: any): void {
-        this._emitter.on(eventKey, (data: T) => listener(this, data, config));
-    }
-
-    public stopListening(eventKey?: string): void {
-        this._emitter.removeAllListeners(eventKey);
-    };
-}
-
-export type StreamEventListener<T> = (emitter: StreamEventEmitter, args?: T, config?: SimpleMap) => void;
+export type StreamEventListener<T> = (socket: TransportStream<EventEmitter>, args?: T) => void;
 
 export interface StreamEventListenerFactory<T> {
     name: string;

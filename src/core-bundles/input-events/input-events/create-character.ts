@@ -1,11 +1,25 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 import {validateCharacterName} from '../../../lib/util/player';
+
+export interface PlayerCreateCharacterPayload {
+    account: Account;
+}
+
+export const PlayerCreateCharacterEvent: MudEventConstructor<PlayerCreateCharacterPayload> = class extends MudEvent<PlayerCreateCharacterPayload> {
+    public static NAME: string = 'create-character';
+    public account: Account;
+};
 
 /**
  * Player creation event

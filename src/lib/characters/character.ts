@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
 import CharacterCombat from '../combat/character-combat';
 import CommandQueue from '../commands/command-queue';
@@ -26,7 +28,6 @@ import {
     InventoryFullError,
 } from '../equipment/equipment-errors';
 import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/item-events';
-import {MudEventEmitter} from '../../lib/events/mud-event';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -49,7 +50,7 @@ export class Character extends ScriptableEntity implements Serializable {
     protected _level: number = 1;
     public name: string = '';
     public room: Room = null;
-    public socket: TransportStream<MudEventEmitter> = null;
+    public socket: TransportStream<EventEmitter> = null;
 
     constructor() {
         super();

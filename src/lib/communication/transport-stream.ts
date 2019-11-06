@@ -2,6 +2,7 @@ import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
 import {SocketCloseEvent} from './socket-events';
+import {StreamEvent, StreamEventListener} from '../events/stream-event';
 
 /**
  * Base class for anything that should be sending or receiving data from the player
@@ -61,6 +62,18 @@ export abstract class TransportStream<T extends EventEmitter> extends EventEmitt
 
         return null;
     }
+
+    public dispatch(event: StreamEvent<unknown>): void {
+        this.socket.emit(event.getName(), event);
+    }
+
+    public listen<T>(eventKey: string, listener: StreamEventListener<T>): void {
+        this.socket.on(eventKey, (data: T) => listener(this, data));
+    }
+
+    public stopListening(eventKey?: string): void {
+        this.socket.removeAllListeners(eventKey);
+    };
 }
 
 export default TransportStream;

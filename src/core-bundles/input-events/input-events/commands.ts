@@ -1,3 +1,5 @@
+import EventEmitter from 'events';
+
 import CommandParser from '../../../lib/commands/command-parser';
 import CommandType from '../../../lib/commands/command-type';
 import Broadcast from '../../../lib/communication/broadcast';
@@ -6,9 +8,7 @@ import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {EventEmitter} from 'events';
 import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands/command-errors';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {
     NoMessageError,
     NoPartyError,
@@ -16,6 +16,12 @@ import {
 } from '../../../lib/communication/channels/channel-errors';
 import {PlayerMoveEvent} from '../../../lib/players/player-events';
 import {RoomCommandEvent} from '../../../lib/locations/room-events';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 
 // const {
 //     NoPartyError,

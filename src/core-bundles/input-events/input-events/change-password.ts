@@ -1,34 +1,48 @@
+import EventEmitter from 'events';
+
+import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
-import Player from '../../../lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import TransportStream from '../../../lib/communication/transport-stream';
 import {
-    PlayerChangePasswordEvent,
-    PlayerChangePasswordPayload,
-    PlayerConfirmPasswordEvent,
-} from '../../../lib/players/player-events';
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
+
+export interface StreamChangePasswordPayload {
+    account: Account;
+    nextStage: string;
+}
+
+export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePasswordPayload> = class extends StreamEvent<StreamChangePasswordPayload> {
+    public static NAME: string = 'stream-change-password';
+    public account: Account;
+    public nextStage: string;
+};
 
 /**
  * Change password event
  */
-export const evt: MudEventListenerFactory<PlayerChangePasswordPayload> = {
-    name: PlayerChangePasswordEvent.getName(),
-    listener: (state: GameState): MudEventListener<PlayerChangePasswordPayload> => (
-        player: Player,
-        args: PlayerChangePasswordPayload
+export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
+    name: StreamChangePasswordEvent.getName(),
+    listener: (state: GameState): StreamEventListener<StreamChangePasswordPayload> => (
+        socket: TransportStream<EventEmitter>,
+        args: StreamChangePasswordPayload
     ) => {
-        const say = EventUtil.genSay(player);
-        const write = EventUtil.genWrite(player);
+        const say = EventUtil.genSay(socket);
+        const write = EventUtil.genWrite(socket);
 
         const {account} = args;
 
         say('Your password must be at least 8 characters.');
         write('<cyan>Enter your account password:</cyan> ');
 
-        player.socket.command('toggleEcho');
+        socket.command('toggleEcho');
 
-        player.socket.once('data', (buf: Buffer) => {
-            player.socket.command('toggleEcho');
+        socket.once('data', (buf: Buffer) => {
+            socket.command('toggleEcho');
 
             say('');
 
@@ -37,7 +51,7 @@ export const evt: MudEventListenerFactory<PlayerChangePasswordPayload> = {
             if (!pass) {
                 say('You must use a password.');
 
-                player.dispatch(new PlayerChangePasswordEvent(args));
+                socket.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -45,7 +59,7 @@ export const evt: MudEventListenerFactory<PlayerChangePasswordPayload> = {
             if (pass.length < 8) {
                 say('Your password is not long enough.');
 
-                player.dispatch(new PlayerChangePasswordEvent(args));
+                socket.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -55,7 +69,7 @@ export const evt: MudEventListenerFactory<PlayerChangePasswordPayload> = {
             state.accountManager.setAccount(account.username, account);
             account.save();
 
-            player.dispatch(new PlayerConfirmPasswordEvent(args));
+            socket.dispatch(new StreamConfirmPasswordEvent(args));
         });
     },
 };

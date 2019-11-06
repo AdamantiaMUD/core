@@ -1,4 +1,4 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import Broadcast from '../../../lib/communication/broadcast';
@@ -7,12 +7,17 @@ import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {
     PlayerChangePasswordEvent,
     PlayerChooseCharacterEvent,
     PlayerChooseCharacterPayload,
 } from '../../../lib/players/player-events';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 
 /* eslint-disable-next-line id-length */
 const {at, prompt} = Broadcast;

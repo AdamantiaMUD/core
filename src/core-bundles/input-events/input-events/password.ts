@@ -1,19 +1,33 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
 
 const passwordAttempts = {};
 const maxFailedAttempts = 2;
 
+export interface StreamAccountPasswordPayload {
+    account: Account;
+}
+
+export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPasswordPayload> = class extends StreamEvent<StreamAccountPasswordPayload> {
+    public static NAME: string = 'stream-account-password';
+    public account: Account;
+};
+
 /**
  * Account password event
  */
-export const evt: MudEventListenerFactory<> = {
-export const password: InputEventListenerDefinition = {
-    event: () => (socket: TransportStream<EventEmitter>, account: Account) => {
+export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
+    name: StreamAccountPasswordEvent.getName(),
+    listener: (): StreamEventListener<StreamAccountPasswordPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const write = EventUtil.genWrite(socket);
 
         const name = account.username;
@@ -46,7 +60,7 @@ export const password: InputEventListenerDefinition = {
                 write('<red>Incorrect password.</red>\r\n');
                 passwordAttempts[name] += 1;
 
-                socket.emit('password', account);
+                socket.dispatch(new StreamAccountPasswordEvent({account}));
             }
         });
     },

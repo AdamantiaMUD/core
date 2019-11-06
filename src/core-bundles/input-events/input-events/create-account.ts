@@ -1,16 +1,32 @@
-import {EventEmitter} from 'events';
+import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {StreamChangePasswordEvent} from './change-password';
+import {
+    StreamEvent,
+    StreamEventConstructor,
+    StreamEventListener,
+    StreamEventListenerFactory,
+} from '../../../lib/events/stream-event';
+import {StreamLoginEvent} from './login';
+
+export interface StreamCreateAccountPayload {
+    name: string;
+}
+
+export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccountPayload> = class extends StreamEvent<StreamCreateAccountPayload> {
+    public static NAME: string = 'stream-create-account';
+    public name: string;
+};
 
 /**
  * Account creation event
  */
-export const evt: MudEventListenerFactory<> = {
-export const createAccount: InputEventListenerDefinition = {
-    event: () => (socket: TransportStream<EventEmitter>, name: string) => {
+export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
+    name: StreamCreateAccountEvent.getName(),
+    listener: (): StreamEventListener<StreamCreateAccountPayload> => (socket: TransportStream<EventEmitter>, {name}) => {
         const write = EventUtil.genWrite(socket);
         const say = EventUtil.genSay(socket);
 
@@ -30,10 +46,10 @@ export const createAccount: InputEventListenerDefinition = {
                 newAccount = new Account();
                 newAccount.username = name;
 
-                socket.emit('change-password', {
+                socket.dispatch(new StreamChangePasswordEvent({
                     account: newAccount,
                     nextStage: 'create-character',
-                });
+                }));
 
                 return;
             }
@@ -41,12 +57,12 @@ export const createAccount: InputEventListenerDefinition = {
             if (data && (data === 'n' || data === 'no')) {
                 say("Let's try again!");
 
-                socket.emit('login');
+                socket.dispatch(new StreamLoginEvent());
 
                 return;
             }
 
-            socket.emit('create-account', name);
+            socket.dispatch(new StreamCreateAccountEvent({name}));
         });
     },
 };
