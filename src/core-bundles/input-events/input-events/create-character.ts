@@ -18,7 +18,7 @@ export interface StreamCreateCharacterPayload {
 }
 
 export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateCharacterPayload> = class extends StreamEvent<StreamCreateCharacterPayload> {
-    public static NAME: string = 'create-character';
+    public NAME: string = 'create-character';
     public account: Account;
 };
 
@@ -26,7 +26,7 @@ export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateChar
  * Player creation event
  */
 export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
-    name: StreamCreateCharacterEvent.getName(),
+    name: new StreamCreateCharacterEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
@@ -64,4 +64,4 @@ export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
     },
 };
 
-export default createCharacter;
+export default evt;

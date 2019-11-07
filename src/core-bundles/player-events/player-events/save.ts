@@ -4,7 +4,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 import {PlayerSaveEvent, PlayerSavePayload} from '../../../lib/players/player-events';
 
 export const evt: MudEventListenerFactory<PlayerSavePayload> = {
-    name: PlayerSaveEvent.getName(),
+    name: new PlayerSaveEvent().getName(),
     listener: (state: GameState): MudEventListener<PlayerSavePayload> => {
         return async (player: Player, payload) => {
             await state.playerManager.save(player);

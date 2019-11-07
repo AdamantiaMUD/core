@@ -1,3 +1,4 @@
+import EventEmitter from 'events';
 import path from 'path';
 import {CommanderStatic} from 'commander';
 
@@ -29,8 +30,8 @@ import QuestGoalManager from './quests/quest-goal-manager';
 import QuestRewardManager from './quests/quest-reward-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
+import StreamEventManager from './events/stream-event-manager';
 import TransportStream from './communication/transport-stream';
-import {MudEventEmitter} from './events/mud-event';
 import {UpdateTickEvent} from './common/common-events';
 
 const DEFAULT_TICK_FREQUENCY = 100;
@@ -48,7 +49,6 @@ export class GameState {
     private readonly _effectFactory: EffectFactory = new EffectFactory();
     private readonly _entityLoaderRegistry: EntityLoaderRegistry;
     private readonly _helpManager: HelpManager = new HelpManager();
-    private readonly _inputEventManager: MudEventManager = new MudEventManager();
     private readonly _itemBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _itemManager: ItemManager = new ItemManager();
     private readonly _itemFactory: ItemFactory = new ItemFactory();
@@ -69,6 +69,7 @@ export class GameState {
     private readonly _serverEventManager: MudEventManager = new MudEventManager();
     private readonly _skillManager: AbilityManager = new AbilityManager();
     private readonly _spellManager: AbilityManager = new AbilityManager();
+    private readonly _streamEventManager: StreamEventManager = new StreamEventManager();
 
     private entityTickInterval = null;
     private playerTickInterval = null;
@@ -161,10 +162,6 @@ export class GameState {
         return this._helpManager;
     }
 
-    public get inputEventManager(): MudEventManager {
-        return this._inputEventManager;
-    }
-
     public get itemBehaviorManager(): BehaviorManager {
         return this._itemBehaviorManager;
     }
@@ -241,8 +238,12 @@ export class GameState {
         return this._spellManager;
     }
 
-    public attachServerStream<S extends TransportStream<T>, T extends MudEventEmitter>(stream: S): void {
-        this._inputEventManager.attach(stream);
+    public get streamEventManager(): StreamEventManager {
+        return this._streamEventManager;
+    }
+
+    public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {
+        this._streamEventManager.attach(stream);
     }
 
     public setCombatEngine(engine: CombatEngine): void {

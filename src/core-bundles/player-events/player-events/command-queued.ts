@@ -8,7 +8,7 @@ import {PlayerCommandQueuedEvent, PlayerCommandQueuedPayload} from '../../../lib
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerCommandQueuedPayload> = {
-    name: PlayerCommandQueuedEvent.getName(),
+    name: new PlayerCommandQueuedEvent().getName(),
     listener: (): MudEventListener<PlayerCommandQueuedPayload> => {
         return (player: Player, {idx}) => {
             const command = player.commandQueue.queue[idx];

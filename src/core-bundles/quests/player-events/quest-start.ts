@@ -7,7 +7,7 @@ import {PlayerQuestStartedEvent, PlayerQuestStartedPayload} from '../../../lib/p
 const {center, line, sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerQuestStartedPayload> = {
-    name: PlayerQuestStartedEvent.getName(),
+    name: new PlayerQuestStartedEvent().getName(),
     listener: (state: GameState): MudEventListener<PlayerQuestStartedPayload> => {
         return (player: Player, {quest}) => {
             sayAt(player, `\r\n<b><yellow>Quest Started: ${quest.config.title}!</yellow></b>`);

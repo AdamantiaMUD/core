@@ -8,6 +8,6 @@ export interface UpdateTickPayload {
 
 export const UpdateTickEvent: MudEventConstructor<UpdateTickPayload> = class extends MudEvent<UpdateTickPayload> {
     public NAME: string = 'update-tick';
-    public config?: {[key: string]: any};
+    public config?: true | {[key: string]: any};
     public state?: GameState;
 };

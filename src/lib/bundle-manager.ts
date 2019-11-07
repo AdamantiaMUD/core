@@ -18,6 +18,7 @@ import {AreaDefinition, AreaManifest} from './locations/area';
 import {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
 import {MudEventListenerFactory} from './events/mud-event';
 import {QuestDefinition} from './quests/quest';
+import {StreamEventListenerFactory} from './events/stream-event';
 
 export class BundleManager {
     private readonly areas: string[] = [];
@@ -472,11 +473,11 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 const eventImport = await import(eventPath);
-                const inputEvent: MudEventListenerFactory<unknown> = eventImport.default;
+                const inputEvent: StreamEventListenerFactory<unknown> = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
 
-                this.state.inputEventManager.add(inputEvent.name, inputEvent.listener(this.state));
+                this.state.streamEventManager.add(inputEvent.name, inputEvent.listener(this.state));
             }
         }
 

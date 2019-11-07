@@ -5,7 +5,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<CombatantAddedPayload> = {
-    name: CombatantAddedEvent.getName(),
+    name: new CombatantAddedEvent().getName(),
     listener: (): MudEventListener<CombatantAddedPayload> => {
         /**
          * @listens Player#combatantAdded

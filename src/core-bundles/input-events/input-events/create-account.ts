@@ -18,7 +18,7 @@ export interface StreamCreateAccountPayload {
 }
 
 export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccountPayload> = class extends StreamEvent<StreamCreateAccountPayload> {
-    public static NAME: string = 'stream-create-account';
+    public NAME: string = 'stream-create-account';
     public name: string;
 };
 
@@ -26,7 +26,7 @@ export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccoun
  * Account creation event
  */
 export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
-    name: StreamCreateAccountEvent.getName(),
+    name: new StreamCreateAccountEvent().getName(),
     listener: (): StreamEventListener<StreamCreateAccountPayload> => (socket: TransportStream<EventEmitter>, {name}) => {
         const write = EventUtil.genWrite(socket);
         const say = EventUtil.genSay(socket);
@@ -68,4 +68,4 @@ export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
     },
 };
 
-export default createAccount;
+export default evt;

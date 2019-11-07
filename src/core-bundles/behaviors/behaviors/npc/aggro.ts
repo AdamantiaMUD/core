@@ -64,7 +64,7 @@ const defaultAggroConfig = {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
+        [new UpdateTickEvent().getName()]: (): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
             const cfg = (payload?.config ?? {}) as AggroConfig;
 
             if (!npc.room) {

@@ -14,14 +14,14 @@ import {
 import {StreamLoginEvent} from './login';
 
 export const StreamIntroEvent: StreamEventConstructor<never> = class extends StreamEvent<never> {
-    public static NAME: string = 'stream-intro';
+    public NAME: string = 'stream-intro';
 };
 
 /**
  * MOTD event
  */
 export const evt: StreamEventListenerFactory<never> = {
-    name: StreamIntroEvent.getName(),
+    name: new StreamIntroEvent().getName(),
     listener: (state: GameState): StreamEventListener<never> => (socket: TransportStream<EventEmitter>) => {
         // MotD generated here:
         // http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
@@ -38,4 +38,4 @@ export const evt: StreamEventListenerFactory<never> = {
     },
 };
 
-export default intro;
+export default evt;

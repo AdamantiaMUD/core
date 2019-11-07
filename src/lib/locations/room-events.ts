@@ -11,7 +11,7 @@ export interface RoomCommandPayload {
 }
 
 export const RoomCommandEvent: MudEventConstructor<RoomCommandPayload> = class extends MudEvent<RoomCommandPayload> {
-    public static NAME: string = 'room-command';
+    public NAME: string = 'room-command';
     public args?: string;
     public name: string;
     public player: Player;
@@ -23,7 +23,7 @@ export interface RoomNpcEnterPayload {
 }
 
 export const RoomNpcEnterEvent: MudEventConstructor<RoomNpcEnterPayload> = class extends MudEvent<RoomNpcEnterPayload> {
-    public static NAME: string = 'npc-enter';
+    public NAME: string = 'npc-enter';
     public npc: Npc;
     public prevRoom: Room;
 };
@@ -34,7 +34,7 @@ export interface RoomNpcLeavePayload {
 }
 
 export const RoomNpcLeaveEvent: MudEventConstructor<RoomNpcLeavePayload> = class extends MudEvent<RoomNpcLeavePayload> {
-    public static NAME: string = 'npc-leave';
+    public NAME: string = 'npc-leave';
     public npc: Npc;
     public nextRoom: Room;
 };
@@ -45,7 +45,7 @@ export interface RoomPlayerEnterPayload {
 }
 
 export const RoomPlayerEnterEvent: MudEventConstructor<RoomPlayerEnterPayload> = class extends MudEvent<RoomPlayerEnterPayload> {
-    public static NAME: string = 'player-enter';
+    public NAME: string = 'player-enter';
     public player: Player;
     public prevRoom: Room;
 };
@@ -56,13 +56,13 @@ export interface RoomPlayerLeavePayload {
 }
 
 export const RoomPlayerLeaveEvent: MudEventConstructor<RoomPlayerLeavePayload> = class extends MudEvent<RoomPlayerLeavePayload> {
-    public static NAME: string = 'player-leave';
+    public NAME: string = 'player-leave';
     public player: Player;
     public nextRoom: Room;
 };
 
 export const RoomReadyEvent: MudEventConstructor<never> = class extends MudEvent<never> {
-    public static NAME: string = 'ready';
+    public NAME: string = 'ready';
 };
 
 export interface RoomRespawnTickPayload {
@@ -70,10 +70,10 @@ export interface RoomRespawnTickPayload {
 }
 
 export const RoomRespawnTickEvent: MudEventConstructor<RoomRespawnTickPayload> = class extends MudEvent<RoomRespawnTickPayload> {
-    public static NAME: string = 'room-respawn-tick';
+    public NAME: string = 'room-respawn-tick';
     public state?: GameState;
 };
 
 export const RoomSpawnEvent: MudEventConstructor<never> = class extends MudEvent<never> {
-    public static NAME: string = 'spawn';
+    public NAME: string = 'spawn';
 };

@@ -83,21 +83,21 @@ export class QuestFactory {
             quest.addGoal(new GoalType(quest, goal.config, player));
         }
 
-        quest.listen<QuestProgressPayload>(QuestProgressEvent.getName(), (qst: Quest, {progress}) => {
+        quest.listen<QuestProgressPayload>(new QuestProgressEvent().getName(), (qst: Quest, {progress}) => {
             player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));
             player.save();
         });
 
-        quest.listen<{}>(QuestStartedEvent.getName(), (qst: Quest) => {
+        quest.listen<{}>(new QuestStartedEvent().getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestStartedEvent({quest: qst}));
             qst.dispatch(new QuestProgressEvent({progress: qst.getProgress()}));
         });
 
-        quest.listen<{}>(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
+        quest.listen<{}>(new QuestTurnInReadyEvent().getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestTurnInReadyEvent({quest: qst}));
         });
 
-        quest.listen<{}>(QuestCompletedEvent.getName(), (qst: Quest) => {
+        quest.listen<{}>(new QuestCompletedEvent().getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestCompletedEvent({quest: qst}));
             player.questTracker.complete(qst.entityReference);
 

@@ -17,7 +17,7 @@ export interface StreamDeleteCharacterPayload {
 }
 
 export const StreamDeleteCharacterEvent: StreamEventConstructor<StreamDeleteCharacterPayload> = class extends StreamEvent<StreamDeleteCharacterPayload> {
-    public static NAME: string = 'delete-character';
+    public NAME: string = 'delete-character';
     public account: Account;
 };
 
@@ -25,7 +25,7 @@ export const StreamDeleteCharacterEvent: StreamEventConstructor<StreamDeleteChar
  * Delete character event
  */
 export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
-    name: StreamDeleteCharacterEvent.getName(),
+    name: new StreamDeleteCharacterEvent().getName(),
     listener: (): StreamEventListener<StreamDeleteCharacterPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
@@ -125,4 +125,4 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
     },
 };
 
-export default deleteCharacter;
+export default evt;

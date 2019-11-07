@@ -87,7 +87,7 @@ export class Quest extends MudEventEmitter implements Serializable {
 
     public addGoal(goal: QuestGoal): void {
         this.goals.push(goal);
-        goal.listen<QuestProgressPayload>(QuestProgressEvent.getName(), () => this.onProgressUpdated());
+        goal.listen<QuestProgressPayload>(new QuestProgressEvent().getName(), () => this.onProgressUpdated());
     }
 
     public complete(): void {

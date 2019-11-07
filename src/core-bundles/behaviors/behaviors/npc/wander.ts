@@ -32,7 +32,7 @@ const defaultWanderConfig = {
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
+        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
             if (npc.combat.isFighting() || !npc.room) {
                 return;
             }

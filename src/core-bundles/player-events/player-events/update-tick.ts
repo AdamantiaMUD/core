@@ -8,7 +8,7 @@ import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-eve
 const {prompt, sayAt, sayAtExcept} = Broadcast;
 
 export const evt: MudEventListenerFactory<UpdateTickPayload> = {
-    name: UpdateTickEvent.getName(),
+    name: new UpdateTickEvent().getName(),
     listener: (state: GameState): MudEventListener<UpdateTickPayload> => {
         return (player: Player) => {
             if (player.commandQueue.hasPending && player.commandQueue.lagRemaining <= 0) {

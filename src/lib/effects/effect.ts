@@ -128,7 +128,7 @@ export class Effect extends MudEventEmitter implements Serializable {
         }
 
         if (this.config.autoActivate) {
-            this.listen(EffectAddedEvent.getName(), this.activate);
+            this.listen(new EffectAddedEvent().getName(), this.activate);
         }
     }
 

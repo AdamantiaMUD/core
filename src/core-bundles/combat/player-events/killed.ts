@@ -9,7 +9,7 @@ const {prompt, sayAt, sayAtExcept} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<PlayerKilledPayload> = {
-    name: PlayerKilledEvent.getName(),
+    name: new PlayerKilledEvent().getName(),
     listener: (state: GameState): MudEventListener<PlayerKilledPayload> => {
         const startingRoomRef = state.config.get('startingRoom');
 

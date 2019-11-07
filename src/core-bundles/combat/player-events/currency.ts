@@ -7,7 +7,7 @@ const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<PlayerCurrencyGainedPayload> = {
-    name: PlayerCurrencyGainedEvent.getName(),
+    name: new PlayerCurrencyGainedEvent().getName(),
     listener: (): MudEventListener<PlayerCurrencyGainedPayload> => {
         return (player: Player, {denomination, amount}) => {
             const friendlyName = denomination

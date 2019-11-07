@@ -8,11 +8,9 @@ import {PlayerMoveEvent, PlayerMovePayload} from '../../../lib/players/player-ev
 const {sayAt, sayAtExcept} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerMovePayload> = {
-    name: PlayerMoveEvent.getName(),
+    name: new PlayerMoveEvent().getName(),
     listener: (state: GameState): MudEventListener<PlayerMovePayload> => {
-        return (player: Player, {cmd}) => {
-            const {payload: {roomExit}} = cmd;
-
+        return (player: Player, {roomExit}) => {
             if (!roomExit) {
                 sayAt(player, "You can't go that way!");
 
@@ -58,7 +56,7 @@ export const evt: MudEventListenerFactory<PlayerMovePayload> = {
                     }
                     else {
                         sayAt(follower as Player, `\r\nYou follow ${player.name} to ${nextRoom.title}.`);
-                        follower.dispatch(new PlayerMoveEvent({cmd}));
+                        follower.dispatch(new PlayerMoveEvent({roomExit}));
                     }
                 }
             }

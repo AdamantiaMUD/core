@@ -11,7 +11,7 @@ import WebsocketStream from '../lib/WebsocketStream';
 const DEFAULT_WEBSOCKET_PORT = 4001;
 
 export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
-    name: GameServerStartupEvent.getName(),
+    name: new GameServerStartupEvent().getName(),
     listener: (state: GameState): MudEventListener<GameServerStartupPayload> => () => {
         const port = state.config.get('port.websocket', DEFAULT_WEBSOCKET_PORT);
 
@@ -28,7 +28,7 @@ export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
             stream.attach(ws);
 
             // Register all of the input events (login, etc.)
-            state.inputEventManager.attach(stream);
+            state.streamEventManager.attach(stream);
 
             stream.write('Connecting...\n');
             Logger.info('User connected via websocket...');

@@ -23,7 +23,7 @@ import {makeCorpse} from '../../../../lib/util/combat';
  */
 export const combatListeners: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc) => {
+        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc) => {
             if (npc.combat.isFighting()) {
                 state.combat.updateRound(state, npc);
             }
@@ -32,7 +32,7 @@ export const combatListeners: BehaviorDefinition = {
         /**
          * NPC was killed
          */
-        [NpcKilledEvent.getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => (npc: Npc) => {
+        [new NpcKilledEvent().getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => (npc: Npc) => {
             if (npc.hasBehavior('lootable')) {
                 return;
             }
@@ -53,9 +53,9 @@ export const combatListeners: BehaviorDefinition = {
         /**
          * NPC hit another character
          */
-        [CharacterHitEvent.getName()]: (): MudEventListener<CharacterHitPayload> => () => {},
+        [new CharacterHitEvent().getName()]: (): MudEventListener<CharacterHitPayload> => () => {},
 
-        [CharacterDamagedEvent.getName()]: (state: GameState): MudEventListener<CharacterDamagedPayload> => (npc: Npc, {source}) => {
+        [new CharacterDamagedEvent().getName()]: (state: GameState): MudEventListener<CharacterDamagedPayload> => (npc: Npc, {source}) => {
             if (npc.getAttribute('hp') <= 0) {
                 state.combat.handleDeath(state, npc, source.attacker);
             }
@@ -64,7 +64,7 @@ export const combatListeners: BehaviorDefinition = {
         /**
          * NPC killed a target
          */
-        [CharacterDeathblowEvent.getName()]: (state: GameState): MudEventListener<CharacterDeathblowPayload> => (npc: Npc) => {
+        [new CharacterDeathblowEvent().getName()]: (state: GameState): MudEventListener<CharacterDeathblowPayload> => (npc: Npc) => {
             if (!npc.combat.isFighting()) {
                 state.combat.startRegeneration(state, npc);
             }

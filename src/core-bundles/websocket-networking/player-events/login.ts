@@ -4,7 +4,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 import {PlayerLoginEvent} from '../../../lib/players/player-events';
 
 export const evt: MudEventListenerFactory<never> = {
-    name: PlayerLoginEvent.getName(),
+    name: new PlayerLoginEvent().getName(),
     listener: (): MudEventListener<never> => {
         /**
          * @listens Player#login

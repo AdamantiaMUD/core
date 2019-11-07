@@ -2,15 +2,15 @@ import Effect from './effect';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
 export const EffectActivatedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public static NAME: string = 'effect-activated';
+    public NAME: string = 'effect-activated';
 };
 
 export const EffectAddedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public static NAME: string = 'effect-added';
+    public NAME: string = 'effect-added';
 };
 
 export const EffectDeactivatedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public static NAME: string = 'effect-deactivated';
+    public NAME: string = 'effect-deactivated';
 };
 
 export interface EffectRefreshedPayload {
@@ -18,12 +18,12 @@ export interface EffectRefreshedPayload {
 }
 
 export const EffectRefreshedEvent: MudEventConstructor<EffectRefreshedPayload> = class extends MudEvent<EffectRefreshedPayload> {
-    public static NAME: string = 'effect-refreshed';
+    public NAME: string = 'effect-refreshed';
     public effect: Effect;
 };
 
 export const EffectRemoveEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
-    public static NAME: string = 'remove';
+    public NAME: string = 'remove';
 };
 
 export interface EffectStackAddedPayload {
@@ -31,6 +31,6 @@ export interface EffectStackAddedPayload {
 }
 
 export const EffectStackAddedEvent: MudEventConstructor<EffectStackAddedPayload> = class extends MudEvent<EffectStackAddedPayload> {
-    public static NAME: string = 'effect-stack-added';
+    public NAME: string = 'effect-stack-added';
     public effect: Effect;
 };

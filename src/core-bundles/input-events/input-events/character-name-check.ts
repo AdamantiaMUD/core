@@ -18,7 +18,7 @@ export interface StreamCharacterNameCheckPayload {
 }
 
 export const StreamCharacterNameCheckEvent: StreamEventConstructor<StreamCharacterNameCheckPayload> = class extends StreamEvent<StreamCharacterNameCheckPayload> {
-    public static NAME: string = 'character-name-check';
+    public NAME: string = 'character-name-check';
     public account: Account;
     public name: string;
 };
@@ -27,7 +27,7 @@ export const StreamCharacterNameCheckEvent: StreamEventConstructor<StreamCharact
  * Confirm new player name
  */
 export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = {
-    name: StreamCharacterNameCheckEvent.getName(),
+    name: new StreamCharacterNameCheckEvent().getName(),
     listener: (): StreamEventListener<StreamCharacterNameCheckPayload> => (
         socket: TransportStream<EventEmitter>,
         args: StreamCharacterNameCheckPayload
@@ -64,4 +64,4 @@ export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = 
     },
 };
 
-export default characterNameCheck;
+export default evt;

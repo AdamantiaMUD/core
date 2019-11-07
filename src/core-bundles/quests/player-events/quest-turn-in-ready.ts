@@ -6,7 +6,7 @@ import {PlayerQuestTurnInReadyEvent, PlayerQuestTurnInReadyPayload} from '../../
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerQuestTurnInReadyPayload> = {
-    name: PlayerQuestTurnInReadyEvent.getName(),
+    name: new PlayerQuestTurnInReadyEvent().getName(),
     listener: (): MudEventListener<PlayerQuestTurnInReadyPayload> => {
         return (player: Player, {quest}) => {
             sayAt(player, `<b><yellow>${quest.config.title} ready to turn in!</yellow></b>`);

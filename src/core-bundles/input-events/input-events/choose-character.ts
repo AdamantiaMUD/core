@@ -26,7 +26,7 @@ export interface StreamChooseCharacterPayload {
 }
 
 export const StreamChooseCharacterEvent: StreamEventConstructor<StreamChooseCharacterPayload> = class extends StreamEvent<StreamChooseCharacterPayload> {
-    public static NAME: string = 'choose-character';
+    public NAME: string = 'choose-character';
     public account: Account;
 };
 
@@ -34,7 +34,7 @@ export const StreamChooseCharacterEvent: StreamEventConstructor<StreamChooseChar
  * Account character selection event
  */
 export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
-    name: StreamChooseCharacterEvent.getName(),
+    name: new StreamChooseCharacterEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamChooseCharacterPayload> => (
         socket: TransportStream<EventEmitter>,
         {account}: StreamChooseCharacterPayload
@@ -213,4 +213,4 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
     },
 };
 
-export default chooseCharacter;
+export default evt;

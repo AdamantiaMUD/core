@@ -19,7 +19,7 @@ export interface StreamFinishCharacterPayload {
 }
 
 export const StreamFinishCharacterEvent: StreamEventConstructor<StreamFinishCharacterPayload> = class extends StreamEvent<StreamFinishCharacterPayload> {
-    public static NAME: string = 'stream-account-password';
+    public NAME: string = 'stream-account-password';
     public account: Account;
     public name: string;
 };
@@ -29,7 +29,7 @@ export const StreamFinishCharacterEvent: StreamEventConstructor<StreamFinishChar
  * to the game world
  */
 export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
-    name: StreamFinishCharacterEvent.getName(),
+    name: new StreamFinishCharacterEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamFinishCharacterPayload> => {
         let startingRoomRef = state.config.get('startingRoom');
 
@@ -62,4 +62,4 @@ export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
     },
 };
 
-export default finishCharacter;
+export default evt;

@@ -12,7 +12,7 @@ import {makeCorpse} from '../../../../lib/util/combat';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
-        [NpcKilledEvent.getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => async function(npc: Npc, payload, config) {
+        [new NpcKilledEvent().getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => async function(npc: Npc, payload, config) {
             const killer = payload?.killer ?? null;
 
             const {room, area} = npc;

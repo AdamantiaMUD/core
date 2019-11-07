@@ -6,7 +6,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<CharacterHealedPayload> = {
-    name: CharacterHealedEvent.getName(),
+    name: new CharacterHealedEvent().getName(),
     listener: (): MudEventListener<CharacterHealedPayload> => {
         return (player: Player, {source, amount}) => {
             if (source.metadata.hidden) {

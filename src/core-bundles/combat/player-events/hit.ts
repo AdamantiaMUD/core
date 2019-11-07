@@ -8,7 +8,7 @@ const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<CharacterHitPayload> = {
-    name: CharacterHitEvent.getName(),
+    name: new CharacterHitEvent().getName(),
     listener: (): MudEventListener<CharacterHitPayload> => {
         return (player: Player, {source, target, amount}) => {
             if (source.metadata.hidden) {

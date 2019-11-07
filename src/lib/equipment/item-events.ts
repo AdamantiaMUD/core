@@ -8,7 +8,7 @@ export interface ItemDroppedPayload {
 }
 
 export const ItemDroppedEvent: MudEventConstructor<ItemDroppedPayload> = class extends MudEvent<ItemDroppedPayload> {
-    public static NAME: string = 'item-dropped';
+    public NAME: string = 'item-dropped';
     public character: Character;
 };
 
@@ -17,7 +17,7 @@ export interface ItemEquippedPayload {
 }
 
 export const ItemEquippedEvent: MudEventConstructor<ItemEquippedPayload> = class extends MudEvent<ItemEquippedPayload> {
-    public static NAME: string = 'equip';
+    public NAME: string = 'equip';
     public wearer: Character;
 };
 
@@ -28,7 +28,7 @@ export interface ItemHitPayload {
 }
 
 export const ItemHitEvent: MudEventConstructor<ItemHitPayload> = class extends MudEvent<ItemHitPayload> {
-    public static NAME: string = 'item-hit';
+    public NAME: string = 'item-hit';
     public amount: number;
     public source: Damage;
     public target: Character;
@@ -39,7 +39,7 @@ export interface ItemPickedUpPayload {
 }
 
 export const ItemPickedUpEvent: MudEventConstructor<ItemPickedUpPayload> = class extends MudEvent<ItemPickedUpPayload> {
-    public static NAME: string = 'item-picked-up';
+    public NAME: string = 'item-picked-up';
     public character: Character;
 };
 
@@ -49,7 +49,7 @@ export interface ItemPutAwayPayload {
 }
 
 export const ItemPutAwayEvent: MudEventConstructor<ItemPutAwayPayload> = class extends MudEvent<ItemPutAwayPayload> {
-    public static NAME: string = 'put';
+    public NAME: string = 'put';
     public character: Character;
     public container: Item;
 };
@@ -63,6 +63,6 @@ export interface ItemUnequippedPayload {
 }
 
 export const ItemUnequippedEvent: MudEventConstructor<ItemUnequippedPayload> = class extends MudEvent<ItemUnequippedPayload> {
-    public static NAME: string = 'unequip';
+    public NAME: string = 'unequip';
     public wearer: Character;
 };

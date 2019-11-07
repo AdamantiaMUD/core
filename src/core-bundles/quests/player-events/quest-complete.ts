@@ -6,7 +6,7 @@ import {PlayerQuestCompletedEvent, PlayerQuestCompletedPayload} from '../../../l
 const {line, sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerQuestCompletedPayload> = {
-    name: PlayerQuestCompletedEvent.getName(),
+    name: new PlayerQuestCompletedEvent().getName(),
     listener: (): MudEventListener<PlayerQuestCompletedPayload> => {
         return (player: Player, {quest}) => {
             sayAt(player, `<b><yellow>Quest Complete: ${quest.config.title}!</yellow></b>`);

@@ -11,7 +11,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 const DEFAULT_TELNET_PORT = 4000;
 
 export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
-    name: GameServerStartupEvent.getName(),
+    name: new GameServerStartupEvent().getName(),
     listener: (state: GameState): MudEventListener<GameServerStartupPayload> => () => {
         const port = state.config.get('port.telnet', DEFAULT_TELNET_PORT);
 

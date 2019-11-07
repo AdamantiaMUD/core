@@ -17,7 +17,7 @@ export interface StreamConfirmPasswordPayload {
 }
 
 export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPasswordPayload> = class extends StreamEvent<StreamConfirmPasswordPayload> {
-    public static NAME: string = 'stream-confirm-password';
+    public NAME: string = 'stream-confirm-password';
     public account: Account;
     public NextEvent: StreamEventConstructor<{account: Account}>;
 };
@@ -26,7 +26,7 @@ export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPas
  * Account password confirmation station
  */
 export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
-    name: StreamConfirmPasswordEvent.getName(),
+    name: new StreamConfirmPasswordEvent().getName(),
     listener: (): StreamEventListener<StreamConfirmPasswordPayload> => (
         socket: TransportStream<EventEmitter>,
         args: StreamConfirmPasswordPayload
@@ -59,4 +59,4 @@ export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
     },
 };
 
-export default confirmPassword;
+export default evt;

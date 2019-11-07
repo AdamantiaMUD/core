@@ -9,7 +9,7 @@ export interface ChannelReceivePayload {
 }
 
 export const ChannelReceiveEvent: MudEventConstructor<ChannelReceivePayload> = class extends MudEvent<ChannelReceivePayload> {
-    public static NAME: string = 'channel-receive';
+    public NAME: string = 'channel-receive';
     public channel: Channel;
     public message: string;
     public sender: Character;

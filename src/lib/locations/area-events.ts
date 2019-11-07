@@ -6,6 +6,6 @@ export interface AreaRoomAddedPayload {
 }
 
 export const AreaRoomAddedEvent: MudEventConstructor<AreaRoomAddedPayload> = class extends MudEvent<AreaRoomAddedPayload> {
-    public static NAME: string = 'room-added';
+    public NAME: string = 'room-added';
     public room: Room;
 };

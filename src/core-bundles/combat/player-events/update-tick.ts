@@ -10,7 +10,7 @@ const {prompt, sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<UpdateTickPayload> = {
-    name: UpdateTickEvent.getName(),
+    name: new UpdateTickEvent().getName(),
     listener: (state: GameState): MudEventListener<UpdateTickPayload> => {
         return (player: Player) => {
             if (!player.combat.isFighting()) {

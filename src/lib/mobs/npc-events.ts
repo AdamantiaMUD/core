@@ -18,7 +18,7 @@ export interface NpcKilledPayload {
 }
 
 export const NpcKilledEvent: MudEventConstructor<NpcKilledPayload> = class extends MudEvent<NpcKilledPayload> {
-    public static NAME: string = 'npc-killed';
+    public NAME: string = 'npc-killed';
     public killer?: Character;
 };
 

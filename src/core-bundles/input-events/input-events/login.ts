@@ -15,11 +15,11 @@ import {
 import {validateAccountName} from '../../../lib/util/player';
 
 export const StreamLoginEvent: StreamEventConstructor<never> = class extends StreamEvent<never> {
-    public static NAME: string = 'stream-login';
+    public NAME: string = 'stream-login';
 };
 
 export const evt: StreamEventListenerFactory<never> = {
-    name: StreamLoginEvent.getName(),
+    name: new StreamLoginEvent().getName(),
     listener: (state: GameState): StreamEventListener<never> => (socket: TransportStream<EventEmitter>) => {
         socket.write('Welcome, what is your username? ');
 
@@ -73,4 +73,4 @@ export const evt: StreamEventListenerFactory<never> = {
     },
 };
 
-export default login;
+export default evt;

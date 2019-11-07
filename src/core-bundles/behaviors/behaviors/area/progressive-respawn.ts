@@ -21,11 +21,11 @@ import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-
  */
 export const progressiveRespawn: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => {
+        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => {
             let lastRespawnTick = Date.now();
 
             return function(area: Area, payload) {
-                const config = payload?.config ?? {};
+                const config = (payload?.config ?? {}) as {[key: string]: any};
 
                 // setup respawnTick to only happen every [interval] seconds
                 const respawnInterval = config?.interval ?? 30;
@@ -40,8 +40,8 @@ export const progressiveRespawn: BehaviorDefinition = {
             };
         },
 
-        [AreaRoomAddedEvent.getName()]: (): MudEventListener<AreaRoomAddedPayload> => (area: Area, {room}) => {
-            room.listen(RoomRespawnTickEvent.getName(), (room: Room, {state}): void => {
+        [new AreaRoomAddedEvent().getName()]: (): MudEventListener<AreaRoomAddedPayload> => (area: Area, {room}) => {
+            room.listen(new RoomRespawnTickEvent().getName(), (room: Room, {state}): void => {
                 room.resetDoors();
 
                 room.defaultNpcs

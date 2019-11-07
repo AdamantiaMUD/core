@@ -4,7 +4,7 @@ import {CharacterEquipItemEvent, CharacterEquipItemPayload} from '../../../lib/c
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 export const evt: MudEventListenerFactory<CharacterEquipItemPayload> = {
-    name: CharacterEquipItemEvent.getName(),
+    name: new CharacterEquipItemEvent().getName(),
     listener: (state: GameState): MudEventListener<CharacterEquipItemPayload> => {
         return (player: Player, {slot, item}) => {
             if (!item.getMeta('stats')) {

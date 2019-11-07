@@ -6,7 +6,7 @@ import {QuestProgressEvent, QuestProgressPayload} from '../../../lib/quests/ques
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<QuestProgressPayload> = {
-    name: QuestProgressEvent.getName(),
+    name: new QuestProgressEvent().getName(),
     listener: (): MudEventListener<QuestProgressPayload> => {
         return (quest: Quest, {progress}) => {
             sayAt(quest.player, `\r\n<b><yellow>${progress.display}</yellow></b>`);

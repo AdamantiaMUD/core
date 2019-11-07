@@ -19,7 +19,7 @@ export interface StreamAccountPasswordPayload {
 }
 
 export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPasswordPayload> = class extends StreamEvent<StreamAccountPasswordPayload> {
-    public static NAME: string = 'stream-account-password';
+    public NAME: string = 'stream-account-password';
     public account: Account;
 };
 
@@ -27,7 +27,7 @@ export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPas
  * Account password event
  */
 export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
-    name: StreamAccountPasswordEvent.getName(),
+    name: new StreamAccountPasswordEvent().getName(),
     listener: (): StreamEventListener<StreamAccountPasswordPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const write = EventUtil.genWrite(socket);
 
@@ -67,4 +67,4 @@ export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
     },
 };
 
-export default password;
+export default evt;

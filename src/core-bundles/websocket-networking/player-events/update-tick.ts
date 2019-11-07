@@ -4,7 +4,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-events';
 
 export const evt: MudEventListenerFactory<UpdateTickPayload> = {
-    name: UpdateTickEvent.getName(),
+    name: new UpdateTickEvent().getName(),
     listener: (): MudEventListener<UpdateTickPayload> => {
         /**
          * @listens Player#updateTick

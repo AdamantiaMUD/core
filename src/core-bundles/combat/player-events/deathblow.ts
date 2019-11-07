@@ -8,7 +8,7 @@ import {PlayerExperienceEvent} from '../../../lib/players/player-events';
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
-    name: CharacterDeathblowEvent.getName(),
+    name: new CharacterDeathblowEvent().getName(),
     listener: (): MudEventListener<CharacterDeathblowPayload> => {
         return (player: Player, payload: CharacterDeathblowPayload) => {
             const {target, skipParty = false} = payload;

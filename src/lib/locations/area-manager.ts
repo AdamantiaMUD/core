@@ -20,7 +20,7 @@ export class AreaManager extends MudEventEmitter {
 
         this.state = state;
 
-        this.listen(UpdateTickEvent.getName(), this.tickAll);
+        this.listen(new UpdateTickEvent().getName(), this.tickAll);
     }
 
     private tickAll(): void {

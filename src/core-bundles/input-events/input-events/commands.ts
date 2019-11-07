@@ -14,7 +14,7 @@ import {
     NoPartyError,
     NoRecipientError
 } from '../../../lib/communication/channels/channel-errors';
-import {PlayerMoveEvent} from '../../../lib/players/player-events';
+import {PlayerMoveEvent, PlayerMovePayload} from '../../../lib/players/player-events';
 import {RoomCommandEvent} from '../../../lib/locations/room-events';
 import {
     StreamEvent,
@@ -36,7 +36,7 @@ export interface StreamCommandsPayload {
 }
 
 export const StreamCommandsEvent: StreamEventConstructor<StreamCommandsPayload> = class extends StreamEvent<StreamCommandsPayload> {
-    public static NAME: string = 'commands';
+    public NAME: string = 'commands';
     public player: Player;
 };
 
@@ -45,7 +45,7 @@ export const StreamCommandsEvent: StreamEventConstructor<StreamCommandsPayload> 
  * If you want to swap out the command parser this is the place to do it
  */
 export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
-    name: StreamCommandsEvent.getName(),
+    name: new StreamCommandsEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamCommandsPayload> => (socket: TransportStream<EventEmitter>, {player}) => {
         socket.once('data', (buf: Buffer) => {
             const loop = (): void => {
@@ -71,7 +71,7 @@ export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
 
                 switch (result.type) {
                     case CommandType.MOVEMENT:
-                        player.dispatch(new PlayerMoveEvent({cmd: result}));
+                        player.dispatch(new PlayerMoveEvent(result.payload as PlayerMovePayload));
 
                         break;
 
@@ -178,4 +178,4 @@ export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
     },
 };
 
-export default commands;
+export default evt;

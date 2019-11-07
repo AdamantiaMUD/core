@@ -3,6 +3,7 @@ import {Random} from 'rando-js';
 import CommandParser from '../../../lib/commands/command-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {PlayerMoveEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
@@ -43,7 +44,7 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAt(player, 'You cowardly flee from the battle!');
         player.combat.disengage();
-        player.emit('move', {roomExit});
+        player.dispatch(new PlayerMoveEvent({roomExit}));
     },
 };
 

@@ -18,7 +18,7 @@ export interface StreamChangePasswordPayload {
 }
 
 export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePasswordPayload> = class extends StreamEvent<StreamChangePasswordPayload> {
-    public static NAME: string = 'stream-change-password';
+    public NAME: string = 'stream-change-password';
     public account: Account;
     public NextEvent: StreamEventConstructor<{account: Account}>;
 };
@@ -27,7 +27,7 @@ export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePassw
  * Change password event
  */
 export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
-    name: StreamChangePasswordEvent.getName(),
+    name: new StreamChangePasswordEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamChangePasswordPayload> => (
         socket: TransportStream<EventEmitter>,
         args: StreamChangePasswordPayload
@@ -75,4 +75,4 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
     },
 };
 
-export default changePassword;
+export default evt;

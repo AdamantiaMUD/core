@@ -5,7 +5,7 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<CharacterAttributeUpdatePayload> = {
-    name: CharacterAttributeUpdateEvent.getName(),
+    name: new CharacterAttributeUpdateEvent().getName(),
     listener: (): MudEventListener<CharacterAttributeUpdatePayload> => {
         /**
          * @listens Player#attributeUpdate

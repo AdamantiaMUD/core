@@ -1,5 +1,5 @@
 import BehaviorManager from './behavior-manager';
-import EventManager from '../events/event-manager';
+import MudEventManager from '../events/mud-event-manager';
 
 describe('BehaviorManager', () => {
     describe('#addListener', () => {
@@ -21,7 +21,7 @@ describe('BehaviorManager', () => {
 
             const mgr = new BehaviorManager();
 
-            expect(mgr.get('missing')).toBeInstanceOf(EventManager);
+            expect(mgr.get('missing')).toBeInstanceOf(MudEventManager);
             expect(mgr.get('missing').size).toStrictEqual(0);
         });
 
@@ -32,7 +32,7 @@ describe('BehaviorManager', () => {
 
             mgr.addListener('present', 'give', () => {});
 
-            expect(mgr.get('present')).toBeInstanceOf(EventManager);
+            expect(mgr.get('present')).toBeInstanceOf(MudEventManager);
             expect(mgr.get('present').size).toStrictEqual(1);
         });
     });

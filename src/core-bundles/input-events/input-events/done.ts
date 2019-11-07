@@ -18,7 +18,7 @@ export interface StreamDonePayload {
 }
 
 export const StreamDoneEvent: StreamEventConstructor<StreamDonePayload> = class extends StreamEvent<StreamDonePayload> {
-    public static NAME: string = 'done';
+    public NAME: string = 'done';
     public player: Player;
 };
 
@@ -26,7 +26,7 @@ export const StreamDoneEvent: StreamEventConstructor<StreamDonePayload> = class 
  * Login is done, allow the player to actually execute commands
  */
 export const evt: StreamEventListenerFactory<StreamDonePayload> = {
-    name: StreamDoneEvent.getName(),
+    name: new StreamDoneEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamDonePayload> => (socket: TransportStream<EventEmitter>, {player}) => {
         player.setMeta('lastCommandTime', Date.now());
 
@@ -43,4 +43,4 @@ export const evt: StreamEventListenerFactory<StreamDonePayload> = {
     },
 };
 
-export default loginDone;
+export default evt;

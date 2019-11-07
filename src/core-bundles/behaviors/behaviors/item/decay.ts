@@ -15,13 +15,13 @@ import {findCarrier} from '../../../../lib/util/items';
 const {sayAt} = Broadcast;
 
 export const ItemDecayEvent: MudEventConstructor<never> = class extends MudEvent<never> {
-    public static NAME: string = 'item-decay';
+    public NAME: string = 'item-decay';
 };
 
 export const decay: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (): MudEventListener<UpdateTickPayload> => (item: Item, payload) => {
-            const config = payload?.config ?? {};
+        [new UpdateTickEvent().getName()]: (): MudEventListener<UpdateTickPayload> => (item: Item, payload) => {
+            const config = (payload?.config ?? {}) as {[key: string]: any};
 
             const now = Date.now();
 
@@ -43,7 +43,7 @@ export const decay: BehaviorDefinition = {
             }
         },
 
-        [ItemDecayEvent.getName()]: (state: GameState): MudEventListener<never> => (item: Item) => {
+        [new ItemDecayEvent().getName()]: (state: GameState): MudEventListener<never> => (item: Item) => {
             const {room} = item;
 
             const owner = findCarrier(item);

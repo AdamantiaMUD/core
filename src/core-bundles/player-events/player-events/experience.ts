@@ -7,7 +7,7 @@ import {PlayerExperienceEvent, PlayerExperiencePayload, PlayerLevelUpEvent} from
 const {progress, sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<PlayerExperiencePayload> = {
-    name: PlayerExperienceEvent.getName(),
+    name: new PlayerExperienceEvent().getName(),
     listener: (): MudEventListener<PlayerExperiencePayload> => {
         return (player: Player, {amount}) => {
             sayAt(player, `<blue>You gained <b>${amount}</b> experience!</blue>`);

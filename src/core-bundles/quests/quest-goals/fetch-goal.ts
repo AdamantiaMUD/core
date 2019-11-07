@@ -29,10 +29,10 @@ export class FetchGoal extends QuestGoal {
 
         this.state = {count: 0};
 
-        this.listen(PlayerGetItemEvent.getName(), this.getItem);
-        this.listen(PlayerDropItemEvent.getName(), this.dropItem);
-        this.listen(ItemDecayEvent.getName(), this.dropItem);
-        this.listen(PlayerQuestStartedEvent.getName(), this.checkInventory);
+        this.listen(new PlayerGetItemEvent().getName(), this.getItem);
+        this.listen(new PlayerDropItemEvent().getName(), this.dropItem);
+        this.listen(new ItemDecayEvent().getName(), this.dropItem);
+        this.listen(new PlayerQuestStartedEvent().getName(), this.checkInventory);
     }
 
     public getProgress(): QuestProgress {

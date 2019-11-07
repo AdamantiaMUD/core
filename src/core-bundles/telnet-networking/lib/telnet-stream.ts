@@ -21,11 +21,11 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
     public attach(socket: TelnetSocket): void {
         super.attach(socket);
 
-        socket.on(SocketDataEvent.getName(), (sock: TelnetSocket, message: string) => {
+        socket.on(new SocketDataEvent().getName(), (sock: TelnetSocket, message: string) => {
             this.emit('data', message);
         });
 
-        socket.on(SocketErrorEvent.getName(), (sock: TelnetSocket, err: string) => {
+        socket.on(new SocketErrorEvent().getName(), (sock: TelnetSocket, err: string) => {
             this.emit('error', err);
         });
 
