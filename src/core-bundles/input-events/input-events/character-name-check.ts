@@ -1,36 +1,44 @@
 import EventEmitter from 'events';
 
+import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import Player from '../../../lib/players/player';
-import {
-    PlayerCharacterNameCheckEvent,
-    PlayerCharacterNameCheckPayload,
-    PlayerCreateCharacterEvent,
-    PlayerFinishCharacterEvent,
-} from '../../../lib/players/player-events';
+import TransportStream from '../../../lib/communication/transport-stream';
+import {StreamCreateCharacterEvent} from './create-character';
 import {
     StreamEvent,
     StreamEventConstructor,
     StreamEventListener,
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
+import {StreamFinishCharacterEvent} from './finish-character';
+
+export interface StreamCharacterNameCheckPayload {
+    account: Account;
+    name: string;
+}
+
+export const StreamCharacterNameCheckEvent: StreamEventConstructor<StreamCharacterNameCheckPayload> = class extends StreamEvent<StreamCharacterNameCheckPayload> {
+    public static NAME: string = 'character-name-check';
+    public account: Account;
+    public name: string;
+};
 
 /**
  * Confirm new player name
  */
-export const evt: MudEventListenerFactory<PlayerCharacterNameCheckPayload> = {
-    name: PlayerCharacterNameCheckEvent.getName(),
-    listener: (): MudEventListener<PlayerCharacterNameCheckPayload> => (
-        player: Player,
-        args: PlayerCharacterNameCheckPayload
+export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = {
+    name: StreamCharacterNameCheckEvent.getName(),
+    listener: (): StreamEventListener<StreamCharacterNameCheckPayload> => (
+        socket: TransportStream<EventEmitter>,
+        args: StreamCharacterNameCheckPayload
     ) => {
-        const say = EventUtil.genSay(player);
-        const write = EventUtil.genWrite(player);
+        const say = EventUtil.genSay(socket);
+        const write = EventUtil.genWrite(socket);
 
         /* eslint-disable-next-line max-len */
         write(`<b>${args.name} doesn't exist, would you like to create it?</b> <cyan>[y/n]</cyan> `);
 
-        player.socket.once('data', (buf: Buffer) => {
+        socket.once('data', (buf: Buffer) => {
             say('');
 
             const confirmation = buf.toString()
@@ -38,7 +46,7 @@ export const evt: MudEventListenerFactory<PlayerCharacterNameCheckPayload> = {
                 .toLowerCase();
 
             if (!(/[yn]/u).test(confirmation)) {
-                player.dispatch(new PlayerCharacterNameCheckEvent(args));
+                socket.dispatch(new StreamCharacterNameCheckEvent(args));
 
                 return;
             }
@@ -46,12 +54,12 @@ export const evt: MudEventListenerFactory<PlayerCharacterNameCheckPayload> = {
             if (confirmation === 'n') {
                 say("Let's try again...");
 
-                player.dispatch(new PlayerCreateCharacterEvent({account: args.account}));
+                socket.dispatch(new StreamCreateCharacterEvent({account: args.account}));
 
                 return;
             }
 
-            player.dispatch(new PlayerFinishCharacterEvent(args));
+            socket.dispatch(new StreamFinishCharacterEvent(args));
         });
     },
 };

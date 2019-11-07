@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
-import Player from '../../../lib/players/player';
+import {StreamChangePasswordEvent} from './change-password';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -11,40 +11,40 @@ import {
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
 
-export interface PlayerConfirmPasswordPayload {
+export interface StreamConfirmPasswordPayload {
     account: Account;
-    nextStage: string;
+    NextEvent: StreamEventConstructor<{account: Account}>;
 }
 
-export const PlayerConfirmPasswordEvent: MudEventConstructor<PlayerConfirmPasswordPayload> = class extends MudEvent<PlayerConfirmPasswordPayload> {
-    public static NAME: string = 'confirm-password';
+export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPasswordPayload> = class extends StreamEvent<StreamConfirmPasswordPayload> {
+    public static NAME: string = 'stream-confirm-password';
     public account: Account;
-    public nextStage: string;
+    public NextEvent: StreamEventConstructor<{account: Account}>;
 };
 
 /**
  * Account password confirmation station
  */
-export const evt: MudEventListenerFactory<PlayerConfirmPasswordPayload> = {
-    name: PlayerConfirmPasswordEvent.getName(),
-    listener: (): MudEventListener<PlayerConfirmPasswordPayload> => (
-        player: Player,
-        args: PlayerConfirmPasswordPayload
+export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
+    name: StreamConfirmPasswordEvent.getName(),
+    listener: (): StreamEventListener<StreamConfirmPasswordPayload> => (
+        socket: TransportStream<EventEmitter>,
+        args: StreamConfirmPasswordPayload
     ) => {
-        const write = EventUtil.genWrite(player);
-        const say = EventUtil.genSay(player);
+        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(socket);
 
         write('<cyan>Confirm your password:</cyan> ');
 
-        player.socket.command('toggleEcho');
+        socket.command('toggleEcho');
 
-        player.socket.once('data', pass => {
-            player.socket.command('toggleEcho');
+        socket.once('data', pass => {
+            socket.command('toggleEcho');
 
             if (!args.account.checkPassword(pass.toString().trim())) {
                 say('<red>Passwords do not match.</red>');
 
-                player.dispatch(new PlayerChangePasswordEvent(args));
+                socket.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -52,7 +52,9 @@ export const evt: MudEventListenerFactory<PlayerConfirmPasswordPayload> = {
             // echo was disabled, the user's Enter didn't make a newline
             say('');
 
-            socket.emit(args.nextStage, {account: args.account});
+            const {NextEvent} = args;
+
+            socket.dispatch(new NextEvent({account: args.account}));
         });
     },
 };

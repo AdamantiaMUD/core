@@ -3,6 +3,7 @@ import EventEmitter from 'events';
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {StreamChooseCharacterEvent} from './choose-character';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -54,7 +55,7 @@ export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
             const pass = buf.toString().trim();
 
             if (account.checkPassword(pass)) {
-                socket.emit('choose-character', account);
+                socket.dispatch(new StreamChooseCharacterEvent({account}));
             }
             else {
                 write('<red>Incorrect password.</red>\r\n');

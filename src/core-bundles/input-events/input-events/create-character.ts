@@ -4,6 +4,7 @@ import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {StreamCharacterNameCheckEvent} from './character-name-check';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -12,11 +13,11 @@ import {
 } from '../../../lib/events/stream-event';
 import {validateCharacterName} from '../../../lib/util/player';
 
-export interface PlayerCreateCharacterPayload {
+export interface StreamCreateCharacterPayload {
     account: Account;
 }
 
-export const PlayerCreateCharacterEvent: MudEventConstructor<PlayerCreateCharacterPayload> = class extends MudEvent<PlayerCreateCharacterPayload> {
+export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateCharacterPayload> = class extends StreamEvent<StreamCreateCharacterPayload> {
     public static NAME: string = 'create-character';
     public account: Account;
 };
@@ -24,9 +25,9 @@ export const PlayerCreateCharacterEvent: MudEventConstructor<PlayerCreateCharact
 /**
  * Player creation event
  */
-export const evt: MudEventListenerFactory<> = {
-export const createCharacter: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>, account: Account) => {
+export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
+    name: StreamCreateCharacterEvent.getName(),
+    listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
 
@@ -43,7 +44,7 @@ export const createCharacter: InputEventListenerDefinition = {
             catch (err) {
                 say(err.message);
 
-                socket.emit('create-character', account);
+                socket.dispatch(new StreamCreateCharacterEvent({account}));
 
                 return;
             }
@@ -53,12 +54,12 @@ export const createCharacter: InputEventListenerDefinition = {
             if (exists) {
                 say('That name is already taken.');
 
-                socket.emit('create-character', account);
+                socket.dispatch(new StreamCreateCharacterEvent({account}));
 
                 return;
             }
 
-            socket.emit('character-name-check', {account, name});
+            socket.dispatch(new StreamCharacterNameCheckEvent({account, name}));
         });
     },
 };

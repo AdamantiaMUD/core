@@ -4,6 +4,8 @@ import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {PlayerLoginEvent} from '../../../lib/players/player-events';
+import {StreamCommandsEvent} from './commands';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -11,12 +13,21 @@ import {
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
 
+export interface StreamDonePayload {
+    player: Player;
+}
+
+export const StreamDoneEvent: StreamEventConstructor<StreamDonePayload> = class extends StreamEvent<StreamDonePayload> {
+    public static NAME: string = 'done';
+    public player: Player;
+};
+
 /**
  * Login is done, allow the player to actually execute commands
  */
-export const evt: MudEventListenerFactory<> = {
-export const loginDone: InputEventListenerDefinition = {
-    event: (state: GameState) => (socket: TransportStream<EventEmitter>, player: Player) => {
+export const evt: StreamEventListenerFactory<StreamDonePayload> = {
+    name: StreamDoneEvent.getName(),
+    listener: (state: GameState): StreamEventListener<StreamDonePayload> => (socket: TransportStream<EventEmitter>, {player}) => {
         player.setMeta('lastCommandTime', Date.now());
 
         state.commandManager
@@ -26,9 +37,9 @@ export const loginDone: InputEventListenerDefinition = {
         Broadcast.prompt(player);
 
         // All done, let them play!
-        player.socket.emit('commands', player);
+        player.socket.dispatch(new StreamCommandsEvent({player}));
 
-        player.emit('login');
+        player.dispatch(new PlayerLoginEvent());
     },
 };
 

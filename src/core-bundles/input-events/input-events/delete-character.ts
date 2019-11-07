@@ -4,6 +4,7 @@ import Account from '../../../lib/players/account';
 import Logger from '../../../lib/util/logger';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {StreamChooseCharacterEvent} from './choose-character';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -11,12 +12,21 @@ import {
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
 
+export interface StreamDeleteCharacterPayload {
+    account: Account;
+}
+
+export const StreamDeleteCharacterEvent: StreamEventConstructor<StreamDeleteCharacterPayload> = class extends StreamEvent<StreamDeleteCharacterPayload> {
+    public static NAME: string = 'delete-character';
+    public account: Account;
+};
+
 /**
  * Delete character event
  */
-export const evt: MudEventListenerFactory<> = {
-export const deleteCharacter: InputEventListenerDefinition = {
-    event: () => (socket: TransportStream<EventEmitter>, account: Account) => {
+export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
+    name: StreamDeleteCharacterEvent.getName(),
+    listener: (): StreamEventListener<StreamDeleteCharacterPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(socket);
         const write = EventUtil.genWrite(socket);
 
@@ -45,7 +55,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
                         if (!(/[yn]/u).test(confirmation)) {
                             say('<b>Invalid Option</b>');
 
-                            socket.emit('choose-character', account);
+                            socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                             return;
                         }
@@ -53,7 +63,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
                         if (confirmation === 'n') {
                             say('No one was deleted...');
 
-                            socket.emit('choose-character', account);
+                            socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                             return;
                         }
@@ -62,7 +72,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
                         account.deleteCharacter(char.username);
                         say('Character deleted.');
 
-                        socket.emit('choose-character', account);
+                        socket.dispatch(new StreamChooseCharacterEvent({account}));
                     });
                 },
             });
@@ -73,7 +83,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
         options.push({
             display: 'Go back to main menu',
             onSelect: () => {
-                socket.emit('choose-character', account);
+                socket.dispatch(new StreamChooseCharacterEvent({account}));
             },
         });
 
@@ -95,7 +105,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
             const choice = parseInt(buf.toString().trim(), 10) - 1;
 
             if (isNaN(choice)) {
-                socket.emit('choose-character', account);
+                socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                 return;
             }
@@ -110,7 +120,7 @@ export const deleteCharacter: InputEventListenerDefinition = {
                 return;
             }
 
-            socket.emit('choose-character', account);
+            socket.dispatch(new StreamChooseCharacterEvent({account}));
         });
     },
 };

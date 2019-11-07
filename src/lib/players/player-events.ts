@@ -6,26 +6,6 @@ import Room from '../locations/room';
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 import {ParsedCommand} from '../../lib/commands/command-parser';
 
-export interface PlayerCharacterNameCheckPayload {
-    account: Account;
-    name: string;
-}
-
-export const PlayerCharacterNameCheckEvent: MudEventConstructor<PlayerCharacterNameCheckPayload> = class extends MudEvent<PlayerCharacterNameCheckPayload> {
-    public static NAME: string = 'character-name-check';
-    public account: Account;
-    public name: string;
-};
-
-export interface PlayerChooseCharacterPayload {
-    account: Account;
-}
-
-export const PlayerChooseCharacterEvent: MudEventConstructor<PlayerChooseCharacterPayload> = class extends MudEvent<PlayerChooseCharacterPayload> {
-    public static NAME: string = 'choose-character';
-    public account: Account;
-};
-
 export interface PlayerCommandQueuedPayload {
     idx: number;
 }
@@ -71,17 +51,6 @@ export interface PlayerExperiencePayload {
 export const PlayerExperienceEvent: MudEventConstructor<PlayerExperiencePayload> = class extends MudEvent<PlayerExperiencePayload> {
     public NAME: string = 'experience';
     public amount: number;
-};
-
-export interface PlayerFinishCharacterPayload {
-    account: Account;
-    name: string;
-}
-
-export const PlayerFinishCharacterEvent: MudEventConstructor<PlayerFinishCharacterPayload> = class extends MudEvent<PlayerFinishCharacterPayload> {
-    public static NAME: string = 'finish-character';
-    public account: Account;
-    public name: string;
 };
 
 export interface PlayerGetItemPayload {

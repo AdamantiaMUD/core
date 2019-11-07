@@ -5,6 +5,7 @@ import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {StreamAccountPasswordEvent} from './password';
+import {StreamCreateAccountEvent} from './create-account';
 import {
     StreamEvent,
     StreamEventConstructor,

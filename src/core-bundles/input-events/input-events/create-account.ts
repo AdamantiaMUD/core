@@ -4,6 +4,7 @@ import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {StreamChangePasswordEvent} from './change-password';
+import {StreamCreateCharacterEvent} from './create-character';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -48,7 +49,7 @@ export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
 
                 socket.dispatch(new StreamChangePasswordEvent({
                     account: newAccount,
-                    nextStage: 'create-character',
+                    NextEvent: StreamCreateCharacterEvent,
                 }));
 
                 return;

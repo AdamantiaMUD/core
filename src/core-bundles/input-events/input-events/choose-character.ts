@@ -5,13 +5,12 @@ import Broadcast from '../../../lib/communication/broadcast';
 import EventUtil from '../../../lib/events/event-util';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
-import {
-    PlayerChangePasswordEvent,
-    PlayerChooseCharacterEvent,
-    PlayerChooseCharacterPayload,
-} from '../../../lib/players/player-events';
+import {StreamChangePasswordEvent} from './change-password';
+import {StreamCommandsEvent} from './commands';
+import {StreamCreateCharacterEvent} from './create-character';
+import {StreamDeleteCharacterEvent} from './delete-character';
+import {StreamDoneEvent} from './done';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -22,17 +21,26 @@ import {
 /* eslint-disable-next-line id-length */
 const {at, prompt} = Broadcast;
 
+export interface StreamChooseCharacterPayload {
+    account: Account;
+}
+
+export const StreamChooseCharacterEvent: StreamEventConstructor<StreamChooseCharacterPayload> = class extends StreamEvent<StreamChooseCharacterPayload> {
+    public static NAME: string = 'choose-character';
+    public account: Account;
+};
+
 /**
  * Account character selection event
  */
-export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
-    name: PlayerChooseCharacterEvent.getName(),
-    listener: (state: GameState): MudEventListener<PlayerChooseCharacterPayload> => (
-        player: Player,
-        {account}: PlayerChooseCharacterPayload
+export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
+    name: StreamChooseCharacterEvent.getName(),
+    listener: (state: GameState): StreamEventListener<StreamChooseCharacterPayload> => (
+        socket: TransportStream<EventEmitter>,
+        {account}: StreamChooseCharacterPayload
     ) => {
-        const say = EventUtil.genSay(player);
-        const write = EventUtil.genWrite(player);
+        const say = EventUtil.genSay(socket);
+        const write = EventUtil.genWrite(socket);
         const mgr = state.playerManager;
 
         /*
@@ -55,10 +63,10 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
         options.push({
             display: 'Change Password',
             onSelect: () => {
-                player.dispatch(
-                    new PlayerChangePasswordEvent({
+                socket.dispatch(
+                    new StreamChangePasswordEvent({
                         account: account,
-                        nextStage: 'choose-character',
+                        NextEvent: StreamChooseCharacterEvent,
                     })
                 );
             },
@@ -68,7 +76,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
             options.push({
                 display: 'Create New Character',
                 onSelect: () => {
-                    player.dispatch(new PlayerCreateCharacterEvent({account}));
+                    socket.dispatch(new StreamCreateCharacterEvent({account}));
                 },
             });
         }
@@ -92,7 +100,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
                             at(player, 'Taking over old connection. Welcome.');
                             prompt(player);
 
-                            player.socket.emit('commands', player);
+                            player.socket.dispatch(new StreamCommandsEvent({player}));
 
                             return;
                         }
@@ -103,7 +111,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
                         );
                         player.socket = socket;
 
-                        socket.emit('done', player);
+                        socket.dispatch(new StreamDoneEvent({player}));
                     },
                 });
             });
@@ -115,7 +123,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
             options.push({
                 display: 'Delete a Character',
                 onSelect: () => {
-                    socket.emit('delete-character', account);
+                    socket.dispatch(new StreamDeleteCharacterEvent({account}));
                 },
             });
         }
@@ -138,7 +146,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
                     if (!(/[yn]/u).test(confirmation)) {
                         say('<b>Invalid Option</b>');
 
-                        socket.emit('choose-character', account);
+                        socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                         return;
                     }
@@ -146,7 +154,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
                     if (confirmation === 'n') {
                         say('No one was deleted...');
 
-                        socket.emit('choose-character', account);
+                        socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                         return;
                     }
@@ -185,7 +193,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
             const choice = parseInt(buf.toString().trim(), 10) - 1;
 
             if (isNaN(choice)) {
-                socket.emit('choose-character', account);
+                socket.dispatch(new StreamChooseCharacterEvent({account}));
 
                 return;
             }
@@ -200,7 +208,7 @@ export const evt: MudEventListenerFactory<PlayerChooseCharacterPayload> = {
                 return;
             }
 
-            socket.emit('choose-character', account);
+            socket.dispatch(new StreamChooseCharacterEvent({account}));
         });
     },
 };

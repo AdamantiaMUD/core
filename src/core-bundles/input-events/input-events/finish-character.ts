@@ -5,6 +5,7 @@ import GameState from '../../../lib/game-state';
 import Player from '../../../lib/players/player';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {StreamDoneEvent} from './done';
 import {
     StreamEvent,
     StreamEventConstructor,
@@ -12,13 +13,24 @@ import {
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
 
+export interface StreamFinishCharacterPayload {
+    account: Account;
+    name: string;
+}
+
+export const StreamFinishCharacterEvent: StreamEventConstructor<StreamFinishCharacterPayload> = class extends StreamEvent<StreamFinishCharacterPayload> {
+    public static NAME: string = 'stream-account-password';
+    public account: Account;
+    public name: string;
+};
+
 /**
  * Finish player creation. Add the character to the account then add the player
  * to the game world
  */
-export const evt: MudEventListenerFactory<> = {
-export const finishCharacter: InputEventListenerDefinition = {
-    event: (state: GameState) => {
+export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
+    name: StreamFinishCharacterEvent.getName(),
+    listener: (state: GameState): StreamEventListener<StreamFinishCharacterPayload> => {
         let startingRoomRef = state.config.get('startingRoom');
 
         if (!startingRoomRef) {
@@ -28,7 +40,7 @@ export const finishCharacter: InputEventListenerDefinition = {
 
         return async (
             socket: TransportStream<EventEmitter>,
-            args: {account: Account; name: string}
+            args: StreamFinishCharacterPayload
         ) => {
             let player = new Player();
 
@@ -45,7 +57,7 @@ export const finishCharacter: InputEventListenerDefinition = {
             player = await state.playerManager.loadPlayer(state, player.name);
             player.socket = socket;
 
-            socket.emit('done', player);
+            socket.dispatch(new StreamDoneEvent({player}));
         };
     },
 };
