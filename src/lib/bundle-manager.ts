@@ -70,7 +70,7 @@ export class BundleManager {
             catch (err) {
                 Logger.error(err.message);
 
-                throw new Error();
+                throw new Error(err);
             }
 
             this.state.areaManager.addArea(area);

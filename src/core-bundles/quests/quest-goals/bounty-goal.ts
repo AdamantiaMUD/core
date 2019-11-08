@@ -29,7 +29,7 @@ export class BountyGoal extends QuestGoal {
             delivered: false,
         };
 
-        this.listen(new PlayerEnterRoomEvent().getName(), this.enterRoom);
+        this.listen(new PlayerEnterRoomEvent().getName(), this.enterRoom.bind(this));
     }
 
     private enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {

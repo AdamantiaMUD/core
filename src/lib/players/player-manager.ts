@@ -20,7 +20,7 @@ export class PlayerManager extends MudEventEmitter {
     public constructor() {
         super();
 
-        this.listen(new UpdateTickEvent().getName(), this.tickAll);
+        this.listen(new UpdateTickEvent().getName(), this.tickAll.bind(this));
     }
 
     public addListener(event: string | symbol, listener: MudEventListener<unknown>): this {

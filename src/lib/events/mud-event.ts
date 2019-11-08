@@ -5,17 +5,32 @@ import SimpleMap from '../util/simple-map';
 
 export class MudEvent<T> {
     public NAME: string = '';
+    public payload: T;
 
     constructor(props?: T) {
         if (typeof props === 'undefined') {
             return;
         }
 
-        const keys = Object.getOwnPropertyNames.call(props);
+        this.payload = props;
 
-        for (let key of keys) {
-            this[key] = props[key];
-        }
+        return new Proxy(this, {
+            get: (obj: MudEvent<T>, prop: 'NAME' | 'getName' | 'payload' | keyof T) => {
+                switch (prop) {
+                    case 'NAME':
+                        return obj.NAME;
+
+                    case 'getName':
+                        return obj.getName;
+
+                    case 'payload':
+                        return obj.payload;
+
+                    default:
+                        return obj.payload[prop];
+                }
+            },
+        });
     }
 
     getName(): string {

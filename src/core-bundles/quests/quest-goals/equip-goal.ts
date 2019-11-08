@@ -26,8 +26,8 @@ export class EquipGoal extends QuestGoal {
 
         this.state = {equipped: false};
 
-        this.listen(new CharacterEquipItemEvent().getName(), this.equipItem);
-        this.listen(new CharacterUnequipItemEvent().getName(), this.unequipItem);
+        this.listen(new CharacterEquipItemEvent().getName(), this.equipItem.bind(this));
+        this.listen(new CharacterUnequipItemEvent().getName(), this.unequipItem.bind(this));
     }
 
     public getProgress(): QuestProgress {

@@ -22,7 +22,7 @@ export class KillGoal extends QuestGoal {
 
         this.state = {count: 0};
 
-        this.listen(new CharacterDeathblowEvent().getName(), this.targetKilled);
+        this.listen(new CharacterDeathblowEvent().getName(), this.targetKilled.bind(this));
     }
 
     public getProgress(): QuestProgress {
