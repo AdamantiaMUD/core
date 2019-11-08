@@ -27,13 +27,13 @@ export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateChar
  */
 export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
     name: new StreamCreateCharacterEvent().getName(),
-    listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+    listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
+        const say = EventUtil.genSay(stream);
+        const write = EventUtil.genWrite(stream);
 
         write('<b>What would you like to name your character?</b> ');
 
-        socket.once('data', (buf: Buffer) => {
+        stream.socket.once('data', (buf: Buffer) => {
             say('');
 
             const name = buf.toString().trim();
@@ -44,7 +44,7 @@ export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
             catch (err) {
                 say(err.message);
 
-                socket.dispatch(new StreamCreateCharacterEvent({account}));
+                stream.dispatch(new StreamCreateCharacterEvent({account}));
 
                 return;
             }
@@ -54,12 +54,12 @@ export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
             if (exists) {
                 say('That name is already taken.');
 
-                socket.dispatch(new StreamCreateCharacterEvent({account}));
+                stream.dispatch(new StreamCreateCharacterEvent({account}));
 
                 return;
             }
 
-            socket.dispatch(new StreamCharacterNameCheckEvent({account, name}));
+            stream.dispatch(new StreamCharacterNameCheckEvent({account, name}));
         });
     },
 };

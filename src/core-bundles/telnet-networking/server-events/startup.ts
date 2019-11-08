@@ -7,6 +7,7 @@ import TelnetSocket from '../lib/telnet-socket';
 import TelnetStream from '../lib/telnet-stream';
 import {GameServerStartupEvent, GameServerStartupPayload} from '../../../lib/game-server-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {StreamIntroEvent} from '../../input-events/input-events/intro';
 
 const DEFAULT_TELNET_PORT = 4000;
 
@@ -28,11 +29,11 @@ export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
 
             stream.attach(telnetSocket);
 
-            stream.on('interrupt', () => {
+            stream.socket.on('interrupt', () => {
                 stream.write('\n*interrupt*\n');
             });
 
-            stream.on('error', err => {
+            stream.socket.on('error', err => {
                 if (err.errno === 'EPIPE') {
                     /* eslint-disable-next-line max-len */
                     Logger.error('EPIPE on write. A websocket client probably connected to the telnet port.');
@@ -49,8 +50,7 @@ export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
             stream.write('Connecting...\n');
             Logger.info('User connected...');
 
-            // @see: bundles/ranvier-events/events/login.js
-            stream.emit('intro', stream);
+            stream.dispatch(new StreamIntroEvent());
         }).netServer;
 
         // Start the server and setup error handlers.

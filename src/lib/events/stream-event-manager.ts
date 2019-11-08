@@ -30,10 +30,10 @@ export class StreamEventManager {
     /**
      * Attach all currently added events to the given emitter
      */
-    public attach(emitter: TransportStream<EventEmitter>, config?: any): void {
+    public attach(emitter: TransportStream<EventEmitter>): void {
         for (const [event, listeners] of this._events) {
             for (const listener of listeners) {
-                emitter.on(event, (...args: any[]) => listener(emitter, args));
+                emitter.listen(event, listener);
             }
         }
     }
@@ -63,7 +63,7 @@ export class StreamEventManager {
         }
 
         for (const event of events) {
-            emitter.removeAllListeners(event);
+            emitter.stopListening(event);
         }
     }
 

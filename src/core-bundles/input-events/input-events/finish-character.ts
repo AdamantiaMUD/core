@@ -39,7 +39,7 @@ export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
         }
 
         return async (
-            socket: TransportStream<EventEmitter>,
+            stream: TransportStream<EventEmitter>,
             args: StreamFinishCharacterPayload
         ) => {
             let player = new Player();
@@ -55,9 +55,9 @@ export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
 
             // reload from manager so events are set
             player = await state.playerManager.loadPlayer(state, player.name);
-            player.socket = socket;
+            player.socket = stream;
 
-            socket.dispatch(new StreamDoneEvent({player}));
+            stream.dispatch(new StreamDoneEvent({player}));
         };
     },
 };

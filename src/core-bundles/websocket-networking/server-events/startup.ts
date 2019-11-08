@@ -4,6 +4,7 @@ import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import {GameServerStartupEvent, GameServerStartupPayload} from '../../../lib/game-server-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {StreamIntroEvent} from '../../input-events/input-events/intro';
 
 // import our adapter
 import WebsocketStream from '../lib/WebsocketStream';
@@ -33,8 +34,7 @@ export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
             stream.write('Connecting...\n');
             Logger.info('User connected via websocket...');
 
-            // @see: bundles/ranvier-events/events/login.js
-            stream.emit('intro', stream);
+            stream.dispatch(new StreamIntroEvent());
         });
 
         Logger.info(`Websocket server started on port: ${wss.options.port}...`);

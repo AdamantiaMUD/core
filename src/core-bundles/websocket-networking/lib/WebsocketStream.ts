@@ -21,7 +21,7 @@ export class WebsocketStream extends TransportStream<WebSocket> {
 
         // websocket uses 'message' instead of the 'data' event net.Socket uses
         socket.on('message', message => {
-            this.emit('data', message);
+            this.socket.emit('data', message);
         });
     }
 

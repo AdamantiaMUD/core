@@ -46,10 +46,10 @@ export const StreamCommandsEvent: StreamEventConstructor<StreamCommandsPayload> 
  */
 export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
     name: new StreamCommandsEvent().getName(),
-    listener: (state: GameState): StreamEventListener<StreamCommandsPayload> => (socket: TransportStream<EventEmitter>, {player}) => {
-        socket.once('data', (buf: Buffer) => {
+    listener: (state: GameState): StreamEventListener<StreamCommandsPayload> => (stream: TransportStream<EventEmitter>, {player}) => {
+        stream.socket.once('data', (buf: Buffer) => {
             const loop = (): void => {
-                socket.dispatch(new StreamCommandsEvent({player}));
+                stream.dispatch(new StreamCommandsEvent({player}));
             };
 
             const data = buf.toString().trim();

@@ -29,16 +29,16 @@ export const StreamCharacterNameCheckEvent: StreamEventConstructor<StreamCharact
 export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = {
     name: new StreamCharacterNameCheckEvent().getName(),
     listener: (): StreamEventListener<StreamCharacterNameCheckPayload> => (
-        socket: TransportStream<EventEmitter>,
+        stream: TransportStream<EventEmitter>,
         args: StreamCharacterNameCheckPayload
     ) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(stream);
+        const write = EventUtil.genWrite(stream);
 
         /* eslint-disable-next-line max-len */
         write(`<b>${args.name} doesn't exist, would you like to create it?</b> <cyan>[y/n]</cyan> `);
 
-        socket.once('data', (buf: Buffer) => {
+        stream.socket.once('data', (buf: Buffer) => {
             say('');
 
             const confirmation = buf.toString()
@@ -46,7 +46,7 @@ export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = 
                 .toLowerCase();
 
             if (!(/[yn]/u).test(confirmation)) {
-                socket.dispatch(new StreamCharacterNameCheckEvent(args));
+                stream.dispatch(new StreamCharacterNameCheckEvent(args));
 
                 return;
             }
@@ -54,12 +54,12 @@ export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = 
             if (confirmation === 'n') {
                 say("Let's try again...");
 
-                socket.dispatch(new StreamCreateCharacterEvent({account: args.account}));
+                stream.dispatch(new StreamCreateCharacterEvent({account: args.account}));
 
                 return;
             }
 
-            socket.dispatch(new StreamFinishCharacterEvent(args));
+            stream.dispatch(new StreamFinishCharacterEvent(args));
         });
     },
 };

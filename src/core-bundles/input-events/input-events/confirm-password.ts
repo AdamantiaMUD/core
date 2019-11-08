@@ -28,23 +28,23 @@ export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPas
 export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
     name: new StreamConfirmPasswordEvent().getName(),
     listener: (): StreamEventListener<StreamConfirmPasswordPayload> => (
-        socket: TransportStream<EventEmitter>,
+        stream: TransportStream<EventEmitter>,
         args: StreamConfirmPasswordPayload
     ) => {
-        const write = EventUtil.genWrite(socket);
-        const say = EventUtil.genSay(socket);
+        const write = EventUtil.genWrite(stream);
+        const say = EventUtil.genSay(stream);
 
         write('<cyan>Confirm your password:</cyan> ');
 
-        socket.command('toggleEcho');
+        stream.command('toggleEcho');
 
-        socket.once('data', pass => {
-            socket.command('toggleEcho');
+        stream.socket.once('data', pass => {
+            stream.command('toggleEcho');
 
             if (!args.account.checkPassword(pass.toString().trim())) {
                 say('<red>Passwords do not match.</red>');
 
-                socket.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -54,7 +54,7 @@ export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
 
             const {NextEvent} = args;
 
-            socket.dispatch(new NextEvent({account: args.account}));
+            stream.dispatch(new NextEvent({account: args.account}));
         });
     },
 };

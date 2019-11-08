@@ -20,19 +20,19 @@ export const StreamLoginEvent: StreamEventConstructor<never> = class extends Str
 
 export const evt: StreamEventListenerFactory<never> = {
     name: new StreamLoginEvent().getName(),
-    listener: (state: GameState): StreamEventListener<never> => (socket: TransportStream<EventEmitter>) => {
-        socket.write('Welcome, what is your username? ');
+    listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
+        stream.write('Welcome, what is your username? ');
 
-        socket.once('data', async (buf: Buffer) => {
+        stream.socket.once('data', async (buf: Buffer) => {
             const name = buf.toString().trim().toLowerCase();
 
             try {
                 validateAccountName(state.config, name);
             }
             catch (err) {
-                socket.write(`${err.message}\r\n`);
+                stream.write(`${err.message}\r\n`);
 
-                socket.dispatch(new StreamLoginEvent());
+                stream.dispatch(new StreamLoginEvent());
 
                 return;
             }
@@ -49,26 +49,26 @@ export const evt: StreamEventListenerFactory<never> = {
             if (!account) {
                 Logger.error(`No account found as ${name}.`);
 
-                socket.dispatch(new StreamCreateAccountEvent({name}));
+                stream.dispatch(new StreamCreateAccountEvent({name}));
 
                 return;
             }
 
             if (account.banned) {
-                socket.write('This account has been banned.\r\n');
-                socket.end();
+                stream.write('This account has been banned.\r\n');
+                stream.end();
 
                 return;
             }
 
             if (account.deleted) {
-                socket.write('This account has been deleted.\r\n');
-                socket.end();
+                stream.write('This account has been deleted.\r\n');
+                stream.end();
 
                 return;
             }
 
-            socket.dispatch(new StreamAccountPasswordEvent({account}));
+            stream.dispatch(new StreamAccountPasswordEvent({account}));
         });
     },
 };

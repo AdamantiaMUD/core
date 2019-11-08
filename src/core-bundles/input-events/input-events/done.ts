@@ -27,7 +27,7 @@ export const StreamDoneEvent: StreamEventConstructor<StreamDonePayload> = class 
  */
 export const evt: StreamEventListenerFactory<StreamDonePayload> = {
     name: new StreamDoneEvent().getName(),
-    listener: (state: GameState): StreamEventListener<StreamDonePayload> => (socket: TransportStream<EventEmitter>, {player}) => {
+    listener: (state: GameState): StreamEventListener<StreamDonePayload> => (stream: TransportStream<EventEmitter>, {player}) => {
         player.setMeta('lastCommandTime', Date.now());
 
         state.commandManager

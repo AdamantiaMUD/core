@@ -29,21 +29,21 @@ export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePassw
 export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
     name: new StreamChangePasswordEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamChangePasswordPayload> => (
-        socket: TransportStream<EventEmitter>,
+        stream: TransportStream<EventEmitter>,
         args: StreamChangePasswordPayload
     ) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(stream);
+        const write = EventUtil.genWrite(stream);
 
         const {account} = args;
 
         say('Your password must be at least 8 characters.');
         write('<cyan>Enter your account password:</cyan> ');
 
-        socket.command('toggleEcho');
+        stream.command('toggleEcho');
 
-        socket.once('data', (buf: Buffer) => {
-            socket.command('toggleEcho');
+        stream.socket.once('data', (buf: Buffer) => {
+            stream.command('toggleEcho');
 
             say('');
 
@@ -52,7 +52,7 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
             if (!pass) {
                 say('You must use a password.');
 
-                socket.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -60,7 +60,7 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
             if (pass.length < 8) {
                 say('Your password is not long enough.');
 
-                socket.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new StreamChangePasswordEvent(args));
 
                 return;
             }
@@ -70,7 +70,7 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
             state.accountManager.setAccount(account.username, account);
             account.save();
 
-            socket.dispatch(new StreamConfirmPasswordEvent(args));
+            stream.dispatch(new StreamConfirmPasswordEvent(args));
         });
     },
 };

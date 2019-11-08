@@ -27,16 +27,16 @@ export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccoun
  */
 export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
     name: new StreamCreateAccountEvent().getName(),
-    listener: (): StreamEventListener<StreamCreateAccountPayload> => (socket: TransportStream<EventEmitter>, {name}) => {
-        const write = EventUtil.genWrite(socket);
-        const say = EventUtil.genSay(socket);
+    listener: (): StreamEventListener<StreamCreateAccountPayload> => (stream: TransportStream<EventEmitter>, {name}) => {
+        const write = EventUtil.genWrite(stream);
+        const say = EventUtil.genSay(stream);
 
         let newAccount = null;
 
         /* eslint-disable-next-line max-len */
         write(`<b>Do you want your account's username to be ${name}?</b> <cyan>[y/n]</cyan> `);
 
-        socket.once('data', (buf: Buffer) => {
+        stream.socket.once('data', (buf: Buffer) => {
             const data = buf.toString('utf8')
                 .trim()
                 .toLowerCase();
@@ -47,7 +47,7 @@ export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
                 newAccount = new Account();
                 newAccount.username = name;
 
-                socket.dispatch(new StreamChangePasswordEvent({
+                stream.dispatch(new StreamChangePasswordEvent({
                     account: newAccount,
                     NextEvent: StreamCreateCharacterEvent,
                 }));
@@ -58,12 +58,12 @@ export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
             if (data && (data === 'n' || data === 'no')) {
                 say("Let's try again!");
 
-                socket.dispatch(new StreamLoginEvent());
+                stream.dispatch(new StreamLoginEvent());
 
                 return;
             }
 
-            socket.dispatch(new StreamCreateAccountEvent({name}));
+            stream.dispatch(new StreamCreateAccountEvent({name}));
         });
     },
 };

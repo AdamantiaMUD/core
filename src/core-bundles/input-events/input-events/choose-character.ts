@@ -36,11 +36,11 @@ export const StreamChooseCharacterEvent: StreamEventConstructor<StreamChooseChar
 export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
     name: new StreamChooseCharacterEvent().getName(),
     listener: (state: GameState): StreamEventListener<StreamChooseCharacterPayload> => (
-        socket: TransportStream<EventEmitter>,
+        stream: TransportStream<EventEmitter>,
         {account}: StreamChooseCharacterPayload
     ) => {
-        const say = EventUtil.genSay(socket);
-        const write = EventUtil.genWrite(socket);
+        const say = EventUtil.genSay(stream);
+        const write = EventUtil.genWrite(stream);
         const mgr = state.playerManager;
 
         /*
@@ -63,7 +63,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
         options.push({
             display: 'Change Password',
             onSelect: () => {
-                socket.dispatch(
+                stream.dispatch(
                     new StreamChangePasswordEvent({
                         account: account,
                         NextEvent: StreamChooseCharacterEvent,
@@ -76,7 +76,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
             options.push({
                 display: 'Create New Character',
                 onSelect: () => {
-                    socket.dispatch(new StreamCreateCharacterEvent({account}));
+                    stream.dispatch(new StreamCreateCharacterEvent({account}));
                 },
             });
         }
@@ -96,7 +96,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                             player.socket.end();
 
                             // link new socket
-                            player.socket = socket;
+                            player.socket = stream;
                             at(player, 'Taking over old connection. Welcome.');
                             prompt(player);
 
@@ -109,9 +109,9 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                             state,
                             char.username.toLowerCase()
                         );
-                        player.socket = socket;
+                        player.socket = stream;
 
-                        socket.dispatch(new StreamDoneEvent({player}));
+                        stream.dispatch(new StreamDoneEvent({player}));
                     },
                 });
             });
@@ -123,7 +123,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
             options.push({
                 display: 'Delete a Character',
                 onSelect: () => {
-                    socket.dispatch(new StreamDeleteCharacterEvent({account}));
+                    stream.dispatch(new StreamDeleteCharacterEvent({account}));
                 },
             });
         }
@@ -136,7 +136,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                 /* eslint-disable-next-line max-len */
                 write('<b>Are you sure you want to delete this account? </b> <cyan>[Y/n]</cyan> ');
 
-                socket.once('data', (buf: Buffer) => {
+                stream.socket.once('data', (buf: Buffer) => {
                     say('');
 
                     const confirmation = buf.toString()
@@ -146,7 +146,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                     if (!(/[yn]/u).test(confirmation)) {
                         say('<b>Invalid Option</b>');
 
-                        socket.dispatch(new StreamChooseCharacterEvent({account}));
+                        stream.dispatch(new StreamChooseCharacterEvent({account}));
 
                         return;
                     }
@@ -154,7 +154,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                     if (confirmation === 'n') {
                         say('No one was deleted...');
 
-                        socket.dispatch(new StreamChooseCharacterEvent({account}));
+                        stream.dispatch(new StreamChooseCharacterEvent({account}));
 
                         return;
                     }
@@ -163,14 +163,14 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                     account.deleteAccount();
                     say('Account deleted, it was a pleasure doing business with you.');
 
-                    socket.end();
+                    stream.end();
                 });
             },
         });
 
         options.push({
             display: 'Quit',
-            onSelect: () => socket.end(),
+            onSelect: () => stream.end(),
         });
 
         // Display options menu
@@ -187,13 +187,13 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
             }
         });
 
-        socket.write('|\r\n`-> ');
+        stream.write('|\r\n`-> ');
 
-        socket.once('data', (buf: Buffer) => {
+        stream.socket.once('data', (buf: Buffer) => {
             const choice = parseInt(buf.toString().trim(), 10) - 1;
 
             if (isNaN(choice)) {
-                socket.dispatch(new StreamChooseCharacterEvent({account}));
+                stream.dispatch(new StreamChooseCharacterEvent({account}));
 
                 return;
             }
@@ -208,7 +208,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
                 return;
             }
 
-            socket.dispatch(new StreamChooseCharacterEvent({account}));
+            stream.dispatch(new StreamChooseCharacterEvent({account}));
         });
     },
 };

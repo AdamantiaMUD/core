@@ -22,7 +22,7 @@ export const StreamIntroEvent: StreamEventConstructor<never> = class extends Str
  */
 export const evt: StreamEventListenerFactory<never> = {
     name: new StreamIntroEvent().getName(),
-    listener: (state: GameState): StreamEventListener<never> => (socket: TransportStream<EventEmitter>) => {
+    listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
         // MotD generated here:
         // http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
         const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');
@@ -31,10 +31,10 @@ export const evt: StreamEventListenerFactory<never> = {
         const motd = fs.readFileSync(motdUri, 'utf8');
 
         if (motd) {
-            EventUtil.genSay(socket)(motd);
+            EventUtil.genSay(stream)(motd);
         }
 
-        socket.dispatch(new StreamLoginEvent());
+        stream.dispatch(new StreamLoginEvent());
     },
 };
 

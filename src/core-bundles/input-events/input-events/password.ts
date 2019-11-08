@@ -28,8 +28,8 @@ export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPas
  */
 export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
     name: new StreamAccountPasswordEvent().getName(),
-    listener: (): StreamEventListener<StreamAccountPasswordPayload> => (socket: TransportStream<EventEmitter>, {account}) => {
-        const write = EventUtil.genWrite(socket);
+    listener: (): StreamEventListener<StreamAccountPasswordPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
+        const write = EventUtil.genWrite(stream);
 
         const name = account.username;
 
@@ -41,27 +41,27 @@ export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
         if (passwordAttempts[name] > maxFailedAttempts) {
             write('Password attempts exceeded.\r\n');
             passwordAttempts[name] = 0;
-            socket.end();
+            stream.end();
 
             return;
         }
 
         write('Enter your password: ');
-        socket.command('toggleEcho');
+        stream.command('toggleEcho');
 
-        socket.once('data', (buf: Buffer) => {
-            socket.command('toggleEcho');
+        stream.socket.once('data', (buf: Buffer) => {
+            stream.command('toggleEcho');
 
             const pass = buf.toString().trim();
 
             if (account.checkPassword(pass)) {
-                socket.dispatch(new StreamChooseCharacterEvent({account}));
+                stream.dispatch(new StreamChooseCharacterEvent({account}));
             }
             else {
                 write('<red>Incorrect password.</red>\r\n');
                 passwordAttempts[name] += 1;
 
-                socket.dispatch(new StreamAccountPasswordEvent({account}));
+                stream.dispatch(new StreamAccountPasswordEvent({account}));
             }
         });
     },
