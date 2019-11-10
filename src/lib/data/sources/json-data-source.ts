@@ -2,6 +2,7 @@ import fs from 'fs';
 
 import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
+import Logger from '../../util/logger';
 
 /**
  * Data source when you have all entities in a single json file

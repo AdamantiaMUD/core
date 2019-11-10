@@ -1,4 +1,5 @@
 import fs from 'fs';
+import path from 'path';
 
 import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
@@ -41,7 +42,7 @@ class YamlAreaDataSource extends FileDataSource {
                 }
 
                 for (const file of files) {
-                    const manifestPath = [dirPath, file.name, 'manifest.yml'].join('/');
+                    const manifestPath = path.join(dirPath, file.name, 'manifest.yml');
 
                     if (file.isDirectory() && fs.existsSync(manifestPath)) {
                         /* eslint-disable-next-line no-await-in-loop */
@@ -63,7 +64,7 @@ class YamlAreaDataSource extends FileDataSource {
 
         const source = new YamlDataSource(this.appConfig);
 
-        return source.fetchAll({path: `${dirPath}/${id}/manifest.yml`});
+        return source.fetchAll({path: path.join(dirPath, id, 'manifest.yml')});
     }
 
     public replace(
@@ -84,7 +85,7 @@ class YamlAreaDataSource extends FileDataSource {
 
         const source = new YamlDataSource(this.appConfig);
 
-        return source.replace({path: `${dirPath}/${id}/manifest.yml`}, data);
+        return source.replace({path: path.join(dirPath, id, 'manifest.yml')}, data);
     }
 }
 

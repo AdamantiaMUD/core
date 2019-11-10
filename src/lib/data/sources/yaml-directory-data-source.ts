@@ -64,7 +64,7 @@ class YamlDirectoryDataSource extends FileDataSource {
 
         const source = new YamlDataSource(this.appConfig);
 
-        return source.fetchAll({path: `${dirPath}/${id}.yml`});
+        return source.fetchAll({path: path.join(dirPath, `${id}.yml`)});
     }
 
     public replace(
@@ -85,7 +85,7 @@ class YamlDirectoryDataSource extends FileDataSource {
 
         const source = new YamlDataSource(this.appConfig);
 
-        return source.replace({path: `${dirPath}/${id}.yml`}, data);
+        return source.replace({path: path.join(dirPath, `${id}.yml`)}, data);
     }
 }
 

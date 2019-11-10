@@ -1,6 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
-import Logger from '../../../lib/util/logger';
 
 const {sayAt, sayAtExcept} = Broadcast;
 

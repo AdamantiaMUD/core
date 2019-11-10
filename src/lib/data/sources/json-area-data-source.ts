@@ -1,9 +1,9 @@
 import fs from 'fs';
+import path from 'path';
 
 import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
 import JsonDataSource from './json-data-source';
-import Logger from '../../util/logger';
 
 /**
  * Data source for areas stored in json. Looks for a directory structure like:
@@ -42,7 +42,7 @@ class JsonAreaDataSource extends FileDataSource {
                 }
 
                 for (const file of files) {
-                    const manifestPath = [dirPath, file.name, 'manifest.json'].join('/');
+                    const manifestPath = path.join(dirPath, file.name, 'manifest.json');
 
                     if (file.isDirectory() && fs.existsSync(manifestPath)) {
                         /* eslint-disable-next-line no-await-in-loop */
@@ -64,7 +64,7 @@ class JsonAreaDataSource extends FileDataSource {
 
         const source = new JsonDataSource(this.appConfig);
 
-        return source.fetchAll({path: `${dirPath}/${id}/manifest.json`});
+        return source.fetchAll({path: path.join(dirPath, id, 'manifest.json')});
     }
 
     public replace(
@@ -85,7 +85,7 @@ class JsonAreaDataSource extends FileDataSource {
 
         const source = new JsonDataSource(this.appConfig);
 
-        return source.replace({path: `${dirPath}/${id}/manifest.json`}, data);
+        return source.replace({path: path.join(dirPath, id, 'manifest.json')}, data);
     }
 }
 

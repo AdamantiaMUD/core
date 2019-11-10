@@ -40,7 +40,6 @@ export abstract class TransportStream<T extends EventEmitter> {
      */
     public attach(socket: T): void {
         this.socket = socket;
-        this.listen(new SocketCloseEvent().getName(), () => this.socket.emit('close'));
     }
 
     /**

@@ -24,10 +24,10 @@ export class Data {
     public static getDataFilePath(type: string, id: string): string {
         switch (type) {
             case 'player':
-                return `${dataPath}player/${id}.json`;
+                return path.join(dataPath, 'player', `${id}.json`);
 
             case 'account':
-                return `${dataPath}account/${id}.json`;
+                return path.join(dataPath, 'account', `${id}.json`);
 
             /* no default */
         }
@@ -56,7 +56,7 @@ export class Data {
      * @return string
      */
     public static loadMotd(): string {
-        return fs.readFileSync(`${dataPath}motd`, 'utf8');
+        return fs.readFileSync(path.join(dataPath, 'motd'), 'utf8');
     }
 
     /**

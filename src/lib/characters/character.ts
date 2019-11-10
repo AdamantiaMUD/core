@@ -310,7 +310,7 @@ export class Character extends ScriptableEntity implements Serializable {
             attributes: this._attributes.serialize(),
             level: this._level,
             name: this.name,
-            room: this.room.entityReference,
+            room: this.room?.entityReference ?? '',
         };
     }
 

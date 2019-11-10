@@ -19,7 +19,7 @@ export interface StreamFinishCharacterPayload {
 }
 
 export const StreamFinishCharacterEvent: StreamEventConstructor<StreamFinishCharacterPayload> = class extends StreamEvent<StreamFinishCharacterPayload> {
-    public NAME: string = 'stream-account-password';
+    public NAME: string = 'stream-finish-character';
     public account: Account;
     public name: string;
 };

@@ -1,6 +1,7 @@
 import Data from '../util/data';
 import EntityLoader from '../data/entity-loader';
 import GameState from '../game-state';
+import Logger from '../util/logger';
 import MudEventManager from '../events/mud-event-manager';
 import Player, {SerializedPlayer} from './player';
 import {MudEventEmitter, MudEventListener} from '../events/mud-event';

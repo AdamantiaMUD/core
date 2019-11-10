@@ -1,3 +1,5 @@
+import path from 'path';
+
 import DataSource from './data-source';
 import DataSourceConfig from './data-source-config';
 
@@ -36,7 +38,8 @@ export class FileDataSource extends DataSource {
             .replace('[BUNDLE]', safeBundle)
             .replace('[BUNDLES]', bundlesPath)
             .replace('[DATA]', this.appConfig.get('dataPath'))
-            .replace('[ROOT]', rootPath);
+            .replace('[ROOT]', rootPath)
+            .replace('/', path.sep);
     }
 }
 

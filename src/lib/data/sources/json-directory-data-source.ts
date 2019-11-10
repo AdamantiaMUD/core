@@ -64,7 +64,7 @@ class JsonDirectoryDataSource extends FileDataSource {
 
         const source = new JsonDataSource(this.appConfig);
 
-        return source.fetchAll({path: `${dirPath}/${id}.json`});
+        return source.fetchAll({path: path.join(dirPath, `${id}.json`)});
     }
 
     public replace(
@@ -84,7 +84,7 @@ class JsonDirectoryDataSource extends FileDataSource {
         }
         const source = new JsonDataSource(this.appConfig);
 
-        return source.replace({path: `${dirPath}/${id}.json`}, data);
+        return source.replace({path: path.join(dirPath, `${id}.json`)}, data);
     }
 }
 
