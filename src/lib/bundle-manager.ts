@@ -78,6 +78,10 @@ export class BundleManager {
     }
 
     private isBundleEnabled(bundle: string, prefix: string = ''): boolean {
+        if (prefix === 'core.') {
+            return true;
+        }
+
         return this.state.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
     }
 
@@ -681,9 +685,11 @@ export class BundleManager {
         Logger.verbose('LOAD: BUNDLES -- START');
 
         const coreBundlesDir = path.join(__dirname, '..', 'core-bundles');
+        const optionalBundlesDir = path.join(__dirname, '..', 'optional-bundles');
         const bundlePath: string = this.state.config.get('bundlesPath');
 
         await this.loadBundlesFromFolder(coreBundlesDir, 'core.');
+        await this.loadBundlesFromFolder(optionalBundlesDir, 'adamantia.');
         await this.loadBundlesFromFolder(bundlePath);
 
         Logger.verbose('LOAD: BUNDLES -- END');

@@ -4,7 +4,7 @@ import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
 import {GameServerStartupEvent, GameServerStartupPayload} from '../../../lib/game-server-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
-import {StreamIntroEvent} from '../../input-events/input-events/intro';
+import {StreamIntroEvent} from '../../../core-bundles/input-events/input-events/intro';
 
 // import our adapter
 import WebsocketStream from '../lib/WebsocketStream';
