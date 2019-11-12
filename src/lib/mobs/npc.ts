@@ -47,7 +47,7 @@ export class Npc extends Character implements Serializable {
     public sourceRoom: Room;
     public uuid: string;
 
-    public constructor(area, data: NpcDefinition) {
+    public constructor(area: Area, data: NpcDefinition) {
         super();
 
         const validate = ['keywords', 'name', 'id'];

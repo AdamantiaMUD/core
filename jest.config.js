@@ -1,12 +1,15 @@
 /* eslint-disable array-bracket-newline, array-element-newline */
+const path = require('path');
 
 module.exports = {
     collectCoverageFrom: [
         '<rootDir>/src/**/*.ts',
-        '!<rootDir>/src/**/*.test.ts',
         '!<rootDir>/src/index.ts',
     ],
-    roots: ['<rootDir>/src'],
+    moduleNameMapper: {
+        '^~/(.*)$': path.resolve(__dirname, './src/$1'),
+    },
+    roots: ['<rootDir>/test'],
     transform: {'^.+\\.ts$': 'ts-jest'},
     testRegex: '^.*\\.test\\.ts$',
 };

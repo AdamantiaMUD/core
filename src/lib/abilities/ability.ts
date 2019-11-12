@@ -40,6 +40,22 @@ export type AbilityRunner = (
     target?: Character
 ) => void | false;
 
+export const ABILITY_DEFAULTS: AbilityDefinition = {
+    configureEffect: a => a,
+    cooldown: 0,
+    effect: null,
+    flags: [],
+    info: (skill: Ability, player: Character) => player.name,
+    initiatesCombat: false,
+    name: '',
+    requiresTarget: true,
+    resource: null,
+    run: () => () => false,
+    targetSelf: false,
+    type: AbilityType.SKILL,
+    options: {},
+};
+
 export class Ability {
     /* eslint-disable lines-between-class-members */
     public configureEffect: (effect: Effect) => Effect;
@@ -62,21 +78,26 @@ export class Ability {
     /* eslint-enable lines-between-class-members */
 
     public constructor(id: string, def: AbilityDefinition, state: GameState) {
+        const config: AbilityDefinition = {
+            ...ABILITY_DEFAULTS,
+            ...def,
+        };
+
         const {
-            configureEffect = a => a,
-            cooldown = 0,
-            effect = null,
-            flags = [],
-            info = (skill: Ability, player: Character) => player.name,
-            initiatesCombat = false,
+            configureEffect,
+            cooldown,
+            effect,
+            flags,
+            info,
+            initiatesCombat,
             name,
-            requiresTarget = true,
-            resource = null,
-            run = () => false,
-            targetSelf = false,
-            type = AbilityType.SKILL,
-            options = {},
-        } = def;
+            requiresTarget,
+            resource,
+            run,
+            targetSelf,
+            type,
+            options,
+        } = config;
 
         this.configureEffect = configureEffect;
 

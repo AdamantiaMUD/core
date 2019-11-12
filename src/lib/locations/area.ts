@@ -31,11 +31,12 @@ export class Area extends ScriptableEntity implements Broadcastable {
     private readonly _npcs: Set<Npc> = new Set();
     private readonly _rooms: Map<string, Room> = new Map();
 
-    public constructor(bundle: string, name: string, manifest: AreaManifest) {
+    public constructor(bundle: string, ref: string, manifest: AreaManifest) {
         super();
 
         this.bundle = bundle;
-        this.name = name;
+        this.entityReference = ref;
+        this.name = manifest.name;
 
         this._manifest = manifest;
 

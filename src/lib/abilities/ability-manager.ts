@@ -15,20 +15,20 @@ export class AbilityManager {
      * Find executable abilities
      */
     public find(search: string, includePassive: boolean = false): Ability {
-        for (const [id, skill] of this._abilities) {
-            if (!includePassive && skill.flags.includes(AbilityFlag.PASSIVE)) {
+        for (const [id, ability] of this._abilities) {
+            if (!includePassive && ability.flags.includes(AbilityFlag.PASSIVE)) {
                 // no-op
             }
             else if (id.indexOf(search) === 0) {
-                return skill;
+                return ability;
             }
         }
 
         return undefined;
     }
 
-    public get(ability: string): Ability {
-        return this._abilities.get(ability);
+    public get(id: string): Ability {
+        return this._abilities.get(id);
     }
 
     public remove(ability: Ability): void {

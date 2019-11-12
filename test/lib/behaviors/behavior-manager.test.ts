@@ -1,5 +1,5 @@
-import BehaviorManager from './behavior-manager';
-import MudEventManager from '../events/mud-event-manager';
+import BehaviorManager from '~/lib/behaviors/behavior-manager';
+import MudEventManager from '~/lib/events/mud-event-manager';
 
 describe('BehaviorManager', () => {
     describe('#addListener', () => {
