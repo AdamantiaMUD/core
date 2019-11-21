@@ -46,7 +46,6 @@ export interface SerializedQuest extends SimpleMap {
 }
 
 export class Quest extends MudEventEmitter implements Serializable {
-    /* eslint-disable lines-between-class-members */
     public GameState: GameState;
     public completedAt: string = '';
     public config: QuestDefinition;
@@ -56,7 +55,6 @@ export class Quest extends MudEventEmitter implements Serializable {
     public player: Player;
     public started: string = '';
     public state: SimpleMap[] = [];
-    /* eslint-enable lines-between-class-members */
 
     public constructor(
         state: GameState,

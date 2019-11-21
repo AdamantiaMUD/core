@@ -15,13 +15,12 @@ export interface SerializedAttribute extends SimpleMap {
  * base temporarily see the {@link http://ranviermud.com/extending/effects|Effect guide}.
  */
 export class Attribute implements Serializable {
-    /* eslint-disable lines-between-class-members */
-    public base: number;
-    public delta: number;
-    public formula: AttributeFormula;
-    public metadata: SimpleMap;
-    public name: string;
-    /* eslint-enable lines-between-class-members */
+    private _base: number;
+    private _delta: number;
+
+    public readonly formula: AttributeFormula;
+    public readonly metadata: SimpleMap;
+    public readonly name: string;
 
     public constructor(
         name: string,
@@ -30,37 +29,37 @@ export class Attribute implements Serializable {
         formula: AttributeFormula = null,
         metadata: SimpleMap = {}
     ) {
-        this.name = name;
-        this.base = base;
-        this.delta = delta;
+        this._base = base;
+        this._delta = delta;
+
         this.formula = formula;
         this.metadata = metadata;
+        this.name = name;
     }
 
-    private lower(amount: number): void {
-        this.raise(-1 * amount);
+    public get base(): number {
+        return this._base;
     }
 
-    private raise(amount: number): void {
-        this.delta = Math.min(this.delta + amount, 0);
+    public get delta(): number {
+        return this._delta;
+    }
+
+    public get value(): number {
+        return this._base + this._delta;
     }
 
     public deserialize(data: SerializedAttribute): void {
-        this.base = data.base;
-        this.delta = data.delta ?? 0;
+        this.setBase(data.base);
+        this.setDelta(data.delta ?? 0);
     }
 
     public modify(amount: number): void {
-        if (amount < 0) {
-            this.lower(amount);
-        }
-        else {
-            this.raise(amount);
-        }
+        this.setDelta(this._delta + amount);
     }
 
     public reset(): void {
-        this.delta = 0;
+        this._delta = 0;
     }
 
     public serialize(): SerializedAttribute {
@@ -70,11 +69,11 @@ export class Attribute implements Serializable {
     }
 
     public setBase(amount: number): void {
-        this.base = Math.max(amount, 0);
+        this._base = Math.max(amount, 0);
     }
 
     public setDelta(amount: number): void {
-        this.delta = Math.min(amount, 0);
+        this._delta = Math.min(amount, 0);
     }
 }
 
