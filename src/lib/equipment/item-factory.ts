@@ -17,7 +17,7 @@ export class ItemFactory extends EntityFactory<Item, ItemDefinition> {
      * `item.hydrate(state)`
      */
     public create(entityRef: string, area: Area): Item {
-        const definition = this.getDefinition(entityRef) as ItemDefinition;
+        const definition = this.getDefinition(entityRef);
 
         if (!definition) {
             throw new Error(`No Entity definition found for ${entityRef}`);

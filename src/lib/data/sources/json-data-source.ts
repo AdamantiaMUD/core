@@ -17,7 +17,7 @@ class JsonDataSource extends FileDataSource {
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public fetchAll(config: DataSourceConfig = {}): Promise<any> {
+    public fetchAll(config: DataSourceConfig = {}): Promise<unknown> {
         const filepath = this.resolvePath(config);
 
         if (!this.hasData(config)) {
@@ -37,7 +37,7 @@ class JsonDataSource extends FileDataSource {
         });
     }
 
-    public async fetch(config: DataSourceConfig = {}, id: string): Promise<any> {
+    public async fetch(config: DataSourceConfig = {}, id: string): Promise<unknown> {
         const data = await this.fetchAll(config);
 
         if (!data.hasOwnProperty(id)) {
@@ -47,7 +47,7 @@ class JsonDataSource extends FileDataSource {
         return data[id];
     }
 
-    public replace(config: DataSourceConfig = {}, data: any): Promise<undefined> {
+    public replace(config: DataSourceConfig = {}, data: unknown): Promise<undefined> {
         const filepath = this.resolvePath(config);
 
         return new Promise((resolve, reject) => {
@@ -67,7 +67,7 @@ class JsonDataSource extends FileDataSource {
     public async update(
         config: DataSourceConfig = {},
         id: string,
-        data: any
+        data: unknown
     ): Promise<undefined> {
         const currentData = await this.fetchAll(config);
 

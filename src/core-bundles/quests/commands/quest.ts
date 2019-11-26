@@ -1,17 +1,15 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
+import ArgParser from '~/lib/commands/arg-parser';
 import Command, {
     CommandDefinition,
-    CommandDefinitionBuilder, CommandDefinitionFactory
-} from '../../../lib/commands/command';
-import CommandManager from '../../../lib/commands/command-manager';
-import GameState from '../../../lib/game-state';
-import Npc from '../../../lib/mobs/npc';
-import Player from '../../../lib/players/player';
-import { QuestProgressEvent } from '../../../lib/quests/quest-events';
-
-const {
-    /* eslint-disable-next-line id-length */
+    CommandDefinitionBuilder,
+    CommandDefinitionFactory,
+} from '~/lib/commands/command';
+import CommandManager from '~/lib/commands/command-manager';
+import GameState from '~/lib/game-state';
+import Npc from '~/lib/mobs/npc';
+import Player from '~/lib/players/player';
+import {QuestProgressEvent} from '~/lib/quests/quest-events';
+import {
     at,
     center,
     indent,
@@ -19,7 +17,7 @@ const {
     progress,
     sayAt,
     wrap,
-} = Broadcast;
+} from '~/lib/communication/broadcast';
 
 const getAvailableQuests = (
     state: GameState,

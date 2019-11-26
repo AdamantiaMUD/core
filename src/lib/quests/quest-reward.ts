@@ -14,6 +14,7 @@ export interface QuestRewardDefinition {
  * create new reward type for quests
  */
 export interface QuestReward {
+
     /**
      * Render the reward
      */

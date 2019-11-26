@@ -29,6 +29,7 @@ export interface RoomDefinition extends ScriptableEntityDefinition {
     items?: RoomEntityDefinition[];
     npcs?: RoomEntityDefinition[];
     title: string;
+
     // @TODO: should this be an enum?
     type?: string;
 }
@@ -41,6 +42,7 @@ export interface RoomEntityDefinition {
 }
 
 export interface RoomExitDefinition {
+
     // @TODO: make directions an enum
     direction: string;
     leaveMessage?: string;
@@ -149,35 +151,37 @@ export class Room extends ScriptableEntity implements Broadcastable {
     /**
      * Emits event on self and proxies certain events to other entities in the room.
      */
-    // public emit(eventName: string | symbol, ...args: any[]): boolean {
-    //     const superReturn = super.emit(eventName, ...args);
-    //
-    //     const proxiedEvents = [
-    //         'npc-enter',
-    //         'npc-leave',
-    //         'player-enter',
-    //         'player-leave',
-    //     ];
-    //
-    //     if (proxiedEvents.includes(eventName as string)) {
-    //         const entities = [...this._players];
-    //
-    //         for (const entity of entities) {
-    //             entity.emit(eventName, ...args);
-    //         }
-    //
-    //         return true;
-    //     }
-    //
-    //     return superReturn;
-    // }
+    /*
+     * public emit(eventName: string | symbol, ...args: any[]): boolean {
+     *     const superReturn = super.emit(eventName, ...args);
+     *
+     *     const proxiedEvents = [
+     *         'npc-enter',
+     *         'npc-leave',
+     *         'player-enter',
+     *         'player-leave',
+     *     ];
+     *
+     *     if (proxiedEvents.includes(eventName as string)) {
+     *         const entities = [...this._players];
+     *
+     *         for (const entity of entities) {
+     *             entity.emit(eventName, ...args);
+     *         }
+     *
+     *         return true;
+     *     }
+     *
+     *     return superReturn;
+     * }
+     */
 
     /**
      * Get the exit definition of a room's exit by searching the exit name
      */
     public findExit(exitName: string): RoomExitDefinition {
         return this.getExits()
-            .find(ex => ex.direction.indexOf(exitName) === 0);
+            .find(ex => ex.direction.startsWith(exitName));
     }
 
     public getBroadcastTargets(): Player[] {
@@ -201,13 +205,13 @@ export class Room extends ScriptableEntity implements Broadcastable {
      */
     public getExitToRoom(nextRoom: Room): RoomExitDefinition {
         return this.getExits()
-            .find(ex => ex.roomId === nextRoom.entityReference);
+            .find((exit: RoomExitDefinition) => exit.roomId === nextRoom.entityReference);
     }
 
     /**
      * Check to see if this room has a door preventing movement from `fromRoom` to here
      */
-    public hasDoor(fromRoom): boolean {
+    public hasDoor(fromRoom: Room): boolean {
         return this._doors.has(fromRoom.entityReference);
     }
 

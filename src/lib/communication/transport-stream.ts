@@ -48,7 +48,7 @@ export abstract class TransportStream<T extends EventEmitter> {
      * `"someCommand"` ill look for a method called `executeSomeCommand` on the
      * `TransportStream`
      */
-    public command(command: string, ...args: any[]): any {
+    public command(command: string, ...args: unknown[]): unknown {
         if (!command || !command.length) {
             throw new RangeError('Must specify a command to the stream');
         }
@@ -72,7 +72,7 @@ export abstract class TransportStream<T extends EventEmitter> {
 
     public stopListening(eventKey?: string): void {
         this.socket.removeAllListeners(eventKey);
-    };
+    }
 }
 
 export default TransportStream;

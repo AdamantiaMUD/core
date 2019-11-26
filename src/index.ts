@@ -60,7 +60,7 @@ export * from './lib/data/sources/file-data-source';
 export * from './lib/data/sources/json-area-data-source';
 export * from './lib/data/sources/json-data-source';
 export * from './lib/data/sources/json-directory-data-source';
-export * from './lib/data/sources/yaml-area-data-source'
+export * from './lib/data/sources/yaml-area-data-source';
 export * from './lib/data/sources/yaml-data-source';
 export * from './lib/data/sources/yaml-directory-data-source';
 export * from './lib/data/entity-loader';

@@ -35,8 +35,10 @@ export const validateCharacterName = (config: Config, name: string): void => {
         throw new Error('Your name may only contain A-Z without spaces or special characters.');
     }
 
-    // @TODO: Is this feasible? Needs thought before implementing
-    // if (!(/^\p{L}+$/iu).test(name)) {
-    //     throw new Error('Your name may only contain Latin characters without spaces or special characters.');
-    // }
+    /*
+     * @TODO: Is this feasible? Needs thought before implementing
+     * if (!(/^\p{L}+$/iu).test(name)) {
+     *     throw new Error('Your name may only contain Latin characters without spaces or special characters.');
+     * }
+     */
 };

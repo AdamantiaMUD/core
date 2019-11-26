@@ -18,11 +18,13 @@ export class QuestTracker implements Serializable {
     private readonly _completedQuests: Map<string, Quest> = new Map();
     private readonly _player: Player;
 
-    public constructor(player: Player, active: any[] = [], completed: any[] = []) {
+    public constructor(player: Player, active: unknown[] = [], completed: unknown[] = []) {
         this._player = player;
 
-        // this.activeQuests = new Map(active);
-        // this.completedQuests = new Map(completed);
+        /*
+         * this.activeQuests = new Map(active);
+         * this.completedQuests = new Map(completed);
+         */
     }
 
     public get active(): Map<string, Quest> {
@@ -40,7 +42,7 @@ export class QuestTracker implements Serializable {
 
         const quest = this.get(qid);
 
-        quest.completedAt = (new Date()).toJSON();
+        quest.completedAt = new Date().toJSON();
 
         this._completedQuests.set(qid, quest);
         this._activeQuests.delete(qid);
@@ -49,13 +51,15 @@ export class QuestTracker implements Serializable {
     /**
      * Proxy events to all active quests
      */
-    // public emit(event: string | symbol, ...args: any[]): boolean {
-    //     for (const [, quest] of this._activeQuests) {
-    //         quest.emit(event, ...args);
-    //     }
-    //
-    //     return true;
-    // }
+    /*
+     * public emit(event: string | symbol, ...args: any[]): boolean {
+     *     for (const [, quest] of this._activeQuests) {
+     *         quest.emit(event, ...args);
+     *     }
+     *
+     *     return true;
+     * }
+     */
 
     public get(qid: string): Quest {
         return this._activeQuests.get(qid);
@@ -98,7 +102,7 @@ export class QuestTracker implements Serializable {
             throw new Error('Quest already started');
         }
 
-        quest.started = (new Date()).toJSON();
+        quest.started = new Date().toJSON();
         this._activeQuests.set(qid, quest);
         quest.dispatch(new QuestStartedEvent());
     }

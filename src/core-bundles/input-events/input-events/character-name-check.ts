@@ -27,7 +27,7 @@ export const StreamCharacterNameCheckEvent: StreamEventConstructor<StreamCharact
  * Confirm new player name
  */
 export const evt: StreamEventListenerFactory<StreamCharacterNameCheckPayload> = {
-    name: new StreamCharacterNameCheckEvent().getName(),
+    name: StreamCharacterNameCheckEvent.getName(),
     listener: (): StreamEventListener<StreamCharacterNameCheckPayload> => (
         stream: TransportStream<EventEmitter>,
         args: StreamCharacterNameCheckPayload

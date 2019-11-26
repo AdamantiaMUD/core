@@ -1,4 +1,4 @@
-export type ExecutableCommand = {
+export interface ExecutableCommand {
     execute(): void;
     label: string;
     lag: number;

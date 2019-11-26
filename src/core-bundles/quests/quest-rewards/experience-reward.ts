@@ -1,10 +1,10 @@
-import GameState from '../../../lib/game-state';
-import LevelUtil from '../../../lib/util/level-util';
-import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
-import QuestReward from '../../../lib/quests/quest-reward';
-import SimpleMap from '../../../lib/util/simple-map';
-import {PlayerExperienceEvent} from '../../../lib/players/player-events';
+import GameState from '~/lib/game-state';
+import LevelUtil from '~/lib/util/level-util';
+import Player from '~/lib/players/player';
+import Quest from '~/lib/quests/quest';
+import QuestReward from '~/lib/quests/quest-reward';
+import SimpleMap from '~/lib/util/simple-map';
+import {PlayerExperienceEvent} from '~/lib/players/player-events';
 
 interface ExperienceRewardConfig extends SimpleMap {
     amount?: number;

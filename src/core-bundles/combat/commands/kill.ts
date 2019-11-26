@@ -1,11 +1,9 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
-import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
-import {CombatError} from '../../../lib/combat/combat-errors';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-
-const {sayAt, sayAtExcept} = Broadcast;
+import GameState from '~/lib/game-state';
+import Logger from '~/lib/util/logger';
+import Player from '~/lib/players/player';
+import {CombatError} from '~/lib/combat/combat-errors';
+import {CommandDefinitionFactory} from '~/lib/commands/command';
+import {sayAt, sayAtExcept} from '~/lib/communication/broadcast';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'kill',

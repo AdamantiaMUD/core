@@ -8,8 +8,10 @@ export interface CurrencyDefinition {
     min: number;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-type-alias
 export type PoolDefinition = Map<string, number>;
 
+// eslint-disable-next-line @typescript-eslint/no-type-alias
 export type PoolReference = string | {[key: string]: number};
 
 export interface LootTableConfig {
@@ -36,13 +38,11 @@ const loadedPools = {};
  * determine drops from the pools up to `maxItems` drops
  */
 export class LootTable {
-    /* eslint-disable lines-between-class-members */
     private readonly _loading: Promise<void>;
     private readonly currencyRanges: {[key: string]: CurrencyDefinition};
     private readonly options: {maxItems: number; [key: string]: number | string};
     private readonly poolData: PoolReference[];
     private pools: PoolDefinition[];
-    /* eslint-enable lines-between-class-members */
 
     /**
      * See bundles/ranvier-areas/areas/limbo/npcs.yml for example of usage
@@ -61,7 +61,7 @@ export class LootTable {
      * Find out how much of the different currencies this NPC will drop
      * @return {Array<{{name: string, amount: number}}>}
      */
-    public currencies(): {amount: number; name: string}[] {
+    public currencies(): Array<{amount: number; name: string}> {
         if (!this.currencyRanges) {
             return [];
         }
@@ -69,9 +69,9 @@ export class LootTable {
         const result = [];
 
         for (const [currency, entry] of Object.entries(this.currencyRanges)) {
-            const amount = Random.inRange(entry.min, entry.max);
+            const amount: number = Random.inRange(entry.min, entry.max);
 
-            if (amount) {
+            if (amount > 0) {
                 result.push({amount: amount, name: currency});
             }
         }
@@ -79,7 +79,7 @@ export class LootTable {
         return result;
     }
 
-    public async load(state): Promise<void> {
+    public async load(state: GameState): Promise<void> {
         const resolved = [];
 
         for (const pool of this.poolData) {
@@ -102,13 +102,13 @@ export class LootTable {
          */
         const poolArea = state.areaManager.getAreaByReference(ref);
 
-        if (!poolArea) {
+        if (poolArea === undefined) {
             Logger.error(`Invalid item pool area: ${ref}`);
 
             return [];
         }
 
-        if (!loadedPools[poolArea.name]) {
+        if (typeof loadedPools[poolArea.name] === 'undefined') {
             try {
                 const loader = state.entityLoaderRegistry.get('loot-pools');
 
@@ -118,7 +118,7 @@ export class LootTable {
                 /* eslint-disable-next-line require-atomic-updates */
                 loadedPools[poolArea.name] = await loader.fetchAll();
             }
-            catch (e) {
+            catch {
                 Logger.error(`Area has no pools definition: ${ref}`);
 
                 return [];

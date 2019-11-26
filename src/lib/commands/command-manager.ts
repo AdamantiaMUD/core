@@ -19,7 +19,7 @@ export class CommandManager {
      */
     public find(search: string): Command {
         for (const [name, command] of this.commands.entries()) {
-            if (name.indexOf(search) === 0) {
+            if (name.startsWith(search)) {
                 return command;
             }
         }
@@ -29,7 +29,7 @@ export class CommandManager {
 
     public findWithAlias(search: string): {command: Command; alias: string} {
         for (const [name, command] of this.commands.entries()) {
-            if (name.indexOf(search) === 0) {
+            if (name.startsWith(search)) {
                 return {command: command, alias: name};
             }
         }

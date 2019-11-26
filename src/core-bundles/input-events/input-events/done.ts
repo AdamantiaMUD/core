@@ -26,7 +26,7 @@ export const StreamDoneEvent: StreamEventConstructor<StreamDonePayload> = class 
  * Login is done, allow the player to actually execute commands
  */
 export const evt: StreamEventListenerFactory<StreamDonePayload> = {
-    name: new StreamDoneEvent().getName(),
+    name: StreamDoneEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamDonePayload> => (stream: TransportStream<EventEmitter>, {player}) => {
         player.setMeta('lastCommandTime', Date.now());
 

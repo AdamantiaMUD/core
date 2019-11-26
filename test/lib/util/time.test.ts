@@ -16,6 +16,7 @@ describe('time.ts', () => {
             (ts: number, output: string) => {
                 expect.assertions(1);
 
+                /* eslint-disable-next-line jest/no-standalone-expect */
                 expect(humanize(ts)).toStrictEqual(output);
             }
         );

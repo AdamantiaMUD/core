@@ -1,14 +1,8 @@
-import EventEmitter from 'events';
-
 import {AddressInfo} from 'net';
-import {
-    SocketDataEvent,
-    SocketErrorEvent
-} from '../../../lib/communication/socket-events';
 
 import Sequences from './sequences';
 import TelnetSocket from './telnet-socket';
-import TransportStream from '../../../lib/communication/transport-stream';
+import TransportStream from '~/lib/communication/transport-stream';
 
 /**
  * Thin wrapper around a @worldofpannotia/ranvier-telnet `TelnetSocket`

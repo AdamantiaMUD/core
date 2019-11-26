@@ -1,9 +1,9 @@
-import GameState from '../../../lib/game-state';
-import Player from '../../../lib/players/player';
-import Quest from '../../../lib/quests/quest';
-import QuestReward from '../../../lib/quests/quest-reward';
-import SimpleMap from '../../../lib/util/simple-map';
-import {PlayerCurrencyGainedEvent} from '../../../lib/players/player-events';
+import GameState from '~/lib/game-state';
+import Player from '~/lib/players/player';
+import Quest from '~/lib/quests/quest';
+import QuestReward from '~/lib/quests/quest-reward';
+import SimpleMap from '~/lib/util/simple-map';
+import {PlayerCurrencyGainedEvent} from '~/lib/players/player-events';
 
 interface CurrencyRewardConfig extends SimpleMap {
     currency: string;

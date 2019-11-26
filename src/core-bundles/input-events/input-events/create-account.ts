@@ -26,7 +26,7 @@ export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccoun
  * Account creation event
  */
 export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
-    name: new StreamCreateAccountEvent().getName(),
+    name: StreamCreateAccountEvent.getName(),
     listener: (): StreamEventListener<StreamCreateAccountPayload> => (stream: TransportStream<EventEmitter>, {name}) => {
         const write = EventUtil.genWrite(stream);
         const say = EventUtil.genSay(stream);

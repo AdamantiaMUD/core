@@ -29,7 +29,7 @@ export const StreamFinishCharacterEvent: StreamEventConstructor<StreamFinishChar
  * to the game world
  */
 export const evt: StreamEventListenerFactory<StreamFinishCharacterPayload> = {
-    name: new StreamFinishCharacterEvent().getName(),
+    name: StreamFinishCharacterEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamFinishCharacterPayload> => {
         let startingRoomRef = state.config.get('startingRoom');
 

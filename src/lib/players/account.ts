@@ -6,7 +6,7 @@ import SimpleMap from '../util/simple-map';
 
 export interface SerializedAccount extends SimpleMap {
     username: string;
-    characters: any[];
+    characters: unknown[];
     password: string;
     metadata: SimpleMap;
     deleted: boolean;
@@ -25,7 +25,7 @@ const hashPassword = (pass: string): string => {
 class Account implements Serializable {
     /* eslint-disable lines-between-class-members */
     public banned: boolean = false;
-    public characters: {username: string; deleted: boolean}[] = [];
+    public characters: Array<{username: string; deleted: boolean}> = [];
     public deleted: boolean = false;
     public metadata: SimpleMap = {};
     public username: string;

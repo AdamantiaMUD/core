@@ -17,7 +17,7 @@ export class ChannelManager {
 
     public find(search: string): Channel {
         for (const [name, channel] of this.channels.entries()) {
-            if (name.indexOf(search) === 0) {
+            if (name.startsWith(search)) {
                 return channel;
             }
         }

@@ -24,7 +24,7 @@ class YamlDirectoryDataSource extends FileDataSource {
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public fetchAll(config: DataSourceConfig = {}): Promise<any> {
+    public fetchAll(config: DataSourceConfig = {}): Promise<unknown> {
         const dirPath = this.resolvePath(config);
 
         if (!this.hasData(config)) {
@@ -55,7 +55,7 @@ class YamlDirectoryDataSource extends FileDataSource {
         });
     }
 
-    public fetch(config: DataSourceConfig = {}, id: string): Promise<any> {
+    public fetch(config: DataSourceConfig = {}, id: string): Promise<unknown> {
         const dirPath = this.resolvePath(config);
 
         if (!fs.existsSync(dirPath)) {
@@ -70,13 +70,13 @@ class YamlDirectoryDataSource extends FileDataSource {
     public replace(
         /* eslint-disable @typescript-eslint/no-unused-vars */
         config: DataSourceConfig = {},
-        data: any
+        data: unknown
         /* eslint-enable @typescript-eslint/no-unused-vars */
     ): Promise<undefined> {
         return Promise.reject(new Error('You cannot replace an entire directory'));
     }
 
-    public update(config: DataSourceConfig = {}, id: string, data: any): Promise<undefined> {
+    public update(config: DataSourceConfig = {}, id: string, data: unknown): Promise<undefined> {
         const dirPath = this.resolvePath(config);
 
         if (!fs.existsSync(dirPath)) {

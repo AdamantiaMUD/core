@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-
 export enum Options {
     OPT_ECHO = 1,
     OPT_EOR = 25,

@@ -4,12 +4,13 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-events';
 
 export const evt: MudEventListenerFactory<UpdateTickPayload> = {
-    name: new UpdateTickEvent().getName(),
-    listener: (): MudEventListener<UpdateTickPayload> => {
+    name: UpdateTickEvent.getName(),
+    listener: (): MudEventListener<UpdateTickPayload> =>
+
         /**
          * @listens Player#updateTick
          */
-        return (player: Player) => {
+        (player: Player) => {
             const effects = player.effects
                 .entries()
                 .filter(effect => !effect.config.hidden)
@@ -29,8 +30,8 @@ export const evt: MudEventListenerFactory<UpdateTickPayload> = {
             }
 
             updateTargets(player);
-        };
-    },
+        }
+    ,
 };
 
 export default evt;

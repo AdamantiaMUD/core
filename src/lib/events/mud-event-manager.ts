@@ -6,7 +6,7 @@ export class MudEventManager {
      * key: string - The name of the event
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
-    private _events: Map<string, Set<MudEventListener<unknown>>> = new Map();
+    private readonly _events: Map<string, Set<MudEventListener<unknown>>> = new Map();
 
     public get size(): number {
         return this._events.size;
@@ -27,7 +27,7 @@ export class MudEventManager {
     /**
      * Attach all currently added events to the given emitter
      */
-    public attach(emitter: MudEventEmitter, config?: any): void {
+    public attach(emitter: MudEventEmitter, config?: unknown): void {
         for (const [event, listeners] of this._events) {
             for (const listener of listeners) {
                 emitter.listen(event, listener, config);

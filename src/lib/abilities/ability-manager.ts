@@ -19,7 +19,7 @@ export class AbilityManager {
             if (!includePassive && ability.flags.includes(AbilityFlag.PASSIVE)) {
                 // no-op
             }
-            else if (id.indexOf(search) === 0) {
+            else if (id.startsWith(search)) {
                 return ability;
             }
         }

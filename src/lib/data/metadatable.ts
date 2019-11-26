@@ -1,8 +1,8 @@
 import {MudEvent, MudEventConstructor} from '../events/mud-event';
 
 export interface Metadatable {
-    getMeta: (key: string) => any;
-    setMeta: (key: string, value: any) => void;
+    getMeta: (key: string) => unknown;
+    setMeta: (key: string, value: unknown) => void;
 }
 
 interface MetadataUpdatedPayload {

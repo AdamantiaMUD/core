@@ -31,7 +31,7 @@ const logTransports = {
     file: null,
 };
 
-let logger: WinstonLogger = createLogger({
+const logger: WinstonLogger = createLogger({
     level: 'debug',
     transports: [logTransports.console],
 });

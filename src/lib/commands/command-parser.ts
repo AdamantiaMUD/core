@@ -46,7 +46,7 @@ export class CommandParser {
         ];
 
         for (const dir of primaryDirections) {
-            if (dir.indexOf(direction) === 0) {
+            if (dir.startsWith(direction)) {
                 return dir;
             }
         }
@@ -59,7 +59,7 @@ export class CommandParser {
         ];
 
         for (const dir of secondaryDirections) {
-            if (dir.abbr === direction || dir.name.indexOf(direction) === 0) {
+            if (dir.abbr === direction || dir.name.startsWith(direction)) {
                 return dir.name;
             }
         }

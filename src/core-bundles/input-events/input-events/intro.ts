@@ -21,10 +21,12 @@ export const StreamIntroEvent: StreamEventConstructor<never> = class extends Str
  * MOTD event
  */
 export const evt: StreamEventListenerFactory<never> = {
-    name: new StreamIntroEvent().getName(),
+    name: StreamIntroEvent.getName(),
     listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
-        // MotD generated here:
-        // http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
+        /*
+         * MotD generated here:
+         * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
+         */
         const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');
         const motdUri: string = state.config.get('motdUri', defaultMotdUri);
 

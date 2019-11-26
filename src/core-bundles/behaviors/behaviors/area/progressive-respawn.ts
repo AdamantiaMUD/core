@@ -1,14 +1,16 @@
 import {Random} from 'rando-js';
 
-import Area from '../../../../lib/locations/area';
-import GameState from '../../../../lib/game-state';
-import Logger from '../../../../lib/util/logger';
-import Room, {RoomEntityDefinition} from '../../../../lib/locations/room';
-import {AreaRoomAddedEvent, AreaRoomAddedPayload} from '../../../../lib/locations/area-events';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import {MudEventListener} from '../../../../lib/events/mud-event';
-import {RoomRespawnTickEvent} from '../../../../lib/locations/room-events';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
+import Area from '~/lib/locations/area';
+import GameState from '~/lib/game-state';
+import Item from '~/lib/equipment/item';
+import Logger from '~/lib/util/logger';
+import Npc from '~/lib/mobs/npc';
+import Room, {RoomEntityDefinition} from '~/lib/locations/room';
+import {AreaRoomAddedEvent, AreaRoomAddedPayload} from '~/lib/locations/area-events';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
+import {MEL} from '~/lib/events/mud-event';
+import {RoomRespawnTickEvent, RoomRespawnTickPayload} from '~/lib/locations/room-events';
+import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
 
 /**
  * Behavior for having a constant respawn tick happening every [interval]
@@ -21,14 +23,14 @@ import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-
  */
 export const progressiveRespawn: BehaviorDefinition = {
     listeners: {
-        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => {
+        [UpdateTickEvent.getName()]: (state: GameState): MEL<UpdateTickPayload> => {
             let lastRespawnTick = Date.now();
 
-            return function(area: Area, payload) {
-                const config = (payload?.config ?? {}) as {[key: string]: any};
+            return (area: Area, payload: UpdateTickPayload): void => {
+                const config = (payload?.config ?? {}) as {[key: string]: unknown};
 
                 // setup respawnTick to only happen every [interval] seconds
-                const respawnInterval = config?.interval ?? 30;
+                const respawnInterval: number = config?.interval as number ?? 30;
                 const sinceLastTick = Date.now() - lastRespawnTick;
 
                 if (sinceLastTick >= respawnInterval * 1000) {
@@ -40,71 +42,78 @@ export const progressiveRespawn: BehaviorDefinition = {
             };
         },
 
-        [new AreaRoomAddedEvent().getName()]: (): MudEventListener<AreaRoomAddedPayload> => (area: Area, {room}) => {
-            room.listen(new RoomRespawnTickEvent().getName(), (room: Room, {state}): void => {
-                room.resetDoors();
+        [AreaRoomAddedEvent.getName()]: (): MEL<AreaRoomAddedPayload> => (
+            area: Area,
+            {room}: AreaRoomAddedPayload
+        ): void => {
+            room.listen(
+                RoomRespawnTickEvent.getName(),
+                /* eslint-disable-next-line id-length */
+                (rm: Room, {state}: RoomRespawnTickPayload): void => {
+                    rm.resetDoors();
 
-                room.defaultNpcs
-                    .forEach((entity: RoomEntityDefinition) => {
-                        const entityDefinition: RoomEntityDefinition = {
-                            maxLoad: 1,
-                            replaceOnRespawn: false,
-                            respawnChance: 100,
-                            ...entity,
-                        };
+                    rm.defaultNpcs
+                        .forEach((entity: RoomEntityDefinition) => {
+                            const entityDefinition: RoomEntityDefinition = {
+                                maxLoad: 1,
+                                replaceOnRespawn: false,
+                                respawnChance: 100,
+                                ...entity,
+                            };
 
-                        const entityCount = [...room.spawnedNpcs]
-                            .filter(npc => npc.entityReference === entityDefinition.id)
-                            .length;
+                            const entityCount = [...rm.spawnedNpcs]
+                                .filter((npc: Npc) => npc.entityReference === entityDefinition.id)
+                                .length;
 
-                        const needsRespawn = entityCount < entityDefinition.maxLoad;
+                            const needsRespawn = entityCount < entityDefinition.maxLoad;
 
-                        if (!needsRespawn) {
-                            return;
-                        }
-
-                        if (Random.probability(entityDefinition.respawnChance)) {
-                            try {
-                                room.spawnNpc(state, entityDefinition.id);
-                            }
-                            catch (err) {
-                                Logger.error(err.message);
-                            }
-                        }
-                    });
-
-                room.defaultItems
-                    .forEach((entity: RoomEntityDefinition) => {
-                        const entityDefinition: RoomEntityDefinition = {
-                            maxLoad: 1,
-                            replaceOnRespawn: false,
-                            respawnChance: 100,
-                            ...entity,
-                        };
-
-                        const entityCount = [...room.items]
-                            .filter(item => item.entityReference === entityDefinition.id)
-                            .length;
-
-                        const needsRespawn = entityCount < entityDefinition.maxLoad;
-
-                        if (!needsRespawn && !entityDefinition.replaceOnRespawn) {
-                            return;
-                        }
-
-                        if (Random.probability(entityDefinition.respawnChance)) {
-                            if (entityDefinition.replaceOnRespawn) {
-                                room.items.forEach(item => {
-                                    if (item.entityReference === entityDefinition.id) {
-                                        state.itemManager.remove(item);
-                                    }
-                                });
+                            if (!needsRespawn) {
+                                return;
                             }
 
-                            room.spawnItem(state, entityDefinition.id);
-                        }
-                    });
-            });
+                            if (Random.probability(entityDefinition.respawnChance)) {
+                                try {
+                                    rm.spawnNpc(state, entityDefinition.id);
+                                }
+                                catch (err) {
+                                    Logger.error(err.message);
+                                }
+                            }
+                        });
+
+                    rm.defaultItems
+                        .forEach((entity: RoomEntityDefinition) => {
+                            const entityDef: RoomEntityDefinition = {
+                                maxLoad: 1,
+                                replaceOnRespawn: false,
+                                respawnChance: 100,
+                                ...entity,
+                            };
+
+                            const entityCount = [...rm.items]
+                                .filter((item: Item) => item.entityReference === entityDef.id)
+                                .length;
+
+                            const needsRespawn = entityCount < entityDef.maxLoad;
+
+                            if (!needsRespawn && !entityDef.replaceOnRespawn) {
+                                return;
+                            }
+
+                            if (Random.probability(entityDef.respawnChance)) {
+                                if (entityDef.replaceOnRespawn) {
+                                    rm.items.forEach((item: Item) => {
+                                        if (item.entityReference === entityDef.id) {
+                                            state.itemManager.remove(item);
+                                        }
+                                    });
+                                }
+
+                                rm.spawnItem(state, entityDef.id);
+                            }
+                        });
+                }
+            );
         },
     },
 };

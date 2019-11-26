@@ -5,7 +5,7 @@ import {CommandDefinitionFactory} from '../../../lib/commands/command';
 
 const {sayAt} = Broadcast;
 
-const findTarget = (player: Player, thingName: string): any => {
+const findTarget = (player: Player, thingName: string): unknown => {
     const findableThings = new Set([
         ...player.room.players,
         ...player.equipment,

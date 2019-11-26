@@ -1,8 +1,6 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-
-const {sayAt} = Broadcast;
+import Player from '~/lib/players/player';
+import {CommandDefinitionFactory} from '~/lib/commands/command';
+import {sayAt} from '~/lib/communication/broadcast';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'pvp',

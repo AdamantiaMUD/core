@@ -27,7 +27,7 @@ export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPas
  * Account password event
  */
 export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
-    name: new StreamAccountPasswordEvent().getName(),
+    name: StreamAccountPasswordEvent.getName(),
     listener: (): StreamEventListener<StreamAccountPasswordPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
         const write = EventUtil.genWrite(stream);
 

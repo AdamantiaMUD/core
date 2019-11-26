@@ -99,7 +99,7 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         // `help search`
-        if (args.indexOf('search') === 0) {
+        if (args.startsWith('search')) {
             searchHelpFiles(args, player, state);
 
             return;

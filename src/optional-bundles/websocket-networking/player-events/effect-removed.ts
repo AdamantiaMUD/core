@@ -3,17 +3,18 @@ import {CharacterEffectRemovedEvent, CharacterEffectRemovedPayload} from '../../
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 export const evt: MudEventListenerFactory<CharacterEffectRemovedPayload> = {
-    name: new CharacterEffectRemovedEvent().getName(),
-    listener: (): MudEventListener<CharacterEffectRemovedPayload> => {
+    name: CharacterEffectRemovedEvent.getName(),
+    listener: (): MudEventListener<CharacterEffectRemovedPayload> =>
+
         /**
          * @listens Player#effectRemoved
          */
-        return (player: Player) => {
+        (player: Player) => {
             if (!player.effects.size) {
                 player.socket.command('sendData', 'effects', []);
             }
-        };
-    },
+        }
+    ,
 };
 
 export default evt;

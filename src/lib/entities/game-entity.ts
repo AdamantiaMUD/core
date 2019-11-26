@@ -4,6 +4,8 @@ import GameState from '../game-state';
 import Metadatable, {MetadataUpdatedEvent} from '../data/metadatable';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
+import get from 'lodash.get';
+import set from 'lodash.set';
 import {MudEventEmitter} from '../events/mud-event';
 
 const clone = cloneFactory();
@@ -19,9 +21,7 @@ export interface SerializedGameEntity {
 
 export class GameEntity extends MudEventEmitter implements Metadatable, Serializable {
     private _metadata: SimpleMap = {};
-
     protected _state: GameState;
-
     public __pruned: boolean = false;
     public __hydrated: boolean = false;
     public entityReference: string = '';
@@ -32,25 +32,20 @@ export class GameEntity extends MudEventEmitter implements Metadatable, Serializ
         this._metadata = clone(def?.metadata ?? {});
     }
 
-    public deserialize(data: SerializedGameEntity = {}, state?: GameState): void {
-        this.entityReference = data.entityReference ?? '';
-        this._metadata = clone(data.metadata ?? {});
+    public deserialize(data?: SerializedGameEntity, state?: GameState): void {
+        this.entityReference = data?.entityReference ?? '';
+        this._metadata = clone(data?.metadata ?? {});
         this._state = state;
     }
 
-    /**
-     * Get metadata by dot notation
-     * Warning: This method is _very_ permissive and will not error on a
-     * non-existent key. Rather, it will return false.
-     *
-     * @throws Error
+    /*
+     * Get metadata by any notation supported by lodash.get
      */
-    public getMeta(key: string): any {
-        const base = this._metadata;
-
-        return key.split('.').reduce((obj, index) => obj && obj[index], base);
+    public getMeta<T = unknown>(key: string): T {
+        return get(this._metadata, key);
     }
 
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     public hydrate(state: GameState): void {
         // no-op
     }
@@ -70,34 +65,17 @@ export class GameEntity extends MudEventEmitter implements Metadatable, Serializ
         return data;
     }
 
-    /**
+    /*
      * Set a metadata value.
-     * Warning: Does _not_ auto-vivify, you will need to create the parent
-     * objects if they don't exist
      *
      * @param {string} key   Key to set. Supports dot notation e.g., `"foo.bar"`
      * @param {*}      newValue Value must be JSON.stringify-able
-     * @throws Error
-     * @throws RangeError
      * @fires MetadataUpdatedEvent
      */
-    public setMeta(key: string, newValue: any): void {
-        const parts = key.split('.');
-        const property = parts.pop();
-        let base = this._metadata;
+    public setMeta<T = unknown>(key: string, newValue: T): void {
+        const oldValue = get(this._metadata, key);
 
-        while (parts.length) {
-            const part = parts.shift();
-
-            if (!(part in base)) {
-                throw new RangeError(`Metadata path invalid: ${key}`);
-            }
-            base = base[part];
-        }
-
-        const oldValue = base[property];
-
-        base[property] = newValue;
+        set(this._metadata, key, newValue);
 
         /**
          * @event Metadatable#metadataUpdate

@@ -1,14 +1,13 @@
 import {Random} from 'rando-js';
 
-import Broadcast from '../../../../lib/communication/broadcast';
-import GameState from '../../../../lib/game-state';
-import Logger from '../../../../lib/util/logger';
-import Npc from '../../../../lib/mobs/npc';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import {MudEventListener} from '../../../../lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
-
-const {sayAt} = Broadcast;
+import GameState from '~/lib/game-state';
+import Logger from '~/lib/util/logger';
+import Npc from '~/lib/mobs/npc';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
+import Room, {Door} from '~/lib/locations/room';
+import {MEL} from '~/lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
+import {sayAt} from '~/lib/communication/broadcast';
 
 interface WanderConfig {
     areaRestricted: boolean;
@@ -22,37 +21,57 @@ const defaultWanderConfig = {
     restrictTo: [],
 };
 
+const getConfig = (config: true | {[key: string]: unknown}): WanderConfig => {
+    if (config === true) {
+        return defaultWanderConfig;
+    }
+
+    return {...defaultWanderConfig, ...config};
+};
+
+const getDoor = (npc: Npc, room: Room): Door => {
+    if (room === undefined) {
+        return undefined;
+    }
+
+    if (npc.room.hasDoor(room)) {
+        return npc.room.getDoor(room);
+    }
+
+    if (room.hasDoor(npc.room)) {
+        return room.getDoor(npc.room);
+    }
+
+    return undefined;
+};
+
 /**
  * An example behavior that causes an NPC to wander around an area when not in combat
  * Options:
- *   areaRestricted: boolean, true to restrict the NPC's wandering to his home area. Default: false
+ *   areaRestricted: boolean, true to restrict the NPCs wandering to his home area. Default: false
  *   restrictTo: Array<EntityReference>, list of room entity references to restrict the NPC to. For
  *     example if you want them to wander along a set path
  *   interval: number, delay in seconds between room movements. Default: 20
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
-            if (npc.combat.isFighting() || !npc.room) {
+        [UpdateTickEvent.getName()]: (state: GameState): MEL<UpdateTickPayload> => (
+            npc: Npc,
+            payload: UpdateTickPayload
+        ): void => {
+            if (npc.combat.isFighting() || npc.room === null) {
                 return;
             }
 
-            const cfg = payload?.config ?? defaultWanderConfig;
+            const config: WanderConfig = getConfig(payload.config ?? defaultWanderConfig);
 
-            let config: WanderConfig = null;
+            const lastWanderTime = npc.getMeta<number>('lastWanderTime');
 
-            if (cfg === true) {
-                config = defaultWanderConfig;
-            }
-            else {
-                config = {...defaultWanderConfig, ...cfg};
-            }
-
-            if (!npc.getMeta('lastWanderTime')) {
+            if (lastWanderTime === undefined) {
                 npc.setMeta('lastWanderTime', Date.now());
             }
 
-            if (Date.now() - npc.getMeta('lastWanderTime') < config.interval * 1000) {
+            if (Date.now() - lastWanderTime < config.interval * 1000) {
                 return;
             }
 
@@ -60,17 +79,15 @@ export const wander: BehaviorDefinition = {
 
             const exits = npc.room.getExits();
 
-            if (!exits.length) {
+            if (exits.length === 0) {
                 return;
             }
 
             const roomExit = Random.fromArray(exits);
             const randomRoom = state.roomManager.getRoom(roomExit.roomId);
+            const door: Door = getDoor(npc, randomRoom);
 
-            const door = randomRoom
-                && (npc.room.getDoor(randomRoom) || randomRoom.getDoor(npc.room));
-
-            if (door && (door.locked || door.closed)) {
+            if (door?.locked || door?.closed) {
                 /*
                  * maybe a possible feature where it could be configured that they can open doors
                  * or even if they have the key they can unlock the doors
@@ -81,8 +98,8 @@ export const wander: BehaviorDefinition = {
             }
 
             if (
-                !randomRoom
-                || (config.restrictTo && !config.restrictTo.includes(randomRoom.entityReference))
+                randomRoom === undefined
+                || !config.restrictTo?.includes(randomRoom.entityReference)
                 || (config.areaRestricted && randomRoom.area !== npc.area)
             ) {
                 return;

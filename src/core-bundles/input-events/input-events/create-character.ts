@@ -26,7 +26,7 @@ export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateChar
  * Player creation event
  */
 export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
-    name: new StreamCreateCharacterEvent().getName(),
+    name: StreamCreateCharacterEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(stream);
         const write = EventUtil.genWrite(stream);

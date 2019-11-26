@@ -27,7 +27,7 @@ export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePassw
  * Change password event
  */
 export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
-    name: new StreamChangePasswordEvent().getName(),
+    name: StreamChangePasswordEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamChangePasswordPayload> => (
         stream: TransportStream<EventEmitter>,
         args: StreamChangePasswordPayload

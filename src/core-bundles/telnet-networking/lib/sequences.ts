@@ -1,5 +1,3 @@
-/* eslint-disable no-magic-numbers */
-
 export enum Sequences {
     EOR = 239,
     SE = 240,

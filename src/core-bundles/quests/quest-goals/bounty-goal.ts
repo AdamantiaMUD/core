@@ -1,13 +1,10 @@
-import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
-import Quest, {QuestProgress} from '../../../lib/quests/quest';
-import QuestGoal from '../../../lib/quests/quest-goal';
-import SimpleMap from '../../../lib/util/simple-map';
-import {
-    PlayerEnterRoomEvent,
-    PlayerEnterRoomPayload
-} from '../../../lib/players/player-events';
-import {QuestProgressEvent} from '../../../lib/quests/quest-events';
+import Logger from '~/lib/util/logger';
+import Player from '~/lib/players/player';
+import Quest, {QuestProgress} from '~/lib/quests/quest';
+import QuestGoal from '~/lib/quests/quest-goal';
+import SimpleMap from '~/lib/util/simple-map';
+import {PlayerEnterRoomEvent, PlayerEnterRoomPayload} from '~/lib/players/player-events';
+import {QuestProgressEvent} from '~/lib/quests/quest-events';
 
 export class BountyGoal extends QuestGoal {
     public constructor(quest: Quest, cfg: SimpleMap, player: Player) {
@@ -29,7 +26,7 @@ export class BountyGoal extends QuestGoal {
             delivered: false,
         };
 
-        this.listen(new PlayerEnterRoomEvent().getName(), this.enterRoom.bind(this));
+        this.listen(PlayerEnterRoomEvent.getName(), this.enterRoom.bind(this));
     }
 
     private enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {

@@ -1,18 +1,16 @@
-import Broadcast from '../../../../lib/communication/broadcast';
-import GameState from '../../../../lib/game-state';
-import Item from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/util/logger';
-import Player from '../../../../lib/players/player';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import GameState from '~/lib/game-state';
+import Item from '~/lib/equipment/item';
+import Logger from '~/lib/util/logger';
+import Player from '~/lib/players/player';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
 import {
+    MEL,
     MudEvent,
     MudEventConstructor,
-    MudEventListener
-} from '../../../../lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
-import {findCarrier} from '../../../../lib/util/items';
-
-const {sayAt} = Broadcast;
+} from '~/lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
+import {findCarrier} from '~/lib/util/items';
+import {sayAt} from '~/lib/communication/broadcast';
 
 export const ItemDecayEvent: MudEventConstructor<never> = class extends MudEvent<never> {
     public NAME: string = 'item-decay';
@@ -20,18 +18,19 @@ export const ItemDecayEvent: MudEventConstructor<never> = class extends MudEvent
 
 export const decay: BehaviorDefinition = {
     listeners: {
-        [new UpdateTickEvent().getName()]: (): MudEventListener<UpdateTickPayload> => (item: Item, payload) => {
-            const config = (payload?.config ?? {}) as {[key: string]: any};
+        [UpdateTickEvent.getName()]: (): MEL<UpdateTickPayload> => (
+            item: Item,
+            payload: UpdateTickPayload
+        ): void => {
+            const config = (payload?.config ?? {}) as {[key: string]: unknown};
 
             const now = Date.now();
 
-            let {duration = 60} = config;
+            let duration: number = config.duration as number ?? 60;
 
             duration *= 1000;
 
-            let decaysAt = item.getMeta('decays-at');
-
-            decaysAt = decaysAt || now + duration;
+            const decaysAt = item.getMeta<number>('decays-at') ?? now + duration;
 
             item.setMeta('decays-at', decaysAt);
 
@@ -43,16 +42,16 @@ export const decay: BehaviorDefinition = {
             }
         },
 
-        [new ItemDecayEvent().getName()]: (state: GameState): MudEventListener<never> => (item: Item) => {
+        [ItemDecayEvent.getName()]: (state: GameState): MEL<never> => (item: Item): void => {
             const {room} = item;
 
             const owner = findCarrier(item);
 
-            if (owner && owner instanceof Player) {
+            if (owner !== null && owner instanceof Player) {
                 sayAt(owner, `Your ${item.name} has rotted away!`);
             }
 
-            if (room) {
+            if (room !== null) {
                 sayAt(room, `${item.name} has rotted away!`);
             }
 

@@ -2,7 +2,7 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Command, {
     CommandDefinition,
-    CommandDefinitionBuilder, CommandDefinitionFactory
+    CommandDefinitionBuilder, CommandDefinitionFactory,
 } from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
 import GameState from '../../../lib/game-state';

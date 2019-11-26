@@ -8,7 +8,7 @@ import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
     EffectRemoveEvent,
-    EffectAddedEvent
+    EffectAddedEvent,
 } from './effect-events';
 
 /**
@@ -69,7 +69,7 @@ export class EffectList implements Serializable {
 
         this._target.dispatch(new CharacterEffectAddedEvent({effect}));
 
-        effect.listen(new EffectRemoveEvent().getName(), (eff: Effect) => this.remove(eff));
+        effect.listen(EffectRemoveEvent.getName(), (eff: Effect) => this.remove(eff));
 
         return true;
     }

@@ -1,67 +1,11 @@
-import {sprintf} from 'sprintf-js';
-
-import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-
-/* eslint-disable-next-line id-length */
-const {at, sayAt} = Broadcast;
-
-const sayAtColumns = (source, strings, numCols): void => {
-    // Build a 2D map of strings by col/row
-    let col = 0,
-        row = 0;
-    const perCol = Math.ceil(strings.length / numCols);
-
-    let rowCount = 0;
-    const colWidth = Math.floor((3 * 20) / numCols);
-
-    const columnedStrings = strings.reduce((map, string) => {
-        if (rowCount >= perCol) {
-            rowCount = 0;
-            col += 1;
-        }
-        map[col] = map[col] || [];
-
-        if (!map[col]) {
-            map.push([]);
-        }
-
-        map[col].push(string);
-        rowCount += 1;
-
-        return map;
-    }, []);
-
-    const said = [];
-
-    col = 0;
-    while (said.length < strings.length) {
-        if (columnedStrings[col] && columnedStrings[col][row]) {
-            const string = columnedStrings[col][row];
-
-            said.push(string);
-
-            at(source, sprintf(`%-${colWidth}s`, string));
-        }
-
-        col += 1;
-        if (col === numCols) {
-            sayAt(source);
-            col = 0;
-            row += 1;
-        }
-    }
-
-    // append another line if need be
-    if (col % numCols !== 0) {
-        sayAt(source);
-    }
-};
+import Player from '~/lib/players/player';
+import {CommandDefinitionFactory} from '~/lib/commands/command';
+import {sayAt, sayAtColumns} from '~/lib/communication/broadcast';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'commands',
     aliases: ['channels'],
-    command: state => (args, player) => {
+    command: state => (args, player: Player) => {
         // print standard commands
         sayAt(player, '<b><white>                  Commands</b></white>');
         /* eslint-disable-next-line max-len */

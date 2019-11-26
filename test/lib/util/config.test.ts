@@ -17,6 +17,7 @@ describe('config.ts', () => {
         expect.assertions(2);
 
         const cfg = new Config();
+
         cfg.load({foo: 'bar'});
 
         expect(cfg.get('foo')).toStrictEqual('bar');

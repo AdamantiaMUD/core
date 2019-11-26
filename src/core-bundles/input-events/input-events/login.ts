@@ -19,12 +19,13 @@ export const StreamLoginEvent: StreamEventConstructor<never> = class extends Str
 };
 
 export const evt: StreamEventListenerFactory<never> = {
-    name: new StreamLoginEvent().getName(),
+    name: StreamLoginEvent.getName(),
     listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
         stream.write('Welcome, what is your username? ');
 
         stream.socket.once('data', async (buf: Buffer) => {
-            const name = buf.toString().trim().toLowerCase();
+            const name = buf.toString().trim()
+                .toLowerCase();
 
             try {
                 validateAccountName(state.config, name);

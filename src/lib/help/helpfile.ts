@@ -1,10 +1,10 @@
-export type HelpfileOptions = {
+export interface HelpfileOptions {
     body: string;
     channel: string;
     command: string;
     keywords?: string[];
     related?: string[];
-};
+}
 
 export class Helpfile {
     /* eslint-disable lines-between-class-members */

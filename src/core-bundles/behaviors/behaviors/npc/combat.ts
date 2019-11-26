@@ -1,8 +1,8 @@
-import GameState from '../../../../lib/game-state';
-import Item, {ItemDefinition} from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/util/logger';
-import Npc from '../../../../lib/mobs/npc';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import GameState from '~/lib/game-state';
+import Item, {ItemDefinition} from '~/lib/equipment/item';
+import Logger from '~/lib/util/logger';
+import Npc from '~/lib/mobs/npc';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
 import {
     CharacterDamagedEvent,
     CharacterDamagedPayload,
@@ -10,11 +10,11 @@ import {
     CharacterDeathblowPayload,
     CharacterHitEvent,
     CharacterHitPayload,
-} from '../../../../lib/characters/character-events';
-import {MudEventListener} from '../../../../lib/events/mud-event';
-import {NpcKilledEvent, NpcKilledPayload} from '../../../../lib/mobs/npc-events';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
-import {makeCorpse} from '../../../../lib/util/combat';
+} from '~/lib/characters/character-events';
+import {MEL} from '~/lib/events/mud-event';
+import {NpcKilledEvent, NpcKilledPayload} from '~/lib/mobs/npc-events';
+import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
+import {makeCorpse} from '~/lib/util/combat';
 
 /**
  * Example real-time combat behavior for NPCs that goes along with the player's
@@ -23,16 +23,16 @@ import {makeCorpse} from '../../../../lib/util/combat';
  */
 export const combatListeners: BehaviorDefinition = {
     listeners: {
-        [new UpdateTickEvent().getName()]: (state: GameState): MudEventListener<UpdateTickPayload> => (npc: Npc) => {
+        [UpdateTickEvent.getName()]: (state: GameState): MEL<UpdateTickPayload> => (npc: Npc): void => {
             if (npc.combat.isFighting()) {
                 state.combat.updateRound(state, npc);
             }
         },
 
-        /**
+        /*
          * NPC was killed
          */
-        [new NpcKilledEvent().getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => (npc: Npc) => {
+        [NpcKilledEvent.getName()]: (state: GameState): MEL<NpcKilledPayload> => (npc: Npc): void => {
             if (npc.hasBehavior('lootable')) {
                 return;
             }
@@ -50,21 +50,24 @@ export const combatListeners: BehaviorDefinition = {
             Logger.log(`Generated corpse: ${corpse.uuid}`);
         },
 
-        /**
+        /*
          * NPC hit another character
          */
-        [new CharacterHitEvent().getName()]: (): MudEventListener<CharacterHitPayload> => () => {},
+        [CharacterHitEvent.getName()]: (): MEL<CharacterHitPayload> => (): void => {},
 
-        [new CharacterDamagedEvent().getName()]: (state: GameState): MudEventListener<CharacterDamagedPayload> => (npc: Npc, {source}) => {
+        [CharacterDamagedEvent.getName()]: (state: GameState): MEL<CharacterDamagedPayload> => (
+            npc: Npc,
+            {source}: CharacterDamagedPayload
+        ): void => {
             if (npc.getAttribute('hp') <= 0) {
                 state.combat.handleDeath(state, npc, source.attacker);
             }
         },
 
-        /**
+        /*
          * NPC killed a target
          */
-        [new CharacterDeathblowEvent().getName()]: (state: GameState): MudEventListener<CharacterDeathblowPayload> => (npc: Npc) => {
+        [CharacterDeathblowEvent.getName()]: (state: GameState): MEL<CharacterDeathblowPayload> => (npc: Npc): void => {
             if (!npc.combat.isFighting()) {
                 state.combat.startRegeneration(state, npc);
             }

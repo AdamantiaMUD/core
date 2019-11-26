@@ -7,21 +7,18 @@ export class MudEvent<T> {
     public NAME: string = '';
     public payload: T;
 
-    constructor(props?: T) {
+    public constructor(props?: T) {
         if (typeof props === 'undefined') {
-            return;
+            return undefined;
         }
 
         this.payload = props;
 
         return new Proxy(this, {
-            get: (obj: MudEvent<T>, prop: 'NAME' | 'getName' | 'payload' | keyof T) => {
+            get: (obj: MudEvent<T>, prop: 'NAME' | 'payload' | keyof T): string | T | unknown => {
                 switch (prop) {
                     case 'NAME':
                         return obj.NAME;
-
-                    case 'getName':
-                        return obj.getName;
 
                     case 'payload':
                         return obj.payload;
@@ -33,8 +30,10 @@ export class MudEvent<T> {
         });
     }
 
-    getName(): string {
-        return this.NAME;
+    public static getName(): string {
+        const inst = new this();
+
+        return inst.NAME;
     }
 }
 
@@ -47,19 +46,22 @@ export class MudEventEmitter {
     protected _emitter: EventEmitter = new EventEmitter();
 
     public dispatch(event: MudEvent<unknown>): void {
-        this._emitter.emit(event.getName(), event);
+        this._emitter.emit(event.NAME, event);
     }
 
-    public listen<T>(eventKey: string, listener: MudEventListener<T>, config?: any): void {
+    public listen<T>(eventKey: string, listener: MudEventListener<T>, config?: SimpleMap): void {
         this._emitter.on(eventKey, (data: T) => listener(this, data, config));
     }
 
     public stopListening(eventKey?: string): void {
         this._emitter.removeAllListeners(eventKey);
-    };
+    }
 }
 
 export type MudEventListener<T> = (emitter: MudEventEmitter, args?: T, config?: SimpleMap) => void;
+
+/* eslint-disable-next-line @typescript-eslint/no-type-alias */
+export type MEL<T> = MudEventListener<T>;
 
 export interface MudEventListenerFactory<T> {
     name: string;

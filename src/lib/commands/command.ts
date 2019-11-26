@@ -30,7 +30,7 @@ export type CommandExecutable = (
     args: string,
     player: Player,
     alias?: string,
-    ...argV: any[]
+    ...argV: unknown[]
 ) => void;
 
 /**
@@ -61,7 +61,7 @@ export class Command {
         this.metadata = def.metadata || {};
     }
 
-    public execute(args: string, player: Player, alias: string = '', ...argV: any[]): void {
+    public execute(args: string, player: Player, alias: string = '', ...argV: unknown[]): void {
         this.func(args, player, alias, ...argV);
     }
 }

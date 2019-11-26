@@ -94,13 +94,15 @@ export class Player extends Character implements Broadcastable {
     public interpolatePrompt(promptStr: string, extraData: SimpleMap = {}): string {
         const attributeData = {};
 
-        // for (const attr of this.getAttributeNames()) {
-        //     attributeData[attr] = {
-        //         current: this.getAttribute(attr),
-        //         max: this.getMaxAttribute(attr),
-        //         base: this.getBaseAttribute(attr),
-        //     };
-        // }
+        /*
+         * for (const attr of this.getAttributeNames()) {
+         *     attributeData[attr] = {
+         *         current: this.getAttribute(attr),
+         *         max: this.getMaxAttribute(attr),
+         *         base: this.getBaseAttribute(attr),
+         *     };
+         * }
+         */
 
         const promptData = Object.assign(attributeData, extraData);
 

@@ -4,7 +4,7 @@
 export class Config {
     private cache = {};
 
-    public get(key: string, fallback: any = null): any {
+    public get(key: string, fallback: unknown = null): unknown {
         if (key in this.cache) {
             return this.cache[key];
         }
@@ -15,11 +15,11 @@ export class Config {
     /**
      * Load `adamantia.json` from disk
      */
-    public load(data: any): void {
+    public load(data: unknown): void {
         this.cache = data;
     }
 
-    public set(key: string, value: any): void {
+    public set(key: string, value: unknown): void {
         this.cache[key] = value;
     }
 }

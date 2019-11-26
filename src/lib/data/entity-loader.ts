@@ -14,11 +14,11 @@ export class EntityLoader {
         this.config = config;
     }
 
-    public fetch(id: string): Promise<any> {
+    public fetch(id: string): Promise<unknown> {
         return this.dataSource.fetch(this.config, id);
     }
 
-    public fetchAll(): Promise<any> {
+    public fetchAll(): Promise<unknown> {
         return this.dataSource.fetchAll(this.config);
     }
 
@@ -26,7 +26,7 @@ export class EntityLoader {
         return this.dataSource.hasData(this.config);
     }
 
-    public replace(data: any): Promise<undefined> {
+    public replace(data: unknown): Promise<undefined> {
         return this.dataSource.replace(this.config, data);
     }
 
@@ -38,7 +38,7 @@ export class EntityLoader {
         this.config.bundle = name;
     }
 
-    public update(id: string, data: any): Promise<undefined> {
+    public update(id: string, data: unknown): Promise<undefined> {
         return this.dataSource.update(this.config, id, data);
     }
 }

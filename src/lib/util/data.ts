@@ -19,7 +19,7 @@ export class Data {
      * get the file path for a given data file by type (player/account)
      * @param {string} type
      * @param {string} id
-     * @return {string}
+     * @returns {string}
      */
     public static getDataFilePath(type: string, id: string): string {
         switch (type) {
@@ -53,7 +53,7 @@ export class Data {
 
     /**
      * load the MOTD for the intro screen
-     * @return string
+     * @returns string
      */
     public static loadMotd(): string {
         return fs.readFileSync(path.join(dataPath, 'motd'), 'utf8');
@@ -86,7 +86,7 @@ export class Data {
     /**
      * Save data file (player/account) data to disk
      */
-    public static save(type: string, id: string, data: any, callback: Function = () => {}): void {
+    public static save(type: string, id: string, data: unknown, callback: Function = () => {}): void {
         fs.writeFileSync(
             this.getDataFilePath(type, id),
             this.stringify(data),
@@ -99,7 +99,7 @@ export class Data {
     /**
      * Write data to a file
      */
-    public static saveFile(filepath: string, data: any, callback: Function = () => {}): void {
+    public static saveFile(filepath: string, data: unknown, callback: Function = () => {}): void {
         if (!fs.existsSync(filepath)) {
             throw new Error(`File [${filepath}] does not exist!`);
         }
@@ -107,7 +107,7 @@ export class Data {
         const serializers = {
             '.yml': yaml.safeDump,
             '.yaml': yaml.safeDump,
-            '.json': (json: any) => this.stringify(json),
+            '.json': (json: unknown) => this.stringify(json),
         };
 
         const ext = path.extname(filepath);
@@ -127,7 +127,7 @@ export class Data {
         dataPath = uri;
     }
 
-    public static stringify(data: any): string {
+    public static stringify(data: unknown): string {
         return JSON.stringify(data, null, 4);
     }
 }

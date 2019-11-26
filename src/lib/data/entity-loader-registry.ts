@@ -5,7 +5,7 @@ import Config from '../util/config';
 
 export interface EntityLoaderDefinition {
     source: string;
-    config?: {[key: string]: any};
+    config?: {[key: string]: unknown};
 }
 
 export interface EntityLoaderDefinitions {
@@ -18,8 +18,8 @@ export interface EntityLoaderDefinitions {
 export class EntityLoaderRegistry {
     private readonly config: Config;
 
-    private dataSourceFactory: DataSourceFactory;
-    private loaders: Map<string, EntityLoader> = new Map();
+    private readonly dataSourceFactory: DataSourceFactory;
+    private readonly loaders: Map<string, EntityLoader> = new Map();
 
     public constructor(loaderConfig: EntityLoaderDefinitions, config: Config) {
         this.config = config;

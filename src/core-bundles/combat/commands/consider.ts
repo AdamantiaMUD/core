@@ -1,7 +1,7 @@
-import {CombatError} from '../../../lib/combat/combat-errors';
 import Broadcast from '../../../lib/communication/broadcast';
 import GameState from '../../../lib/game-state';
 import Logger from '../../../lib/util/logger';
+import {CombatError} from '../../../lib/combat/combat-errors';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
 
 const {sayAt} = Broadcast;

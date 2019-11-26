@@ -22,7 +22,7 @@ export interface EffectListenersDefinition {
     effectAdded?: (effect?: Effect) => void;
     effectDeactivated?: (effect?: Effect) => void;
     effectRefreshed?: (effect?: Effect) => void;
-    [key: string]: (effect?: Effect, ...args: any[]) => void;
+    [key: string]: (effect?: Effect, ...args: unknown[]) => void;
 }
 
 export type EffectListenersDefinitionFactory = (state: GameState) => EffectListenersDefinition;
@@ -30,9 +30,9 @@ export type EffectListenersDefinitionFactory = (state: GameState) => EffectListe
 export class EffectFactory {
     /* eslint-disable lines-between-class-members */
     public effects: Map<
-        string,
-        {definition: EffectDefinition; eventManager: MudEventManager}
-        > = new Map();
+    string,
+    {definition: EffectDefinition; eventManager: MudEventManager}
+    > = new Map();
     /* eslint-enable lines-between-class-members */
 
     public add(id: string, config: EffectDefinition, state: GameState): void {
@@ -71,8 +71,8 @@ export class EffectFactory {
 
         const def = clone(entry.definition);
 
-        def.config = Object.assign({}, def.config, config);
-        def.state = Object.assign({}, def.state, state);
+        def.config = {...def.config, ...config};
+        def.state = {...def.state, ...state};
 
         const effect = new Effect(id, def);
 

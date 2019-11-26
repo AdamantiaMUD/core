@@ -1,3 +1,3 @@
-export const ident = (obj: any): any => obj;
+export const ident = (obj: unknown): unknown => obj;
 
 export const noop = (): unknown => undefined;

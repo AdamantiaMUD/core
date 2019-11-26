@@ -9,7 +9,7 @@ import Logger from '../util/logger';
 import Room from '../locations/room';
 import ScriptableEntity, {
     ScriptableEntityDefinition,
-    SerializedScriptableEntity
+    SerializedScriptableEntity,
 } from '../entities/scriptable-entity';
 import Serializable from '../data/serializable';
 

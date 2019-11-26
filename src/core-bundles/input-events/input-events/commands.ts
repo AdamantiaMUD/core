@@ -12,7 +12,7 @@ import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands
 import {
     NoMessageError,
     NoPartyError,
-    NoRecipientError
+    NoRecipientError,
 } from '../../../lib/communication/channels/channel-errors';
 import {PlayerMoveEvent, PlayerMovePayload} from '../../../lib/players/player-events';
 import {RoomCommandEvent} from '../../../lib/locations/room-events';
@@ -23,11 +23,13 @@ import {
     StreamEventListenerFactory,
 } from '../../../lib/events/stream-event';
 
-// const {
-//     NoPartyError,
-//     NoRecipientError,
-//     NoMessageError,
-// } = ChannelErrors;
+/*
+ * const {
+ *     NoPartyError,
+ *     NoRecipientError,
+ *     NoMessageError,
+ * } = ChannelErrors;
+ */
 
 const {prompt, sayAt} = Broadcast;
 
@@ -45,7 +47,7 @@ export const StreamCommandsEvent: StreamEventConstructor<StreamCommandsPayload> 
  * If you want to swap out the command parser this is the place to do it
  */
 export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
-    name: new StreamCommandsEvent().getName(),
+    name: StreamCommandsEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamCommandsPayload> => (stream: TransportStream<EventEmitter>, {player}) => {
         stream.socket.once('data', (buf: Buffer) => {
             const loop = (): void => {
@@ -88,39 +90,41 @@ export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
                         break;
                     }
 
-                    // case CommandType.CHANNEL: {
-                    //     const {channel} = result.payload;
-                    //
-                    //     if (
-                    //         channel.minRequiredRole !== null
-                    //         && channel.minRequiredRole > player.role
-                    //     ) {
-                    //         throw new RestrictedCommandError();
-                    //     }
-                    //
-                    //     // same with channels
-                    //     try {
-                    //         channel.send(state, player, result.args);
-                    //     }
-                    //     catch (error) {
-                    //         if (error instanceof NoPartyError) {
-                    //             sayAt(player, "You aren't in a group.");
-                    //         }
-                    //         else if (error instanceof NoRecipientError) {
-                    //             sayAt(player, 'Send the message to whom?');
-                    //         }
-                    //         else if (error instanceof NoMessageError) {
-                    //             sayAt(player, `\r\nChannel: ${channel.name}`);
-                    //             sayAt(player, `Syntax: ${channel.getUsage()}`);
-                    //
-                    //             if (channel.description) {
-                    //                 sayAt(player, channel.description);
-                    //             }
-                    //         }
-                    //     }
-                    //
-                    //     break;
-                    // }
+                    /*
+                     * case CommandType.CHANNEL: {
+                     *     const {channel} = result.payload;
+                     *
+                     *     if (
+                     *         channel.minRequiredRole !== null
+                     *         && channel.minRequiredRole > player.role
+                     *     ) {
+                     *         throw new RestrictedCommandError();
+                     *     }
+                     *
+                     *     // same with channels
+                     *     try {
+                     *         channel.send(state, player, result.args);
+                     *     }
+                     *     catch (error) {
+                     *         if (error instanceof NoPartyError) {
+                     *             sayAt(player, "You aren't in a group.");
+                     *         }
+                     *         else if (error instanceof NoRecipientError) {
+                     *             sayAt(player, 'Send the message to whom?');
+                     *         }
+                     *         else if (error instanceof NoMessageError) {
+                     *             sayAt(player, `\r\nChannel: ${channel.name}`);
+                     *             sayAt(player, `Syntax: ${channel.getUsage()}`);
+                     *
+                     *             if (channel.description) {
+                     *                 sayAt(player, channel.description);
+                     *             }
+                     *         }
+                     *     }
+                     *
+                     *     break;
+                     * }
+                     */
 
                     // case CommandType.SKILL: {
                     //     /*

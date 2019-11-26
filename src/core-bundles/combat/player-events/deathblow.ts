@@ -8,36 +8,34 @@ import {PlayerExperienceEvent} from '../../../lib/players/player-events';
 const {sayAt} = Broadcast;
 
 export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
-    name: new CharacterDeathblowEvent().getName(),
-    listener: (): MudEventListener<CharacterDeathblowPayload> => {
-        return (player: Player, payload: CharacterDeathblowPayload) => {
-            const {target, skipParty = false} = payload;
+    name: CharacterDeathblowEvent.getName(),
+    listener: (): MudEventListener<CharacterDeathblowPayload> => (player: Player, payload: CharacterDeathblowPayload) => {
+        const {target, skipParty = false} = payload;
 
-            /* eslint-disable-next-line id-length */
-            const xp = LevelUtil.mobExp(target.level);
+        /* eslint-disable-next-line id-length */
+        const xp = LevelUtil.mobExp(target.level);
 
-            if (player.party && !skipParty) {
-                /*
-                 * If they're in a party, proxy the deathblow to all members of
-                 * the party in the same room. this will make sure party members
-                 * get quest credit trigger anything else listening for
-                 * deathblow
-                 */
-                for (const member of player.party) {
-                    if (member.room === player.room) {
-                        member.dispatch(new CharacterDeathblowEvent({skipParty: true, target: target}));
-                    }
+        if (player.party && !skipParty) {
+            /*
+             * If they're in a party, proxy the deathblow to all members of
+             * the party in the same room. this will make sure party members
+             * get quest credit trigger anything else listening for
+             * deathblow
+             */
+            for (const member of player.party) {
+                if (member.room === player.room) {
+                    member.dispatch(new CharacterDeathblowEvent({skipParty: true, target: target}));
                 }
-
-                return;
             }
 
-            if (target && !player.isNpc) {
-                sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
-            }
+            return;
+        }
 
-            player.dispatch(new PlayerExperienceEvent({amount: xp}));
-        };
+        if (target && !player.isNpc) {
+            sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
+        }
+
+        player.dispatch(new PlayerExperienceEvent({amount: xp}));
     },
 };
 

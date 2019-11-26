@@ -26,7 +26,7 @@ export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPas
  * Account password confirmation station
  */
 export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
-    name: new StreamConfirmPasswordEvent().getName(),
+    name: StreamConfirmPasswordEvent.getName(),
     listener: (): StreamEventListener<StreamConfirmPasswordPayload> => (
         stream: TransportStream<EventEmitter>,
         args: StreamConfirmPasswordPayload

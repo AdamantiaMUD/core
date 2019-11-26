@@ -4,6 +4,7 @@ import * as Combat from '~/lib/util/combat';
 import Area from '~/lib/locations/area';
 import ItemType from '~/lib/equipment/item-type';
 import Npc from '~/lib/mobs/npc';
+import {ItemDefinition} from '../../../src';
 
 const makeArea = (name: string): Area => new Area(
     'test-bundle',
@@ -42,11 +43,15 @@ describe('combat.ts', () => {
                         },
                     },
                 },
-            ]
+            ],
         ];
 
-        each(testCases).it('should make the corpse correctly', (npc, output) => {
-            expect(Combat.makeCorpse(npc)).toStrictEqual(output);
-        });
+        each(testCases)
+            .it('should make the corpse correctly', (npc: Npc, output: ItemDefinition) => {
+                expect.assertions(1);
+
+                /* eslint-disable-next-line jest/no-standalone-expect */
+                expect(Combat.makeCorpse(npc)).toStrictEqual(output);
+            });
     });
 });

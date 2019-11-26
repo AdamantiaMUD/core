@@ -1,10 +1,10 @@
-import Character from '../../../lib/characters/character';
-import Player from '../../../lib/players/player';
-import Quest, {QuestProgress} from '../../../lib/quests/quest';
-import QuestGoal from '../../../lib/quests/quest-goal';
-import SimpleMap from '../../../lib/util/simple-map';
-import {CharacterDeathblowEvent} from '../../../lib/characters/character-events';
-import {QuestProgressEvent} from '../../../lib/quests/quest-events';
+import Character from '~/lib/characters/character';
+import Player from '~/lib/players/player';
+import Quest, {QuestProgress} from '~/lib/quests/quest';
+import QuestGoal from '~/lib/quests/quest-goal';
+import SimpleMap from '~/lib/util/simple-map';
+import {CharacterDeathblowEvent} from '~/lib/characters/character-events';
+import {QuestProgressEvent} from '~/lib/quests/quest-events';
 
 /**
  * A quest goal requiring the player kill a certain target a certain number of times
@@ -22,7 +22,7 @@ export class KillGoal extends QuestGoal {
 
         this.state = {count: 0};
 
-        this.listen(new CharacterDeathblowEvent().getName(), this.targetKilled.bind(this));
+        this.listen(CharacterDeathblowEvent.getName(), this.targetKilled.bind(this));
     }
 
     public getProgress(): QuestProgress {

@@ -6,10 +6,14 @@ module.exports = {
         '<rootDir>/src/**/*.ts',
         '!<rootDir>/src/index.ts',
     ],
+
     moduleNameMapper: {
         '^~/(.*)$': path.resolve(__dirname, './src/$1'),
     },
+
     roots: ['<rootDir>/test'],
-    transform: {'^.+\\.ts$': 'ts-jest'},
+
     testRegex: '^.*\\.test\\.ts$',
+
+    transform: {'^.+\\.ts$': 'ts-jest'},
 };

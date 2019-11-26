@@ -4,7 +4,7 @@ import Room from './room';
  * Keeps track of all the individual rooms in the game
  */
 export class RoomManager {
-    private _rooms: Map<string, Room> = new Map();
+    private readonly _rooms: Map<string, Room> = new Map();
 
     public addRoom(room: Room): void {
         this._rooms.set(room.entityReference, room);

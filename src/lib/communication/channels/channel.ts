@@ -58,7 +58,7 @@ export class Channel {
     /* eslint-enable lines-between-class-members */
 
     /**
-     * @param {object}  config
+     * @param {Object}  config
      * @param {string} [config.description]
      * @param {PlayerRole} [config.minRequiredRole]
      * @param {string} [config.color]
@@ -123,7 +123,7 @@ export class Channel {
      * @param {Player} target
      * @param {string} message
      * @param {Function} colorify
-     * @return {string}
+     * @returns {string}
      */
     public formatToRecipient(
         sender: Character,

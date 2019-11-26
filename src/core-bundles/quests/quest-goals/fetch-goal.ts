@@ -1,15 +1,15 @@
-import Inventory from '../../../lib/equipment/inventory';
-import Item from '../../../lib/equipment/item';
-import Player from '../../../lib/players/player';
-import Quest, {QuestProgress} from '../../../lib/quests/quest';
-import QuestGoal from '../../../lib/quests/quest-goal';
-import SimpleMap from '../../../lib/util/simple-map';
+import Inventory from '~/lib/equipment/inventory';
+import Item from '~/lib/equipment/item';
+import Player from '~/lib/players/player';
+import Quest, {QuestProgress} from '~/lib/quests/quest';
+import QuestGoal from '~/lib/quests/quest-goal';
+import SimpleMap from '~/lib/util/simple-map';
 import {
     PlayerGetItemEvent,
     PlayerDropItemEvent,
-    PlayerQuestStartedEvent
-} from '../../../lib/players/player-events';
-import {QuestProgressEvent} from '../../../lib/quests/quest-events';
+    PlayerQuestStartedEvent,
+} from '~/lib/players/player-events';
+import {QuestProgressEvent} from '~/lib/quests/quest-events';
 import {ItemDecayEvent} from '../../behaviors/behaviors/item/decay';
 
 /**
@@ -29,10 +29,10 @@ export class FetchGoal extends QuestGoal {
 
         this.state = {count: 0};
 
-        this.listen(new PlayerGetItemEvent().getName(), this.getItem.bind(this));
-        this.listen(new PlayerDropItemEvent().getName(), this.dropItem.bind(this));
-        this.listen(new ItemDecayEvent().getName(), this.dropItem.bind(this));
-        this.listen(new PlayerQuestStartedEvent().getName(), this.checkInventory.bind(this));
+        this.listen(PlayerGetItemEvent.getName(), this.getItem.bind(this));
+        this.listen(PlayerDropItemEvent.getName(), this.dropItem.bind(this));
+        this.listen(ItemDecayEvent.getName(), this.dropItem.bind(this));
+        this.listen(PlayerQuestStartedEvent.getName(), this.checkInventory.bind(this));
     }
 
     public getProgress(): QuestProgress {

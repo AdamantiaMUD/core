@@ -5,13 +5,13 @@ export class ArgParser {
      * @param {Iterable} list      Where to look for the item
      * @param {boolean}  returnKey If `list` is a Map, true to return the KV
      *                             tuple instead of just the entry
-     * @return {*} Boolean on error otherwise an entry from the list
+     * @returns {*} Boolean on error otherwise an entry from the list
      */
     public static parseDot(
         search: string,
-        list: Iterable<any>,
+        list: Iterable<unknown>,
         returnKey: boolean = false
-    ): any {
+    ): unknown {
         if (!list) {
             return null;
         }

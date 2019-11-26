@@ -6,8 +6,11 @@ module.exports = {
         '@chimericdream/jest',
         '@chimericdream/typescript',
     ],
-    parserOptions: {
-        project: './tsconfig.json',
+    'parser': '@typescript-eslint/parser',
+    'parserOptions': {
+        ecmaVersion: 2020,
+        project: './tsconfig.eslint.json',
+        sourceType: 'module',
     },
     'env': {
         browser: false,
@@ -15,9 +18,12 @@ module.exports = {
         node: true,
     },
     'rules': {
-        'no-magic-numbers': 'off',
+        '@typescript-eslint/no-magic-numbers': 'off',
+
         'no-restricted-imports': 'off',
+
         'no-sync': 'off',
+
         'no-underscore-dangle': [
             'error',
             {

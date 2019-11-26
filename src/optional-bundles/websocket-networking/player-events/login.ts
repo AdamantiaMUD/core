@@ -4,12 +4,13 @@ import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud
 import {PlayerLoginEvent} from '../../../lib/players/player-events';
 
 export const evt: MudEventListenerFactory<never> = {
-    name: new PlayerLoginEvent().getName(),
-    listener: (): MudEventListener<never> => {
+    name: PlayerLoginEvent.getName(),
+    listener: (): MudEventListener<never> =>
+
         /**
          * @listens Player#login
          */
-        return (player: Player) => {
+        (player: Player) => {
             player.socket.command('sendData', 'quests', player.questTracker.serialize().active);
 
             const effects = player.effects
@@ -20,8 +21,8 @@ export const evt: MudEventListenerFactory<never> = {
             player.socket.command('sendData', 'effects', effects);
 
             updateAttributes(player);
-        };
-    },
+        }
+    ,
 };
 
 export default evt;

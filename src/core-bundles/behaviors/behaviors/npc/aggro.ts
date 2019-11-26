@@ -1,11 +1,11 @@
-import Broadcast from '../../../../lib/communication/broadcast';
-import Logger from '../../../../lib/util/logger';
-import Npc from '../../../../lib/mobs/npc';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import {MudEventListener} from '../../../../lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/common-events';
-
-const {sayAt} = Broadcast;
+import Character from '~/lib/characters/character';
+import Logger from '~/lib/util/logger';
+import Npc from '~/lib/mobs/npc';
+import Player from '~/lib/players/player';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
+import {MEL} from '~/lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
+import {sayAt} from '~/lib/communication/broadcast';
 
 interface AggroConfig {
     delay: number;
@@ -25,6 +25,14 @@ const defaultAggroConfig = {
         players: true,
         npcs: [],
     },
+};
+
+const getConfig = (config: true | {[key: string]: unknown}): AggroConfig => {
+    if (config === true) {
+        return defaultAggroConfig;
+    }
+
+    return {...defaultAggroConfig, ...config};
 };
 
 /**
@@ -64,23 +72,23 @@ const defaultAggroConfig = {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        [new UpdateTickEvent().getName()]: (): MudEventListener<UpdateTickPayload> => (npc: Npc, payload) => {
-            const cfg = (payload?.config ?? {}) as AggroConfig;
-
-            if (!npc.room) {
+        [UpdateTickEvent.getName()]: (): MEL<UpdateTickPayload> => (
+            npc: Npc,
+            payload: UpdateTickPayload
+        ): void => {
+            if (npc.room === null) {
                 return;
             }
 
-            // setup default configs
-            const config = {...defaultAggroConfig, ...cfg};
+            const config = getConfig(payload?.config ?? {});
 
             if (npc.combat.isFighting()) {
                 return;
             }
 
-            const aggroTarget = npc.getMeta('aggroTarget');
+            const aggroTarget = npc.getMeta<Character>('aggroTarget');
 
-            if (aggroTarget) {
+            if (aggroTarget !== undefined) {
                 if (aggroTarget.room !== npc.room) {
                     npc.setMeta('aggroTarget', null);
                     npc.setMeta('aggroWarned', false);
@@ -93,12 +101,12 @@ export const aggro: BehaviorDefinition = {
 
                 // attack
                 if (sinceLastCheck >= delayLength) {
-                    if (aggroTarget.isNpc) {
+                    if (aggroTarget.isNpc()) {
                         /* eslint-disable-next-line max-len */
                         Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`);
                     }
                     else {
-                        sayAt(aggroTarget, config.attackMessage.replace(/%name%/u, npc.name));
+                        sayAt(aggroTarget as Player, config.attackMessage.replace(/%name%/u, npc.name));
                     }
 
                     npc.combat.initiate(aggroTarget);
@@ -112,10 +120,10 @@ export const aggro: BehaviorDefinition = {
                 // warn
                 if (
                     sinceLastCheck >= delayLength / 2
-                    && !aggroTarget.isNpc
-                    && !npc.getMeta('aggroWarned')
+                    && !aggroTarget.isNpc()
+                    && !npc.getMeta<boolean>('aggroWarned')
                 ) {
-                    sayAt(aggroTarget, config.warnMessage.replace(/%name%/u, npc.name));
+                    sayAt(aggroTarget as Player, config.warnMessage.replace(/%name%/u, npc.name));
                     npc.setMeta('aggroWarned', true);
                 }
 

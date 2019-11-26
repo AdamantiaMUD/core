@@ -4,7 +4,7 @@ import GameState from '../game-state';
 import Player from '../players/player';
 import QuestGoal, {
     QuestGoalDefinition,
-    SerializedQuestGoal
+    SerializedQuestGoal,
 } from './quest-goal';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
@@ -85,7 +85,7 @@ export class Quest extends MudEventEmitter implements Serializable {
 
     public addGoal(goal: QuestGoal): void {
         this.goals.push(goal);
-        goal.listen<QuestProgressPayload>(new QuestProgressEvent().getName(), this.onProgressUpdated.bind(this));
+        goal.listen<QuestProgressPayload>(QuestProgressEvent.getName(), this.onProgressUpdated.bind(this));
     }
 
     public complete(): void {
@@ -99,20 +99,22 @@ export class Quest extends MudEventEmitter implements Serializable {
     /**
      * Proxy all events to all the goals
      */
-    // public emit(event: string | symbol, ...args: any[]): boolean {
-    //     super.emit(event, ...args);
-    //
-    //     if (event === 'progress') {
-    //         // don't proxy progress event
-    //         return false;
-    //     }
-    //
-    //     this.goals.forEach(goal => {
-    //         goal.emit(event, ...args);
-    //     });
-    //
-    //     return true;
-    // }
+    /*
+     * public emit(event: string | symbol, ...args: any[]): boolean {
+     *     super.emit(event, ...args);
+     *
+     *     if (event === 'progress') {
+     *         // don't proxy progress event
+     *         return false;
+     *     }
+     *
+     *     this.goals.forEach(goal => {
+     *         goal.emit(event, ...args);
+     *     });
+     *
+     *     return true;
+     * }
+     */
 
     public getProgress(): QuestProgress {
         let overallPercent = 0;

@@ -25,7 +25,7 @@ export const StreamDeleteCharacterEvent: StreamEventConstructor<StreamDeleteChar
  * Delete character event
  */
 export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
-    name: new StreamDeleteCharacterEvent().getName(),
+    name: StreamDeleteCharacterEvent.getName(),
     listener: (): StreamEventListener<StreamDeleteCharacterPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
         const say = EventUtil.genSay(stream);
         const write = EventUtil.genWrite(stream);

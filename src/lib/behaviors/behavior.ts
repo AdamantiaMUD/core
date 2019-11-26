@@ -2,7 +2,7 @@ import GameState from '../game-state';
 import SimpleMap from '../util/simple-map';
 import {MudEventListener} from '../events/mud-event';
 
-export type Behavior = (config: SimpleMap, ...args: any[]) => void;
+export type Behavior = (config: SimpleMap, ...args: unknown[]) => void;
 
 export interface BehaviorDefinition {
     listeners: {
@@ -13,5 +13,5 @@ export interface BehaviorDefinition {
 export type BehaviorEventListenerFactory<T> = (state?: GameState) => MudEventListener<T>;
 
 export interface BehaviorEventListenerDefinition {
-    listeners: {[key: string]: BehaviorEventListenerFactory<any>};
+    listeners: {[key: string]: BehaviorEventListenerFactory<unknown>};
 }

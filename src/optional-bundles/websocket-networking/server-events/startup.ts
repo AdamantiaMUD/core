@@ -12,7 +12,7 @@ import WebsocketStream from '../lib/WebsocketStream';
 const DEFAULT_WEBSOCKET_PORT = 4001;
 
 export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
-    name: new GameServerStartupEvent().getName(),
+    name: GameServerStartupEvent.getName(),
     listener: (state: GameState): MudEventListener<GameServerStartupPayload> => () => {
         const port = state.config.get('port.websocket', DEFAULT_WEBSOCKET_PORT);
 

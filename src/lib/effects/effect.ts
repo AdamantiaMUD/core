@@ -35,7 +35,7 @@ export interface EffectState {
     stacks?: number;
     tickInterval?: number;
     ticks?: number;
-    [key: string]: any;
+    [key: string]: unknown;
 }
 
 export interface SerializedEffect extends SimpleMap {
@@ -51,7 +51,7 @@ const clone = cloneFactory();
 
 /**
  * See the {@link http://ranviermud.com/extending/effects/|Effect guide} for usage.
- * @property {object}  config Effect configuration (name/desc/duration/etc.)
+ * @property {Object}  config Effect configuration (name/desc/duration/etc.)
  * @property {boolean} config.autoActivate If this effect immediately activates itself when added to the target
  * @property {boolean} config.hidden       If this effect is shown in the character's effect list
  * @property {boolean} config.refreshes    If an effect with the same type is applied it will trigger an effectRefresh
@@ -63,7 +63,7 @@ const clone = cloneFactory();
  * @property {string}  config.type         The effect category, mainly used when disallowing stacking
  * @property {boolean|number} config.tickInterval Number of seconds between calls to the `updateTick` listener
  * @property {string}    description
- * @property {object}    state  Configuration of this _type_ of effect (magnitude, element, stat, etc.)
+ * @property {Object}    state  Configuration of this _type_ of effect (magnitude, element, stat, etc.)
  *
  * @listens Effect#effectAdded
  */
@@ -128,7 +128,7 @@ export class Effect extends MudEventEmitter implements Serializable {
         }
 
         if (this.config.autoActivate) {
-            this.listen(new EffectAddedEvent().getName(), this.activate.bind(this));
+            this.listen(EffectAddedEvent.getName(), this.activate.bind(this));
         }
     }
 
@@ -201,7 +201,7 @@ export class Effect extends MudEventEmitter implements Serializable {
     /**
      * Reinitialize from persisted data
      */
-    public hydrate(state: GameState, data: any): void {
+    public hydrate(state: GameState, data: unknown): void {
         data.config.duration = data.config.duration === -1 ? Infinity : data.config.duration;
 
         this.config = data.config;
@@ -275,7 +275,7 @@ export class Effect extends MudEventEmitter implements Serializable {
 
     /**
      * Gather data to persist
-     * @return {Object}
+     * @returns {Object}
      */
     public serialize(): SerializedEffect {
         const config = clone(this.config);

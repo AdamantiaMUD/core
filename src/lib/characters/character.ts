@@ -138,6 +138,7 @@ export class Character extends ScriptableEntity implements Serializable {
         }
         else {
             const startingRoom = state.config.get('startingRoom');
+
             this.room = state.roomManager.getRoom(startingRoom);
         }
     }
@@ -216,6 +217,7 @@ export class Character extends ScriptableEntity implements Serializable {
         }
 
         const attribute = this._attributes.get(attr);
+
         // const currentVal = this.effects.evaluateAttribute(attribute);
         const currentVal = attribute.base ?? 0;
 

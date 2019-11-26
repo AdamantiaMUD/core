@@ -7,25 +7,23 @@ const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<PlayerCurrencyGainedPayload> = {
-    name: new PlayerCurrencyGainedEvent().getName(),
-    listener: (): MudEventListener<PlayerCurrencyGainedPayload> => {
-        return (player: Player, {denomination, amount}) => {
-            const friendlyName = denomination
-                .replace('_', ' ')
-                .replace(/\b\w/gu, str => str.toUpperCase());
+    name: PlayerCurrencyGainedEvent.getName(),
+    listener: (): MudEventListener<PlayerCurrencyGainedPayload> => (player: Player, {denomination, amount}) => {
+        const friendlyName = denomination
+            .replace('_', ' ')
+            .replace(/\b\w/gu, str => str.toUpperCase());
 
-            const key = `currencies.${denomination}`;
+        const key = `currencies.${denomination}`;
 
-            if (!player.getMeta('currencies')) {
-                player.setMeta('currencies', {});
-            }
+        if (!player.getMeta('currencies')) {
+            player.setMeta('currencies', {});
+        }
 
-            player.setMeta(key, (player.getMeta(key) || 0) + amount);
-            player.save();
+        player.setMeta(key, (player.getMeta(key) || 0) + amount);
+        player.save();
 
-            /* eslint-disable-next-line max-len */
-            sayAt(player, `<green>You receive currency: <b><white>[${friendlyName}]</white></b> x${amount}.`);
-        };
+        /* eslint-disable-next-line max-len */
+        sayAt(player, `<green>You receive currency: <b><white>[${friendlyName}]</white></b> x${amount}.`);
     },
 };
 

@@ -34,7 +34,7 @@ export const StreamChooseCharacterEvent: StreamEventConstructor<StreamChooseChar
  * Account character selection event
  */
 export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
-    name: new StreamChooseCharacterEvent().getName(),
+    name: StreamChooseCharacterEvent.getName(),
     listener: (state: GameState): StreamEventListener<StreamChooseCharacterPayload> => (
         stream: TransportStream<EventEmitter>,
         {account}: StreamChooseCharacterPayload
@@ -63,12 +63,10 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
         options.push({
             display: 'Change Password',
             onSelect: () => {
-                stream.dispatch(
-                    new StreamChangePasswordEvent({
-                        account: account,
-                        NextEvent: StreamChooseCharacterEvent,
-                    })
-                );
+                stream.dispatch(new StreamChangePasswordEvent({
+                    account: account,
+                    NextEvent: StreamChooseCharacterEvent,
+                }));
             },
         });
 

@@ -4,12 +4,12 @@ import Attribute from './attribute';
 import AttributeFormula from './attribute-formula';
 import SimpleMap from '../util/simple-map';
 
-export type AttributeDefinition = {
+export interface AttributeDefinition {
     base: number;
     formula: AttributeFormula;
     metadata: SimpleMap;
     name: string;
-};
+}
 
 export class AttributeFactory {
     private readonly _attributes: Map<string, AttributeDefinition> = new Map();

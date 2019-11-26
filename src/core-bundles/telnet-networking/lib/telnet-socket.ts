@@ -1,8 +1,7 @@
-/* eslint-disable no-magic-numbers */
 import EventEmitter from 'events';
 import {AddressInfo} from 'net';
 
-import AdamantiaSocket from '../../../lib/communication/adamantia-socket';
+import AdamantiaSocket from '~/lib/communication/adamantia-socket';
 import Options from './options';
 import Sequences from './sequences';
 
@@ -14,7 +13,7 @@ export class TelnetSocket extends EventEmitter {
     public maxInputLength: number;
     public socket: AdamantiaSocket;
 
-    public constructor(opts: {maxInputLength?: number; [key: string]: any} = {}) {
+    public constructor(opts: {maxInputLength?: number; [key: string]: unknown} = {}) {
         super();
 
         this.socket = null;
@@ -119,7 +118,7 @@ export class TelnetSocket extends EventEmitter {
      * Send a GMCP message
      * https://www.gammon.com.au/gmcp
      */
-    public sendGMCP(gmcpPackage: string, data: any): void {
+    public sendGMCP(gmcpPackage: string, data: unknown): void {
         const gmcpData = `${gmcpPackage} ${JSON.stringify(data)}`;
         const dataBuffer = Buffer.from(gmcpData);
         const seqStartBuffer = Buffer.from([Sequences.IAC, Sequences.SB, Options.OPT_GMCP]);
@@ -173,7 +172,8 @@ export class TelnetSocket extends EventEmitter {
             for (let i = 0; i < inputlen; i++) {
                 if (databuf[i] !== 10) { // \n
                     bucket.push(databuf[i]);
-                } else {
+                }
+                else {
                     this.input(Buffer.from(bucket));
                     bucket = [];
                 }

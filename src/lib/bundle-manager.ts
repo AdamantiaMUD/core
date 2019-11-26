@@ -268,6 +268,7 @@ export class BundleManager {
         await this.loadQuestRewards(bundle, bundlePath);
         await this.loadAttributes(bundle, bundlePath);
         await this.loadBehaviors(bundle, bundlePath);
+
         // await this.loadChannels(bundle, bundlePath);
         await this.loadNpcClasses(bundle, bundlePath);
         await this.loadPlayerClasses(bundle, bundlePath);
@@ -276,6 +277,7 @@ export class BundleManager {
         await this.loadInputEvents(bundle, bundlePath);
         await this.loadServerEvents(bundle, bundlePath);
         await this.loadPlayerEvents(bundle, bundlePath);
+
         // await this.loadSkills(bundle, bundlePath);
         await this.loadHelp(bundle, bundlePath);
 
@@ -354,7 +356,7 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Effects -- END`);
     }
 
-    private async loadEntities<T extends EntityFactory<any, any>>(
+    private async loadEntities<T extends EntityFactory<unknown, unknown>>(
         bundle: string,
         bundlePath: string,
         areaName: string,
@@ -402,7 +404,7 @@ export class BundleManager {
     }
 
     private async loadEntityScript(
-        factory: EntityFactory<any, any>,
+        factory: EntityFactory<unknown, unknown>,
         ref: string,
         scriptPath: string
     ): Promise<void> {
@@ -435,6 +437,7 @@ export class BundleManager {
 
         for (const helpFile of files) {
             const helpName = path.basename(helpFile, path.extname(helpFile));
+
             Logger.verbose(`LOAD: ${bundle} - Help -> ${helpName}`);
 
             const helpPath = path.join(uri, helpFile);

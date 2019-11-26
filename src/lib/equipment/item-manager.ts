@@ -5,7 +5,7 @@ import {UpdateTickEvent} from '../common/common-events';
  * Keep track of all items in game
  */
 export class ItemManager {
-    private _items: Set<Item> = new Set();
+    private readonly _items: Set<Item> = new Set();
 
     public add(item: Item): void {
         this._items.add(item);

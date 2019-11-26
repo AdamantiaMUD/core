@@ -16,7 +16,7 @@ export class MobFactory extends EntityFactory<Npc, NpcDefinition> {
      * contents you must manually call `npc.hydrate(state)`
      */
     public create(entityRef: string, area: Area): Npc {
-        const definition = this.getDefinition(entityRef) as NpcDefinition;
+        const definition = this.getDefinition(entityRef);
 
         if (!definition) {
             throw new Error(`No Entity definition found for ${entityRef}`);

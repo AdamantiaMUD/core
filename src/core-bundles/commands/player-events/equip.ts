@@ -4,28 +4,26 @@ import {CharacterEquipItemEvent, CharacterEquipItemPayload} from '../../../lib/c
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 
 export const evt: MudEventListenerFactory<CharacterEquipItemPayload> = {
-    name: new CharacterEquipItemEvent().getName(),
-    listener: (state: GameState): MudEventListener<CharacterEquipItemPayload> => {
-        return (player: Player, {slot, item}) => {
-            if (!item.getMeta('stats')) {
-                return;
-            }
+    name: CharacterEquipItemEvent.getName(),
+    listener: (state: GameState): MudEventListener<CharacterEquipItemPayload> => (player: Player, {slot, item}) => {
+        if (!item.getMeta('stats')) {
+            return;
+        }
 
-            const stats = item.getMeta('stats');
+        const stats = item.getMeta('stats');
 
-            const config = {
-                name: `Equip: ${slot}`,
-                type: `equip.${slot}`,
-            };
-
-            const effectState = {slot, stats};
-
-            player.addEffect(state.effectFactory.create(
-                'equip',
-                config,
-                effectState
-            ));
+        const config = {
+            name: `Equip: ${slot}`,
+            type: `equip.${slot}`,
         };
+
+        const effectState = {slot, stats};
+
+        player.addEffect(state.effectFactory.create(
+            'equip',
+            config,
+            effectState
+        ));
     },
 };
 

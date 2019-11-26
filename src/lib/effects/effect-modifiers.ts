@@ -9,7 +9,7 @@ export type EffectAttributeModifierFunction = (
     current: number
 ) => number;
 
-export type EffectModifier = (effect: Effect, ...args: any[]) => any;
+export type EffectModifier = (effect: Effect, ...args: unknown[]) => unknown;
 
 export interface EffectModifiers {
     attributes?: EffectAttributeModifierFunction | {[key: string]: EffectAttributeModifier};

@@ -14,7 +14,7 @@ export class RoomFactory extends EntityFactory<Room, RoomDefinition> {
      * Create a new instance of a given room. Room will not be hydrated
      */
     public create(entityRef: string, area: Area): Room {
-        const definition = this.getDefinition(entityRef) as RoomDefinition;
+        const definition = this.getDefinition(entityRef);
 
         if (!definition) {
             throw new Error(`No Entity definition found for ${entityRef}`);

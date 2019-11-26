@@ -9,7 +9,7 @@ export class StreamEventManager {
      * key: string - The name of the event
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
-    private _events: Map<string, Set<StreamEventListener<unknown>>> = new Map();
+    private readonly _events: Map<string, Set<StreamEventListener<unknown>>> = new Map();
 
     public get size(): number {
         return this._events.size;

@@ -1,15 +1,15 @@
-import Character from '../../../lib/characters/character';
-import Player from '../../../lib/players/player';
-import Quest, {QuestProgress} from '../../../lib/quests/quest';
-import QuestGoal from '../../../lib/quests/quest-goal';
-import SimpleMap from '../../../lib/util/simple-map';
+import Character from '~/lib/characters/character';
+import Player from '~/lib/players/player';
+import Quest, {QuestProgress} from '~/lib/quests/quest';
+import QuestGoal from '~/lib/quests/quest-goal';
+import SimpleMap from '~/lib/util/simple-map';
 import {
     CharacterEquipItemEvent,
     CharacterEquipItemPayload,
     CharacterUnequipItemEvent,
     CharacterUnequipItemPayload,
-} from '../../../lib/characters/character-events';
-import {QuestProgressEvent} from '../../../lib/quests/quest-events';
+} from '~/lib/characters/character-events';
+import {QuestProgressEvent} from '~/lib/quests/quest-events';
 
 /**
  * A quest goal requiring the player equip something to a particular slot
@@ -26,8 +26,8 @@ export class EquipGoal extends QuestGoal {
 
         this.state = {equipped: false};
 
-        this.listen(new CharacterEquipItemEvent().getName(), this.equipItem.bind(this));
-        this.listen(new CharacterUnequipItemEvent().getName(), this.unequipItem.bind(this));
+        this.listen(CharacterEquipItemEvent.getName(), this.equipItem.bind(this));
+        this.listen(CharacterUnequipItemEvent.getName(), this.unequipItem.bind(this));
     }
 
     public getProgress(): QuestProgress {

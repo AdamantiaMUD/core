@@ -8,57 +8,55 @@ const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<CharacterHitPayload> = {
-    name: new CharacterHitEvent().getName(),
-    listener: (): MudEventListener<CharacterHitPayload> => {
-        return (player: Player, {source, target, amount}) => {
-            if (source.metadata.hidden) {
-                return;
-            }
+    name: CharacterHitEvent.getName(),
+    listener: (): MudEventListener<CharacterHitPayload> => (player: Player, {source, target, amount}) => {
+        if (source.metadata.hidden) {
+            return;
+        }
 
-            let buf = '';
+        let buf = '';
 
-            if (source.source === player) {
-                buf = 'You hit';
-            }
-            else {
-                buf = `Your <b>${source.source.name}</b> hit`;
-            }
+        if (source.source === player) {
+            buf = 'You hit';
+        }
+        else {
+            buf = `Your <b>${source.source.name}</b> hit`;
+        }
 
-            buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
+        buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
 
-            if (source.metadata.critical) {
-                buf += ' <red><b>(Critical)</b></red>';
-            }
+        if (source.metadata.critical) {
+            buf += ' <red><b>(Critical)</b></red>';
+        }
 
-            sayAt(player, buf);
+        sayAt(player, buf);
 
-            if (player.equipment.has('wield')) {
-                player.equipment
-                    .get('wield')
-                    .dispatch(new ItemHitEvent({amount, source, target}));
-            }
+        if (player.equipment.has('wield')) {
+            player.equipment
+                .get('wield')
+                .dispatch(new ItemHitEvent({amount, source, target}));
+        }
 
-            // show damage to party members
-            if (!player.party) {
-                return;
-            }
+        // show damage to party members
+        if (!player.party) {
+            return;
+        }
 
-            for (const member of player.party) {
-                if (!(member === player || member.room !== player.room)) {
-                    buf = '';
+        for (const member of player.party) {
+            if (!(member === player || member.room !== player.room)) {
+                buf = '';
 
-                    if (source.source === player) {
-                        buf = `${player.name} hit`;
-                    }
-                    else {
-                        buf = `${player.name} <b>${source.source.name}</b> hit`;
-                    }
-
-                    buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
-                    sayAt(member, buf);
+                if (source.source === player) {
+                    buf = `${player.name} hit`;
                 }
+                else {
+                    buf = `${player.name} <b>${source.source.name}</b> hit`;
+                }
+
+                buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
+                sayAt(member, buf);
             }
-        };
+        }
     },
 };
 

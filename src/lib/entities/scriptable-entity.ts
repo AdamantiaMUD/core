@@ -4,7 +4,7 @@ import {sprintf} from 'sprintf-js';
 import BehaviorManager from '../behaviors/behavior-manager';
 import GameEntity, {
     GameEntityDefinition,
-    SerializedGameEntity
+    SerializedGameEntity,
 } from './game-entity';
 import GameState from '../game-state';
 import Logger from '../util/logger';

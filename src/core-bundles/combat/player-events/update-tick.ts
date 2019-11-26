@@ -10,45 +10,43 @@ const {prompt, sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
 export const evt: MudEventListenerFactory<UpdateTickPayload> = {
-    name: new UpdateTickEvent().getName(),
-    listener: (state: GameState): MudEventListener<UpdateTickPayload> => {
-        return (player: Player) => {
-            if (!player.combat.isFighting()) {
-                return;
+    name: UpdateTickEvent.getName(),
+    listener: (state: GameState): MudEventListener<UpdateTickPayload> => (player: Player) => {
+        if (!player.combat.isFighting()) {
+            return;
+        }
+
+        state.combat.startRegeneration(state, player);
+
+        let hadActions = false;
+
+        try {
+            hadActions = state.combat.updateRound(state, player);
+        }
+        catch (e) {
+            if (e instanceof CombatInvalidTargetError) {
+                sayAt(player, "You can't attack that target.");
             }
-
-            state.combat.startRegeneration(state, player);
-
-            let hadActions = false;
-
-            try {
-                hadActions = state.combat.updateRound(state, player);
+            else {
+                throw e;
             }
-            catch (e) {
-                if (e instanceof CombatInvalidTargetError) {
-                    sayAt(player, "You can't attack that target.");
-                }
-                else {
-                    throw e;
-                }
-            }
+        }
 
-            if (!hadActions) {
-                return;
-            }
+        if (!hadActions) {
+            return;
+        }
 
-            const usingWebsockets = player.socket instanceof WebsocketStream;
+        const usingWebsockets = player.socket instanceof WebsocketStream;
 
-            // don't show the combat prompt to a websockets server
-            if (!player.hasPrompt('combat') && !usingWebsockets) {
-                player.addPrompt('combat', () => state.combat.buildPrompt(player));
-            }
+        // don't show the combat prompt to a websockets server
+        if (!player.hasPrompt('combat') && !usingWebsockets) {
+            player.addPrompt('combat', () => state.combat.buildPrompt(player));
+        }
 
-            sayAt(player, '');
-            if (!usingWebsockets) {
-                prompt(player);
-            }
-        };
+        sayAt(player, '');
+        if (!usingWebsockets) {
+            prompt(player);
+        }
     },
 };
 

@@ -1,28 +1,31 @@
-import GameState from '../../../../lib/game-state';
-import Item, {ItemDefinition} from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/util/logger';
-import LootTable from '../../../../lib/combat/loot-table';
-import Npc from '../../../../lib/mobs/npc';
-import Player from '../../../../lib/players/player';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import {MudEventListener} from '../../../../lib/events/mud-event';
-import {NpcKilledEvent, NpcKilledPayload} from '../../../../lib/mobs/npc-events';
-import {PlayerCurrencyGainedEvent} from '../../../../lib/players/player-events';
-import {makeCorpse} from '../../../../lib/util/combat';
+import GameState from '~/lib/game-state';
+import Item, {ItemDefinition} from '~/lib/equipment/item';
+import Logger from '~/lib/util/logger';
+import LootTable from '~/lib/combat/loot-table';
+import Npc from '~/lib/mobs/npc';
+import Player from '~/lib/players/player';
+import {BehaviorDefinition} from '~/lib/behaviors/behavior';
+import {MEL} from '~/lib/events/mud-event';
+import {NpcKilledEvent, NpcKilledPayload} from '~/lib/mobs/npc-events';
+import {PlayerCurrencyGainedEvent} from '~/lib/players/player-events';
+import SimpleMap from '~/lib/util/simple-map';
+import {makeCorpse} from '~/lib/util/combat';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
-        [new NpcKilledEvent().getName()]: (state: GameState): MudEventListener<NpcKilledPayload> => async function(npc: Npc, payload, config) {
+        [NpcKilledEvent.getName()]: (state: GameState): MEL<NpcKilledPayload> => async (
+            npc: Npc,
+            payload: NpcKilledPayload,
+            config: SimpleMap
+        ): Promise<void> => {
             const killer = payload?.killer ?? null;
 
             const {room, area} = npc;
 
             const lootTable = new LootTable(state, config);
-
             const currencies = lootTable.currencies();
             const roll = await lootTable.roll();
-
-            const items = roll.map(item => state.itemFactory.create(item, area));
+            const items = roll.map((item: string): Item => state.itemFactory.create(item, area));
 
             const corpseDef: ItemDefinition = makeCorpse(npc);
 
@@ -34,7 +37,7 @@ export const lootable: BehaviorDefinition = {
 
             Logger.log(`Generated corpse: ${corpse.uuid}`);
 
-            items.forEach(item => {
+            items.forEach((item: Item): void => {
                 item.hydrate(state);
                 corpse.addItem(item);
             });
@@ -48,7 +51,7 @@ export const lootable: BehaviorDefinition = {
                     currencies.forEach(currency => {
                         // distribute currency among group members in the same room
                         const recipients = (killer.party ? [...killer.party] : [killer])
-                            .filter(recipient => recipient.room === killer.room);
+                            .filter((recipient: Player) => recipient.room === killer.room);
 
                         let remaining = currency.amount;
 
@@ -64,7 +67,10 @@ export const lootable: BehaviorDefinition = {
 
                             remaining -= amount;
 
-                            recipient.dispatch(new PlayerCurrencyGainedEvent({amount: amount, denomination: currency.name}));
+                            recipient.dispatch(new PlayerCurrencyGainedEvent({
+                                amount: amount,
+                                denomination: currency.name,
+                            }));
 
                             state.commandManager.get('look').execute(corpse.uuid, recipient);
                         }

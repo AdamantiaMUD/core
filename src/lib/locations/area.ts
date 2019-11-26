@@ -40,7 +40,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
 
         this._manifest = manifest;
 
-        this.listen(new UpdateTickEvent().getName(), this.tickAll.bind(this));
+        this.listen(UpdateTickEvent.getName(), this.tickAll.bind(this));
     }
 
     /**

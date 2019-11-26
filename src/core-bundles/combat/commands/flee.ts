@@ -1,16 +1,15 @@
 import {Random} from 'rando-js';
 
-import CommandParser from '../../../lib/commands/command-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-import {PlayerMoveEvent} from '../../../lib/players/player-events';
-
-const {sayAt} = Broadcast;
+import CommandParser from '~/lib/commands/command-parser';
+import Player from '~/lib/players/player';
+import {CommandDefinitionFactory} from '~/lib/commands/command';
+import {PlayerMoveEvent} from '~/lib/players/player-events';
+import {sayAt} from '~/lib/communication/broadcast';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'flee',
     usage: 'flee [direction]',
-    command: state => (direction, player) => {
+    command: state => (direction, player: Player) => {
         if (!player.combat.isFighting()) {
             sayAt(player, 'You jump at the sight of your own shadow.');
 

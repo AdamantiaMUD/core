@@ -8,7 +8,7 @@ import YamlDataSource from './yaml-data-source';
 import YamlDirectoryDataSource from './yaml-directory-data-source';
 
 export class DataSourceFactory {
-    private sources: Map<string, DataSource> = new Map();
+    private readonly sources: Map<string, DataSource> = new Map();
 
     private readonly config: Config;
 
