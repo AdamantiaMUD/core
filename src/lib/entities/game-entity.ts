@@ -4,6 +4,7 @@ import set from 'lodash.set';
 
 import MudEventEmitter from '../events/mud-event-emitter';
 import {MetadataUpdatedEvent} from '../data/events';
+import {hasValue} from '../util/functions';
 
 import type GameEntityInterface from './game-entity-interface';
 import type GameStateData from '../game-state-data';
@@ -48,11 +49,11 @@ export class GameEntity extends MudEventEmitter implements Metadatable, Serializ
     /*
      * Get metadata by any notation supported by lodash.get
      */
-    public getMeta<T = unknown>(key: string): T | undefined {
+    public getMeta<T = unknown>(key: string): T | null {
         const meta: unknown = get(this._metadata, key);
 
-        if (typeof meta === 'undefined') {
-            return undefined;
+        if (!hasValue(meta)) {
+            return null;
         }
 
         return meta as T;

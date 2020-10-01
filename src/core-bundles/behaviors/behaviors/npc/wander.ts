@@ -1,13 +1,14 @@
 import {Random} from 'rando-js';
 
-import GameStateData from '~/lib/game-state-data';
-import Logger from '~/lib/util/logger';
-import Npc from '~/lib/mobs/npc';
-import {BehaviorDefinition} from '~/lib/behaviors/behavior';
-import Room, {Door} from '~/lib/locations/room';
-import {MEL} from '~/lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
-import {sayAt} from '~/lib/communication/broadcast';
+import GameStateData from '../../../../lib/game-state-data';
+import Logger from '../../../../lib/util/logger';
+import Npc from '../../../../lib/mobs/npc';
+import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import Room, {Door} from '../../../../lib/locations/room';
+import {MEL} from '../../../../lib/events/mud-event';
+import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/events';
+import {hasValue} from '../../../../lib/util/functions';
+import {sayAt} from '../../../../lib/communication/broadcast';
 
 interface WanderConfig {
     areaRestricted: boolean;
@@ -29,9 +30,9 @@ const getConfig = (config: true | {[key: string]: unknown}): WanderConfig => {
     return {...defaultWanderConfig, ...config};
 };
 
-const getDoor = (npc: Npc, room: Room): Door => {
-    if (room === undefined) {
-        return undefined;
+const getDoor = (npc: Npc, room?: Room): Door | null => {
+    if (!hasValue(room) || !hasValue(npc.room)) {
+        return null;
     }
 
     if (npc.room.hasDoor(room)) {
@@ -42,7 +43,7 @@ const getDoor = (npc: Npc, room: Room): Door => {
         return room.getDoor(npc.room);
     }
 
-    return undefined;
+    return null;
 };
 
 /**
@@ -55,7 +56,7 @@ const getDoor = (npc: Npc, room: Room): Door => {
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameState): MEL<UpdateTickPayload> => (
+        [UpdateTickEvent.getName()]: (state: GameStateData): MEL<UpdateTickPayload> => (
             npc: Npc,
             payload: UpdateTickPayload
         ): void => {

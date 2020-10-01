@@ -64,8 +64,8 @@ export class QuestTracker implements Serializable {
      * }
      */
 
-    public get(qid: string): Quest | undefined {
-        return this._activeQuests.get(qid);
+    public get(qid: string): Quest | null {
+        return this._activeQuests.get(qid) ?? null;
     }
 
     public hydrate(state: GameStateData): void {

@@ -48,8 +48,8 @@ export class CharacterAttributes implements Serializable {
             });
     }
 
-    public get(key: string): Attribute | undefined {
-        return this._attributes.get(key);
+    public get(key: string): Attribute | null {
+        return this._attributes.get(key) ?? null;
     }
 
     public getAttributes(): IterableIterator<[string, Attribute]> {

@@ -1,8 +1,8 @@
-import Helpfile from './helpfile';
+import type Helpfile from './helpfile';
 
 export class HelpManager {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public helps: Map<string, Helpfile> = new Map();
+    public helps: Map<string, Helpfile> = new Map<string, Helpfile>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public add(help: Helpfile): void {
@@ -24,14 +24,14 @@ export class HelpManager {
         return results;
     }
 
-    public get(help: string): Helpfile {
-        return this.helps.get(help);
+    public get(help: string): Helpfile | null {
+        return this.helps.get(help) ?? null;
     }
 
-    public getFirst(search: string): Helpfile {
+    public getFirst(search: string): Helpfile | null {
         const results = this.find(search);
 
-        if (!results.size) {
+        if (results.size === 0) {
             /**
              * No results found
              */

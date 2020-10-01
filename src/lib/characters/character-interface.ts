@@ -37,7 +37,7 @@ export interface CharacterInterface extends ScriptableEntityInterface {
     getAttribute: (attr: string, defaultValue?: number | null) => number;
     getAttributeNames: () => IterableIterator<string>;
     getBaseAttribute: (attr: string) => number;
-    getItem: (itemRef: string) => Item | undefined;
+    getItem: (itemRef: string) => Item | null;
     getMaxAttribute: (attr: string) => number;
     hasEffectType: (type: string) => boolean;
     hasFollower: (target: CharacterInterface) => boolean;

@@ -17,31 +17,31 @@ export class CommandManager {
     /**
      * Find a command from a partial name
      */
-    public find(search: string): Command | undefined {
+    public find(search: string): Command | null {
         for (const [name, command] of this.commands.entries()) {
             if (name.startsWith(search)) {
                 return command;
             }
         }
 
-        return undefined;
+        return null;
     }
 
-    public findWithAlias(search: string): {command: Command; alias: string} | undefined {
+    public findWithAlias(search: string): {command: Command; alias: string} | null {
         for (const [name, command] of this.commands.entries()) {
             if (name.startsWith(search)) {
                 return {command: command, alias: name};
             }
         }
 
-        return undefined;
+        return null;
     }
 
     /**
      * Get command by name
      */
-    public get(name: string): Command | undefined {
-        return this.commands.get(name);
+    public get(name: string): Command | null {
+        return this.commands.get(name) ?? null;
     }
 
     public remove(command: Command): void {

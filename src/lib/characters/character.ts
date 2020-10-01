@@ -196,8 +196,8 @@ export abstract class Character extends ScriptableEntity implements Serializable
         return att?.base ?? 0;
     }
 
-    public getItem(itemRef: string): Item | undefined {
-        return this.inventory.items.get(itemRef);
+    public getItem(itemRef: string): Item | null {
+        return this.inventory.items.get(itemRef) ?? null;
     }
 
     /**

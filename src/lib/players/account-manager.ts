@@ -17,13 +17,13 @@ export class AccountManager {
         this._accounts.set(username, acc);
     }
 
-    public getAccount(username: string): Account | undefined {
-        return this._accounts.get(username);
+    public getAccount(username: string): Account | null {
+        return this._accounts.get(username) ?? null;
     }
 
-    public async loadAccount(username: string, force: boolean = false): Promise<Account | undefined> {
+    public async loadAccount(username: string, force: boolean = false): Promise<Account | null> {
         if (this._accounts.has(username) && !force) {
-            return Promise.resolve(this.getAccount(username));
+            return Promise.resolve(this.getAccount(username) ?? null);
         }
 
         if (!hasValue(this._loader)) {

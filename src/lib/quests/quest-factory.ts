@@ -141,8 +141,8 @@ export class QuestFactory {
     /**
      * Get a quest definition. Use `create` if you want an instance of a quest
      */
-    public get(qid: string): AbstractQuest | undefined {
-        return this._quests.get(qid);
+    public get(qid: string): AbstractQuest | null {
+        return this._quests.get(qid) ?? null;
     }
 
     public set(qid: string, val: AbstractQuest): void {

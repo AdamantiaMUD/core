@@ -2,14 +2,14 @@ import {AddressInfo} from 'net';
 
 import Sequences from './sequences';
 import TelnetSocket from './telnet-socket';
-import TransportStream from '~/lib/communication/transport-stream';
+import TransportStream from '../../../lib/communication/transport-stream';
 
 /**
  * Thin wrapper around a @worldofpannotia/ranvier-telnet `TelnetSocket`
  */
 export class TelnetStream extends TransportStream<TelnetSocket> {
-    public address(): AddressInfo | string {
-        return undefined;
+    public address(): AddressInfo | string | null {
+        return null;
     }
 
     public attach(socket: TelnetSocket): void {

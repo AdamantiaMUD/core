@@ -61,8 +61,8 @@ export class EntityLoaderRegistry {
         }
     }
 
-    public get(name: string): EntityLoader | undefined {
-        return this._loaders.get(name);
+    public get(name: string): EntityLoader | null {
+        return this._loaders.get(name) ?? null;
     }
 }
 

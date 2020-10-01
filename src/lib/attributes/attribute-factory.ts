@@ -60,7 +60,7 @@ export class AttributeFactory {
         });
     }
 
-    public create(name: string, base: number | null = null, delta: number = 0): Attribute | undefined {
+    public create(name: string, base: number | null = null, delta: number = 0): Attribute | null {
         if (!this.has(name)) {
             throw new RangeError(`No attribute definition found for [${name}]`);
         }
@@ -68,7 +68,7 @@ export class AttributeFactory {
         const def = this._attributes.get(name);
 
         if (!hasValue(def)) {
-            return undefined;
+            return null;
         }
 
         return new Attribute(name, base ?? def.base, delta, def.formula, def.metadata);
@@ -77,8 +77,8 @@ export class AttributeFactory {
     /**
      * Get a attribute definition. Use `create` if you want an instance of a attribute
      */
-    public get(name: string): AttributeDefinition | undefined {
-        return this._attributes.get(name);
+    public get(name: string): AttributeDefinition | null {
+        return this._attributes.get(name) ?? null;
     }
 
     public has(name: string): boolean {

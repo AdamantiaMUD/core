@@ -1,10 +1,6 @@
-export interface HelpfileOptions {
-    body: string;
-    channel: string;
-    command: string;
-    keywords?: string[];
-    related?: string[];
-}
+import {hasValue} from '../util/functions';
+
+import type HelpfileOptions from './helpfile-options';
 
 export class Helpfile {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -21,14 +17,14 @@ export class Helpfile {
         this.bundle = bundle;
         this.name = name;
 
-        if (!options || !options.body) {
+        if (!hasValue(options) || options.body?.length === 0) {
             throw new Error(`Help file [${name}] has no content.`);
         }
 
-        this.keywords = options.keywords || [name];
+        this.keywords = options.keywords ?? [name];
         this.command = options.command;
         this.channel = options.channel;
-        this.related = options.related || [];
+        this.related = options.related ?? [];
         this.body = options.body;
     }
 }

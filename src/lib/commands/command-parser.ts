@@ -25,16 +25,16 @@ export const CommandParser = {
     /**
      * Determine if a player can leave the current room to a given direction
      */
-    canGo: (player: Player, direction: string): RoomExitDefinition | undefined => {
+    canGo: (player: Player, direction: string): RoomExitDefinition | null => {
         if (!hasValue(player.room)) {
-            return undefined;
+            return null;
         }
 
         const dir = CommandParser.checkDirection(player, direction);
 
         return player.room
             .getExits()
-            .find((exit: RoomExitDefinition) => exit.direction === dir);
+            .find((exit: RoomExitDefinition) => exit.direction === dir) ?? null;
     },
 
     checkDirection: (player: Player, direction: string): string | null => {

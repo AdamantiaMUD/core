@@ -13,7 +13,7 @@ export abstract class TransportStream<T extends EventEmitter> {
     public _prompted: boolean = false;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public abstract address(): AddressInfo | string;
+    public abstract address(): AddressInfo | string | null;
 
     public abstract end(): void;
 

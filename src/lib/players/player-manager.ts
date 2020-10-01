@@ -48,8 +48,8 @@ export class PlayerManager extends MudEventEmitter {
         return this.getPlayersAsArray();
     }
 
-    public getPlayer(name: string): Player | undefined {
-        return this.players.get(name.toLowerCase());
+    public getPlayer(name: string): Player | null {
+        return this.players.get(name.toLowerCase()) ?? null;
     }
 
     public getPlayersAsArray(): Player[] {

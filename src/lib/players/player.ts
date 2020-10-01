@@ -211,7 +211,7 @@ export class Player extends Character implements Broadcastable {
         };
     }
 
-    public setParty(party: Party): void {
+    public setParty(party: Party | null): void {
         this._party = party;
     }
 

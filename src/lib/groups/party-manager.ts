@@ -1,5 +1,6 @@
 import Party from './party';
-import Player from '../players/player';
+
+import type Player from '../players/player';
 
 /**
  * Keeps track of active in game parties and is used to create new parties
@@ -18,9 +19,6 @@ export class PartyManager extends Set<Party> {
         party.disband();
 
         this.delete(party);
-
-        /* eslint-disable-next-line no-param-reassign */
-        party = null;
     }
 }
 
