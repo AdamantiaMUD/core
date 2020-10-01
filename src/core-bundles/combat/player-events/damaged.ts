@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Player from '../../../lib/players/player';
 import {CharacterDamagedEvent, CharacterDamagedPayload} from '../../../lib/characters/character-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';

@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 
 import EventUtil from '../../../lib/events/event-util';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {
     StreamEvent,
@@ -13,16 +13,16 @@ import {
 } from '../../../lib/events/stream-event';
 import {StreamLoginEvent} from './login';
 
-export const StreamIntroEvent: StreamEventConstructor<never> = class extends StreamEvent<never> {
+export const StreamIntroEvent: StreamEventConstructor<void> = class extends StreamEvent<void> {
     public NAME: string = 'stream-intro';
 };
 
 /**
  * MOTD event
  */
-export const evt: StreamEventListenerFactory<never> = {
+export const evt: StreamEventListenerFactory<void> = {
     name: StreamIntroEvent.getName(),
-    listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
+    listener: (state: GameState): StreamEventListener<void> => (stream: TransportStream<EventEmitter>) => {
         /*
          * MotD generated here:
          * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD

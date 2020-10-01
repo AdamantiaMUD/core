@@ -7,7 +7,7 @@ import Command, {
     CommandDefinitionBuilder, CommandDefinitionFactory,
 } from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtils from '../../../lib/util/items';

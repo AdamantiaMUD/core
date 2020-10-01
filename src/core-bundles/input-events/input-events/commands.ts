@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import CommandParser from '../../../lib/commands/command-parser';
 import CommandType from '../../../lib/commands/command-type';
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';

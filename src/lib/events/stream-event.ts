@@ -1,6 +1,6 @@
 import EventEmitter from 'events';
 
-import GameState from '../game-state';
+import GameStateData from '../game-state-data';
 import TransportStream from '../communication/transport-stream';
 
 export class StreamEvent<T> {

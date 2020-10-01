@@ -1,16 +1,23 @@
 import bcrypt from 'bcryptjs';
 
 import Data from '../util/data';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
+import {hasValue} from '../util/functions';
+
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+
+interface CharacterBrief {
+    username: string;
+    isDeleted: boolean;
+}
 
 export interface SerializedAccount extends SimpleMap {
     username: string;
-    characters: unknown[];
+    characters: CharacterBrief[];
     password: string;
     metadata: SimpleMap;
-    deleted: boolean;
-    banned: boolean;
+    isDeleted: boolean;
+    isBanned: boolean;
 }
 
 const hashPassword = (pass: string): string => {
@@ -23,20 +30,20 @@ const hashPassword = (pass: string): string => {
  * Representation of a player's account
  */
 class Account implements Serializable {
-    /* eslint-disable lines-between-class-members */
-    public banned: boolean = false;
-    public characters: Array<{username: string; deleted: boolean}> = [];
-    public deleted: boolean = false;
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    public isBanned: boolean = false;
+    public characters: CharacterBrief[] = [];
+    public isDeleted: boolean = false;
     public metadata: SimpleMap = {};
     public username: string;
 
-    private password: string;
-    /* eslint-enable lines-between-class-members */
+    private _password: string;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public addCharacter(username: string): void {
         this.characters.push({
             username: username,
-            deleted: false,
+            isDeleted: false,
         });
     }
 
@@ -45,12 +52,12 @@ class Account implements Serializable {
      * There is no un-ban because this can just be done by manually editing the account file
      */
     public ban(): void {
-        this.banned = true;
+        this.isBanned = true;
         this.save();
     }
 
     public checkPassword(pass: string): boolean {
-        return bcrypt.compareSync(pass, this.password);
+        return bcrypt.compareSync(pass, this._password);
     }
 
     /**
@@ -58,15 +65,22 @@ class Account implements Serializable {
      * There is no un-delete because this can just be done by manually editing the account file
      */
     public deleteAccount(): void {
-        this.characters.forEach(char => this.deleteCharacter(char.username));
-        this.deleted = true;
+        this.characters
+            .forEach((char: CharacterBrief) => this.deleteCharacter(char.username));
+
+        this.isDeleted = true;
+
         this.save();
     }
 
     public deleteCharacter(name: string): void {
-        const picked = this.characters.find(char => char.username === name);
+        const picked = this.characters
+            .find((char: CharacterBrief) => char.username === name);
 
-        picked.deleted = true;
+        if (hasValue(picked)) {
+            picked.isDeleted = true;
+        }
+
         this.save();
     }
 
@@ -75,19 +89,20 @@ class Account implements Serializable {
     }
 
     public hasCharacter(name: string): boolean {
-        return this.characters.find(char => char.username === name) !== undefined;
+        return this.characters
+            .find((char: CharacterBrief) => char.username === name) !== undefined;
     }
 
     public restore(data: SerializedAccount): void {
-        this.banned = data.banned;
+        this.isBanned = data.isBanned;
         this.characters = data.characters;
-        this.deleted = data.deleted;
-        this.password = data.password;
+        this.isDeleted = data.isDeleted;
+        this._password = data.password;
         this.username = data.username;
         this.metadata = data.metadata;
     }
 
-    public save(callback?: Function): void {
+    public save(callback?: () => void): void {
         Data.save(
             'account',
             this.username,
@@ -103,31 +118,35 @@ class Account implements Serializable {
         const {
             username,
             characters,
-            password,
+            _password,
             metadata,
-            deleted,
-            banned,
+            isDeleted,
+            isBanned,
         } = this;
 
         return {
-            username,
-            characters,
-            password,
-            metadata,
-            deleted,
-            banned,
+            username: username,
+            characters: characters,
+            password: _password,
+            metadata: metadata,
+            isDeleted: isDeleted,
+            isBanned: isBanned,
         };
     }
 
     public setPassword(pass: string): void {
-        this.password = hashPassword(pass);
+        this._password = hashPassword(pass);
         this.save();
     }
 
     public undeleteCharacter(name: string): void {
-        const picked = this.characters.find(char => char.username === name);
+        const picked = this.characters
+            .find((char: CharacterBrief) => char.username === name);
 
-        picked.deleted = false;
+        if (hasValue(picked)) {
+            picked.isDeleted = false;
+        }
+
         this.save();
     }
 }

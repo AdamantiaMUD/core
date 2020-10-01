@@ -1,4 +1,6 @@
-import Config from './config';
+import {hasValue} from './functions';
+
+import type Config from './config';
 
 const DEFAULT_MAX_LENGTH = 16;
 const DEFAULT_MIN_LENGTH = 4;
@@ -7,7 +9,7 @@ const checkEasyStuff = (config: Config, name: string): void => {
     const maxLength = config.get('maxAccountNameLength', DEFAULT_MAX_LENGTH);
     const minLength = config.get('minAccountNameLength', DEFAULT_MIN_LENGTH);
 
-    if (!name) {
+    if (!hasValue(name)) {
         throw new Error('Please enter a name.');
     }
 

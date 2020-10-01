@@ -1,3 +1,15 @@
-export const ident = (obj: unknown): unknown => obj;
+/* eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types, @typescript-eslint/no-explicit-any -- `any` is actually required here */
+export const cast = <T>(obj: any): T => obj as unknown as T;
 
-export const noop = (): unknown => undefined;
+export const hasValue = <T>(thing: T | null | undefined): thing is T => !(thing === null || typeof thing === 'undefined');
+
+export const ident = <T = unknown>(obj: T): T => obj;
+
+export const noop = (): undefined => undefined;
+
+/* eslint-disable-next-line @typescript-eslint/ban-types */
+export const safeBind = <T extends Function>(
+    func: T,
+    thisArg: unknown,
+    ...argArray: unknown[]
+): T => cast<T>(func.bind(thisArg, argArray));

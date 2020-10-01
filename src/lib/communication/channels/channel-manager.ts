@@ -4,9 +4,9 @@ import Channel from './channel';
  * Contains registered channels
  */
 export class ChannelManager {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public channels: Map<string, Channel> = new Map();
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public add(channel: Channel): void {
         this.channels.set(channel.name, channel);

@@ -2,6 +2,7 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {isNpc} from '../../../lib/util/characters';
 
 const {sayAt} = Broadcast;
 
@@ -30,7 +31,7 @@ const follow: CommandDefinitionFactory = {
         // follow self un-follows the person they're currently following
         if (target === player) {
             if (player.following !== null) {
-                if (!player.following.isNpc()) {
+                if (!isNpc(player.following)) {
                     sayAt(player.following as Player, `${player.name} stops following you.`);
                 }
 

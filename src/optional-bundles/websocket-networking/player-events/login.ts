@@ -3,9 +3,9 @@ import updateAttributes from '../util/update-attributes';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
 import {PlayerLoginEvent} from '../../../lib/players/player-events';
 
-export const evt: MudEventListenerFactory<never> = {
+export const evt: MudEventListenerFactory<void> = {
     name: PlayerLoginEvent.getName(),
-    listener: (): MudEventListener<never> =>
+    listener: (): MudEventListener<void> =>
 
         /**
          * @listens Player#login

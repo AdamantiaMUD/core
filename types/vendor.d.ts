@@ -5,8 +5,3 @@ declare module 'rando-js' {
     function probability(chance: number): boolean;
     function roll(count: number, sides: number): number;
 }
-
-declare module 'sty' {
-    function enable(): void;
-    function parse(str: string): string;
-}

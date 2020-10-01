@@ -7,7 +7,7 @@ export interface HelpfileOptions {
 }
 
 export class Helpfile {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public body: string;
     public bundle: string;
     public channel: string;
@@ -15,7 +15,7 @@ export class Helpfile {
     public keywords: string[];
     public name: string;
     public related: string[];
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(bundle: string, name: string, options: HelpfileOptions) {
         this.bundle = bundle;

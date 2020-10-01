@@ -19,7 +19,7 @@ class YamlDataSource extends FileDataSource {
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public fetchAll(config: DataSourceConfig = {}): Promise<unknown> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
         const filepath = this.resolvePath(config);
 
         if (!this.hasData(config)) {
@@ -60,7 +60,7 @@ class YamlDataSource extends FileDataSource {
         });
     }
 
-    public async fetch(config: DataSourceConfig = {}, id: string): Promise<unknown> {
+    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
         const data = await this.fetchAll(config);
 
         if (!data.hasOwnProperty(id)) {
@@ -70,7 +70,7 @@ class YamlDataSource extends FileDataSource {
         return data[id];
     }
 
-    public replace(config: DataSourceConfig = {}, data: unknown): Promise<undefined> {
+    public async replace<T = unknown>(config: DataSourceConfig = {}, data: T): Promise<T> {
         const filepath = this.resolvePath(config);
 
         return new Promise((resolve, reject) => {
@@ -86,11 +86,11 @@ class YamlDataSource extends FileDataSource {
         });
     }
 
-    public async update(
+    public async update<T = unknown>(
         config: DataSourceConfig = {},
         id: string,
-        data: unknown
-    ): Promise<undefined> {
+        data: T
+    ): Promise<T> {
         const currentData = await this.fetchAll(config);
 
         if (Array.isArray(currentData)) {
@@ -99,7 +99,7 @@ class YamlDataSource extends FileDataSource {
 
         currentData[id] = data;
 
-        return this.replace(config, currentData);
+        return this.replace<T>(config, currentData);
     }
 }
 

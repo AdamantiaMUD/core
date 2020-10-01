@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {StreamAccountPasswordEvent} from './password';
@@ -14,13 +14,13 @@ import {
 } from '../../../lib/events/stream-event';
 import {validateAccountName} from '../../../lib/util/player';
 
-export const StreamLoginEvent: StreamEventConstructor<never> = class extends StreamEvent<never> {
+export const StreamLoginEvent: StreamEventConstructor<void> = class extends StreamEvent<void> {
     public NAME: string = 'stream-login';
 };
 
-export const evt: StreamEventListenerFactory<never> = {
+export const evt: StreamEventListenerFactory<void> = {
     name: StreamLoginEvent.getName(),
-    listener: (state: GameState): StreamEventListener<never> => (stream: TransportStream<EventEmitter>) => {
+    listener: (state: GameState): StreamEventListener<void> => (stream: TransportStream<EventEmitter>) => {
         stream.write('Welcome, what is your username? ');
 
         stream.socket.once('data', async (buf: Buffer) => {
@@ -55,14 +55,14 @@ export const evt: StreamEventListenerFactory<never> = {
                 return;
             }
 
-            if (account.banned) {
+            if (account.isBanned) {
                 stream.write('This account has been banned.\r\n');
                 stream.end();
 
                 return;
             }
 
-            if (account.deleted) {
+            if (account.isDeleted) {
                 stream.write('This account has been deleted.\r\n');
                 stream.end();
 

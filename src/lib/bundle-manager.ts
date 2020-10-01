@@ -1,95 +1,105 @@
+/* eslint-disable import/max-dependencies, no-await-in-loop */
+/* eslint-disable-next-line id-length */
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 
 import AttributeFormula from './attributes/attribute-formula';
-import BehaviorManager from './behaviors/behavior-manager';
 import Command from './commands/command';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
-import GameState from './game-state';
-import Helpfile, {HelpfileOptions} from './help/helpfile';
+import Helpfile from './help/helpfile';
 import Logger from './util/logger';
-import NpcClass from './classes/npc-class';
-import PlayerClass from './classes/player-class';
-import QuestGoal from './quests/quest-goal';
-import QuestReward from './quests/quest-reward';
-import {AreaDefinition, AreaManifest} from './locations/area';
-import {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
-import {MudEventListenerFactory} from './events/mud-event';
-import {QuestDefinition} from './quests/quest';
-import {StreamEventListenerFactory} from './events/stream-event';
+import {hasValue} from './util/functions';
+
+import type BehaviorManager from './behaviors/behavior-manager';
+import type GameStateData from './game-state-data';
+import type NpcClass from './classes/npc-class';
+import type PlayerClass from './classes/player-class';
+import type QuestGoal from './quests/quest-goal';
+import type QuestReward from './quests/quest-reward';
+import type {AreaDefinition, AreaManifest} from './locations/area';
+import type {AttributeModule} from './util/modules';
+import type {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
+import type {HelpfileOptions} from './help/helpfile';
+import type {MudEventListenerFactory} from './events/mud-event-listener-factory';
+import type {QuestDefinition} from './quests/quest';
+import type {StreamEventListenerFactory} from './events/stream-event';
 
 export class BundleManager {
-    private readonly areas: string[] = [];
-    private readonly state: GameState;
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _areas: string[] = [];
+    private readonly _state: GameStateData;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(state: GameState) {
-        const bundlePath: string = state.config.get('bundlesPath', null);
-        const dataPath: string = state.config.get('dataPath', null);
-        const rootPath: string = state.config.get('rootPath', null);
+    public constructor(state: GameStateData) {
+        const bundlePath: string | null = state.config.get('bundlesPath', null);
+        const dataPath: string | null = state.config.get('dataPath', null);
+        const rootPath: string | null = state.config.get('rootPath', null);
 
-        if (!bundlePath || !fs.existsSync(bundlePath)) {
-            Logger.error(`Bundle path "${bundlePath}" is not valid`);
+        if (!hasValue<string>(bundlePath) || !fs.existsSync(bundlePath)) {
+            Logger.error(`Bundle path "${String(bundlePath)}" is not valid`);
             throw new Error('Invalid bundle path');
         }
 
-        if (!dataPath || !fs.existsSync(dataPath)) {
-            Logger.error(`Data path "${dataPath}" is not valid`);
+        if (!hasValue<string>(dataPath) || !fs.existsSync(dataPath)) {
+            Logger.error(`Data path "${String(dataPath)}" is not valid`);
             throw new Error('Invalid data path');
         }
 
-        if (!rootPath || !fs.existsSync(rootPath)) {
-            Logger.error(`Root path "${rootPath}" is not valid`);
+        if (!hasValue<string>(rootPath) || !fs.existsSync(rootPath)) {
+            Logger.error(`Root path "${String(rootPath)}" is not valid`);
             throw new Error('Invalid root path');
         }
 
-        this.state = state;
+        this._state = state;
     }
 
-    private async createCommand(uri: string, name: string, bundle: string): Promise<Command> {
+    private async _createCommand(uri: string, name: string, bundle: string): Promise<Command> {
         const commandImport = await import(uri);
         const loader = commandImport.default;
 
-        loader.command = loader.command(this.state);
+        loader.command = loader.command(this._state);
 
         return new Command(bundle, name, loader, uri);
     }
 
-    private getAreaScriptPath(bundlePath: string, areaName: string): string {
+    private static _getAreaScriptPath(bundlePath: string, areaName: string): string {
         return path.join(bundlePath, 'areas', areaName, 'scripts');
     }
 
-    private hydrateAreas(): void {
-        for (const areaRef of this.areas) {
-            const area = this.state.areaFactory.create(areaRef);
+    private _hydrateAreas(): void {
+        for (const areaRef of this._areas) {
+            const area = this._state.areaFactory.create(areaRef);
 
             try {
-                area.hydrate(this.state);
+                area.hydrate(this._state);
             }
-            catch (err) {
+            catch (err: unknown) {
                 Logger.error(err.message);
 
                 throw new Error(err);
             }
 
-            this.state.areaManager.addArea(area);
+            this._state.areaManager.addArea(area);
         }
     }
 
-    private isBundleEnabled(bundle: string, prefix: string = ''): boolean {
+    private _isBundleEnabled(bundle: string, prefix: string = ''): boolean {
         if (prefix === 'core.') {
             return true;
         }
 
-        return this.state.config.get('bundles', []).indexOf(`${prefix}${bundle}`) > -1;
+        return this._state.config
+            .get<string[]>('bundles', [])
+            .includes(`${prefix}${bundle}`);
     }
 
-    private isValidBundle(bundle: string, bundlePath: string): boolean {
+    private static _isValidBundle(bundle: string, bundlePath: string): boolean {
         return !(fs.statSync(bundlePath).isFile() || bundle === '.' || bundle === '..');
     }
 
-    private async loadArea(
+    private async _loadArea(
         bundle: string,
         bundlePath: string,
         areaName: string,
@@ -106,44 +116,44 @@ export class BundleManager {
         };
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: Quests...`);
-        definition.quests = await this.loadQuests(bundle, areaName);
+        definition.quests = await this._loadQuests(bundle, areaName);
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
-        definition.rooms = await this.loadEntities(
+        definition.rooms = await this._loadEntities(
             bundle,
             bundlePath,
             areaName,
             'items',
-            this.state.itemFactory
+            this._state.itemFactory
         );
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: NPCs...`);
-        definition.npcs = await this.loadEntities(
+        definition.npcs = await this._loadEntities(
             bundle,
             bundlePath,
             areaName,
             'npcs',
-            this.state.mobFactory
+            this._state.mobFactory
         );
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);
-        definition.rooms = await this.loadEntities(
+        definition.rooms = await this._loadEntities(
             bundle,
             bundlePath,
             areaName,
             'rooms',
-            this.state.roomFactory
+            this._state.roomFactory
         );
 
-        this.state.areaFactory.setDefinition(areaName, definition);
+        this._state.areaFactory.setDefinition(areaName, definition);
 
         Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- END`);
     }
 
-    private async loadAreas(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadAreas(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: ${bundle} - Areas -- START`);
 
-        const loader = this.state.entityLoaderRegistry.get('areas');
+        const loader = this._state.entityLoaderRegistry.get('areas');
 
         loader.setBundle(bundle);
 
@@ -154,15 +164,15 @@ export class BundleManager {
         const areas: {[key: string]: AreaManifest} = await loader.fetchAll();
 
         for (const [name, manifest] of Object.entries(areas)) {
-            this.areas.push(name);
+            this._areas.push(name);
 
-            await this.loadArea(bundle, bundlePath, name, manifest);
+            await this._loadArea(bundle, bundlePath, name, manifest);
         }
 
         Logger.info(`LOAD: ${bundle} - Areas -- END`);
     }
 
-    private async loadAttributes(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadAttributes(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'attributes.js');
 
         if (!fs.existsSync(uri)) {
@@ -171,15 +181,16 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Attributes -- START`);
 
-        const attributeImport = await import(uri);
-        const attributes = attributeImport.default;
+        /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+        const module: AttributeModule = await import(uri);
+        const attributes = module.default;
 
         const error = `Attributes file [${uri}] from bundle [${bundle}]`;
 
         if (!Array.isArray(attributes)) {
             Logger.error(`${error} does not define an array of attributes`);
 
-            return;
+            return Promise.resolve();
         }
 
         for (const attribute of attributes) {
@@ -201,16 +212,18 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Attributes -> ${attribute.name}`);
 
-                this.state
+                this._state
                     .attributeFactory
                     .add(attribute.name, attribute.base, formula, attribute.metadata);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Attributes -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadBehaviors(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadBehaviors(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'behaviors');
 
         if (!fs.existsSync(uri)) {
@@ -222,7 +235,7 @@ export class BundleManager {
         const loadEntityBehaviors = async (
             type: string,
             manager: BehaviorManager,
-            state: GameState
+            state: GameStateData
         ): Promise<void> => {
             const typeDir = path.join(uri, type);
 
@@ -253,53 +266,53 @@ export class BundleManager {
             }
         };
 
-        await loadEntityBehaviors('area', this.state.areaBehaviorManager, this.state);
-        await loadEntityBehaviors('npc', this.state.mobBehaviorManager, this.state);
-        await loadEntityBehaviors('item', this.state.itemBehaviorManager, this.state);
-        await loadEntityBehaviors('room', this.state.roomBehaviorManager, this.state);
+        await loadEntityBehaviors('area', this._state.areaBehaviorManager, this._state);
+        await loadEntityBehaviors('npc', this._state.mobBehaviorManager, this._state);
+        await loadEntityBehaviors('item', this._state.itemBehaviorManager, this._state);
+        await loadEntityBehaviors('room', this._state.roomBehaviorManager, this._state);
 
         Logger.info(`LOAD: ${bundle} - Behaviors -- END`);
     }
 
-    private async loadBundle(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadBundle(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
 
-        await this.loadQuestGoals(bundle, bundlePath);
-        await this.loadQuestRewards(bundle, bundlePath);
-        await this.loadAttributes(bundle, bundlePath);
-        await this.loadBehaviors(bundle, bundlePath);
+        await this._loadQuestGoals(bundle, bundlePath);
+        await this._loadQuestRewards(bundle, bundlePath);
+        await this._loadAttributes(bundle, bundlePath);
+        await this._loadBehaviors(bundle, bundlePath);
 
         // await this.loadChannels(bundle, bundlePath);
-        await this.loadNpcClasses(bundle, bundlePath);
-        await this.loadPlayerClasses(bundle, bundlePath);
-        await this.loadCommands(bundle, bundlePath);
-        await this.loadEffects(bundle, bundlePath);
-        await this.loadInputEvents(bundle, bundlePath);
-        await this.loadServerEvents(bundle, bundlePath);
-        await this.loadPlayerEvents(bundle, bundlePath);
+        await this._loadNpcClasses(bundle, bundlePath);
+        await this._loadPlayerClasses(bundle, bundlePath);
+        await this._loadCommands(bundle, bundlePath);
+        await this._loadEffects(bundle, bundlePath);
+        await this._loadInputEvents(bundle, bundlePath);
+        await this._loadServerEvents(bundle, bundlePath);
+        await this._loadPlayerEvents(bundle, bundlePath);
 
         // await this.loadSkills(bundle, bundlePath);
-        await this.loadHelp(bundle, bundlePath);
+        await this._loadHelp(bundle, bundlePath);
 
-        await this.loadAreas(bundle, bundlePath);
+        await this._loadAreas(bundle, bundlePath);
 
         Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
     }
 
-    private async loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
+    private async _loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
         const bundles = fs.readdirSync(bundlesPath);
 
         for (const bundle of bundles) {
             const bundlePath = path.join(bundlesPath, bundle);
 
             // only load bundles the user has configured to be loaded
-            if (this.isValidBundle(bundle, bundlePath) && this.isBundleEnabled(bundle, prefix)) {
-                await this.loadBundle(`${prefix}${bundle}`, bundlePath);
+            if (this._isValidBundle(bundle, bundlePath) && this._isBundleEnabled(bundle, prefix)) {
+                await this._loadBundle(`${prefix}${bundle}`, bundlePath);
             }
         }
     }
 
-    private async loadCommands(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadCommands(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'commands');
 
         if (!fs.existsSync(uri)) {
@@ -317,16 +330,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Commands -> ${commandName}`);
 
-                const command = await this.createCommand(commandPath, commandName, bundle);
+                const command = await this._createCommand(commandPath, commandName, bundle);
 
-                this.state.commandManager.add(command);
+                this._state.commandManager.add(command);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Commands -- END`);
     }
 
-    private async loadEffects(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadEffects(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'effects');
 
         if (!fs.existsSync(uri)) {
@@ -347,25 +360,27 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Effects -> ${effectName}`);
 
-                this.state
+                this._state
                     .effectFactory
-                    .add(effectName, loader, this.state);
+                    .add(effectName, loader, this._state);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Effects -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadEntities<T extends EntityFactory<unknown, unknown>>(
+    private async _loadEntities<T extends EntityFactory<unknown, unknown>>(
         bundle: string,
         bundlePath: string,
         areaName: string,
         type: string,
         factory: T
     ): Promise<string[]> {
-        const loader = this.state.entityLoaderRegistry.get(type);
+        const loader = this._state.entityLoaderRegistry.get(type);
 
-        if (loader === null) {
+        if (!hasValue(loader)) {
             Logger.warn(`Could not find entity loader for type '${type}'`);
 
             return Promise.resolve([]);
@@ -379,7 +394,7 @@ export class BundleManager {
         }
 
         const entities = await loader.fetchAll();
-        const scriptPath = this.getAreaScriptPath(bundlePath, areaName);
+        const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaName);
 
         return entities.map(entity => {
             const ref = EntityFactory.createRef(areaName, entity.id);
@@ -392,7 +407,7 @@ export class BundleManager {
                 Logger.verbose(`Loading entity script - [${ref}] -> ${entity.script}`);
 
                 try {
-                    this.loadEntityScript(factory, ref, scriptUri);
+                    this._loadEntityScript(factory, ref, scriptUri);
                 }
                 catch (e) {
                     Logger.warn(`Missing entity script - [${ref}] -> ${entity.script}`);
@@ -403,7 +418,7 @@ export class BundleManager {
         });
     }
 
-    private async loadEntityScript(
+    private async _loadEntityScript(
         factory: EntityFactory<unknown, unknown>,
         ref: string,
         scriptPath: string
@@ -418,13 +433,13 @@ export class BundleManager {
         for (const [eventName, listener] of Object.entries(listeners)) {
             Logger.verbose(`LOAD: ${ref} - Script Listeners -> ${eventName}`);
 
-            factory.addScriptListener(ref, eventName, listener(this.state));
+            factory.addScriptListener(ref, eventName, listener(this._state));
         }
 
         Logger.info(`LOAD: ${ref} - Script Listeners -- END`);
     }
 
-    private async loadHelp(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadHelp(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'help');
 
         if (!fs.existsSync(uri)) {
@@ -459,13 +474,15 @@ export class BundleManager {
 
             const hfile = new Helpfile(bundle, helpName, helpData);
 
-            this.state.helpManager.add(hfile);
+            this._state.helpManager.add(hfile);
         }
 
         Logger.info(`LOAD: ${bundle} - Help -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadInputEvents(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadInputEvents(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'input-events');
 
         if (!fs.existsSync(uri)) {
@@ -484,14 +501,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
 
-                this.state.streamEventManager.add(inputEvent.name, inputEvent.listener(this.state));
+                this._state.streamEventManager.add(inputEvent.name, inputEvent.listener(this._state));
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Input Events -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadNpcClasses(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadNpcClasses(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'classes', 'npcs');
 
         if (!fs.existsSync(uri)) {
@@ -512,14 +531,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - NPC Classes -> ${className}`);
 
-                this.state.npcClassManager.set(className, classDef);
+                this._state.npcClassManager.set(className, classDef);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - NPC Classes -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadPlayerClasses(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadPlayerClasses(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'classes', 'players');
 
         if (!fs.existsSync(uri)) {
@@ -540,14 +561,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Player Classes -> ${className}`);
 
-                this.state.playerClassManager.set(className, classDef);
+                this._state.playerClassManager.set(className, classDef);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Player Classes -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadPlayerEvents(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadPlayerEvents(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'player-events');
 
         if (!fs.existsSync(uri)) {
@@ -567,14 +590,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Player Events -> ${playerEvent.name}`);
 
-                this.state.playerManager.addListener(playerEvent.name, playerEvent.listener(this.state));
+                this._state.playerManager.addListener(playerEvent.name, playerEvent.listener(this._state));
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Player Events -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadQuestGoals(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadQuestGoals(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'quests', 'goals');
 
         if (!fs.existsSync(uri)) {
@@ -596,14 +621,16 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Goals -> ${goalName}`);
 
-                this.state.questGoalManager.set(goalName, loader);
+                this._state.questGoalManager.set(goalName, loader);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Quest Goals -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadQuestRewards(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadQuestRewards(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'quests', 'rewards');
 
         if (!fs.existsSync(uri)) {
@@ -624,15 +651,17 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Rewards -> ${rewardName}`);
 
-                this.state.questRewardManager.set(rewardName, loader);
+                this._state.questRewardManager.set(rewardName, loader);
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Quest Rewards -- END`);
+
+        return Promise.resolve();
     }
 
-    private async loadQuests(bundle: string, areaName: string): Promise<string[]> {
-        const loader = this.state.entityLoaderRegistry.get('quests');
+    private async _loadQuests(bundle: string, areaName: string): Promise<string[]> {
+        const loader = this._state.entityLoaderRegistry.get('quests');
 
         loader.setBundle(bundle);
         loader.setArea(areaName);
@@ -651,13 +680,13 @@ export class BundleManager {
 
             Logger.verbose(`LOAD: ${bundle} - Areas -> ${areaName} -> Quests -> ${ref}`);
 
-            this.state.questFactory.add(ref, areaName, quest.id, quest);
+            this._state.questFactory.add(ref, areaName, quest.id, quest);
 
             return ref;
         });
     }
 
-    private async loadServerEvents(bundle: string, bundlePath: string): Promise<void> {
+    private async _loadServerEvents(bundle: string, bundlePath: string): Promise<void> {
         const uri = path.join(bundlePath, 'server-events');
 
         if (!fs.existsSync(uri)) {
@@ -677,11 +706,13 @@ export class BundleManager {
 
                 Logger.verbose(`LOAD: ${bundle} - Server Events -> ${serverEvent.name}`);
 
-                this.state.serverEventManager.add(serverEvent.name, serverEvent.listener(this.state));
+                this._state.serverEventManager.add(serverEvent.name, serverEvent.listener(this._state));
             }
         }
 
         Logger.info(`LOAD: ${bundle} - Server Events -- END`);
+
+        return Promise.resolve();
     }
 
     public async loadBundles(): Promise<void> {
@@ -689,11 +720,11 @@ export class BundleManager {
 
         const coreBundlesDir = path.join(__dirname, '..', 'core-bundles');
         const optionalBundlesDir = path.join(__dirname, '..', 'optional-bundles');
-        const bundlePath: string = this.state.config.get('bundlesPath');
+        const bundlePath: string = this._state.config.get('bundlesPath');
 
-        await this.loadBundlesFromFolder(coreBundlesDir, 'core.');
-        await this.loadBundlesFromFolder(optionalBundlesDir, 'adamantia.');
-        await this.loadBundlesFromFolder(bundlePath);
+        await this._loadBundlesFromFolder(coreBundlesDir, 'core.');
+        await this._loadBundlesFromFolder(optionalBundlesDir, 'adamantia.');
+        await this._loadBundlesFromFolder(bundlePath);
 
         Logger.verbose('LOAD: BUNDLES -- END');
 
@@ -701,7 +732,7 @@ export class BundleManager {
          * Distribution is done after all areas are loaded in case items in one
          * area depend on another area.
          */
-        this.hydrateAreas();
+        this._hydrateAreas();
     }
 }
 

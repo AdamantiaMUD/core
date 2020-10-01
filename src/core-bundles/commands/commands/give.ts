@@ -2,6 +2,7 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Character from '../../../lib/characters/character';
 import Item from '../../../lib/equipment/item';
+import {isNpc} from '../../../lib/util/characters';
 import ItemUtil from '../../../lib/util/items';
 import Npc from '../../../lib/mobs/npc';
 import Player from '../../../lib/players/player';
@@ -89,7 +90,7 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAt(player, `<green>You give <white>${target.name}</white>: ${ItemUtil.display(item)}.</green>`);
 
-        if (!target.isNpc()) {
+        if (!isNpc(target)) {
             sayAt(target as Player, `<green>${player.name} gives you: ${ItemUtil.display(item)}.</green>`);
         }
     },

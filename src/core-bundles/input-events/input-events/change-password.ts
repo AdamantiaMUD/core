@@ -2,7 +2,7 @@ import EventEmitter from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {StreamConfirmPasswordEvent} from './confirm-password';
 import {

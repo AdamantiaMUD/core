@@ -1,9 +1,7 @@
 import Attribute from '../attributes/attribute';
-import Character from '../characters/character';
 import Damage from '../combat/damage';
-import Effect, {SerializedEffect} from './effect';
 import Serializable from '../data/serializable';
-import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/character-events';
+import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/events';
 import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
@@ -11,14 +9,17 @@ import {
     EffectAddedEvent,
 } from './effect-events';
 
+import type CharacterInterface from '../characters/character-interface';
+import type {Effect, SerializedEffect} from './effect';
+
 /**
  * Self-managing list of effects for a target
  */
 export class EffectList implements Serializable {
     private readonly _effects: Set<Effect> = new Set();
-    private readonly _target: Character;
+    private readonly _target: CharacterInterface;
 
-    public constructor(target: Character) {
+    public constructor(target: CharacterInterface) {
         this._target = target;
     }
 
@@ -205,7 +206,7 @@ export class EffectList implements Serializable {
      */
     public remove(effect: Effect): void {
         if (!this._effects.has(effect)) {
-            throw new ReferenceError('Trying to remove effect that was never added');
+            throw new ReferenceError('Trying to remove effect that was void added');
         }
 
         effect.deactivate();

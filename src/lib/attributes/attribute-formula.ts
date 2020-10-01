@@ -1,18 +1,20 @@
-import Attribute from './attribute';
+import {safeBind} from '../util/functions';
+
+import type Attribute from './attribute';
 
 export class AttributeFormula {
-    /* eslint-disable lines-between-class-members */
-    private readonly formula: (...args: number[]) => number;
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _formula: (...args: number[]) => number;
     public requires: string[];
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(requires: string[], fn: (...args: number[]) => number) {
         this.requires = requires;
-        this.formula = fn;
+        this._formula = fn;
     }
 
     public evaluate(attribute: Attribute, ...args: number[]): number {
-        return this.formula.bind(attribute)(...args);
+        return safeBind(this._formula, attribute)(...args);
     }
 }
 

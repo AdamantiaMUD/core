@@ -1,7 +1,7 @@
 import EventEmitter from 'events';
 
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Player from '../../../lib/players/player';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {PlayerLoginEvent} from '../../../lib/players/player-events';

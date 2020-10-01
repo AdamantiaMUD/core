@@ -1,36 +1,37 @@
-import Effect from './effect';
-import {MudEvent, MudEventConstructor} from '../events/mud-event';
+import MudEvent from '../events/mud-event';
 
-export const EffectActivatedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+import type Effect from './effect';
+
+export class EffectActivatedEvent extends MudEvent<{}> {
     public NAME: string = 'effect-activated';
-};
+}
 
-export const EffectAddedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class EffectAddedEvent extends MudEvent<{}> {
     public NAME: string = 'effect-added';
-};
+}
 
-export const EffectDeactivatedEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class EffectDeactivatedEvent extends MudEvent<{}> {
     public NAME: string = 'effect-deactivated';
-};
+}
 
 export interface EffectRefreshedPayload {
     effect: Effect;
 }
 
-export const EffectRefreshedEvent: MudEventConstructor<EffectRefreshedPayload> = class extends MudEvent<EffectRefreshedPayload> {
+export class EffectRefreshedEvent extends MudEvent<EffectRefreshedPayload> {
     public NAME: string = 'effect-refreshed';
     public effect: Effect;
-};
+}
 
-export const EffectRemoveEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class EffectRemoveEvent extends MudEvent<{}> {
     public NAME: string = 'remove';
-};
+}
 
 export interface EffectStackAddedPayload {
     effect: Effect;
 }
 
-export const EffectStackAddedEvent: MudEventConstructor<EffectStackAddedPayload> = class extends MudEvent<EffectStackAddedPayload> {
+export class EffectStackAddedEvent extends MudEvent<EffectStackAddedPayload> {
     public NAME: string = 'effect-stack-added';
     public effect: Effect;
-};
+}

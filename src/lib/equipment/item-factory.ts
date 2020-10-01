@@ -1,12 +1,15 @@
-import Area from '../locations/area';
 import EntityFactory from '../entities/entity-factory';
-import Item, {ItemDefinition} from './item';
+import Item from './item';
+import {hasValue} from '../util/functions';
+
+import type Area from '../locations/area';
+import type {ItemDefinition} from './item';
 
 /**
  * Stores definitions of items to allow for easy creation/cloning of objects
  */
 export class ItemFactory extends EntityFactory<Item, ItemDefinition> {
-    public clone(entity: Item): Item {
+    public clone(entity: Item): Item | null {
         return this.create(entity.entityReference, entity.area);
     }
 
@@ -16,10 +19,14 @@ export class ItemFactory extends EntityFactory<Item, ItemDefinition> {
      * want it to also populate its default contents you must manually call
      * `item.hydrate(state)`
      */
-    public create(entityRef: string, area: Area): Item {
+    public create(entityRef: string | null, area: Area): Item | null {
+        if (!hasValue(entityRef)) {
+            return null;
+        }
+
         const definition = this.getDefinition(entityRef);
 
-        if (!definition) {
+        if (!hasValue(definition)) {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 

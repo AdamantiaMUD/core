@@ -18,13 +18,13 @@ import YamlDataSource from './yaml-data-source';
  *   path: string: relative path to directory containing area folders
  */
 class YamlAreaDataSource extends FileDataSource {
-    public hasData(config: DataSourceConfig = {}): Promise<boolean> {
+    public async hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const dirPath = this.resolvePath(config);
 
         return Promise.resolve(fs.existsSync(dirPath));
     }
 
-    public fetchAll(config: DataSourceConfig = {}): Promise<unknown> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
         const dirPath = this.resolvePath(config);
 
         if (!this.hasData(config)) {
@@ -55,7 +55,7 @@ class YamlAreaDataSource extends FileDataSource {
         });
     }
 
-    public fetch(config: DataSourceConfig = {}, id: string): Promise<unknown> {
+    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
         const dirPath = this.resolvePath(config);
 
         if (!fs.existsSync(dirPath)) {
@@ -67,16 +67,16 @@ class YamlAreaDataSource extends FileDataSource {
         return source.fetchAll({path: path.join(dirPath, id, 'manifest.yml')});
     }
 
-    public replace(
+    public async replace<T = unknown>(
         /* eslint-disable @typescript-eslint/no-unused-vars */
         config: DataSourceConfig = {},
-        data: unknown
+        data: T
         /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): Promise<undefined> {
+    ): Promise<T> {
         return Promise.reject(new Error('You cannot replace an entire directory'));
     }
 
-    public update(config: DataSourceConfig = {}, id: string, data: unknown): Promise<undefined> {
+    public async update<T = unknown>(config: DataSourceConfig = {}, id: string, data: T): Promise<T> {
         const dirPath = this.resolvePath(config);
 
         if (!fs.existsSync(dirPath)) {

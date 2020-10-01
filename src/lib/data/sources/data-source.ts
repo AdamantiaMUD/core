@@ -1,36 +1,36 @@
 /* eslint-disable @typescript-eslint/no-unused-vars, prefer-promise-reject-errors */
-import DataSourceConfig from './data-source-config';
-import Config from '../../util/config';
+import type DataSourceConfig from './data-source-config';
+import type Config from '../../util/config';
 
 export class DataSource {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public name: string = '';
 
     protected readonly appConfig: Config;
     protected readonly config: DataSourceConfig;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(appConfig: Config) {
         this.appConfig = appConfig;
     }
 
-    public hasData(config: DataSourceConfig): Promise<boolean> {
+    public async hasData(config: DataSourceConfig): Promise<boolean> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public fetchAll(config: DataSourceConfig): Promise<unknown> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig): Promise<T> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public fetch(config: DataSourceConfig, id: string): Promise<unknown> {
+    public async fetch<T = unknown>(config: DataSourceConfig, id: string): Promise<T> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public replace(config: DataSourceConfig, data: unknown): Promise<undefined> {
+    public async replace<T = unknown>(config: DataSourceConfig, data: T): Promise<T> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public update(config: DataSourceConfig, id: string, data: unknown): Promise<undefined> {
+    public async update<T = unknown>(config: DataSourceConfig, id: string, data: T): Promise<T> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 }

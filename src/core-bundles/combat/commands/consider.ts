@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import {CombatError} from '../../../lib/combat/combat-errors';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';

@@ -1,9 +1,10 @@
-import GameState from '../game-state';
-import Player from '../players/player';
-import Quest, {SerializedQuest} from './quest';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
-import {QuestStartedEvent} from './quest-events';
+import QuestStartedEvent from './events/quest-started-event';
+
+import type GameStateData from '../game-state-data';
+import type Player from '../players/player';
+import type {Quest, SerializedQuest} from './quest';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
 
 export interface SerializedQuestTracker extends SimpleMap {
     active: {[key: string]: SerializedQuest};
@@ -14,9 +15,11 @@ export interface SerializedQuestTracker extends SimpleMap {
  * Keeps track of player quest progress
  */
 export class QuestTracker implements Serializable {
-    private readonly _activeQuests: Map<string, Quest> = new Map();
-    private readonly _completedQuests: Map<string, Quest> = new Map();
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _activeQuests: Map<string, Quest> = new Map<string, Quest>();
+    private readonly _completedQuests: Map<string, Quest> = new Map<string, Quest>();
     private readonly _player: Player;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(player: Player, active: unknown[] = [], completed: unknown[] = []) {
         this._player = player;
@@ -42,9 +45,9 @@ export class QuestTracker implements Serializable {
 
         const quest = this.get(qid);
 
-        quest.completedAt = new Date().toJSON();
+        quest!.completedAt = new Date().toJSON();
 
-        this._completedQuests.set(qid, quest);
+        this._completedQuests.set(qid, quest!);
         this._activeQuests.delete(qid);
     }
 
@@ -61,11 +64,11 @@ export class QuestTracker implements Serializable {
      * }
      */
 
-    public get(qid: string): Quest {
+    public get(qid: string): Quest | undefined {
         return this._activeQuests.get(qid);
     }
 
-    public hydrate(state: GameState): void {
+    public hydrate(state: GameStateData): void {
         for (const [qid, data] of this._activeQuests) {
             const quest = state.questFactory.create(state, qid, this._player, data.state);
 
@@ -87,11 +90,24 @@ export class QuestTracker implements Serializable {
     public serialize(): SerializedQuestTracker {
         return {
             completed: [...this._completedQuests]
-                .map(([qid, quest]) => [qid, quest.serialize()])
-                .reduce((acc, [qid, quest]) => ({...acc, [`${qid}`]: quest}), {}),
+                .map(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce(
+                    (
+                        acc: {[key: string]: SerializedQuest},
+                        [qid, quest]: [string, SerializedQuest]
+                    ) => ({...acc, [`${qid}`]: quest}),
+                    {}
+                ),
+
             active: [...this._activeQuests]
-                .map(([qid, quest]) => [qid, quest.serialize()])
-                .reduce((acc, [qid, quest]) => ({...acc, [`${qid}`]: quest}), {}),
+                .map(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce(
+                    (
+                        acc: {[key: string]: SerializedQuest},
+                        [qid, quest]: [string, SerializedQuest]
+                    ) => ({...acc, [`${qid}`]: quest}),
+                    {}
+                ),
         };
     }
 

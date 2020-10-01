@@ -1,9 +1,9 @@
 import {GameServerShutdownEvent} from '~/lib/game-server-events';
 import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
 
-export const evt: MudEventListenerFactory<never> = {
+export const evt: MudEventListenerFactory<void> = {
     name: GameServerShutdownEvent.getName(),
-    listener: (): MudEventListener<never> => () => {
+    listener: (): MudEventListener<void> => () => {
         // no need to do anything special in shutdown
     },
 };

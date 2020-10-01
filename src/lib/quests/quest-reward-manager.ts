@@ -1,4 +1,4 @@
-import QuestReward from './quest-reward';
+import type QuestReward from './quest-reward';
 
 /**
  * Simple map of quest reward name => class instance

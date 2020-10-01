@@ -11,13 +11,13 @@ import Logger from '../../util/logger';
  *   path: string: relative path to .json file from project root
  */
 class JsonDataSource extends FileDataSource {
-    public hasData(config: DataSourceConfig = {}): Promise<boolean> {
+    public async hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public fetchAll(config: DataSourceConfig = {}): Promise<unknown> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
         const filepath = this.resolvePath(config);
 
         if (!this.hasData(config)) {
@@ -37,7 +37,7 @@ class JsonDataSource extends FileDataSource {
         });
     }
 
-    public async fetch(config: DataSourceConfig = {}, id: string): Promise<unknown> {
+    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
         const data = await this.fetchAll(config);
 
         if (!data.hasOwnProperty(id)) {
@@ -47,7 +47,7 @@ class JsonDataSource extends FileDataSource {
         return data[id];
     }
 
-    public replace(config: DataSourceConfig = {}, data: unknown): Promise<undefined> {
+    public async replace<T = unknown>(config: DataSourceConfig = {}, data: T): Promise<T> {
         const filepath = this.resolvePath(config);
 
         return new Promise((resolve, reject) => {
@@ -64,11 +64,11 @@ class JsonDataSource extends FileDataSource {
         });
     }
 
-    public async update(
+    public async update<T = unknown>(
         config: DataSourceConfig = {},
         id: string,
-        data: unknown
-    ): Promise<undefined> {
+        data: T
+    ): Promise<T> {
         const currentData = await this.fetchAll(config);
 
         if (Array.isArray(currentData)) {

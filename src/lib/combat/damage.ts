@@ -1,28 +1,30 @@
-import Ability from '../abilities/ability';
-import Character from '../characters/character';
-import Effect from '../effects/effect';
-import Item from '../equipment/item';
-import Room from '../locations/room';
-import SimpleMap from '../util/simple-map';
-import {CharacterDamagedEvent, CharacterHitEvent} from '../characters/character-events';
+import {CharacterDamagedEvent, CharacterHitEvent} from '../characters/events';
+import {hasValue} from '../util/functions';
+
+import type Ability from '../abilities/ability';
+import type CharacterInterface from '../characters/character-interface';
+import type Effect from '../effects/effect';
+import type Item from '../equipment/item';
+import type Room from '../locations/room';
+import type SimpleMap from '../util/simple-map';
 
 // @TODO: make this an interface rather than a hard-coded list
-export type DamageSource = Character | Effect | Item | Room | Ability;
+export type DamageSource = CharacterInterface | Effect | Item | Room | Ability;
 
 export class Damage {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public amount: number;
-    public attacker: Character;
+    public attacker: CharacterInterface | null;
     public attribute: string;
     public metadata: SimpleMap;
-    public source: DamageSource;
-    /* eslint-enable lines-between-class-members */
+    public source: DamageSource | null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(
         attribute: string,
         amount: number,
-        attacker: Character = null,
-        source: DamageSource = null,
+        attacker: CharacterInterface | null = null,
+        source: DamageSource | null = null,
         metadata: SimpleMap = {}
     ) {
         if (!Number.isFinite(amount)) {
@@ -41,12 +43,12 @@ export class Damage {
      * @fires Character#hit
      * @fires Character#damaged
      */
-    public commit(target: Character): void {
+    public commit(target: CharacterInterface): void {
         const finalAmount = this.evaluate(target);
 
         target.attributes.modify(this.attribute, -1 * finalAmount);
 
-        if (this.attacker) {
+        if (hasValue(this.attacker)) {
             this.attacker.dispatch(new CharacterHitEvent({amount: finalAmount, source: this, target: target}));
         }
 
@@ -56,10 +58,10 @@ export class Damage {
     /**
      * Evaluate actual damage taking attacker/target's effects into account
      */
-    public evaluate(target: Character): number {
+    public evaluate(target: CharacterInterface): number {
         let amount = this.amount;
 
-        if (this.attacker) {
+        if (hasValue(this.attacker)) {
             amount = this.attacker.combat.evaluateOutgoingDamage(this, amount);
         }
 

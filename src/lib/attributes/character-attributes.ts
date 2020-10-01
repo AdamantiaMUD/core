@@ -1,10 +1,11 @@
-import Attribute, {SerializedAttribute} from './attribute';
-import Character from '../characters/character';
-import GameState from '../game-state';
 import Logger from '../util/logger';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
-import {CharacterAttributeUpdateEvent} from '../characters/character-events';
+import {CharacterAttributeUpdateEvent} from '../characters/events';
+
+import type CharacterInterface from '../characters/character-interface';
+import type GameStateData from '../game-state-data';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+import type {Attribute, SerializedAttribute} from './attribute';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;
@@ -14,11 +15,13 @@ export interface SerializedCharacterAttributes extends SimpleMap {
  * Container for a list of attributes for a {@link Character}
  */
 export class CharacterAttributes implements Serializable {
-    private readonly _attributes: Map<string, Attribute> = new Map();
-    private readonly _target: Character;
-    private readonly _unknownAttributes: Map<string, SerializedAttribute> = new Map();
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _attributes: Map<string, Attribute> = new Map<string, Attribute>();
+    private readonly _target: CharacterInterface;
+    private readonly _unknownAttributes: Map<string, SerializedAttribute> = new Map<string, SerializedAttribute>();
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(target: Character) {
+    public constructor(target: CharacterInterface) {
         this._target = target;
     }
 
@@ -26,17 +29,17 @@ export class CharacterAttributes implements Serializable {
         this._attributes.set(attribute.name, attribute);
     }
 
-    public deserialize(data: SerializedCharacterAttributes, state: GameState): void {
+    public deserialize(data: SerializedCharacterAttributes, state: GameStateData): void {
         Object.entries(data)
-            .forEach(([attr, config]) => {
+            .forEach(([attr, config]: [string, SerializedAttribute]) => {
                 const attrName = attr.replace('unknown:', '');
 
                 if (state.attributeFactory.has(attrName)) {
                     const attribute = state.attributeFactory.create(attrName);
 
-                    attribute.deserialize(config);
+                    attribute!.deserialize(config);
 
-                    this.add(attribute);
+                    this.add(attribute!);
                 }
                 else {
                     Logger.warn(`Entity trying to deserialize with unknown attribute ${attrName}`);
@@ -45,7 +48,7 @@ export class CharacterAttributes implements Serializable {
             });
     }
 
-    public get(key: string): Attribute {
+    public get(key: string): Attribute | undefined {
         return this._attributes.get(key);
     }
 
@@ -66,9 +69,9 @@ export class CharacterAttributes implements Serializable {
             throw new Error(`Invalid attribute ${key}`);
         }
 
-        this.get(key).modify(amount);
+        this.get(key)!.modify(amount);
 
-        this._target.dispatch(new CharacterAttributeUpdateEvent({attr: key, value: this.get(key)}));
+        this._target.dispatch(new CharacterAttributeUpdateEvent({attr: key, value: this.get(key)!}));
     }
 
     public reset(): void {
@@ -80,11 +83,11 @@ export class CharacterAttributes implements Serializable {
     public serialize(): SerializedCharacterAttributes {
         const data = {};
 
-        [...this._attributes].forEach(([name, attribute]) => {
+        [...this._attributes].forEach(([name, attribute]: [string, Attribute]) => {
             data[name] = attribute.serialize();
         });
 
-        [...this._unknownAttributes].forEach(([name, config]) => {
+        [...this._unknownAttributes].forEach(([name, config]: [string, SerializedAttribute]) => {
             data[`unknown:${name}`] = config;
         });
 

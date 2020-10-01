@@ -1,17 +1,16 @@
-import uuid from 'uuid/v4';
+import {v4 as uuid} from 'uuid';
 
-import Area from '../locations/area';
-import Character from '../characters/character';
-import GameState from '../game-state';
 import Inventory from './inventory';
 import ItemType from './item-type';
 import Logger from '../util/logger';
-import Room from '../locations/room';
-import ScriptableEntity, {
-    ScriptableEntityDefinition,
-    SerializedScriptableEntity,
-} from '../entities/scriptable-entity';
-import Serializable from '../data/serializable';
+import ScriptableEntity from '../entities/scriptable-entity';
+
+import type Area from '../locations/area';
+import type Character from '../characters/character';
+import type GameStateData from '../game-state-data';
+import type Room from '../locations/room';
+import type Serializable from '../data/serializable';
+import type {ScriptableEntityDefinition, SerializedScriptableEntity} from '../entities/scriptable-entity';
 
 export interface ItemDefinition extends ScriptableEntityDefinition {
     description?: string;
@@ -30,9 +29,9 @@ export interface SerializedItem extends SerializedScriptableEntity {
 }
 
 export class Item extends ScriptableEntity implements Serializable {
-    public carriedBy: Character | Item = null;
-    public room: Room = null;
-    public sourceRoom: Room = null;
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    public room: Room | null = null;
+    public sourceRoom: Room | null = null;
 
     private readonly _area: Area;
     private readonly _definition: ItemDefinition;
@@ -45,7 +44,9 @@ export class Item extends ScriptableEntity implements Serializable {
     private readonly _name: string;
     private readonly _roomDesc: string;
     private readonly _type: ItemType;
+    private _carriedBy: Character | Item | null = null;
     private _uuid: string = uuid();
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(def: ItemDefinition, area: Area) {
         super(def);
@@ -67,6 +68,10 @@ export class Item extends ScriptableEntity implements Serializable {
         return this._area;
     }
 
+    public get carriedBy(): Character | Item | null {
+        return this._carriedBy;
+    }
+
     public get description(): string {
         return this._description;
     }
@@ -75,9 +80,9 @@ export class Item extends ScriptableEntity implements Serializable {
         return this._flags;
     }
 
-    public get inventory(): Inventory {
+    public get inventory(): Inventory | null {
         if (this._type !== ItemType.CONTAINER) {
-            // @TODO: throw
+            // @TODO: throw?
             return null;
         }
 
@@ -118,11 +123,12 @@ export class Item extends ScriptableEntity implements Serializable {
             return;
         }
 
-        item.carriedBy = this;
+        item.setCarrier(this);
+
         this._inventory.addItem(item);
     }
 
-    public deserialize(data: SerializedItem, state?: GameState): void {
+    public deserialize(data: SerializedItem, state?: GameStateData): void {
         super.deserialize(data, state);
 
         this._uuid = data.uuid;
@@ -130,7 +136,7 @@ export class Item extends ScriptableEntity implements Serializable {
         this.__hydrated = true;
     }
 
-    public hydrate(state: GameState): void {
+    public hydrate(state: GameStateData): void {
         if (this.__hydrated) {
             Logger.warn('Attempted to hydrate already hydrated item.');
 
@@ -146,7 +152,8 @@ export class Item extends ScriptableEntity implements Serializable {
             return;
         }
 
-        item.carriedBy = null;
+        item.setCarrier(null);
+
         this._inventory.removeItem(item);
     }
 
@@ -155,6 +162,10 @@ export class Item extends ScriptableEntity implements Serializable {
             ...super.serialize(),
             uuid: this._uuid,
         };
+    }
+
+    public setCarrier(carrier: Character | Item | null): void {
+        this._carriedBy = carrier;
     }
 }
 

@@ -1,13 +1,14 @@
-import GameState from '../game-state';
-import Npc from '../mobs/npc';
-import Player from '../players/player';
-import Room from './room';
-import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
-import SimpleMap from '../util/simple-map';
-import {AreaRoomAddedEvent} from './area-events';
-import {Broadcastable} from '../communication/broadcast';
-import {RoomReadyEvent} from './room-events';
+import ScriptableEntity from '../entities/scriptable-entity';
+import {AreaRoomAddedEvent, RoomReadyEvent} from './events';
 import {UpdateTickEvent} from '../common/common-events';
+
+import type GameStateData from '../game-state-data';
+import type Npc from '../mobs/npc';
+import type Player from '../players/player';
+import type Room from './room';
+import type SimpleMap from '../util/simple-map';
+import type {Broadcastable} from '../communication/broadcast';
+import type {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
@@ -85,7 +86,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
         return [this, ...roomTargets];
     }
 
-    public hydrate(state: GameState): void {
+    public hydrate(state: GameStateData): void {
         const {rooms} = state.areaFactory.getDefinition(this.name);
 
         for (const roomRef of rooms) {

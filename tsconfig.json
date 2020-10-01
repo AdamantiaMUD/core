@@ -8,16 +8,15 @@
         "module": "CommonJS",
         "moduleResolution": "node",
         "outDir": "build",
-        "paths": {
-            "~/*": ["src/*"]
-        },
         "resolveJsonModule": true,
         "sourceMap": true,
         "target": "ES2019",
         "typeRoots": [
             "./types",
             "./node_modules/@types"
-        ]
+        ],
+        "strictNullChecks": true,
+        "strictBindCallApply": true
     },
     "exclude": ["node_modules"],
     "include": [

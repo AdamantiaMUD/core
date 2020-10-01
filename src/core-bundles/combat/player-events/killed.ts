@@ -1,5 +1,6 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
+import {isNpc} from '../../../lib/util/characters';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
@@ -33,7 +34,7 @@ export const evt: MudEventListenerFactory<PlayerKilledPayload> = {
             sayAtExcept(
                 player.room,
                 othersDeathMessage,
-                killer && !killer.isNpc
+                killer && !isNpc(killer)
                     ? [killer as Player, player]
                     : player
             );

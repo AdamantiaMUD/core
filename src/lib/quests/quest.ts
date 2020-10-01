@@ -1,27 +1,25 @@
 import cloneFactory from 'rfdc';
 
-import GameState from '../game-state';
-import Player from '../players/player';
-import QuestGoal, {
-    QuestGoalDefinition,
-    SerializedQuestGoal,
-} from './quest-goal';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
-import {MudEventEmitter} from '../events/mud-event';
+import MudEventEmitter from '../events/mud-event-emitter';
 import {
     QuestCompletedEvent,
     QuestProgressEvent,
-    QuestProgressPayload,
     QuestTurnInReadyEvent,
-} from './quest-events';
-import {QuestRewardDefinition} from './quest-reward';
+} from './events';
+
+import type GameStateData from '../game-state-data';
+import type Player from '../players/player';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+import type {QuestGoal, QuestGoalDefinition, SerializedQuestGoal} from './quest-goal';
+import type {QuestProgressPayload} from './events';
+import type {QuestRewardDefinition} from './quest-reward';
 
 const clone = cloneFactory();
 
 export interface QuestDefinition {
     autoComplete: boolean;
-    completionMessage?: string;
+    completionMessage?: string | null;
     description?: string;
     entityReference?: string;
     goals: QuestGoalDefinition[];
@@ -46,7 +44,8 @@ export interface SerializedQuest extends SimpleMap {
 }
 
 export class Quest extends MudEventEmitter implements Serializable {
-    public GameState: GameState;
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    public GameState: GameStateData;
     public completedAt: string = '';
     public config: QuestDefinition;
     public id: string;
@@ -55,9 +54,10 @@ export class Quest extends MudEventEmitter implements Serializable {
     public player: Player;
     public started: string = '';
     public state: SimpleMap[] = [];
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(
-        state: GameState,
+        state: GameStateData,
         id: string,
         config: QuestDefinition,
         player: Player
@@ -65,17 +65,12 @@ export class Quest extends MudEventEmitter implements Serializable {
         super();
 
         this.id = id;
-        this.entityReference = config.entityReference;
+        this.entityReference = config.entityReference ?? id;
         this.config = {
-            title: 'Missing Quest Title',
             description: 'Missing Quest Description',
             completionMessage: null,
             requires: [],
             level: 1,
-            autoComplete: false,
-            repeatable: false,
-            rewards: [],
-            goals: [],
             ...clone(config),
         };
 
@@ -118,9 +113,9 @@ export class Quest extends MudEventEmitter implements Serializable {
 
     public getProgress(): QuestProgress {
         let overallPercent = 0;
-        const overallDisplay = [];
+        const overallDisplay: string[] = [];
 
-        this.goals.forEach(goal => {
+        this.goals.forEach((goal: QuestGoal) => {
             const goalProgress = goal.getProgress();
 
             overallPercent += goalProgress.percent;
@@ -134,7 +129,7 @@ export class Quest extends MudEventEmitter implements Serializable {
     }
 
     public hydrate(): void {
-        this.state.forEach((goalState, i) => {
+        this.state.forEach((goalState: SerializedQuestGoal, i: number) => {
             this.goals[i].hydrate(goalState.state);
         });
     }
@@ -161,11 +156,11 @@ export class Quest extends MudEventEmitter implements Serializable {
      */
     public serialize(): SerializedQuest {
         return {
-            state: this.goals.map(goal => goal.serialize()),
+            state: this.goals.map((goal: QuestGoal) => goal.serialize()),
             progress: this.getProgress(),
             config: {
-                desc: this.config.description,
-                level: this.config.level,
+                desc: this.config.description ?? 'Missing Quest Description',
+                level: this.config.level ?? 1,
                 title: this.config.title,
             },
         };

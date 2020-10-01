@@ -1,7 +1,8 @@
-import {CommanderStatic} from 'commander';
+import type {CommanderStatic} from 'commander';
 
-import {GameServerShutdownEvent, GameServerStartupEvent} from './game-server-events';
-import {MudEventEmitter} from './events/mud-event';
+import GameServerShutdownEvent from './game-server/events/game-server-shutdown-event';
+import GameServerStartupEvent from './game-server/events/game-server-startup-event';
+import MudEventEmitter from './events/mud-event-emitter';
 
 export class GameServer extends MudEventEmitter {
     /**

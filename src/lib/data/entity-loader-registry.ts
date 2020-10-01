@@ -1,7 +1,8 @@
-import DataSource from './sources/data-source';
 import DataSourceFactory from './sources/data-source-factory';
 import EntityLoader from './entity-loader';
-import Config from '../util/config';
+
+import type Config from '../util/config';
+import type DataSource from './sources/data-source';
 
 export interface EntityLoaderDefinition {
     source: string;
@@ -16,21 +17,21 @@ export interface EntityLoaderDefinitions {
  * Holds instances of configured EntityLoaders
  */
 export class EntityLoaderRegistry {
-    private readonly config: Config;
-
-    private readonly dataSourceFactory: DataSourceFactory;
-    private readonly loaders: Map<string, EntityLoader> = new Map();
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _config: Config;
+    private readonly _dataSourceFactory: DataSourceFactory;
+    private readonly _loaders: Map<string, EntityLoader> = new Map<string, EntityLoader>();
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(loaderConfig: EntityLoaderDefinitions, config: Config) {
-        this.config = config;
-        this.dataSourceFactory = new DataSourceFactory(config);
+        this._config = config;
+        this._dataSourceFactory = new DataSourceFactory(config);
 
-        this.initLoaders(loaderConfig);
+        this._initLoaders(loaderConfig);
     }
 
-    // noinspection JSMethodCanBeStatic
-    private getDataSource(entityName: string, settings: EntityLoaderDefinition): DataSource {
-        const source = this.dataSourceFactory.getDataSource(settings.source);
+    private _getDataSource(entityName: string, settings: EntityLoaderDefinition): DataSource {
+        const source = this._dataSourceFactory.getDataSource(settings.source);
 
         if (source === null) {
             throw new Error(`Invalid source [${settings.source}] for entity [${entityName}]`);
@@ -39,19 +40,18 @@ export class EntityLoaderRegistry {
         return source;
     }
 
-    private initLoaders(config: EntityLoaderDefinitions): void {
+    private _initLoaders(config: EntityLoaderDefinitions): void {
         for (const [name, settings] of Object.entries(config)) {
-            this.validateLoader(name, settings);
+            this._validateLoader(name, settings);
 
-            const source = this.getDataSource(name, settings);
-            const sourceConfig = settings.config || {};
+            const source = this._getDataSource(name, settings);
+            const sourceConfig = settings.config ?? {};
 
-            this.loaders.set(name, new EntityLoader(source, sourceConfig));
+            this._loaders.set(name, new EntityLoader(source, sourceConfig));
         }
     }
 
-    // noinspection JSMethodCanBeStatic
-    private validateLoader(name: string, settings: EntityLoaderDefinition): void {
+    private _validateLoader(name: string, settings: EntityLoaderDefinition): void {
         if (!Object.prototype.hasOwnProperty.call(settings, 'source')) {
             throw new Error(`EntityLoader [${name}] does not specify a 'source'`);
         }
@@ -61,8 +61,8 @@ export class EntityLoaderRegistry {
         }
     }
 
-    public get(name: string): EntityLoader {
-        return this.loaders.get(name);
+    public get(name: string): EntityLoader | undefined {
+        return this._loaders.get(name);
     }
 }
 

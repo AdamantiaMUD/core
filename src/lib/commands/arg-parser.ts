@@ -1,4 +1,6 @@
-export class ArgParser {
+import {hasValue} from '../util/functions';
+
+export const ArgParser = {
     /**
      * Parse "get 2.foo bar"
      * @param {string}   search    2.foo
@@ -7,18 +9,18 @@ export class ArgParser {
      *                             tuple instead of just the entry
      * @returns {*} Boolean on error otherwise an entry from the list
      */
-    public static parseDot(
+    parseDot: <T extends {keywords?: string[]; name?: string; uuid: string}>(
         search: string,
-        list: Iterable<unknown>,
+        list: Array<T | [string, T]>,
         returnKey: boolean = false
-    ): unknown {
-        if (!list) {
+    ): unknown => {
+        if (!hasValue(list)) {
             return null;
         }
 
         const parts = search.split('.');
         let findNth = 1,
-            keyword = null;
+            keyword: string | null = null;
 
         if (parts.length > 2) {
             return false;
@@ -35,8 +37,8 @@ export class ArgParser {
         let encountered = 0;
 
         for (const entity of list) {
-            let key = null,
-                entry = null;
+            let key: string | null = null,
+                entry: T | null = null;
 
             if (Array.isArray(entity)) {
                 [key, entry] = entity;
@@ -50,14 +52,14 @@ export class ArgParser {
             }
 
             // prioritize keywords over item/player names
-            if (entry.keywords && (entry.keywords.includes(keyword) || entry.uuid === keyword)) {
+            if (hasValue(entry.keywords) && (entry.keywords.includes(keyword) || entry.uuid === keyword)) {
                 encountered += 1;
 
                 if (encountered === findNth) {
                     return returnKey ? [key, entry] : entry;
                 }
             }
-            else if (entry.name && entry.name.toLowerCase().includes(keyword.toLowerCase())) {
+            else if (hasValue(entry.name) && entry.name.toLowerCase().includes(keyword.toLowerCase())) {
                 encountered += 1;
 
                 if (encountered === findNth) {
@@ -67,7 +69,7 @@ export class ArgParser {
         }
 
         return false;
-    }
-}
+    },
+};
 
 export default ArgParser;

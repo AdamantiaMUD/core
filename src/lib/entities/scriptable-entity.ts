@@ -1,43 +1,46 @@
 import cloneFactory from 'rfdc';
 import {sprintf} from 'sprintf-js';
 
-import BehaviorManager from '../behaviors/behavior-manager';
-import GameEntity, {
-    GameEntityDefinition,
-    SerializedGameEntity,
-} from './game-entity';
-import GameState from '../game-state';
+import GameEntity from './game-entity';
 import Logger from '../util/logger';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
+import {hasValue} from '../util/functions';
+
+import type BehaviorManager from '../behaviors/behavior-manager';
+import type GameStateData from '../game-state-data';
+import type ScriptableEntityInterface from './scriptable-entity-interface';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+import type {GameEntityDefinition, SerializedGameEntity} from './game-entity';
 
 const clone = cloneFactory();
 
 export interface Scriptable {
-    behaviors: Map<string, SimpleMap | true>;
-    getBehavior: (name: string) => SimpleMap | true;
+    behaviors: Map<string, SimpleMap | true | null>;
+    getBehavior: (name: string) => SimpleMap | true | null;
     hasBehavior: (name: string) => boolean;
 }
 
 export interface ScriptableEntityDefinition extends GameEntityDefinition {
-    behaviors?: {[key: string]: SimpleMap | true};
+    behaviors?: {[key: string]: SimpleMap | true | null};
     script?: string;
 }
 
 export interface SerializedScriptableEntity extends SerializedGameEntity {
-    behaviors: {[key: string]: SimpleMap | true};
+    behaviors: {[key: string]: SimpleMap | true | null};
 }
 
-export class ScriptableEntity extends GameEntity implements Scriptable, Serializable {
-    protected _behaviors: Map<string, SimpleMap | true>;
-    protected _script: string;
+export class ScriptableEntity extends GameEntity implements Scriptable, Serializable, ScriptableEntityInterface {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    protected _behaviors: Map<string, SimpleMap | true | null>;
+    protected _script: string | null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(def?: ScriptableEntityDefinition) {
         super(def);
 
         this._behaviors = typeof def?.behaviors === 'undefined'
-            ? new Map()
-            : clone(def.behaviors);
+            ? new Map<string, SimpleMap | true | null>()
+            : new Map<string, SimpleMap | true | null>(Object.entries(clone(def.behaviors)));
 
         this._script = def?.script ?? null;
     }
@@ -46,12 +49,12 @@ export class ScriptableEntity extends GameEntity implements Scriptable, Serializ
      * Attach this entity's behaviors from the manager
      * @param {BehaviorManager} manager
      */
-    private setupBehaviors(manager: BehaviorManager): void {
+    private _setupBehaviors(manager: BehaviorManager): void {
         /* eslint-disable-next-line prefer-const */
         for (let [name, config] of this._behaviors) {
             const behavior = manager.get(name);
 
-            if (behavior) {
+            if (hasValue(behavior)) {
                 // behavior may be a boolean in which case it will be `behaviorName: true`
                 config = config === true ? {} : config;
                 behavior.attach(this, config);
@@ -66,26 +69,26 @@ export class ScriptableEntity extends GameEntity implements Scriptable, Serializ
         }
     }
 
-    public get behaviors(): Map<string, SimpleMap | true> {
+    public get behaviors(): Map<string, SimpleMap | true | null> {
         return this._behaviors;
     }
 
-    public getBehavior(name: string): SimpleMap | true {
-        return this._behaviors.get(name);
+    public getBehavior(name: string): SimpleMap | true | null {
+        return this._behaviors.get(name) ?? null;
     }
 
     public hasBehavior(name: string): boolean {
         return this._behaviors.has(name);
     }
 
-    public hydrate(state: GameState): void {
+    public hydrate(state: GameStateData): void {
         super.hydrate(state);
 
-        this.setupBehaviors(state.itemBehaviorManager);
+        this._setupBehaviors(state.itemBehaviorManager);
     }
 
     public serialize(): SerializedScriptableEntity {
-        const behaviors: {[key: string]: SimpleMap | true} = {};
+        const behaviors: {[key: string]: SimpleMap | true | null} = {};
 
         for (const [key, val] of this._behaviors) {
             behaviors[key] = val;
@@ -98,7 +101,7 @@ export class ScriptableEntity extends GameEntity implements Scriptable, Serializ
              * behaviors are serialized in case their config was modified during gameplay
              * and that state needs to persist (charges of a scroll remaining, etc)
              */
-            behaviors: behaviors,
+            behaviors,
         };
     }
 }

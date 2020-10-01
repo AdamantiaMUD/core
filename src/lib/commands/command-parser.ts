@@ -1,11 +1,13 @@
-import Command from './command';
 import CommandType from './command-type';
-import GameState from '../game-state';
-import Player from '../players/player';
-import PlayerRole from '../players/player-role';
-import SimpleMap from '../util/simple-map';
-import {InvalidCommandError} from './command-errors';
-import {RoomExitDefinition} from '../locations/room';
+import {InvalidCommandError} from './errors';
+import {hasValue} from '../util/functions';
+
+import type Command from './command';
+import type GameStateData from '../game-state-data';
+import type Player from '../players/player';
+import type PlayerRole from '../players/player-role';
+import type SimpleMap from '../util/simple-map';
+import type {RoomExitDefinition} from '../locations/room';
 
 export interface ParsedCommand {
     args: string;
@@ -19,12 +21,12 @@ export interface ParsedCommand {
 /**
  * Interpreter.. you guessed it, interprets command input
  */
-export class CommandParser {
+export const CommandParser = {
     /**
      * Determine if a player can leave the current room to a given direction
      */
-    public static canGo(player: Player, direction: string): RoomExitDefinition {
-        if (!player.room) {
+    canGo: (player: Player, direction: string): RoomExitDefinition | undefined => {
+        if (!hasValue(player.room)) {
             return undefined;
         }
 
@@ -32,10 +34,10 @@ export class CommandParser {
 
         return player.room
             .getExits()
-            .find(roomExit => roomExit.direction === dir);
-    }
+            .find((exit: RoomExitDefinition) => exit.direction === dir);
+    },
 
-    public static checkDirection(player: Player, direction: string): string {
+    checkDirection: (player: Player, direction: string): string | null => {
         const primaryDirections = [
             'north',
             'south',
@@ -65,35 +67,34 @@ export class CommandParser {
         }
 
         return null;
-    }
+    },
 
     /**
      * Check command for partial match on primary directions, or exact match on
      * secondary name or abbreviation
      */
-    public static checkMovement(player: Player, direction: string): string {
+    checkMovement: (player: Player, direction: string): string | null => {
         const exit = CommandParser.checkDirection(player, direction);
 
         if (exit !== null) {
             return exit;
         }
 
-        const otherExit = player.room
-            .getExits()
-            .find(roomExit => roomExit.direction === direction);
+        const otherExit = player.room?.getExits()
+            .find((roomExit: RoomExitDefinition) => roomExit.direction === direction);
 
-        return otherExit ? otherExit.direction : null;
-    }
+        return otherExit?.direction ?? null;
+    },
 
     /**
      * Parse a given string to find the resulting command/arguments
      */
-    public static parse(state: GameState, raw: string, player: Player): ParsedCommand {
+    parse: (state: GameStateData, raw: string, player: Player): ParsedCommand => {
         const data = raw.trim();
         const parts = data.split(' ');
-        const command = parts.shift().toLowerCase();
+        const command = parts.shift()?.toLowerCase();
 
-        if (!command.length) {
+        if (!hasValue(command) || command.length === 0) {
             throw new InvalidCommandError();
         }
 
@@ -124,10 +125,10 @@ export class CommandParser {
         }
 
         // see if they matched a direction for a movement command
-        const roomDirection = this.checkMovement(player, command);
+        const roomDirection = CommandParser.checkMovement(player, command);
 
-        if (roomDirection) {
-            const roomExit = this.canGo(player, roomDirection);
+        if (hasValue(roomDirection)) {
+            const roomExit = CommandParser.canGo(player, roomDirection);
 
             return {
                 type: CommandType.MOVEMENT,
@@ -140,7 +141,7 @@ export class CommandParser {
         }
 
         // see if they matched exactly a command
-        if (state.commandManager.get(command)) {
+        if (hasValue(state.commandManager.get(command))) {
             return {
                 type: CommandType.COMMAND,
                 command: state.commandManager.get(command),
@@ -152,7 +153,7 @@ export class CommandParser {
         // see if they typed at least the beginning of a command and try to match
         const foundStart = state.commandManager.findWithAlias(command);
 
-        if (foundStart) {
+        if (hasValue(foundStart)) {
             return {
                 type: CommandType.COMMAND,
                 command: foundStart.command,
@@ -188,7 +189,7 @@ export class CommandParser {
         // }
 
         throw new InvalidCommandError();
-    }
-}
+    },
+};
 
 export default CommandParser;

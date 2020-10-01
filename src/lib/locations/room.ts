@@ -1,18 +1,17 @@
-import cloneFactory from 'rfdc';
-
-import Area from './area';
-import GameState from '../game-state';
-import Item from '../equipment/item';
 import Logger from '../util/logger';
-import Npc from '../mobs/npc';
-import Player from '../players/player';
-import ScriptableEntity, {ScriptableEntityDefinition} from '../entities/scriptable-entity';
-import {Broadcastable} from '../communication/broadcast';
-import {ItemSpawnEvent} from '../equipment/item-events';
-import {NpcSpawnEvent} from '../mobs/npc-events';
-import {RoomSpawnEvent} from './room-events';
+import ScriptableEntity from '../entities/scriptable-entity';
+import {ItemSpawnEvent} from '../equipment/events';
+import {NpcSpawnEvent} from '../mobs/events';
+import {RoomSpawnEvent} from './events';
+import {clone} from '../util/objects';
 
-const clone = cloneFactory();
+import type Area from './area';
+import type GameStateData from '../game-state-data';
+import type Item from '../equipment/item';
+import type Npc from '../mobs/npc';
+import type Player from '../players/player';
+import type {Broadcastable} from '../communication/broadcast';
+import type {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 
 export interface Door {
     closed?: boolean;
@@ -50,13 +49,14 @@ export interface RoomExitDefinition {
 }
 
 export class Room extends ScriptableEntity implements Broadcastable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _defaultItems: RoomEntityDefinition[];
     private readonly _defaultNpcs: RoomEntityDefinition[];
-    private readonly _doors: Map<string, Door> = new Map();
-    private readonly _items: Set<Item> = new Set();
-    private readonly _npcs: Set<Npc> = new Set();
-    private readonly _players: Set<Player> = new Set();
-    private readonly _spawnedNpcs: Set<Npc> = new Set();
+    private readonly _doors: Map<string, Door> = new Map<string, Door>();
+    private readonly _items: Set<Item> = new Set<Item>();
+    private readonly _npcs: Set<Npc> = new Set<Npc>();
+    private readonly _players: Set<Player> = new Set<Player>();
+    private readonly _spawnedNpcs: Set<Npc> = new Set<Npc>();
 
     public area: Area;
     public def: RoomDefinition;
@@ -65,6 +65,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
     public id: string;
     public name: string;
     public title: string;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(def: RoomDefinition, area: Area) {
         super(def);
@@ -72,7 +73,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
         this.area = area;
         this.def = def;
         this.description = def.description;
-        this.exits = def.exits || [];
+        this.exits = def.exits ?? [];
         this.id = def.id;
         this.name = def.title;
         this.title = def.title;
@@ -215,7 +216,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
         return this._doors.has(fromRoom.entityReference);
     }
 
-    public hydrate(state: GameState): void {
+    public hydrate(state: GameStateData): void {
         super.hydrate(state);
 
         /**

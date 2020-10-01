@@ -2,25 +2,25 @@
  * Access class for the `adamantia.json` config
  */
 export class Config {
-    private cache = {};
+    private _cache: {[key: string]: unknown} = {};
 
-    public get(key: string, fallback: unknown = null): unknown {
-        if (key in this.cache) {
-            return this.cache[key];
+    public get<T>(key: string, fallback: T | null = null): T {
+        if (key in this._cache) {
+            return this._cache[key] as T;
         }
 
-        return fallback;
+        return fallback as T;
     }
 
     /**
      * Load `adamantia.json` from disk
      */
-    public load(data: unknown): void {
-        this.cache = data;
+    public load(data: {[key: string]: unknown}): void {
+        this._cache = data;
     }
 
-    public set(key: string, value: unknown): void {
-        this.cache[key] = value;
+    public set<T>(key: string, value: T): void {
+        this._cache[key] = value;
     }
 }
 

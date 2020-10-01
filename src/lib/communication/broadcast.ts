@@ -1,11 +1,7 @@
-import ansi from 'sty';
 import wrapAnsi from 'wrap-ansi';
 import {sprintf} from 'sprintf-js';
 
 import Player from '../players/player';
-
-// force ansi on even when there isn't a tty for the server
-ansi.enable();
 
 export interface Broadcastable {
     getBroadcastTargets(): Player[];

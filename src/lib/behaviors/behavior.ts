@@ -1,16 +1,16 @@
-import GameState from '../game-state';
-import SimpleMap from '../util/simple-map';
-import {MudEventListener} from '../events/mud-event';
+import type GameStateData from '../game-state-data';
+import type MudEventListener from '../events/mud-event-listener';
+import type SimpleMap from '../util/simple-map';
 
 export type Behavior = (config: SimpleMap, ...args: unknown[]) => void;
 
 export interface BehaviorDefinition {
     listeners: {
-        [key: string]: (state: GameState) => MudEventListener<unknown>;
+        [key: string]: (state: GameStateData) => MudEventListener<unknown>;
     };
 }
 
-export type BehaviorEventListenerFactory<T> = (state?: GameState) => MudEventListener<T>;
+export type BehaviorEventListenerFactory<T> = (state?: GameStateData) => MudEventListener<T>;
 
 export interface BehaviorEventListenerDefinition {
     listeners: {[key: string]: BehaviorEventListenerFactory<unknown>};

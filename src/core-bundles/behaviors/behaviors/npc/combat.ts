@@ -1,4 +1,4 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Item, {ItemDefinition} from '~/lib/equipment/item';
 import Logger from '~/lib/util/logger';
 import Npc from '~/lib/mobs/npc';

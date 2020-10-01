@@ -2,7 +2,7 @@ import cloneFactory from 'rfdc';
 
 import Effect, {EffectConfig} from './effect';
 import EffectFlag from './effect-flag';
-import GameState from '../game-state';
+import GameStateData from '../game-state-data';
 import MudEventManager from '../events/mud-event-manager';
 import SimpleMap from '../util/simple-map';
 import {EffectModifiers} from './effect-modifiers';
@@ -28,12 +28,12 @@ export interface EffectListenersDefinition {
 export type EffectListenersDefinitionFactory = (state: GameState) => EffectListenersDefinition;
 
 export class EffectFactory {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public effects: Map<
     string,
     {definition: EffectDefinition; eventManager: MudEventManager}
     > = new Map();
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public add(id: string, config: EffectDefinition, state: GameState): void {
         if (this.effects.has(id)) {

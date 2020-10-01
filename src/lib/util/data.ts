@@ -1,19 +1,20 @@
+/* eslint-disable-next-line id-length */
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-let dataPath: string = null;
+import {hasValue, noop} from './functions';
+
+let dataPath: string | null = null;
 
 /**
  * Class for loading/parsing data files from disk
  */
-export class Data {
+export const Data = {
     /**
      * Check if a data file exists
      */
-    public static exists(type: string, id: string): boolean {
-        return fs.existsSync(this.getDataFilePath(type, id));
-    }
+    exists: (type: string, id: string): boolean => fs.existsSync(Data.getDataFilePath(type, id)),
 
     /**
      * get the file path for a given data file by type (player/account)
@@ -21,7 +22,11 @@ export class Data {
      * @param {string} id
      * @returns {string}
      */
-    public static getDataFilePath(type: string, id: string): string {
+    getDataFilePath: (type: string, id: string): string => {
+        if (!hasValue(dataPath)) {
+            throw new Error('dataPath has not been set');
+        }
+
         switch (type) {
             case 'player':
                 return path.join(dataPath, 'player', `${id}.json`);
@@ -33,42 +38,46 @@ export class Data {
         }
 
         throw new Error(`Invalid data type provided: '${type}'`);
-    }
+    },
 
     /**
      * Determine whether or not a path leads to a legitimate JS file or not.
      */
-    public static isScriptFile(uri: string, file: string): boolean {
-        const script = file || uri;
+    isScriptFile: (uri: string, file?: string): boolean => {
+        const script = hasValue(file) ? file : uri;
 
-        return fs.statSync(uri).isFile() && script.match(/(?!test\.)[jt]s$/u) !== null;
-    }
+        const fileTest = /(?!test\.)[jt]s$/u;
+
+        return fs.statSync(uri).isFile() && fileTest.exec(script) !== null;
+    },
 
     /**
      * load/parse a data file (player/account)
      */
-    public static load(type: string, id: string): string {
-        return this.parseFile(this.getDataFilePath(type, id));
-    }
+    load: (type: string, id: string): string => Data.parseFile(Data.getDataFilePath(type, id)),
 
     /**
      * load the MOTD for the intro screen
      * @returns string
      */
-    public static loadMotd(): string {
+    loadMotd: (): string => {
+        if (!hasValue(dataPath)) {
+            throw new Error('dataPath has not been set');
+        }
+
         return fs.readFileSync(path.join(dataPath, 'motd'), 'utf8');
-    }
+    },
 
     /**
      * Read in and parse a file. Current supports yaml and json
      */
-    public static parseFile(filepath: string): string {
+    parseFile: <T = unknown>(filepath: string): T => {
         if (!fs.existsSync(filepath)) {
             throw new Error(`File [${filepath}] does not exist!`);
         }
 
         const contents = fs.readFileSync(fs.realpathSync(filepath)).toString('utf8');
-        const parsers = {
+        const parsers: {[key: string]: (...args: unknown[]) => unknown} = {
             '.yml': yaml.load,
             '.yaml': yaml.load,
             '.json': JSON.parse,
@@ -76,38 +85,38 @@ export class Data {
 
         const ext = path.extname(filepath);
 
-        if (!(ext in parsers)) {
-            throw new Error(`File [${filepath}] does not have a valid parser!`);
+        if (ext in parsers) {
+            return parsers[ext](contents) as T;
         }
 
-        return parsers[ext](contents);
-    }
+        throw new Error(`File [${filepath}] does not have a valid parser!`);
+    },
 
     /**
      * Save data file (player/account) data to disk
      */
-    public static save(type: string, id: string, data: unknown, callback: Function = () => {}): void {
+    save: (type: string, id: string, data: unknown, callback: () => void = noop): void => {
         fs.writeFileSync(
-            this.getDataFilePath(type, id),
-            this.stringify(data),
+            Data.getDataFilePath(type, id),
+            Data.stringify(data),
             'utf8'
         );
 
         callback();
-    }
+    },
 
     /**
      * Write data to a file
      */
-    public static saveFile(filepath: string, data: unknown, callback: Function = () => {}): void {
+    saveFile: (filepath: string, data: unknown, callback: () => void = noop): void => {
         if (!fs.existsSync(filepath)) {
             throw new Error(`File [${filepath}] does not exist!`);
         }
 
-        const serializers = {
+        const serializers: {[key: string]: (...args: unknown[]) => string} = {
             '.yml': yaml.safeDump,
             '.yaml': yaml.safeDump,
-            '.json': (json: unknown) => this.stringify(json),
+            '.json': (json: unknown) => Data.stringify(json),
         };
 
         const ext = path.extname(filepath);
@@ -121,15 +130,13 @@ export class Data {
         fs.writeFileSync(filepath, dataToWrite, 'utf8');
 
         callback();
-    }
+    },
 
-    public static setDataPath(uri: string): void {
+    setDataPath: (uri: string): void => {
         dataPath = uri;
-    }
+    },
 
-    public static stringify(data: unknown): string {
-        return JSON.stringify(data, null, 4);
-    }
-}
+    stringify: (data: unknown): string => JSON.stringify(data, null, 4),
+};
 
 export default Data;

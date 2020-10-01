@@ -1,9 +1,11 @@
-import EventEmitter from 'events';
+/* eslint-disable import/max-dependencies */
 import path from 'path';
-import {CommanderStatic} from 'commander';
+
+import type {CommanderStatic} from 'commander';
+import type {EventEmitter} from 'events';
 
 import AbilityManager from './abilities/ability-manager';
-import CombatEngine from './combat/combat-engine';
+import GameStateData from './game-state-data';
 import PartyManager from './groups/party-manager';
 import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
@@ -13,7 +15,6 @@ import BehaviorManager from './behaviors/behavior-manager';
 import ChannelManager from './communication/channels/channel-manager';
 import CharacterClassManager from './classes/character-class-manager';
 import CommandManager from './commands/command-manager';
-import Config from './util/config';
 import Data from './util/data';
 import EffectFactory from './effects/effect-factory';
 import EntityLoaderRegistry from './data/entity-loader-registry';
@@ -31,19 +32,24 @@ import QuestRewardManager from './quests/quest-reward-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
 import StreamEventManager from './events/stream-event-manager';
-import TransportStream from './communication/transport-stream';
 import {UpdateTickEvent} from './common/common-events';
+
+import type CombatEngine from './combat/combat-engine';
+import type Config from './util/config';
+import type Timeout from './util/timeout';
+import type TransportStream from './communication/transport-stream';
+import type {EntityLoaderDefinitions} from './data/entity-loader-registry';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
-export class GameState {
+export class GameState implements GameStateData {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _accountManager: AccountManager = new AccountManager();
     private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
     private readonly _attributeFactory: AttributeFactory = new AttributeFactory();
     private readonly _channelManager: ChannelManager = new ChannelManager();
-    private _combat: CombatEngine = null;
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
     private readonly _effectFactory: EffectFactory = new EffectFactory();
@@ -71,46 +77,48 @@ export class GameState {
     private readonly _spellManager: AbilityManager = new AbilityManager();
     private readonly _streamEventManager: StreamEventManager = new StreamEventManager();
 
-    private entityTickInterval = null;
-    private playerTickInterval = null;
+    private _combat: CombatEngine | null = null;
+    private _entityTickInterval: Timeout | null = null;
+    private _playerTickInterval: Timeout | null = null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(config: Config) {
-        Data.setDataPath(config.get('dataPath'));
+        Data.setDataPath(config.get<string>('dataPath'));
 
         config.set('core.bundlesPath', path.join(__dirname, '..', 'core-bundles'));
         config.set('core.rootPath', path.join(__dirname, '..'));
 
         this._areaManager = new AreaManager(this);
         this._config = config;
-        this._entityLoaderRegistry = new EntityLoaderRegistry(config.get('entityLoaders'), config);
+        this._entityLoaderRegistry = new EntityLoaderRegistry(config.get<EntityLoaderDefinitions>('entityLoaders'), config);
 
         this._accountManager.setLoader(this._entityLoaderRegistry.get('accounts'));
         this._playerManager.setLoader(this._entityLoaderRegistry.get('players'));
     }
 
-    private attachServer(): void {
+    private _attachServer(): void {
         this.serverEventManager.attach(this._server);
     }
 
-    private startEntityTicker(): void {
-        if (this.entityTickInterval !== null) {
-            clearInterval(this.entityTickInterval);
+    private _startEntityTicker(): void {
+        if (this._entityTickInterval !== null) {
+            clearInterval(this._entityTickInterval);
         }
 
-        this.entityTickInterval = setInterval(
+        this._entityTickInterval = setInterval(
             () => this.tickEntities(),
             this._config.get('entityTickFrequency', DEFAULT_TICK_FREQUENCY)
         );
     }
 
-    private startPlayerTicker(): void {
-        if (this.playerTickInterval !== null) {
-            clearInterval(this.playerTickInterval);
+    private _startPlayerTicker(): void {
+        if (this._playerTickInterval !== null) {
+            clearInterval(this._playerTickInterval);
         }
 
-        this.playerTickInterval = setInterval(
+        this._playerTickInterval = setInterval(
             () => this.tickPlayers(),
-            this._config.get('playerTickFrequency', DEFAULT_TICK_FREQUENCY)
+            this._config.get<number>('playerTickFrequency', DEFAULT_TICK_FREQUENCY)
         );
     }
 
@@ -138,7 +146,7 @@ export class GameState {
         return this._channelManager;
     }
 
-    public get combat(): CombatEngine {
+    public get combat(): CombatEngine | null{
         return this._combat;
     }
 
@@ -251,12 +259,12 @@ export class GameState {
     }
 
     public startServer(commander: CommanderStatic): void {
-        this.attachServer();
+        this._attachServer();
 
         this._server.startup(commander);
 
-        this.startEntityTicker();
-        this.startPlayerTicker();
+        this._startEntityTicker();
+        this._startPlayerTicker();
     }
 
     public tickEntities(): void {

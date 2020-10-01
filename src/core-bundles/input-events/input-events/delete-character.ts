@@ -34,7 +34,7 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
         say('|      Delete a Character');
         say('------------------------------');
 
-        const characters = account.characters.filter(currChar => currChar.deleted === false);
+        const characters = account.characters.filter(currChar => currChar.isDeleted === false);
 
         const options = [];
 

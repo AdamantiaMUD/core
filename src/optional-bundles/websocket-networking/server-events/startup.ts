@@ -1,6 +1,6 @@
 import WebSocket from 'ws';
 
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import {GameServerStartupEvent, GameServerStartupPayload} from '../../../lib/game-server-events';
 import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';

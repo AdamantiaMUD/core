@@ -1,83 +1,60 @@
-import AbilityErrors from './ability-errors';
 import AbilityFlag from './ability-flag';
 import AbilityType from './ability-type';
 import Broadcast from '../communication/broadcast';
-import Character from '../characters/character';
 import Damage from '../combat/damage';
-import Effect from '../effects/effect';
-import GameState from '../game-state';
 import Player from '../players/player';
-import SimpleMap from '../util/simple-map';
-import {EffectDefinition} from '../effects/effect-factory';
+import {CooldownError, NotEnoughResourcesError, PassiveError} from './errors';
+import {hasValue, ident, noop} from '../util/functions';
+
+import type AbilityDefinition from './ability-definition';
+import type AbilityResource from './ability-resource';
+import type AbilityRunner from './ability-runner';
+import type CharacterInterface from '../characters/character-interface';
+import type Effect from '../effects/effect';
+import type GameStateData from '../game-state-data';
+import type SimpleMap from '../util/simple-map';
+import type {EffectDefinition} from '../effects/effect-factory';
 
 const {sayAt} = Broadcast;
 
-export interface AbilityDefinition {
-    configureEffect?: (effect: Effect) => Effect;
-    cooldown?: number | {group: string; length: number};
-    effect?: string;
-    flags?: AbilityFlag[];
-    info?: (skill?: Ability, player?: Player) => string;
-    initiatesCombat: boolean;
-    name: string;
-    options: SimpleMap;
-    requiresTarget: boolean;
-    resource?: AbilityResource | AbilityResource[];
-    run?: (state?: GameState) => AbilityRunner;
-    targetSelf: boolean;
-    type: AbilityType;
-}
-
-export interface AbilityResource {
-    attribute: string;
-    cost: number;
-}
-
-export type AbilityRunner = (
-    skill: Ability,
-    args: string,
-    source: Character,
-    target?: Character
-) => void | false;
-
 export const ABILITY_DEFAULTS: AbilityDefinition = {
-    configureEffect: a => a,
+    configureEffect: null,
     cooldown: 0,
     effect: null,
     flags: [],
-    info: (skill: Ability, player: Character) => player.name,
+    info: (skill: Ability, player: CharacterInterface | undefined) => player?.name ?? skill.name,
     initiatesCombat: false,
     name: '',
     requiresTarget: true,
     resource: null,
-    run: () => () => false,
+    run: () => noop,
     targetSelf: false,
     type: AbilityType.SKILL,
     options: {},
 };
 
-export class Ability {
-    /* eslint-disable lines-between-class-members */
+class Ability {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public configureEffect: (effect: Effect) => Effect;
-    public cooldownGroup: string;
+    public cooldownGroup: string | null;
     public cooldownLength: number;
-    public effect: string;
+    public effect: string | null;
     public flags: AbilityFlag[];
     public id: string;
-    public info: (skill?: Ability, player?: Character) => string;
+    public info: (skill?: Ability, player?: CharacterInterface) => string;
     public initiatesCombat: boolean;
     public lag: number = -1;
     public name: string;
     public options: SimpleMap;
     public requiresTarget: boolean;
-    public resource: AbilityResource | AbilityResource[];
+    public resource: AbilityDefinition['resource'];
     public run: AbilityRunner;
-    public state: GameState;
+    public state: GameStateData;
     public targetSelf: boolean;
     public type: AbilityType;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(id: string, def: AbilityDefinition, state: GameState) {
+    public constructor(id: string, def: AbilityDefinition, state: GameStateData) {
         const config: AbilityDefinition = {
             ...ABILITY_DEFAULTS,
             ...def,
@@ -99,38 +76,41 @@ export class Ability {
             options,
         } = config;
 
-        this.configureEffect = configureEffect;
+        this.configureEffect = configureEffect ?? ident;
 
         this.cooldownGroup = null;
-        if (typeof cooldown === 'object') {
+        if (typeof cooldown === 'number') {
+            this.cooldownLength = cooldown;
+        }
+        else if (hasValue(cooldown)) {
             this.cooldownGroup = cooldown.group;
             this.cooldownLength = cooldown.length;
         }
         else {
-            this.cooldownLength = cooldown;
+            this.cooldownLength = 0;
         }
 
-        this.effect = effect;
-        this.flags = flags;
+        this.effect = effect ?? null;
+        this.flags = flags ?? [];
         this.id = id;
-        this.info = info.bind(this);
+        this.info = info!.bind(this) as Ability['info'];
         this.initiatesCombat = initiatesCombat;
         this.name = name;
         this.options = options;
         this.requiresTarget = requiresTarget;
         this.resource = resource;
-        this.run = run.bind(this);
+        this.run = (run ?? noop).bind(this) as AbilityRunner;
         this.state = state;
         this.targetSelf = targetSelf;
         this.type = type;
     }
 
-    public activate(character: Character): void {
+    public activate(character: CharacterInterface): void {
         if (!this.flags.includes(AbilityFlag.PASSIVE)) {
             return;
         }
 
-        if (!this.effect) {
+        if (!hasValue(this.effect)) {
             throw new Error('Passive skill has no attached effect');
         }
 
@@ -150,24 +130,24 @@ export class Ability {
 
         character.addEffect(effect);
 
-        this.run(this, null, character);
+        this.run(this, null, character, null);
     }
 
     /**
      * Put this skill on cooldown
      */
-    public cooldown(character: Character): void {
-        if (!this.cooldownLength) {
+    public cooldown(character: CharacterInterface): void {
+        if (!hasValue(this.cooldownLength) || this.cooldownLength === 0) {
             return;
         }
 
-        character.addEffect(this.createCooldownEffect());
+        character.addEffect(this._createCooldownEffect());
     }
 
     /**
      * Create an instance of the cooldown effect for use by cooldown()
      */
-    private createCooldownEffect(): Effect {
+    private _createCooldownEffect(): Effect {
         if (!this.state.effectFactory.has('cooldown')) {
             this.state
                 .effectFactory
@@ -193,20 +173,20 @@ export class Ability {
     /**
      * perform an active skill
      */
-    public execute(args: string, actor: Character, target: Character = null): void {
+    public execute(args: string, actor: CharacterInterface, target: CharacterInterface | null = null): void {
         if (this.flags.includes(AbilityFlag.PASSIVE)) {
-            throw new AbilityErrors.PassiveError();
+            throw new PassiveError();
         }
 
         const cdEffect = this.onCooldown(actor);
 
-        if (this.cooldownLength && cdEffect) {
-            throw new AbilityErrors.CooldownError(cdEffect);
+        if (hasValue(this.cooldownLength) && hasValue(cdEffect)) {
+            throw new CooldownError(cdEffect);
         }
 
-        if (this.resource) {
+        if (hasValue(this.resource)) {
             if (!this.hasEnoughResources(actor)) {
-                throw new AbilityErrors.NotEnoughResourcesError();
+                throw new NotEnoughResourcesError();
             }
         }
 
@@ -220,13 +200,14 @@ export class Ability {
         }
 
         this.cooldown(actor);
-        if (this.resource) {
+
+        if (hasValue(this.resource)) {
             this.payResourceCosts(actor);
         }
     }
 
     public getCooldownId(): string {
-        return this.cooldownGroup
+        return hasValue(this.cooldownGroup)
             ? `skillgroup:${this.cooldownGroup}`
             : `skill:${this.id}`;
     }
@@ -243,7 +224,7 @@ export class Ability {
                 cooldownId: null,
             },
             listeners: {
-                effectDeactivated: (effect: Effect) => {
+                effectDeactivated: (effect: Effect): void => {
                     if (effect.target instanceof Player) {
                         /* eslint-disable-next-line max-len */
                         sayAt(effect.target, `You may now use <b>${effect.ability.name}</b> again.`);
@@ -253,10 +234,7 @@ export class Ability {
         };
     }
 
-    public hasEnoughResource(
-        character: Character,
-        resource: {attribute: string; cost: number}
-    ): boolean {
+    public hasEnoughResource(character: CharacterInterface, resource: AbilityResource): boolean {
         return resource.cost === 0
             || (
                 character.attributes.has(resource.attribute)
@@ -264,26 +242,31 @@ export class Ability {
             );
     }
 
-    public hasEnoughResources(character: Character): boolean {
+    public hasEnoughResources(character: CharacterInterface): boolean {
+        if (!hasValue(this.resource)) {
+            return true;
+        }
+
         if (Array.isArray(this.resource)) {
-            return this.resource.every(resource => this.hasEnoughResource(character, resource));
+            return this.resource
+                .every((resource: AbilityResource) => this.hasEnoughResource(character, resource));
         }
 
         return this.hasEnoughResource(character, this.resource);
     }
 
-    public onCooldown(character: Character): Effect | false {
+    public onCooldown(character: CharacterInterface): Effect | undefined {
         for (const effect of character.effects.entries()) {
             if (effect.id === 'cooldown' && effect.state.cooldownId === this.getCooldownId()) {
                 return effect;
             }
         }
 
-        return false;
+        return undefined;
     }
 
     // Helper to pay a single resource cost.
-    public payResourceCost(character: Character, resource): boolean {
+    public payResourceCost(character: CharacterInterface, resource: AbilityResource): boolean {
         /*
          * Resource cost is calculated as the character damaging themselves, so
          * effects could potentially reduce resource costs
@@ -301,11 +284,13 @@ export class Ability {
         return true;
     }
 
-    public payResourceCosts(character: Character): boolean {
-        const hasMultipleResourceCosts = Array.isArray(this.resource);
+    public payResourceCosts(character: CharacterInterface): boolean {
+        if (!hasValue(this.resource)) {
+            return true;
+        }
 
-        if (hasMultipleResourceCosts) {
-            for (const resourceCost of this.resource as []) {
+        if (Array.isArray(this.resource)) {
+            for (const resourceCost of this.resource) {
                 this.payResourceCost(character, resourceCost);
             }
 

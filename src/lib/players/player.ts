@@ -1,16 +1,22 @@
+import get from 'lodash.get';
+
 import Broadcast from '../communication/broadcast';
-import Character, {SerializedCharacter} from '../characters/character';
-import GameState from '../game-state';
-import Party from '../groups/party';
+import Character from '../characters/character';
+import Inventory from '../equipment/inventory';
+import {isNpc} from '../util/characters';
 import PlayerRole from './player-role';
 import QuestTracker from '../quests/quest-tracker';
-import Room from '../locations/room';
-import SimpleMap from '../util/simple-map';
-import {Broadcastable} from '../communication/broadcast';
-import {ExecutableCommand} from '../commands/command-queue';
-import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './player-events';
-import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/room-events';
-import {noop} from '../util/functions';
+import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './events';
+import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/events';
+import {hasValue, noop} from '../util/functions';
+
+import type GameStateData from '../game-state-data';
+import type Party from '../groups/party';
+import type Room from '../locations/room';
+import type SimpleMap from '../util/simple-map';
+import type {Broadcastable} from '../communication/broadcast';
+import type {ExecutableCommand} from '../commands/command-queue';
+import type {SerializedCharacter} from '../characters/character';
 
 export interface PromptDefinition {
     removeOnRender: boolean;
@@ -23,14 +29,18 @@ export interface SerializedPlayer extends SerializedCharacter {
     role: PlayerRole;
 }
 
+const DEFAULT_MAX_INVENTORY = 20;
+
 export class Player extends Character implements Broadcastable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private _experience: number = 0;
-    private _party: Party = null;
+    private _party: Party | null = null;
     private _prompt: string = '> ';
     private readonly _questTracker: QuestTracker;
     private _role: PlayerRole = PlayerRole.PLAYER;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public extraPrompts: Map<string, PromptDefinition> = new Map();
+    public extraPrompts: Map<string, PromptDefinition> = new Map<string, PromptDefinition>();
 
     public constructor() {
         super();
@@ -42,7 +52,23 @@ export class Player extends Character implements Broadcastable {
         return this._experience;
     }
 
-    public get party(): Party {
+    public get inventory(): Inventory {
+        if (this._inventory === null) {
+            this._inventory = new Inventory();
+
+            if (!isNpc(this) && !isFinite(this._inventory.getMax())) {
+                this._inventory
+                    .setMax(this._state.config.get(
+                        'maxPlayerInventory',
+                        DEFAULT_MAX_INVENTORY
+                    ));
+            }
+        }
+
+        return this._inventory;
+    }
+
+    public get party(): Party | null {
         return this._party;
     }
 
@@ -70,7 +96,7 @@ export class Player extends Character implements Broadcastable {
         this.extraPrompts.set(id, {removeOnRender, renderer});
     }
 
-    public deserialize(data: SerializedPlayer, state: GameState): void {
+    public deserialize(data: SerializedPlayer, state: GameStateData): void {
         super.deserialize(data, state);
 
         this._experience = data.experience;
@@ -104,26 +130,25 @@ export class Player extends Character implements Broadcastable {
          * }
          */
 
-        const promptData = Object.assign(attributeData, extraData);
+        const promptData: SimpleMap = Object.assign(attributeData, extraData);
 
-        const expr = /%([a-z.]+)%/u;
+        const expr = /%(?<token>[a-z.]+)%/u;
 
         let prompt = promptStr,
-            matches = prompt.match(expr);
+            matches = expr.exec(prompt);
 
         while (matches !== null) {
             const token = matches[1];
 
-            let promptValue = token
-                .split('.')
-                .reduce((obj, index) => obj && obj[index], promptData);
+            /* eslint-disable-next-line @typescript-eslint/no-unsafe-call -- eslint thinks `get` is type `any`, but it isn't... wth */
+            let promptValue: string = get(promptData, token) as string;
 
-            if (promptValue === null || promptValue === undefined) {
+            if (!hasValue(promptValue)) {
                 promptValue = 'invalid-token';
             }
 
             prompt = prompt.replace(matches[0], promptValue);
-            matches = prompt.match(expr);
+            matches = expr.exec(prompt);
         }
 
         return prompt;
@@ -137,10 +162,10 @@ export class Player extends Character implements Broadcastable {
     /**
      * Move the player to the given room, emitting events appropriately
      */
-    public moveTo(nextRoom: Room, onMoved: Function = noop): void {
+    public moveTo(nextRoom: Room, onMoved: () => void = noop): void {
         const prevRoom = this.room;
 
-        if (this.room && this.room !== nextRoom) {
+        if (hasValue(this.room) && this.room !== nextRoom) {
             this.room.dispatch(new RoomPlayerLeaveEvent({player: this, nextRoom: nextRoom}));
             this.room.removePlayer(this);
         }
@@ -168,7 +193,7 @@ export class Player extends Character implements Broadcastable {
         this.extraPrompts.delete(id);
     }
 
-    public save(callback?: Function): void {
+    public save(callback: () => void = noop): void {
         if (!this.__hydrated) {
             return;
         }

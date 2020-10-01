@@ -1,5 +1,3 @@
-import Config from '../../util/config';
-import DataSource from './data-source';
 import JsonAreaDataSource from './json-area-data-source';
 import JsonDataSource from './json-data-source';
 import JsonDirectoryDataSource from './json-directory-data-source';
@@ -7,50 +5,56 @@ import YamlAreaDataSource from './yaml-area-data-source';
 import YamlDataSource from './yaml-data-source';
 import YamlDirectoryDataSource from './yaml-directory-data-source';
 
-export class DataSourceFactory {
-    private readonly sources: Map<string, DataSource> = new Map();
+import type Config from '../../util/config';
+import type DataSource from './data-source';
 
-    private readonly config: Config;
+export class DataSourceFactory {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _config: Config;
+    private readonly _sources: Map<string, DataSource> = new Map<string, DataSource>();
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(config: Config) {
-        this.config = config;
+        this._config = config;
     }
 
-    public getDataSource(name: string): DataSource {
-        if (this.sources.has(name)) {
-            return this.sources.get(name);
+    public getDataSource(name: string): DataSource | null {
+        if (this._sources.has(name)) {
+            return this._sources.get(name)!;
         }
 
-        let source = null;
+        let source: DataSource | null = null;
 
         switch (name) {
             case 'JsonArea':
-                source = new JsonAreaDataSource(this.config);
+                source = new JsonAreaDataSource(this._config);
                 break;
 
             case 'Json':
-                source = new JsonDataSource(this.config);
+                source = new JsonDataSource(this._config);
                 break;
 
             case 'JsonDirectory':
-                source = new JsonDirectoryDataSource(this.config);
+                source = new JsonDirectoryDataSource(this._config);
                 break;
 
             case 'YamlArea':
-                source = new YamlAreaDataSource(this.config);
+                source = new YamlAreaDataSource(this._config);
                 break;
 
             case 'Yaml':
-                source = new YamlDataSource(this.config);
+                source = new YamlDataSource(this._config);
                 break;
 
             case 'YamlDirectory':
-                source = new YamlDirectoryDataSource(this.config);
+                source = new YamlDirectoryDataSource(this._config);
                 break;
+
+            /* no default */
         }
 
         if (source !== null) {
-            this.sources.set(name, source);
+            this._sources.set(name, source);
         }
 
         return source;

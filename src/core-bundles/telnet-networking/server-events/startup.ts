@@ -1,4 +1,4 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Logger from '~/lib/util/logger';
 import Options from '../lib/options';
 import Sequences from '../lib/sequences';

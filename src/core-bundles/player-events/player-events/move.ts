@@ -1,9 +1,10 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Player from '~/lib/players/player';
 import {Door} from '~/lib/locations/room';
 import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
 import {PlayerMoveEvent, PlayerMovePayload} from '~/lib/players/player-events';
 import {sayAt, sayAtExcept} from '~/lib/communication/broadcast';
+import {isNpc} from '../../../lib/util/characters';
 
 export const evt: MudEventListenerFactory<PlayerMovePayload> = {
     name: PlayerMoveEvent.getName(),
@@ -51,7 +52,7 @@ export const evt: MudEventListenerFactory<PlayerMovePayload> = {
 
         for (const follower of player.followers) {
             if (!(follower.room !== oldRoom)) {
-                if (follower.isNpc()) {
+                if (isNpc(follower)) {
                     follower.moveTo(nextRoom);
                 }
                 else {

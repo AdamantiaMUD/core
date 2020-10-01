@@ -1,10 +1,9 @@
 import cloneFactory from 'rfdc';
 
 import Ability from '../abilities/ability';
-import Character from '../characters/character';
 import Damage from '../combat/damage';
 import EffectFlag from './effect-flag';
-import GameState from '../game-state';
+import GameStateData from '../game-state-data';
 import Serializable from '../data/serializable';
 import SimpleMap from '../util/simple-map';
 import {
@@ -15,6 +14,8 @@ import {
 } from './effect-events';
 import {EffectModifiers} from './effect-modifiers';
 import {MudEventEmitter} from '../events/mud-event';
+
+import type CharacterInterface from '../characters/character-interface';
 
 export interface EffectConfig {
     autoActivate?: boolean;
@@ -68,10 +69,10 @@ const clone = cloneFactory();
  * @listens Effect#effectAdded
  */
 export class Effect extends MudEventEmitter implements Serializable {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public ability: Ability = null;
     public active: boolean;
-    public attacker: Character = null;
+    public attacker: CharacterInterface = null;
     public config: EffectConfig;
     public flags: EffectFlag[] = [];
     public id: string;
@@ -79,8 +80,8 @@ export class Effect extends MudEventEmitter implements Serializable {
     public paused: number = 0;
     public startedAt: number = 0;
     public state: EffectState;
-    public target: Character;
-    /* eslint-enable lines-between-class-members */
+    public target: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     // @TODO: not done
     public constructor(id, def) {
@@ -201,7 +202,7 @@ export class Effect extends MudEventEmitter implements Serializable {
     /**
      * Reinitialize from persisted data
      */
-    public hydrate(state: GameState, data: unknown): void {
+    public hydrate(state: GameStateData, data: unknown): void {
         data.config.duration = data.config.duration === -1 ? Infinity : data.config.duration;
 
         this.config = data.config;

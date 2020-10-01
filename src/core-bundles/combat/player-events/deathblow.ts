@@ -1,4 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
+import {isNpc} from '../../../lib/util/characters';
 import LevelUtil from '../../../lib/util/level-util';
 import Player from '../../../lib/players/player';
 import {CharacterDeathblowEvent, CharacterDeathblowPayload} from '../../../lib/characters/character-events';
@@ -31,7 +32,7 @@ export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
             return;
         }
 
-        if (target && !player.isNpc) {
+        if (target && !isNpc(player)) {
             sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
         }
 

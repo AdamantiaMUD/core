@@ -5,7 +5,7 @@ import Command, {
     CommandDefinitionBuilder, CommandDefinitionFactory,
 } from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Player from '../../../lib/players/player';
 
 const {center, prompt, sayAt} = Broadcast;

@@ -1,22 +1,24 @@
+import MudEventEmitter from '../events/mud-event-emitter';
 import Data from '../util/data';
-import EntityLoader from '../data/entity-loader';
-import GameState from '../game-state';
-import Logger from '../util/logger';
 import MudEventManager from '../events/mud-event-manager';
-import Player, {SerializedPlayer} from './player';
-import {MudEventEmitter, MudEventListener} from '../events/mud-event';
-import {PlayerSavedEvent} from './player-events';
+import Player from './player';
+import {PlayerSavedEvent} from './events';
 import {UpdateTickEvent} from '../common/common-events';
+
+import type EntityLoader from '../data/entity-loader';
+import type GameStateData from '../game-state-data';
+import type MudEventListener from '../events/mud-event-listener';
+import type {SerializedPlayer} from './player';
 
 /**
  * Keeps track of all active players in game
  */
 export class PlayerManager extends MudEventEmitter {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public events: MudEventManager = new MudEventManager();
-    public loader: EntityLoader = null;
-    public players: Map<string, Player> = new Map();
-    /* eslint-enable lines-between-class-members */
+    public loader: EntityLoader | null = null;
+    public players: Map<string, Player> = new Map<string, Player>();
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor() {
         super();
@@ -46,7 +48,7 @@ export class PlayerManager extends MudEventEmitter {
         return this.getPlayersAsArray();
     }
 
-    public getPlayer(name: string): Player {
+    public getPlayer(name: string): Player | undefined {
         return this.players.get(name.toLowerCase());
     }
 
@@ -58,12 +60,12 @@ export class PlayerManager extends MudEventEmitter {
      * Load a player for an account
      */
     public async loadPlayer(
-        state: GameState,
+        state: GameStateData,
         username: string,
         force: boolean = false
     ): Promise<Player> {
         if (this.players.has(username) && !force) {
-            return this.getPlayer(username);
+            return this.getPlayer(username)!;
         }
 
         if (!this.loader) {

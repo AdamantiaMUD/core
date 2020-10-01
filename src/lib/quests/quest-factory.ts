@@ -1,36 +1,40 @@
-import GameState from '../game-state';
+import produce from 'immer';
+
+import type {Draft} from 'immer';
+
 import Logger from '../util/logger';
-import Player from '../players/player';
-import Quest, {QuestDefinition} from './quest';
-import SimpleMap from '../util/simple-map';
+import Quest from './quest';
 import {
     PlayerQuestCompletedEvent,
     PlayerQuestProgressEvent,
     PlayerQuestStartedEvent,
     PlayerQuestTurnInReadyEvent,
-} from '../players/player-events';
+} from '../players/events';
 import {
     QuestCompletedEvent,
     QuestProgressEvent,
-    QuestProgressPayload,
     QuestRewardEvent,
     QuestStartedEvent,
     QuestTurnInReadyEvent,
-} from './quest-events';
+} from './events';
+import {hasValue} from '../util/functions';
 
-interface AbstractQuest {
-    area: string;
-    config: QuestDefinition;
-    id: string;
-    npc?: string;
-}
+import type AbstractQuest from './abstract-quest';
+import type GameStateData from '../game-state-data';
+import type Player from '../players/player';
+import type SimpleMap from '../util/simple-map';
+import type {QuestDefinition} from './quest';
+import type {QuestProgressPayload} from './events';
 
 export class QuestFactory {
-    private readonly _quests: Map<string, AbstractQuest> = new Map();
+    private readonly _quests: Map<string, AbstractQuest> = new Map<string, AbstractQuest>();
 
     public add(ref: string, areaName: string, id: string, config: QuestDefinition): void {
-        config.entityReference = ref;
-        this._quests.set(ref, {id: id, area: areaName, config: config});
+        const cfg = produce(config, (draft: Draft<QuestDefinition>) => {
+            draft.entityReference = ref;
+        });
+
+        this._quests.set(ref, {id: id, area: areaName, config: cfg});
     }
 
     /**
@@ -40,7 +44,7 @@ export class QuestFactory {
     public canStart(player: Player, questRef: string): boolean {
         const quest = this.get(questRef);
 
-        if (!quest) {
+        if (!hasValue(quest)) {
             throw new Error(`Invalid quest id [${questRef}]`);
         }
 
@@ -54,22 +58,23 @@ export class QuestFactory {
             return false;
         }
 
-        if (!quest.config.requires) {
+        if (!Array.isArray(quest.config.requires)) {
             return true;
         }
 
-        return quest.config.requires.every(requiresRef => tracker.isComplete(requiresRef));
+        return quest.config.requires
+            .every((requiresRef: string) => tracker.isComplete(requiresRef));
     }
 
     public create(
-        state: GameState,
+        state: GameStateData,
         qid: string,
         player: Player,
         questState: SimpleMap[] = []
     ): Quest {
         const questData = this._quests.get(qid);
 
-        if (!questData) {
+        if (!hasValue(questData)) {
             throw new Error(`Trying to create invalid quest id [${qid}]`);
         }
 
@@ -80,46 +85,50 @@ export class QuestFactory {
         for (const goal of questData.config.goals) {
             const GoalType = state.questGoalManager.get(goal.type);
 
-            quest.addGoal(new GoalType(quest, goal.config, player));
+            if (hasValue(GoalType)) {
+                quest.addGoal(new GoalType(quest, goal.config, player));
+            }
+            else {
+                // @TODO: error
+            }
         }
 
-        quest.listen<QuestProgressPayload>(QuestProgressEvent.getName(), (qst: Quest, {progress}) => {
-            player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));
-            player.save();
-        });
+        quest.listen<QuestProgressPayload>(
+            QuestProgressEvent.getName(),
+            (qst: Quest, {progress}: QuestProgressPayload) => {
+                player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));
+                player.save();
+            }
+        );
 
-        quest.listen<{}>(QuestStartedEvent.getName(), (qst: Quest) => {
+        quest.listen(QuestStartedEvent.getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestStartedEvent({quest: qst}));
             qst.dispatch(new QuestProgressEvent({progress: qst.getProgress()}));
         });
 
-        quest.listen<{}>(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
+        quest.listen(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestTurnInReadyEvent({quest: qst}));
         });
 
-        quest.listen<{}>(QuestCompletedEvent.getName(), (qst: Quest) => {
+        quest.listen(QuestCompletedEvent.getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestCompletedEvent({quest: qst}));
             player.questTracker.complete(qst.entityReference);
 
-            if (!questData.config.rewards) {
+            if (!hasValue(questData.config.rewards) || questData.config.rewards.length === 0) {
                 player.save();
 
                 return;
             }
 
             for (const reward of questData.config.rewards) {
-                try {
-                    const rewardClass = state.questRewardManager.get(reward.type);
+                const rewardClass = state.questRewardManager.get(reward.type);
 
-                    if (!rewardClass) {
-                        throw new Error(`Quest [${qid}] has invalid reward type ${reward.type}`);
-                    }
-
+                if (hasValue(rewardClass)) {
                     rewardClass.reward(state, qst, reward.config, player);
                     player.dispatch(new QuestRewardEvent({reward}));
                 }
-                catch (e) {
-                    Logger.error(e.message);
+                else {
+                    Logger.error(`Quest [${qid}] has invalid reward type ${reward.type}`);
                 }
             }
 
@@ -132,7 +141,7 @@ export class QuestFactory {
     /**
      * Get a quest definition. Use `create` if you want an instance of a quest
      */
-    public get(qid: string): AbstractQuest {
+    public get(qid: string): AbstractQuest | undefined {
         return this._quests.get(qid);
     }
 

@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Helpfile from '../../../lib/help/helpfile';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';

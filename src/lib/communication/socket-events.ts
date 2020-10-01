@@ -1,13 +1,13 @@
-import {MudEvent, MudEventConstructor} from '../events/mud-event';
+import MudEvent from '../events/mud-event';
 
-export const SocketCloseEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class SocketCloseEvent extends MudEvent<{}> {
     public NAME: string = 'close';
 };
 
-export const SocketDataEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class SocketDataEvent extends MudEvent<{}> {
     public NAME: string = 'data';
 };
 
-export const SocketErrorEvent: MudEventConstructor<{}> = class extends MudEvent<{}> {
+export class SocketErrorEvent extends MudEvent<{}> {
     public NAME: string = 'error';
 };

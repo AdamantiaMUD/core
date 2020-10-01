@@ -2,6 +2,7 @@ import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
 import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {isNpc} from '../../../lib/util/characters';
 
 const {sayAt, sayAtExcept} = Broadcast;
 
@@ -59,7 +60,7 @@ export const cmd: CommandDefinitionFactory = {
         player.followers.forEach(follower => {
             follower.unfollow();
 
-            if (!follower.isNpc) {
+            if (!isNpc(follower)) {
                 sayAt(follower as Player, `You stop following ${player.name}.`);
             }
         });

@@ -1,24 +1,24 @@
-import Random from 'rando-js';
+import {Chance} from 'chance';
 
-import GameState from '../game-state';
 import Logger from '../util/logger';
+import {hasValue} from '../util/functions';
+
+import type GameStateData from '../game-state-data';
 
 export interface CurrencyDefinition {
     max: number;
     min: number;
 }
 
-// eslint-disable-next-line @typescript-eslint/no-type-alias
 export type PoolDefinition = Map<string, number>;
 
-// eslint-disable-next-line @typescript-eslint/no-type-alias
 export type PoolReference = string | {[key: string]: number};
 
 export interface LootTableConfig {
-    currencies?: {[key: string]: CurrencyDefinition};
+    currencies?: {[key: string]: CurrencyDefinition} | null;
     options?: {
         maxItems?: number;
-        [key: string]: number | string;
+        [key: string]: number | string | undefined;
     };
     pools?: PoolReference[];
 }
@@ -31,28 +31,34 @@ export const DEFAULT_CONFIG = {
     pools: [],
 };
 
-const loadedPools = {};
+/**
+ * Map<area name, loot pools>
+ */
+const loadedPools: {[key: string]: PoolDefinition} = {};
 
 /**
  * A loot table is made up of one or more loot pools. The `roll()` method will
  * determine drops from the pools up to `maxItems` drops
  */
 export class LootTable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _chance: Chance.Chance = new Chance();
     private readonly _loading: Promise<void>;
-    private readonly currencyRanges: {[key: string]: CurrencyDefinition};
-    private readonly options: {maxItems: number; [key: string]: number | string};
-    private readonly poolData: PoolReference[];
-    private pools: PoolDefinition[];
+    private readonly _currencyRanges: {[key: string]: CurrencyDefinition} | null;
+    private readonly _options: {maxItems: number; [key: string]: number | string};
+    private readonly _poolData: PoolReference[];
+    private _pools: PoolDefinition[];
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     /**
      * See bundles/ranvier-areas/areas/limbo/npcs.yml for example of usage
      * @param {Array<PoolReference|Object>} config.pools List of pool references or pool definitions
      */
-    public constructor(state: GameState, config: LootTableConfig = DEFAULT_CONFIG) {
-        this.poolData = config.pools || [];
-        this.currencyRanges = config.currencies || null;
+    public constructor(state: GameStateData, config: LootTableConfig = DEFAULT_CONFIG) {
+        this._poolData = config.pools ?? [];
+        this._currencyRanges = config.currencies ?? null;
 
-        this.options = {maxItems: 5, ...config.options || {}};
+        this._options = {maxItems: 5, ...config.options ?? {}};
 
         this._loading = this.load(state);
     }
@@ -62,14 +68,16 @@ export class LootTable {
      * @return {Array<{{name: string, amount: number}}>}
      */
     public currencies(): Array<{amount: number; name: string}> {
-        if (!this.currencyRanges) {
+        if (!hasValue(this._currencyRanges)) {
             return [];
         }
 
-        const result = [];
+        const result: Array<{amount: number; name: string}> = [];
 
-        for (const [currency, entry] of Object.entries(this.currencyRanges)) {
-            const amount: number = Random.inRange(entry.min, entry.max);
+        for (const [currency, entry] of Object.entries(this._currencyRanges)) {
+            const {max, min} = entry;
+
+            const amount: number = this._chance.integer({min, max});
 
             if (amount > 0) {
                 result.push({amount: amount, name: currency});
@@ -79,18 +87,18 @@ export class LootTable {
         return result;
     }
 
-    public async load(state: GameState): Promise<void> {
-        const resolved = [];
+    public async load(state: GameStateData): Promise<void> {
+        const resolved: PoolDefinition[][] = [];
 
-        for (const pool of this.poolData) {
+        for (const pool of this._poolData) {
             /* eslint-disable-next-line no-await-in-loop */
             resolved.push(await this.resolvePool(state, pool));
         }
 
-        this.pools = resolved.reduce((acc, val) => acc.concat(val), []);
+        this._pools = resolved.flat();
     }
 
-    public async resolvePool(state: GameState, ref: PoolReference): Promise<PoolDefinition[]> {
+    public async resolvePool(state: GameStateData, ref: PoolReference): Promise<PoolDefinition[]> {
         if (typeof ref !== 'string') {
             // pool is a ready-built pool definition
             return [new Map(Object.entries(ref))];
@@ -102,21 +110,23 @@ export class LootTable {
          */
         const poolArea = state.areaManager.getAreaByReference(ref);
 
-        if (poolArea === undefined) {
+        if (!hasValue(poolArea)) {
             Logger.error(`Invalid item pool area: ${ref}`);
 
             return [];
         }
 
-        if (typeof loadedPools[poolArea.name] === 'undefined') {
+        if (!hasValue(loadedPools[poolArea.name])) {
             try {
                 const loader = state.entityLoaderRegistry.get('loot-pools');
 
-                loader.setBundle(poolArea.bundle);
-                loader.setArea(poolArea.name);
+                if (hasValue(loader)) {
+                    loader.setBundle(poolArea.bundle);
+                    loader.setArea(poolArea.name);
 
-                /* eslint-disable-next-line require-atomic-updates */
-                loadedPools[poolArea.name] = await loader.fetchAll();
+                    /* eslint-disable-next-line require-atomic-updates */
+                    loadedPools[poolArea.name] = await loader.fetchAll();
+                }
             }
             catch {
                 Logger.error(`Area has no pools definition: ${ref}`);
@@ -140,7 +150,7 @@ export class LootTable {
         let pool = resolvedPool;
 
         if (Array.isArray(resolvedPool)) {
-            const nestedResolved = [];
+            const nestedResolved: PoolDefinition[][] = [];
 
             for (const nestedPool of resolvedPool) {
                 /* eslint-disable-next-line no-await-in-loop */
@@ -157,19 +167,19 @@ export class LootTable {
     public async roll(): Promise<string[]> {
         await this._loading;
 
-        const items = [];
+        const items: string[] = [];
 
-        for (const pool of this.pools) {
-            if (items.length >= this.options.maxItems) {
+        for (const pool of this._pools) {
+            if (items.length >= this._options.maxItems) {
                 break;
             }
 
             for (const [item, chance] of pool) {
-                if (Random.probability(chance)) {
+                if (this._chance.bool({likelihood: chance})) {
                     items.push(item);
                 }
 
-                if (items.length >= this.options.maxItems) {
+                if (items.length >= this._options.maxItems) {
                     break;
                 }
             }

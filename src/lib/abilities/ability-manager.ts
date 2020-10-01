@@ -1,11 +1,12 @@
-import Ability from './ability';
 import AbilityFlag from './ability-flag';
+
+import type Ability from './ability';
 
 /**
  * Keeps track of registered abilities
  */
 export class AbilityManager {
-    private readonly _abilities: Map<string, Ability> = new Map();
+    private readonly _abilities: Map<string, Ability> = new Map<string, Ability>();
 
     public add(ability: Ability): void {
         this._abilities.set(ability.id, ability);
@@ -14,7 +15,7 @@ export class AbilityManager {
     /**
      * Find executable abilities
      */
-    public find(search: string, includePassive: boolean = false): Ability {
+    public find(search: string, includePassive: boolean = false): Ability | undefined {
         for (const [id, ability] of this._abilities) {
             if (!includePassive && ability.flags.includes(AbilityFlag.PASSIVE)) {
                 // no-op
@@ -27,7 +28,7 @@ export class AbilityManager {
         return undefined;
     }
 
-    public get(id: string): Ability {
+    public get(id: string): Ability | undefined {
         return this._abilities.get(id);
     }
 

@@ -1,4 +1,4 @@
-import CharacterClass from './character-class';
+import type CharacterClass from './character-class';
 
 /**
  * Simple map of class name => class instance

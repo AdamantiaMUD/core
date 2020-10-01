@@ -1,10 +1,11 @@
 import cloneFactory from 'rfdc';
 
-import Player from '../players/player';
-import Quest from './quest';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
-import {MudEventEmitter} from '../events/mud-event';
+import MudEventEmitter from '../events/mud-event-emitter';
+
+import type Player from '../players/player';
+import type Quest from './quest';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
 
@@ -25,10 +26,12 @@ export interface SerializedQuestGoal extends SimpleMap {
  * @extends EventEmitter
  */
 export class QuestGoal extends MudEventEmitter implements Serializable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public config: SimpleMap;
     public player: Player;
     public quest: Quest;
     public state: SimpleMap = {};
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(quest: Quest, config: SimpleMap, player: Player) {
         super();
@@ -42,7 +45,7 @@ export class QuestGoal extends MudEventEmitter implements Serializable {
     /**
      * Put any cleanup activities after the quest is finished here
      */
-    /* eslint-disable-next-line no-empty-function */
+    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
     public complete(): void {}
 
     public getProgress(): {percent: number; display: string} {

@@ -1,34 +1,37 @@
-import Account, {SerializedAccount} from './account';
-import EntityLoader from '../data/entity-loader';
+import Account from './account';
+import {hasValue} from '../util/functions';
+
+import type EntityLoader from '../data/entity-loader';
+import type {SerializedAccount} from './account';
 
 /**
  * Creates/loads accounts
  */
 export class AccountManager {
-    /* eslint-disable lines-between-class-members */
-    private readonly accounts: Map<string, Account> = new Map();
-    private loader: EntityLoader = null;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _accounts: Map<string, Account> = new Map<string, Account>();
+    private _loader: EntityLoader | null = null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public setAccount(username: string, acc: Account): void {
-        this.accounts.set(username, acc);
+        this._accounts.set(username, acc);
     }
 
-    public getAccount(username: string): Account {
-        return this.accounts.get(username);
+    public getAccount(username: string): Account | undefined {
+        return this._accounts.get(username);
     }
 
-    public async loadAccount(username: string, force: boolean = false): Promise<Account> {
-        if (this.accounts.has(username) && !force) {
+    public async loadAccount(username: string, force: boolean = false): Promise<Account | undefined> {
+        if (this._accounts.has(username) && !force) {
             return Promise.resolve(this.getAccount(username));
         }
 
-        if (!this.loader) {
+        if (!hasValue(this._loader)) {
             throw new Error('No entity loader configured for accounts');
         }
 
         const account = new Account();
-        const data: SerializedAccount = await this.loader.fetch(username);
+        const data: SerializedAccount = await this._loader.fetch(username);
 
         account.restore(data);
 
@@ -38,7 +41,7 @@ export class AccountManager {
     }
 
     public setLoader(loader: EntityLoader): void {
-        this.loader = loader;
+        this._loader = loader;
     }
 }
 

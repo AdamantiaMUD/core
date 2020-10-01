@@ -1,18 +1,17 @@
-import EventEmitter from 'events';
-import sty from 'sty';
+import type {EventEmitter} from 'events';
 
 import Player from '../players/player';
-import TransportStream from '../communication/transport-stream';
+import type TransportStream from '../communication/transport-stream';
 
 /**
  * Helper methods for colored output during input-events
  */
-export class EventUtil {
+const EventUtil = {
     /**
      * Generate a function for writing colored output to a socket with a newline
      */
-    public static genSay(entity: Player | TransportStream<EventEmitter>): (string) => boolean {
-        let socket: TransportStream<EventEmitter> = null;
+    genSay: (entity: Player | TransportStream<EventEmitter>): ((string) => boolean) => {
+        let socket: TransportStream<EventEmitter> | null = null;
 
         if (entity instanceof Player) {
             socket = entity.socket;
@@ -21,14 +20,14 @@ export class EventUtil {
             socket = entity;
         }
 
-        return (str: string): boolean => socket.write(sty.parse(`${str}\r\n`));
-    }
+        return (str: string): boolean => socket!.write(`${str}\r\n`);
+    },
 
     /**
      * Generate a function for writing colored output to a socket
      */
-    public static genWrite(entity: Player | TransportStream<EventEmitter>): (string) => boolean {
-        let socket: TransportStream<EventEmitter> = null;
+    genWrite: (entity: Player | TransportStream<EventEmitter>): ((string) => boolean) => {
+        let socket: TransportStream<EventEmitter> | null = null;
 
         if (entity instanceof Player) {
             socket = entity.socket;
@@ -37,8 +36,8 @@ export class EventUtil {
             socket = entity;
         }
 
-        return (str: string): boolean => socket.write(sty.parse(str));
-    }
-}
+        return (str: string): boolean => socket!.write(str);
+    },
+};
 
 export default EventUtil;

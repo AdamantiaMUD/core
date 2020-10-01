@@ -3,7 +3,7 @@ import EventEmitter from 'events';
 import Account from '../../../lib/players/account';
 import Broadcast from '../../../lib/communication/broadcast';
 import EventUtil from '../../../lib/events/event-util';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import TransportStream from '../../../lib/communication/transport-stream';
 import {StreamChangePasswordEvent} from './change-password';
@@ -53,7 +53,7 @@ export const evt: StreamEventListenerFactory<StreamChooseCharacterPayload> = {
         say('------------------------------');
 
         // This just gets their names.
-        const characters = account.characters.filter(currChar => currChar.deleted === false);
+        const characters = account.characters.filter(currChar => currChar.isDeleted === false);
         const maxCharacters = state.config.get('maxCharacters', 10);
         const canAddCharacter = characters.length < maxCharacters;
 

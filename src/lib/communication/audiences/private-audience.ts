@@ -1,5 +1,7 @@
 import ChannelAudience from './channel-audience';
-import Player from '../../players/player';
+import {hasValue} from '../../util/functions';
+
+import type Player from '../../players/player';
 
 /**
  * Audience class representing a specific targeted player.
@@ -20,7 +22,7 @@ export class PrivateAudience extends ChannelAudience {
         const targetPlayerName = this.message.split(' ')[0];
         const targetPlayer = this.state.playerManager.getPlayer(targetPlayerName);
 
-        if (targetPlayer) {
+        if (hasValue(targetPlayer)) {
             return [targetPlayer];
         }
 

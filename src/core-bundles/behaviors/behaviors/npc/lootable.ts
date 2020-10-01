@@ -1,19 +1,22 @@
-import GameState from '~/lib/game-state';
-import Item, {ItemDefinition} from '~/lib/equipment/item';
-import Logger from '~/lib/util/logger';
-import LootTable from '~/lib/combat/loot-table';
-import Npc from '~/lib/mobs/npc';
-import Player from '~/lib/players/player';
-import {BehaviorDefinition} from '~/lib/behaviors/behavior';
-import {MEL} from '~/lib/events/mud-event';
-import {NpcKilledEvent, NpcKilledPayload} from '~/lib/mobs/npc-events';
-import {PlayerCurrencyGainedEvent} from '~/lib/players/player-events';
-import SimpleMap from '~/lib/util/simple-map';
-import {makeCorpse} from '~/lib/util/combat';
+import Item from '../../../../lib/equipment/item';
+import Logger from '../../../../lib/util/logger';
+import LootTable from '../../../../lib/combat/loot-table';
+import Player from '../../../../lib/players/player';
+import {NpcKilledEvent} from '../../../../lib/mobs/events';
+import {PlayerCurrencyGainedEvent} from '../../../../lib/players/events';
+import {makeCorpse} from '../../../../lib/util/combat';
+
+import type GameStateData from '../../../../lib/game-state-data';
+import type MudEventListener from '../../../../lib/events/mud-event-listener';
+import type Npc from '../../../../lib/mobs/npc';
+import type SimpleMap from '../../../../lib/util/simple-map';
+import type {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
+import type {ItemDefinition} from '../../../../lib/equipment/item';
+import type {NpcKilledPayload} from '../../../../lib/mobs/events';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
-        [NpcKilledEvent.getName()]: (state: GameState): MEL<NpcKilledPayload> => async (
+        [NpcKilledEvent.getName()]: (state: GameStateData): MudEventListener<NpcKilledPayload> => async (
             npc: Npc,
             payload: NpcKilledPayload,
             config: SimpleMap

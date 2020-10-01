@@ -1,9 +1,10 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Logger from '~/lib/util/logger';
 import Player from '~/lib/players/player';
 import {CombatError} from '~/lib/combat/combat-errors';
 import {CommandDefinitionFactory} from '~/lib/commands/command';
 import {sayAt, sayAtExcept} from '~/lib/communication/broadcast';
+import {isNpc} from '../../../lib/util/characters';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'kill',
@@ -44,7 +45,7 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAtExcept(player.room, `${player.name} attacks ${target.name}!`, [player, target]);
 
-        if (!target.isNpc) {
+        if (!isNpc(target)) {
             sayAt(target, `${player.name} attacks you!`);
         }
     },

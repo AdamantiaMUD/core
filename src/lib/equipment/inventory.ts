@@ -1,9 +1,10 @@
-import Character from '../characters/character';
-import GameState from '../game-state';
-import Item, {SerializedItem} from './item';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
 import {InventoryFullError} from './equipment-errors';
+
+import type CharacterInterface from '../characters/character-interface';
+import type GameStateData from '../game-state-data';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+import type {Item, SerializedItem} from './item';
 
 export interface SerializedInventory extends SimpleMap {
     [key: string]: SerializedItem;
@@ -16,7 +17,7 @@ export class Inventory implements Serializable {
     private readonly _items: Map<string, Item> = new Map();
     public maxSize: number = Infinity;
 
-    public deserialize(data: SerializedInventory, carriedBy: Character | Item, state?: GameState): void {
+    public deserialize(data: SerializedInventory, carriedBy: CharacterInterface | Item, state?: GameStateData): void {
         for (const [uuid, itemData] of Object.entries(data)) {
             const area = state.areaManager.getAreaByReference(itemData.entityReference);
             const newItem = state.itemFactory.create(itemData.entityReference, area);

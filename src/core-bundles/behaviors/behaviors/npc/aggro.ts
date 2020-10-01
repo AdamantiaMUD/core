@@ -7,6 +7,8 @@ import {MEL} from '~/lib/events/mud-event';
 import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
 import {sayAt} from '~/lib/communication/broadcast';
 
+import {isNpc} from '../../../../lib/util/characters';
+
 interface AggroConfig {
     delay: number;
     warnMessage: string;
@@ -101,7 +103,7 @@ export const aggro: BehaviorDefinition = {
 
                 // attack
                 if (sinceLastCheck >= delayLength) {
-                    if (aggroTarget.isNpc()) {
+                    if (isNpc(aggroTarget)) {
                         /* eslint-disable-next-line max-len */
                         Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`);
                     }
@@ -120,7 +122,7 @@ export const aggro: BehaviorDefinition = {
                 // warn
                 if (
                     sinceLastCheck >= delayLength / 2
-                    && !aggroTarget.isNpc()
+                    && !isNpc(aggroTarget)
                     && !npc.getMeta<boolean>('aggroWarned')
                 ) {
                     sayAt(aggroTarget as Player, config.warnMessage.replace(/%name%/u, npc.name));

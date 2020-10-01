@@ -1,18 +1,12 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import CharacterAttributes, {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import CharacterAttributes from '../attributes/character-attributes';
 import CharacterCombat from '../combat/character-combat';
 import CommandQueue from '../commands/command-queue';
-import Effect from '../effects/effect';
 import EffectList from '../effects/effect-list';
-import GameState from '../game-state';
 import Inventory from '../equipment/inventory';
-import Item from '../equipment/item';
-import Npc from '../mobs/npc';
-import Room from '../locations/room';
-import ScriptableEntity, {SerializedScriptableEntity} from '../entities/scriptable-entity';
-import Serializable from '../data/serializable';
-import TransportStream from '../communication/transport-stream';
+import ScriptableEntity from '../entities/scriptable-entity';
+import {hasValue} from '../util/functions';
 import {
     CharacterAttributeUpdateEvent,
     CharacterEquipItemEvent,
@@ -21,13 +15,23 @@ import {
     CharacterLostFollowerEvent,
     CharacterUnequipItemEvent,
     CharacterUnfollowedTargetEvent,
-} from './character-events';
+} from './events';
 import {
     EquipAlreadyEquippedError,
     EquipSlotTakenError,
     InventoryFullError,
 } from '../equipment/equipment-errors';
-import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/item-events';
+import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events';
+
+import type CharacterInterface from './character-interface';
+import type Effect from '../effects/effect';
+import type GameStateData from '../game-state-data';
+import type Item from '../equipment/item';
+import type Room from '../locations/room';
+import type Serializable from '../data/serializable';
+import type TransportStream from '../communication/transport-stream';
+import type {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import type {SerializedScriptableEntity} from '../entities/scriptable-entity';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -36,23 +40,23 @@ export interface SerializedCharacter extends SerializedScriptableEntity {
     room: string;
 }
 
-const DEFAULT_MAX_INVENTORY = 20;
-
-export class Character extends ScriptableEntity implements Serializable {
+export abstract class Character extends ScriptableEntity implements Serializable, CharacterInterface {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
     protected readonly _commandQueue: CommandQueue = new CommandQueue();
     protected readonly _effects: EffectList;
-    protected readonly _equipment: Map<string, Item> = new Map();
-    protected readonly _followers: Set<Character> = new Set();
-    protected _following: Character = null;
-    protected _inventory: Inventory = null;
+    protected readonly _equipment: Map<string, Item> = new Map<string, Item>();
+    protected readonly _followers: Set<Character> = new Set<Character>();
+    protected _following: Character | null = null;
+    protected _inventory: Inventory | null = null;
     protected _level: number = 1;
     public name: string = '';
-    public room: Room = null;
-    public socket: TransportStream<EventEmitter> = null;
+    public room: Room | null = null;
+    public socket: TransportStream<EventEmitter> | null = null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    constructor() {
+    protected constructor() {
         super();
 
         this._attributes = new CharacterAttributes(this);
@@ -80,7 +84,7 @@ export class Character extends ScriptableEntity implements Serializable {
         return this._followers;
     }
 
-    public get following(): Character {
+    public get following(): Character | null {
         return this._following;
     }
 
@@ -88,21 +92,7 @@ export class Character extends ScriptableEntity implements Serializable {
         return this._equipment;
     }
 
-    public get inventory(): Inventory {
-        if (this._inventory === null) {
-            this._inventory = new Inventory();
-
-            if (!this.isNpc() && !isFinite(this._inventory.getMax())) {
-                this._inventory
-                    .setMax(this._state.config.get(
-                        'maxPlayerInventory',
-                        DEFAULT_MAX_INVENTORY
-                    ));
-            }
-        }
-
-        return this._inventory;
-    }
+    public abstract get inventory(): Inventory;
 
     public get level(): number {
         return this._level;
@@ -114,30 +104,31 @@ export class Character extends ScriptableEntity implements Serializable {
 
     public addFollower(follower: Character): void {
         this._followers.add(follower);
+
         follower.setFollowing(this);
 
         this.dispatch(new CharacterGainedFollowerEvent({follower}));
     }
 
     public addItem(item: Item): void {
-        this._inventory.addItem(item);
+        this.inventory.addItem(item);
 
-        item.carriedBy = this;
+        item.setCarrier(this);
     }
 
-    public deserialize(data: SerializedCharacter, state: GameState): void {
+    public deserialize(data: SerializedCharacter, state: GameStateData): void {
         super.deserialize(data, state);
 
-        this._attributes.deserialize(data.attributes ?? {}, state);
+        this._attributes.deserialize(data.attributes, state);
 
         this._level = data.level;
         this.name = data.name;
 
-        if (data.room) {
+        if (hasValue(data.room)) {
             this.room = state.roomManager.getRoom(data.room);
         }
         else {
-            const startingRoom = state.config.get('startingRoom');
+            const startingRoom = state.config.get<string>('startingRoom');
 
             this.room = state.roomManager.getRoom(startingRoom);
         }
@@ -147,7 +138,8 @@ export class Character extends ScriptableEntity implements Serializable {
         if (this._equipment.has(slot)) {
             throw new EquipSlotTakenError();
         }
-        if (item.getMeta('equippedBy')) {
+
+        if (hasValue(item.getMeta<Character>('equippedBy'))) {
             throw new EquipAlreadyEquippedError();
         }
 
@@ -179,7 +171,7 @@ export class Character extends ScriptableEntity implements Serializable {
     /**
      * Get the current value of an attribute (base modified by delta)
      */
-    public getAttribute(attr: string, defaultValue: number = null): number {
+    public getAttribute(attr: string, defaultValue: number | null = null): number {
         if (!this._attributes.has(attr)) {
             if (defaultValue !== null) {
                 return defaultValue;
@@ -188,7 +180,7 @@ export class Character extends ScriptableEntity implements Serializable {
             throw new RangeError(`Character does not have attribute [${attr}]`);
         }
 
-        return this.getMaxAttribute(attr) + this._attributes.get(attr).delta;
+        return this.getMaxAttribute(attr) + this._attributes.get(attr)!.delta;
     }
 
     public getAttributeNames(): IterableIterator<string> {
@@ -201,11 +193,11 @@ export class Character extends ScriptableEntity implements Serializable {
     public getBaseAttribute(attr: string): number {
         const att = this._attributes.get(attr);
 
-        return att?.base;
+        return att?.base ?? 0;
     }
 
-    public getItem(itemRef: string): Item {
-        return this._inventory.items.get(itemRef);
+    public getItem(itemRef: string): Item | undefined {
+        return this.inventory.items.get(itemRef);
     }
 
     /**
@@ -216,18 +208,18 @@ export class Character extends ScriptableEntity implements Serializable {
             throw new RangeError(`Character does not have attribute [${attr}]`);
         }
 
-        const attribute = this._attributes.get(attr);
+        const attribute = this._attributes.get(attr)!;
 
         // const currentVal = this.effects.evaluateAttribute(attribute);
-        const currentVal = attribute.base ?? 0;
+        const currentVal = attribute.base;
 
-        if (!attribute.formula) {
+        if (!hasValue(attribute.formula)) {
             return currentVal;
         }
 
         const {formula} = attribute;
 
-        const requiredValues = formula.requires.map(att => this.getMaxAttribute(att));
+        const requiredValues = formula.requires.map((att: string) => this.getMaxAttribute(att));
 
         /* eslint-disable-next-line no-useless-call */
         return formula.evaluate.apply(formula, [
@@ -247,11 +239,7 @@ export class Character extends ScriptableEntity implements Serializable {
     }
 
     public hasItem(itemRef: string): boolean {
-        return this._inventory.items.has(itemRef);
-    }
-
-    public isNpc(): this is Npc {
-        return false;
+        return this.inventory.items.has(itemRef);
     }
 
     public modifyAttribute(attr: string, amount: number): void {
@@ -259,7 +247,8 @@ export class Character extends ScriptableEntity implements Serializable {
             throw new Error(`Invalid attribute ${attr}`);
         }
 
-        this._attributes.get(attr).modify(amount);
+        this._attributes.get(attr)!.modify(amount);
+
         this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
     }
 
@@ -269,7 +258,8 @@ export class Character extends ScriptableEntity implements Serializable {
 
     public removeFollower(follower: Character): void {
         this._followers.delete(follower);
-        follower._following = null;
+
+        follower.setFollowing(null);
 
         this.dispatch(new CharacterLostFollowerEvent({follower}));
     }
@@ -280,7 +270,7 @@ export class Character extends ScriptableEntity implements Serializable {
      * character's inventory
      */
     public removeItem(item: Item): void {
-        this._inventory.removeItem(item);
+        this.inventory.removeItem(item);
 
         /*
          * if we removed the last item unset the inventory
@@ -288,11 +278,11 @@ export class Character extends ScriptableEntity implements Serializable {
          * its default inventory. Instead it will persist the fact
          * that all the items were removed from it
          */
-        if (this._inventory.size === 0) {
+        if (this.inventory.size === 0) {
             this._inventory = null;
         }
 
-        item.carriedBy = null;
+        item.setCarrier(null);
     }
 
     public resetAttribute(attr: string): void {
@@ -300,7 +290,7 @@ export class Character extends ScriptableEntity implements Serializable {
             throw new Error(`Invalid attribute ${attr}`);
         }
 
-        this._attributes.get(attr).reset();
+        this._attributes.get(attr)!.reset();
 
         this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
     }
@@ -316,7 +306,7 @@ export class Character extends ScriptableEntity implements Serializable {
         };
     }
 
-    public setFollowing(target: Character): void {
+    public setFollowing(target: Character | null): void {
         this._following = target;
     }
 
@@ -324,11 +314,15 @@ export class Character extends ScriptableEntity implements Serializable {
      * Remove equipment in a given slot and move it to the character's inventory
      */
     public unequip(slot: string): void {
-        if (this._inventory.isFull) {
-            throw new InventoryFullError();
+        const item = this.equipment.get(slot);
+
+        if (!hasValue(item)) {
+            return;
         }
 
-        const item = this.equipment.get(slot);
+        if (this.inventory.isFull) {
+            throw new InventoryFullError();
+        }
 
         item.setMeta('equippedBy', null);
 
@@ -337,6 +331,7 @@ export class Character extends ScriptableEntity implements Serializable {
         item.dispatch(new ItemUnequippedEvent({wearer: this}));
 
         this.dispatch(new CharacterUnequipItemEvent({item, slot}));
+
         this.addItem(item);
     }
 
@@ -344,6 +339,10 @@ export class Character extends ScriptableEntity implements Serializable {
      * Stop following whoever the character was following
      */
     public unfollow(): void {
+        if (!hasValue(this._following)) {
+            return;
+        }
+
         this._following.removeFollower(this);
 
         this.dispatch(new CharacterUnfollowedTargetEvent({target: this._following}));

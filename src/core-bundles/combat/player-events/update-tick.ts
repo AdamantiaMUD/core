@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameState from '../../../lib/game-state';
+import GameStateData from '../../../lib/game-state-data';
 import Player from '../../../lib/players/player';
 import WebsocketStream from '../../../optional-bundles/websocket-networking/lib/WebsocketStream';
 import {CombatInvalidTargetError} from '../../../lib/combat/combat-errors';

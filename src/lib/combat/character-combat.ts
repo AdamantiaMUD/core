@@ -1,25 +1,29 @@
-import Character from '../characters/character';
-import Damage from './damage';
+import {hasValue} from '../util/functions';
 import {
     CombatantAddedEvent,
     CombatantRemovedEvent,
     CombatEndEvent,
     CombatStartEvent,
-} from './combat-events';
+} from './events';
+
+import type CharacterInterface from '../characters/character-interface';
+import type Damage from './damage';
 
 export class CharacterCombat {
-    private readonly _character: Character;
-    private readonly _combatants: Set<Character> = new Set();
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _character: CharacterInterface;
+    private readonly _combatants: Set<CharacterInterface> = new Set();
     private _killed: boolean = false;
-    private _killedBy: Character = null;
+    private _killedBy: CharacterInterface | null = null;
     private _lag: number = 0;
     private _roundStarted: number = 0;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    constructor(char: Character) {
+    public constructor(char: CharacterInterface) {
         this._character = char;
     }
 
-    private reset(): void {
+    private _reset(): void {
         this._combatants.clear();
         this._killed = false;
         this._killedBy = null;
@@ -27,11 +31,11 @@ export class CharacterCombat {
         this._roundStarted = 0;
     }
 
-    public get combatants(): Set<Character> {
+    public get combatants(): Set<CharacterInterface> {
         return this._combatants;
     }
 
-    public addCombatant(target: Character): void {
+    public addCombatant(target: CharacterInterface): void {
         if (this.isFighting(target)) {
             return;
         }
@@ -58,7 +62,7 @@ export class CharacterCombat {
             this.removeCombatant(combatant);
         }
 
-        this.reset();
+        this._reset();
     }
 
     public evaluateIncomingDamage(damage: Damage, currentAmount: number): number {
@@ -69,7 +73,7 @@ export class CharacterCombat {
         return this._character.effects.evaluateOutgoingDamage(damage, currentAmount);
     }
 
-    public initiate(target: Character, lag: number = 0): void {
+    public initiate(target: CharacterInterface | null, lag: number = 0): void {
         if (!this.isFighting()) {
             this._lag = lag;
             this._roundStarted = Date.now();
@@ -81,7 +85,7 @@ export class CharacterCombat {
             this._character.dispatch(new CombatStartEvent());
         }
 
-        if (this.isFighting(target)) {
+        if (this.isFighting(target) || !hasValue(target)) {
             return;
         }
 
@@ -98,8 +102,8 @@ export class CharacterCombat {
         target.combat.addCombatant(this._character);
     }
 
-    public isFighting(target: Character = null): boolean {
-        return target
+    public isFighting(target: CharacterInterface | null = null): boolean {
+        return hasValue(target)
             ? this._combatants.has(target)
             : this._combatants.size > 0;
     }
@@ -108,7 +112,7 @@ export class CharacterCombat {
      * @fires Character#combatantRemoved
      * @fires Character#combatEnd
      */
-    public removeCombatant(target: Character): void {
+    public removeCombatant(target: CharacterInterface): void {
         if (!this._combatants.has(target)) {
             return;
         }
@@ -122,7 +126,7 @@ export class CharacterCombat {
          */
         this._character.dispatch(new CombatantRemovedEvent({target}));
 
-        if (!this._combatants.size) {
+        if (this._combatants.size === 0) {
             /**
              * @event Character#combatEnd
              */

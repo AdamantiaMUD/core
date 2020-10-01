@@ -1,19 +1,20 @@
+import MudEventEmitter from '../events/mud-event-emitter';
+import {hasValue} from '../util/functions';
 import Area from './area';
-import GameState from '../game-state';
+import GameStateData from '../game-state-data';
 import Room from './room';
-import {MudEventEmitter} from '../events/mud-event';
 import {UpdateTickEvent} from '../common/common-events';
 
 /**
  * Stores references to, and handles distribution of, active areas
  */
 export class AreaManager extends MudEventEmitter {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private placeholder: Area;
     private readonly state: GameState;
 
     public areas: Map<string, Area> = new Map();
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(state: GameState) {
         super();
@@ -33,11 +34,15 @@ export class AreaManager extends MudEventEmitter {
         this.areas.set(area.name, area);
     }
 
-    public getArea(name: string): Area {
-        return this.areas.get(name);
+    public getArea(name: string): Area | null {
+        return this.areas.get(name) ?? null;
     }
 
-    public getAreaByReference(entityRef: string): Area {
+    public getAreaByReference(entityRef: string | null): Area | null {
+        if (!hasValue(entityRef)) {
+            return null;
+        }
+
         const [name] = entityRef.split(':');
 
         return this.getArea(name);

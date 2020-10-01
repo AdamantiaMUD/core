@@ -1,9 +1,9 @@
 import Helpfile from './helpfile';
 
 export class HelpManager {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public helps: Map<string, Helpfile> = new Map();
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public add(help: Helpfile): void {
         this.helps.set(help.name, help);

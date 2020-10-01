@@ -1,4 +1,4 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Player from '~/lib/players/player';
 import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
 import {PlayerSaveEvent, PlayerSavePayload} from '~/lib/players/player-events';

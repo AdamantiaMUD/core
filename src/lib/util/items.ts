@@ -5,10 +5,11 @@ import {sprintf} from 'sprintf-js';
 
 import Broadcast from '../communication/broadcast';
 import Character from '../characters/character';
-import GameState from '../game-state';
+import GameStateData from '../game-state-data';
 import Item from '../equipment/item';
 import ItemType from '../equipment/item-type';
 import Player from '../players/player';
+import {clone} from './objects';
 
 const {line, wrap} = Broadcast;
 
@@ -22,7 +23,7 @@ const qualityColors = {
     artifact: ['yellow'],
 };
 
-export const findCarrier = (item: Item): Character | Item => {
+export const findCarrier = (item: Item): Character | Item | null => {
     let owner = item.carriedBy;
 
     while (owner) {
@@ -44,7 +45,7 @@ export const findCarrier = (item: Item): Character | Item => {
  * Colorize the given string according to this item's quality
  */
 export const qualityColorize = (item: Item, string: string): string => {
-    const colors = qualityColors[item.getMeta('quality') || 'common'];
+    const colors = qualityColors[item.getMeta<string>('quality') ?? 'common'];
     const open = `<${colors.join('><')}>`;
     const close = `</${colors.reverse().join('></')}>`;
 
@@ -70,11 +71,11 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         case ItemType.WEAPON: {
             buf += sprintf(
                 '| %-18s%18s |\r\n',
-                `${item.getMeta('minDamage')} - ${item.getMeta('maxDamage')} Damage`,
-                `Speed ${item.getMeta('speed')}`
+                `${item.getMeta<number>('minDamage')} - ${item.getMeta<number>('maxDamage')} Damage`,
+                `Speed ${item.getMeta<number>('speed')}`
             );
 
-            const dps = ((item.getMeta('minDamage') + item.getMeta('maxDamage')) / 2) / item.getMeta('speed');
+            const dps = ((item.getMeta<number>('minDamage') + item.getMeta<number>('maxDamage')) / 2) / item.getMeta<number>('speed');
 
             buf += sprintf('| %-36s |\r\n', `(${dps.toPrecision(2)} damage per second)`);
             break;
@@ -83,7 +84,7 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         case ItemType.ARMOR:
             buf += sprintf(
                 '| %-36s |\r\n',
-                item.getMeta('slot')[0].toUpperCase() + item.getMeta('slot').slice(1)
+                item.getMeta<string>('slot')[0].toUpperCase() + item.getMeta<string>('slot').slice(1)
             );
             break;
 
@@ -94,8 +95,9 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         /* no default */
     }
 
+    // @TODO: make stats an interface
     // copy stats to make sure we don't accidentally modify it
-    const stats = {...item.getMeta('stats')};
+    const stats: any = clone(item.getMeta('stats'));
 
     // always show armor first
     if (stats.armor) {
@@ -115,19 +117,20 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
 
     // custom special effect rendering
     if (item.getMeta('specialEffects')) {
-        item.getMeta('specialEffects').forEach(effectText => {
-            const text = wrap(effectText, 36).split(/\r\n/gu);
+        item.getMeta<string[]>('specialEffects')
+            .forEach((effectText: string) => {
+                const text = wrap(effectText, 36).split(/\r\n/gu);
 
-            text.forEach(textLine => {
-                buf += sprintf('| <b><green>%-36s</green></b> |\r\n', textLine);
+                text.forEach(textLine => {
+                    buf += sprintf('| <b><green>%-36s</green></b> |\r\n', textLine);
+                });
             });
-        });
     }
 
-    if (item.getMeta('level')) {
-        const cantUse = item.getMeta('level') > player.level ? '<red>%-36s</red>' : '%-36s';
+    if (item.getMeta<number>('level')) {
+        const cantUse = item.getMeta<number>('level') > player.level ? '<red>%-36s</red>' : '%-36s';
 
-        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${item.getMeta('level')}`);
+        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${item.getMeta<number>('level')}`);
     }
 
     buf += `${qualityColorize(item, `'${line(38)}'`)}\r\n`;

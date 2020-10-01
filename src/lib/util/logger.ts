@@ -1,4 +1,11 @@
-import winston, {Logger as WinstonLogger} from 'winston';
+import winston from 'winston';
+
+/* eslint-disable-next-line import/no-namespace */
+import type * as Transport from 'winston-transport';
+import type {Logger as WinstonLogger} from 'winston';
+import type {TransformableInfo} from 'logform';
+
+import {hasValue} from './functions';
 
 const {createLogger, format, transports} = winston;
 const {
@@ -10,10 +17,14 @@ const {
     timestamp,
 } = format;
 
-const logTransports = {
+interface LogMessage extends TransformableInfo {
+    timestamp: string;
+}
+
+const logTransports: {[key: string]: Transport | null} = {
     console: new transports.Console({
         format: combine(
-            format(data => ({
+            format((data: TransformableInfo) => ({
                 ...data,
                 level: data.level.toUpperCase(),
             }))(),
@@ -21,10 +32,10 @@ const logTransports = {
             timestamp(),
             padLevels(),
             simple(),
-            printf(data => {
-                const {level, message, timestamp} = data;
+            printf((data: LogMessage) => {
+                const {level, message, timestamp: lineTs} = data;
 
-                return `[${timestamp}] [${level}] ${message}`;
+                return `[${lineTs}] [${level}] ${message}`;
             })
         ),
     }),
@@ -33,66 +44,66 @@ const logTransports = {
 
 const logger: WinstonLogger = createLogger({
     level: 'debug',
-    transports: [logTransports.console],
+    transports: [logTransports.console as Transport],
 });
 
 /**
  * Wrapper around Winston
  */
-export class Logger {
+export const Logger = {
     /*
      * Appends red "ERROR" to the start of logs.
      * Highest priority logging.
      */
-    public static error(msg: string, ...messages: string[]): void {
+    error: (msg: string, ...messages: string[]): void => {
         logger.log('error', msg, ...messages);
-    }
+    },
 
     /*
      * Medium priority logging, default.
      */
-    public static info(msg: string, ...messages: string[]): void {
+    info: (msg: string, ...messages: string[]): void => {
         logger.log('info', msg, ...messages);
-    }
+    },
 
     /*
      * Medium priority logging, default.
      */
-    public static log(msg: string, ...messages: string[]): void {
+    log: (msg: string, ...messages: string[]): void => {
         logger.log('info', msg, ...messages);
-    }
+    },
 
-    public static setFileLogging(uri: string): void {
+    setFileLogging: (uri: string): void => {
         logTransports.file = new transports.File({
             filename: uri,
             format: format.timestamp(),
         });
 
         logger.add(logTransports.file);
-    }
+    },
 
-    public static setLevel(level: string): void {
-        logTransports.console.level = level;
+    setLevel: (level: string): void => {
+        logTransports.console!.level = level;
 
-        if (logTransports.file !== null) {
-            logTransports.file.level = level;
+        if (hasValue(logTransports.file)) {
+            logTransports.file!.level = level;
         }
-    }
+    },
 
     /*
      * Lower priority logging.
      * Only logs if the environment variable is set to VERBOSE.
      */
-    public static verbose(msg: string, ...messages: string[]): void {
+    verbose: (msg: string, ...messages: string[]): void => {
         logger.log('verbose', msg, ...messages);
-    }
+    },
 
     /*
      * Less high priority than error, still higher visibility than default.
      */
-    public static warn(msg: string, ...messages: string[]): void {
+    warn: (msg: string, ...messages: string[]): void => {
         logger.log('warn', msg, ...messages);
-    }
-}
+    },
+};
 
 export default Logger;

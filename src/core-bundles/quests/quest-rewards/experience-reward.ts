@@ -1,4 +1,4 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import LevelUtil from '~/lib/util/level-util';
 import Player from '~/lib/players/player';
 import Quest from '~/lib/quests/quest';

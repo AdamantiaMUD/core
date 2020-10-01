@@ -1,15 +1,17 @@
-import uuid from 'uuid/v4';
+import {v4 as uuid} from 'uuid';
 
-import Area from '../locations/area';
 import Character from '../characters/character';
-import GameState from '../game-state';
+import Inventory from '../equipment/inventory';
 import Logger from '../util/logger';
-import Room from '../locations/room';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
-import {NpcEnterRoomEvent} from './npc-events';
-import {RoomNpcEnterEvent, RoomNpcLeaveEvent} from '../locations/room-events';
-import {noop} from '../util/functions';
+import {NpcEnterRoomEvent} from './events';
+import {RoomNpcEnterEvent, RoomNpcLeaveEvent} from '../locations/events';
+import {hasValue, noop} from '../util/functions';
+
+import type Area from '../locations/area';
+import type GameStateData from '../game-state-data';
+import type Room from '../locations/room';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
 
 export interface NpcDefinition {
     attributes?: SimpleMap;
@@ -33,8 +35,9 @@ export interface NpcDefinition {
 }
 
 export class Npc extends Character implements Serializable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public area: Area;
-    public corpseDesc: string;
+    public corpseDesc: string | null;
     public defaultEquipment: {[key: string]: string};
     public defaultItems: string[];
     public description: string;
@@ -42,30 +45,22 @@ export class Npc extends Character implements Serializable {
     public keywords: string[];
     public quests: string[];
     public roomDesc: string;
-    public script: string;
+    public script: string | null;
     public shortName: string;
     public sourceRoom: Room;
     public uuid: string;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(area: Area, data: NpcDefinition) {
         super();
 
-        const validate = ['keywords', 'name', 'id'];
-
-        for (const prop of validate) {
-            if (!(prop in data)) {
-                /* eslint-disable-next-line max-len */
-                throw new ReferenceError(`NPC in area [${area.name}] missing required property [${prop}]`);
-            }
-        }
-
         this.area = area;
-        this.script = data.script;
+        this.script = data.script ?? null;
         this.corpseDesc = data.corpseDesc ?? '';
         this.defaultEquipment = data.defaultEquipment ?? {};
         this.defaultItems = data.items ?? [];
         this.description = data.description;
-        this.entityReference = data.entityReference;
+        this.entityReference = data.entityReference ?? null;
         this.id = data.id;
         this.keywords = data.keywords;
         this.name = data.name;
@@ -91,7 +86,15 @@ export class Npc extends Character implements Serializable {
     //     return super.emit(name, ...args);
     // }
 
-    public hydrate(state: GameState): boolean {
+    public get inventory(): Inventory {
+        if (this._inventory === null) {
+            this._inventory = new Inventory();
+        }
+
+        return this._inventory;
+    }
+
+    public hydrate(state: GameStateData): boolean {
         super.hydrate(state);
 
         state.mobManager.add(this);
@@ -119,10 +122,6 @@ export class Npc extends Character implements Serializable {
         return true;
     }
 
-    public isNpc(): this is Npc {
-        return true;
-    }
-
     /**
      * Move the npc to the given room, emitting events appropriately
      *
@@ -133,10 +132,10 @@ export class Npc extends Character implements Serializable {
      * @fires Room#npcEnter
      * @fires Npc#enterRoom
      */
-    public moveTo(nextRoom: Room, onMoved: Function = noop): void {
+    public moveTo(nextRoom: Room, onMoved: () => void = noop): void {
         const prevRoom = this.room;
 
-        if (this.room) {
+        if (hasValue(this.room)) {
             /**
              * @event Room#npcLeave
              */

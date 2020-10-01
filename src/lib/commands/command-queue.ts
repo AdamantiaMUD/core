@@ -1,5 +1,5 @@
 export interface ExecutableCommand {
-    execute(): void;
+    execute: () => void;
     label: string;
     lag: number;
 }
@@ -8,11 +8,11 @@ export interface ExecutableCommand {
  * Keeps track of the queue off commands to execute for a player
  */
 export class CommandQueue {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _commands: ExecutableCommand[] = [];
     private _lag: number = 0;
     private _lastRun: number = 0;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public get hasPending(): boolean {
         return this._commands.length > 0;
@@ -53,15 +53,15 @@ export class CommandQueue {
      * Execute the currently pending command if it's ready
      */
     public execute(): boolean {
-        if (!this._commands.length || this.msTilNextRun > 0) {
+        if (this._commands.length === 0 || this.msTilNextRun > 0) {
             return false;
         }
 
         const command = this._commands.shift();
 
         this._lastRun = Date.now();
-        this._lag = command.lag;
-        command.execute();
+        this._lag = command!.lag;
+        command!.execute();
 
         return true;
     }

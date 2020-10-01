@@ -1,7 +1,7 @@
-import Command from './command';
+import type Command from './command';
 
 export class CommandManager {
-    public commands: Map<string, Command> = new Map();
+    public commands: Map<string, Command> = new Map<string, Command>();
 
     /**
      * Add the command and set up aliases
@@ -9,38 +9,38 @@ export class CommandManager {
     public add(command: Command): void {
         this.commands.set(command.name, command);
 
-        if (command.aliases) {
-            command.aliases.forEach(alias => this.commands.set(alias, command));
+        for (const alias of command.aliases) {
+            this.commands.set(alias, command);
         }
     }
 
     /**
      * Find a command from a partial name
      */
-    public find(search: string): Command {
+    public find(search: string): Command | undefined {
         for (const [name, command] of this.commands.entries()) {
             if (name.startsWith(search)) {
                 return command;
             }
         }
 
-        return void 0;
+        return undefined;
     }
 
-    public findWithAlias(search: string): {command: Command; alias: string} {
+    public findWithAlias(search: string): {command: Command; alias: string} | undefined {
         for (const [name, command] of this.commands.entries()) {
             if (name.startsWith(search)) {
                 return {command: command, alias: name};
             }
         }
 
-        return void 0;
+        return undefined;
     }
 
     /**
      * Get command by name
      */
-    public get(name: string): Command {
+    public get(name: string): Command | undefined {
         return this.commands.get(name);
     }
 

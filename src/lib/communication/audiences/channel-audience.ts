@@ -1,17 +1,17 @@
-import Character from '../../characters/character';
-import GameState from '../../game-state';
-import Player from '../../players/player';
-import {Broadcastable} from '../broadcast';
+import type Character from '../../characters/character';
+import type GameStateData from '../../game-state-data';
+import type Player from '../../players/player';
+import type {Broadcastable} from '../broadcast';
 
 /**
  * Base channel audience class
  */
 export class ChannelAudience implements Broadcastable {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public message: string;
     public sender: Character;
-    public state: GameState;
-    /* eslint-enable lines-between-class-members */
+    public state: GameStateData;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public alterMessage(message: string): string {
         return message;
@@ -20,7 +20,7 @@ export class ChannelAudience implements Broadcastable {
     /**
      * Configure the current state for the audience. Called by {@link Channel#send}
      */
-    public configure(options: {state: GameState; sender: Character; message: string}): void {
+    public configure(options: {state: GameStateData; sender: Character; message: string}): void {
         this.state = options.state;
         this.sender = options.sender;
         this.message = options.message;

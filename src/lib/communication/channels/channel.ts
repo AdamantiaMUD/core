@@ -1,40 +1,22 @@
 import Broadcast from '../broadcast';
-import ChannelAudience from '../audiences/channel-audience';
-import Character from '../../characters/character';
-import GameState from '../../game-state';
 import PartyAudience from '../audiences/party-audience';
 import Player from '../../players/player';
-import PlayerRole from '../../players/player-role';
 import PrivateAudience from '../audiences/private-audience';
 import WorldAudience from '../audiences/world-audience';
 import {ChannelReceiveEvent} from './channel-events';
 import {NoMessageError, NoPartyError, NoRecipientError} from './channel-errors';
+import {hasValue} from '../../util/functions';
+
+import type ChannelAudience from '../audiences/channel-audience';
+import type ChannelDefinition from './channel-definition';
+import type ChannelInterface from './channel-interface';
+import type ChannelMessageFormatter from './channel-message-formatter';
+import type Character from '../../characters/character';
+import type GameStateData from '../../game-state-data';
+import type PlayerRole from '../../players/player-role';
+import type {Colorizer} from '../colorizer';
 
 const {sayAt, sayAtFormatted} = Broadcast;
-
-export interface ChannelDefinition {
-    aliases?: string[];
-    audience: ChannelAudience;
-    bundle?: string;
-    color?: string | string[];
-    description?: string;
-    formatter?: {
-        sender: (
-            sender: Player,
-            target: Player,
-            message: string,
-            colorify: (message: string) => string
-        ) => string;
-        target: (
-            sender: Player,
-            target: Player,
-            message: string,
-            colorify: (message: string) => string
-        ) => string;
-    };
-    minRequiredRole?: PlayerRole;
-    name: string;
-}
 
 /**
  * @property {ChannelAudience} audience People who receive messages from this
@@ -45,17 +27,17 @@ export interface ChannelDefinition {
  *                                        role or greater can use the channel
  * @property {{sender: function, target: function}} [formatter]
  */
-export class Channel {
-    /* eslint-disable lines-between-class-members */
+export class Channel implements ChannelInterface {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public aliases: string[];
     public audience: ChannelAudience;
-    public bundle: string;
-    public color: string | string[];
-    public description: string;
-    public formatter: {sender: Function; target: Function};
-    public minRequiredRole: PlayerRole;
+    public bundle: string | null;
+    public color: string | string[] | null;
+    public description: string | null;
+    public formatter: {sender: ChannelMessageFormatter; target: ChannelMessageFormatter};
+    public minRequiredRole: PlayerRole | null;
     public name: string;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     /**
      * @param {Object}  config
@@ -65,41 +47,38 @@ export class Channel {
      * @param {{sender: function, target: function}} [config.formatter]
      */
     public constructor(config: ChannelDefinition) {
-        if (!config.name) {
+        if (!hasValue(config.name)) {
             throw new Error('Channels must have a name to be usable.');
-        }
-        if (!config.audience) {
-            throw new Error(`Channel ${config.name} is missing a valid audience.`);
         }
 
         this.name = config.name;
-        this.description = config.description;
+        this.description = config.description ?? null;
 
         this.minRequiredRole = typeof config.minRequiredRole === 'undefined'
             ? null
             : config.minRequiredRole;
 
         // for debugging purposes, which bundle it came from
-        this.bundle = config.bundle || null;
-        this.audience = config.audience || new WorldAudience();
-        this.color = config.color || null;
-        this.aliases = config.aliases;
-        this.formatter = config.formatter || {
+        this.bundle = config.bundle ?? null;
+        this.audience = config.audience ?? new WorldAudience();
+        this.color = config.color ?? null;
+        this.aliases = config.aliases ?? [];
+        this.formatter = config.formatter ?? {
             sender: this.formatToSender.bind(this),
             target: this.formatToRecipient.bind(this),
         };
     }
 
     public colorify(message: string): string {
-        if (!this.color) {
+        if (!hasValue(this.color)) {
             return message;
         }
 
         const colors = Array.isArray(this.color) ? this.color : [this.color];
 
-        const open = colors.map(color => `<${color}>`).join('');
+        const open = colors.map((color: string) => `<${color}>`).join('');
         const close = colors.reverse()
-            .map(color => `</${color}>`)
+            .map((color: string) => `</${color}>`)
             .join('');
 
         return open + message + close;
@@ -110,7 +89,7 @@ export class Channel {
             sayAt(sender, `\r\nChannel: ${this.name}`);
             sayAt(sender, `Syntax: ${this.getUsage()}`);
 
-            if (this.description) {
+            if (hasValue(this.description)) {
                 sayAt(sender, this.description);
             }
         }
@@ -126,12 +105,12 @@ export class Channel {
      * @returns {string}
      */
     public formatToRecipient(
-        sender: Character,
-        target: Character,
+        sender: Player,
+        target: Player | null,
         message: string,
-        colorify: Function
+        colorify: Colorizer
     ): string {
-        return this.formatToSender(sender, target, message, colorify);
+        return colorify(`[${this.name}] ${sender.name}: ${message}`);
     }
 
     /**
@@ -139,12 +118,12 @@ export class Channel {
      * E.g., you may want "chat" to say "You chat, 'message here'"
      */
     public formatToSender(
-        sender: Character,
-        target: Character,
+        sender: Player,
+        target: Player | null,
         message: string,
-        colorify: Function
+        colorify: Colorizer
     ): string {
-        return colorify(`[${this.name}] ${sender.name}: ${message}`);
+        return colorify(`[${this.name}] You: ${message}`);
     }
 
     public getUsage(): string {
@@ -161,14 +140,14 @@ export class Channel {
      * @param {string}    msg
      * @fires ScriptableEntity#channelReceive
      */
-    public send(state: GameState, sender: Character, msg: string): void {
+    public send(state: GameStateData, sender: Player, msg: string): void {
         // If they don't include a message, explain how to use the channel.
         if (msg.length === 0) {
             throw new NoMessageError();
         }
 
-        if (!this.audience) {
-            throw new Error(`Channel [${this.name} has invalid audience [${this.audience}]`);
+        if (!hasValue(this.audience)) {
+            throw new Error(`Channel [${this.name} has invalid audience`);
         }
 
         let message = msg;
@@ -176,7 +155,7 @@ export class Channel {
         this.audience.configure({state, sender, message});
         const targets = this.audience.getBroadcastTargets();
 
-        if (this.audience instanceof PartyAudience && !targets.length) {
+        if (this.audience instanceof PartyAudience && targets.length === 0) {
             throw new NoPartyError();
         }
 
@@ -186,7 +165,7 @@ export class Channel {
         // Private channels also send the target player to the formatter
         if (sender instanceof Player) {
             if (this.audience instanceof PrivateAudience) {
-                if (!targets.length) {
+                if (targets.length === 0) {
                     throw new NoRecipientError();
                 }
                 sayAt(
@@ -206,7 +185,12 @@ export class Channel {
         sayAtFormatted(
             this.audience,
             message,
-            (target, mess) => this.formatter.target(sender, target, mess, this.colorify.bind(this))
+            (target: Player, mess: string) => this.formatter.target(
+                sender,
+                target,
+                mess,
+                this.colorify.bind(this)
+            )
         );
 
         // strip color tags

@@ -4,10 +4,10 @@ import Player from '../players/player';
  * Representation of an adventuring party
  */
 export class Party extends Set<Player> {
-    /* eslint-disable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public invited: Set<Player> = new Set();
     public leader: Player;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(leader: Player) {
         super();

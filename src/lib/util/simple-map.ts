@@ -1,5 +1,3 @@
-export interface SimpleMap {
+export default interface SimpleMap {
     [key: string]: unknown;
 }
-
-export default SimpleMap;

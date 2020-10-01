@@ -1,7 +1,7 @@
-import GameState from '../game-state';
-import Player from '../players/player';
-import Quest from './quest';
-import SimpleMap from '../util/simple-map';
+import type GameStateData from '../game-state-data';
+import type Player from '../players/player';
+import type Quest from './quest';
+import type SimpleMap from '../util/simple-map';
 
 export interface QuestRewardDefinition {
     config: SimpleMap;
@@ -14,16 +14,15 @@ export interface QuestRewardDefinition {
  * create new reward type for quests
  */
 export interface QuestReward {
-
     /**
      * Render the reward
      */
-    display(state: GameState, quest: Quest, config?: SimpleMap, player?: Player): string;
+    display: (state: GameStateData, quest: Quest, config?: SimpleMap, player?: Player) => string;
 
     /**
      * Assign the reward to the player
      */
-    reward(state: GameState, quest: Quest, config?: SimpleMap, player?: Player): void;
+    reward: (state: GameStateData, quest: Quest, config?: SimpleMap, player?: Player) => void;
 }
 
 export default QuestReward;

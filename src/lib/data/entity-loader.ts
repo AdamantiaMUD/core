@@ -1,45 +1,50 @@
-import DataSource from './sources/data-source';
+import type DataSource from './sources/data-source';
+
+export interface EntityLoaderConfig {
+    area?: string;
+    bundle?: string;
+}
 
 /**
  * Used to CRUD an entity from a configured DataSource
  */
 export class EntityLoader {
-    /* eslint-disable lines-between-class-members */
-    private readonly config: {area?: string; bundle?: string};
-    private readonly dataSource: DataSource;
-    /* eslint-enable lines-between-class-members */
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
+    private readonly _config: EntityLoaderConfig;
+    private readonly _dataSource: DataSource;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(dataSource: DataSource, config = {}) {
-        this.dataSource = dataSource;
-        this.config = config;
+    public constructor(dataSource: DataSource, config: EntityLoaderConfig = {}) {
+        this._dataSource = dataSource;
+        this._config = config;
     }
 
-    public fetch(id: string): Promise<unknown> {
-        return this.dataSource.fetch(this.config, id);
+    public async fetch<T = unknown>(id: string): Promise<T> {
+        return this._dataSource.fetch<T>(this._config, id);
     }
 
-    public fetchAll(): Promise<unknown> {
-        return this.dataSource.fetchAll(this.config);
+    public async fetchAll<T = unknown>(): Promise<T> {
+        return this._dataSource.fetchAll<T>(this._config);
     }
 
-    public hasData(): Promise<boolean> {
-        return this.dataSource.hasData(this.config);
+    public async hasData(): Promise<boolean> {
+        return this._dataSource.hasData(this._config);
     }
 
-    public replace(data: unknown): Promise<undefined> {
-        return this.dataSource.replace(this.config, data);
+    public async replace<T = unknown>(data: T): Promise<T> {
+        return this._dataSource.replace<T>(this._config, data);
     }
 
     public setArea(name: string): void {
-        this.config.area = name;
+        this._config.area = name;
     }
 
     public setBundle(name: string): void {
-        this.config.bundle = name;
+        this._config.bundle = name;
     }
 
-    public update(id: string, data: unknown): Promise<undefined> {
-        return this.dataSource.update(this.config, id, data);
+    public async update<T = unknown>(id: string, data: T): Promise<T> {
+        return this._dataSource.update<T>(this._config, id, data);
     }
 }
 

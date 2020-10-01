@@ -1,6 +1,6 @@
 import {Random} from 'rando-js';
 
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Logger from '~/lib/util/logger';
 import Npc from '~/lib/mobs/npc';
 import {BehaviorDefinition} from '~/lib/behaviors/behavior';

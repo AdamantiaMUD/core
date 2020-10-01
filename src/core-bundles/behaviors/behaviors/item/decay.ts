@@ -1,4 +1,4 @@
-import GameState from '~/lib/game-state';
+import GameStateData from '~/lib/game-state-data';
 import Item from '~/lib/equipment/item';
 import Logger from '~/lib/util/logger';
 import Player from '~/lib/players/player';
@@ -12,7 +12,7 @@ import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
 import {findCarrier} from '~/lib/util/items';
 import {sayAt} from '~/lib/communication/broadcast';
 
-export const ItemDecayEvent: MudEventConstructor<never> = class extends MudEvent<never> {
+export class ItemDecayEvent extends MudEvent<void> {
     public NAME: string = 'item-decay';
 };
 
@@ -42,7 +42,7 @@ export const decay: BehaviorDefinition = {
             }
         },
 
-        [ItemDecayEvent.getName()]: (state: GameState): MEL<never> => (item: Item): void => {
+        [ItemDecayEvent.getName()]: (state: GameState): MEL<void> => (item: Item): void => {
             const {room} = item;
 
             const owner = findCarrier(item);
