@@ -5,7 +5,7 @@ import type * as Transport from 'winston-transport';
 import type {Logger as WinstonLogger} from 'winston';
 import type {TransformableInfo} from 'logform';
 
-import {hasValue} from './functions';
+import {cast, hasValue} from './functions';
 
 const {createLogger, format, transports} = winston;
 const {
@@ -104,6 +104,15 @@ export const Logger = {
     warn: (msg: string, ...messages: string[]): void => {
         logger.log('warn', msg, ...messages);
     },
+};
+
+/*
+ * Small utility to eliminate typing these couple lines a bajillion places
+ */
+export const logAndRethrow = (err: unknown): void => {
+    Logger.error(cast<Error>(err).message);
+
+    throw new Error(cast<Error>(err).message);
 };
 
 export default Logger;

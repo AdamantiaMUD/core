@@ -1,21 +1,21 @@
 import cloneFactory from 'rfdc';
 
-import Ability from '../abilities/ability';
-import Damage from '../combat/damage';
-import EffectFlag from './effect-flag';
-import GameStateData from '../game-state-data';
-import Serializable from '../data/serializable';
-import SimpleMap from '../util/simple-map';
+import MudEventEmitter from '../events/mud-event-emitter';
 import {
     EffectActivatedEvent,
     EffectAddedEvent,
     EffectDeactivatedEvent,
     EffectRemoveEvent,
 } from './effect-events';
-import {EffectModifiers} from './effect-modifiers';
-import {MudEventEmitter} from '../events/mud-event';
 
+import type Ability from '../abilities/ability';
 import type CharacterInterface from '../characters/character-interface';
+import type Damage from '../combat/damage';
+import type EffectFlag from './effect-flag';
+import type GameStateData from '../game-state-data';
+import type Serializable from '../data/serializable';
+import type SimpleMap from '../util/simple-map';
+import type {EffectModifiers} from './effect-modifiers';
 
 export interface EffectConfig {
     autoActivate?: boolean;

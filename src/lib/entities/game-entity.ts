@@ -6,6 +6,7 @@ import MudEventEmitter from '../events/mud-event-emitter';
 import {MetadataUpdatedEvent} from '../data/events';
 import {hasValue} from '../util/functions';
 
+import type GameEntityDefinition from './game-entity-definition';
 import type GameEntityInterface from './game-entity-interface';
 import type GameStateData from '../game-state-data';
 import type Metadatable from '../data/metadatable';
@@ -13,10 +14,6 @@ import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
-
-export interface GameEntityDefinition {
-    metadata?: SimpleMap;
-}
 
 export interface SerializedGameEntity extends SimpleMap {
     entityReference: string | null;
@@ -101,6 +98,10 @@ export class GameEntity extends MudEventEmitter implements Metadatable, Serializ
          * @param {*} oldValue
          */
         this.dispatch(new MetadataUpdatedEvent({key, newValue, oldValue}));
+    }
+
+    public setPruned(isPruned: boolean = true): void {
+        this.__pruned = isPruned;
     }
 }
 

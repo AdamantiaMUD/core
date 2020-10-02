@@ -16,11 +16,7 @@ import {
     CharacterUnequipItemEvent,
     CharacterUnfollowedTargetEvent,
 } from './events';
-import {
-    EquipAlreadyEquippedError,
-    EquipSlotTakenError,
-    InventoryFullError,
-} from '../equipment/equipment-errors';
+import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equipment/errors';
 import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events';
 
 import type CharacterInterface from './character-interface';
@@ -136,11 +132,11 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
     public equip(item: Item, slot: string): void {
         if (this._equipment.has(slot)) {
-            throw new EquipSlotTakenError();
+            throw new SlotTakenError();
         }
 
         if (hasValue(item.getMeta<Character>('equippedBy'))) {
-            throw new EquipAlreadyEquippedError();
+            throw new AlreadyEquippedError();
         }
 
         if (this._inventory instanceof Inventory) {
@@ -221,13 +217,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         const requiredValues = formula.requires.map((att: string) => this.getMaxAttribute(att));
 
-        /* eslint-disable-next-line no-useless-call */
-        return formula.evaluate.apply(formula, [
-            attribute,
-            this,
-            currentVal,
-            ...requiredValues,
-        ]);
+        return formula.evaluate(this, currentVal, ...requiredValues);
     }
 
     public hasEffectType(type: string): boolean {

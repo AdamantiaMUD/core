@@ -10,8 +10,8 @@ import type GameStateData from '../game-state-data';
 import type Item from '../equipment/item';
 import type Npc from '../mobs/npc';
 import type Player from '../players/player';
+import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
 import type {Broadcastable} from '../communication/broadcast';
-import type {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 
 export interface Door {
     closed?: boolean;

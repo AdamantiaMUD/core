@@ -1,41 +1,27 @@
 import cloneFactory from 'rfdc';
 
-import Effect, {EffectConfig} from './effect';
-import EffectFlag from './effect-flag';
-import GameStateData from '../game-state-data';
+import Effect from './effect';
 import MudEventManager from '../events/mud-event-manager';
-import SimpleMap from '../util/simple-map';
-import {EffectModifiers} from './effect-modifiers';
+import {hasValue} from '../util/functions';
+
+import type EffectDefinition from './effect-definition';
+import type GameStateData from '../game-state-data';
+import type SimpleMap from '../util/simple-map';
+import type {EffectConfig} from './effect';
 
 const clone = cloneFactory();
 
-export interface EffectDefinition {
-    config: EffectConfig;
-    flags?: EffectFlag[];
-    listeners?: EffectListenersDefinition | EffectListenersDefinitionFactory;
-    modifiers?: EffectModifiers;
-    state?: SimpleMap;
+interface EffectInfo {
+    definition: EffectDefinition;
+    eventManager: MudEventManager;
 }
-
-export interface EffectListenersDefinition {
-    effectActivated?: (effect?: Effect) => void;
-    effectAdded?: (effect?: Effect) => void;
-    effectDeactivated?: (effect?: Effect) => void;
-    effectRefreshed?: (effect?: Effect) => void;
-    [key: string]: (effect?: Effect, ...args: unknown[]) => void;
-}
-
-export type EffectListenersDefinitionFactory = (state: GameState) => EffectListenersDefinition;
 
 export class EffectFactory {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public effects: Map<
-    string,
-    {definition: EffectDefinition; eventManager: MudEventManager}
-    > = new Map();
+    public effects: Map<string, EffectInfo> = new Map<string, EffectInfo>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public add(id: string, config: EffectDefinition, state: GameState): void {
+    public add(id: string, config: EffectDefinition, state: GameStateData): void {
         if (this.effects.has(id)) {
             return;
         }
@@ -43,7 +29,7 @@ export class EffectFactory {
         const definition = clone(config);
 
         delete definition.listeners;
-        let listeners = config.listeners || {};
+        let listeners = config.listeners ?? {};
 
         if (typeof listeners === 'function') {
             listeners = listeners(state);
@@ -52,7 +38,9 @@ export class EffectFactory {
         const eventManager = new MudEventManager();
 
         for (const event in listeners) {
-            eventManager.add(event, listeners[event]);
+            if (Object.prototype.hasOwnProperty.call(listeners, event)) {
+                eventManager.add(event, listeners[event]);
+            }
         }
 
         this.effects.set(id, {definition, eventManager});
@@ -65,7 +53,7 @@ export class EffectFactory {
     ): Effect {
         const entry = this.effects.get(id);
 
-        if (!entry || !entry.definition) {
+        if (!hasValue(entry) || !hasValue(entry.definition)) {
             throw new Error(`No valid entry definition found for effect ${id}.`);
         }
 
@@ -84,8 +72,8 @@ export class EffectFactory {
     /**
      * Get a effect definition. Use `create` if you want an instance of a effect
      */
-    public get(id: string): {definition: EffectDefinition; eventManager: MudEventManager} {
-        return this.effects.get(id);
+    public get(id: string): EffectInfo | null {
+        return this.effects.get(id) ?? null;
     }
 
     public has(id: string): boolean {

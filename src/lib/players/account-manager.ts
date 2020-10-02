@@ -40,7 +40,7 @@ export class AccountManager {
         return account;
     }
 
-    public setLoader(loader: EntityLoader): void {
+    public setLoader(loader: EntityLoader | null): void {
         this._loader = loader;
     }
 }

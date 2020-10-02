@@ -3,7 +3,8 @@ import Data from '../util/data';
 import MudEventManager from '../events/mud-event-manager';
 import Player from './player';
 import {PlayerSavedEvent} from './events';
-import {UpdateTickEvent} from '../common/common-events';
+import {UpdateTickEvent} from '../common/events';
+import {hasValue} from '../util/functions';
 
 import type EntityLoader from '../data/entity-loader';
 import type GameStateData from '../game-state-data';
@@ -40,7 +41,7 @@ export class PlayerManager extends MudEventEmitter {
         return Data.exists('player', name);
     }
 
-    public filter(fn: (Player) => boolean): Player[] {
+    public filter(fn: (char: Player) => boolean): Player[] {
         return this.getPlayersAsArray().filter(fn);
     }
 
@@ -68,7 +69,7 @@ export class PlayerManager extends MudEventEmitter {
             return this.getPlayer(username)!;
         }
 
-        if (!this.loader) {
+        if (!hasValue(this.loader)) {
             throw new Error('No entity loader configured for players');
         }
 
@@ -92,22 +93,22 @@ export class PlayerManager extends MudEventEmitter {
      */
     public removePlayer(player: Player, killSocket: boolean = false): void {
         if (killSocket) {
-            player.socket.end();
+            player.socket?.end();
         }
 
         player.stopListening();
 
-        if (player.room) {
+        if (hasValue(player.room)) {
             player.room.removePlayer(player);
         }
 
-        player.__pruned = true;
+        player.setPruned();
 
         this.players.delete(player.name.toLowerCase());
     }
 
     public async save(player: Player): Promise<void> {
-        if (!this.loader) {
+        if (!hasValue(this.loader)) {
             throw new Error('No entity loader configured for players');
         }
 
@@ -123,7 +124,7 @@ export class PlayerManager extends MudEventEmitter {
         }
     }
 
-    public setLoader(loader: EntityLoader): void {
+    public setLoader(loader: EntityLoader | null): void {
         this.loader = loader;
     }
 

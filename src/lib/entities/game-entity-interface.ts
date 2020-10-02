@@ -2,7 +2,7 @@ import type GameStateData from '../game-state-data';
 import type MudEventEmitterInterface from '../events/mud-event-emitter-interface';
 import type {SerializedGameEntity} from './game-entity';
 
-export interface GameEntityInterface extends MudEventEmitterInterface{
+export interface GameEntityInterface extends MudEventEmitterInterface {
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     __pruned: boolean;
     /* eslint-disable-next-line @typescript-eslint/naming-convention */

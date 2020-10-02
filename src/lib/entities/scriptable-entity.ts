@@ -7,23 +7,14 @@ import {hasValue} from '../util/functions';
 
 import type BehaviorManager from '../behaviors/behavior-manager';
 import type GameStateData from '../game-state-data';
+import type Scriptable from './scriptable';
+import type ScriptableEntityDefinition from './scriptable-entity-definition';
 import type ScriptableEntityInterface from './scriptable-entity-interface';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
-import type {GameEntityDefinition, SerializedGameEntity} from './game-entity';
+import type {SerializedGameEntity} from './game-entity';
 
 const clone = cloneFactory();
-
-export interface Scriptable {
-    behaviors: Map<string, SimpleMap | true | null>;
-    getBehavior: (name: string) => SimpleMap | true | null;
-    hasBehavior: (name: string) => boolean;
-}
-
-export interface ScriptableEntityDefinition extends GameEntityDefinition {
-    behaviors?: {[key: string]: SimpleMap | true | null};
-    script?: string;
-}
 
 export interface SerializedScriptableEntity extends SerializedGameEntity {
     behaviors: {[key: string]: SimpleMap | true | null};

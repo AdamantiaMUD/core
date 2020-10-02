@@ -1,3 +1,3 @@
-export default interface SimpleMap {
-    [key: string]: unknown;
-}
+type SimpleMap<T = unknown> = Record<string, T>;
+
+export default SimpleMap;

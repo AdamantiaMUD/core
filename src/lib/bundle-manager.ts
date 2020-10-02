@@ -4,27 +4,32 @@ import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 
-import AttributeFormula from './attributes/attribute-formula';
 import Command from './commands/command';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import Helpfile from './help/helpfile';
-import Logger from './util/logger';
-import {hasValue} from './util/functions';
+import Logger, {logAndRethrow} from './util/logger';
+import {cast, hasValue} from './util/functions';
 
 import type BehaviorManager from './behaviors/behavior-manager';
+import type GameEntity from './entities/game-entity';
+import type GameEntityDefinition from './entities/game-entity-definition';
 import type GameStateData from './game-state-data';
-import type NpcClass from './classes/npc-class';
-import type PlayerClass from './classes/player-class';
-import type QuestGoal from './quests/quest-goal';
-import type QuestReward from './quests/quest-reward';
+import type HelpfileOptions from './help/helpfile-options';
+import type ScriptableEntity from './entities/scriptable-entity';
+import type ScriptableEntityDefinition from './entities/scriptable-entity-definition';
+import type SimpleMap from './util/simple-map';
 import type {AreaDefinition, AreaManifest} from './locations/area';
-import type {AttributeModule} from './util/modules';
-import type {BehaviorDefinition, BehaviorEventListenerDefinition} from './behaviors/behavior';
-import type {HelpfileOptions} from './help/helpfile';
-import type {MudEventListenerFactory} from './events/mud-event-listener-factory';
+import type {
+    AttributeModule,
+    BehaviorModule,
+    CommandModule,
+    EffectModule,
+} from './module-helpers';
+import type {CommandDefinition} from './commands/command';
 import type {QuestDefinition} from './quests/quest';
-import type {StreamEventListenerFactory} from './events/stream-event';
+
+export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
 
 export class BundleManager {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -56,12 +61,16 @@ export class BundleManager {
     }
 
     private async _createCommand(uri: string, name: string, bundle: string): Promise<Command> {
-        const commandImport = await import(uri);
+        /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+        const commandImport: CommandModule = await import(uri);
         const loader = commandImport.default;
 
-        loader.command = loader.command(this._state);
+        const commandDef: CommandDefinition = {
+            ...loader,
+            command: loader.command(this._state),
+        };
 
-        return new Command(bundle, name, loader, uri);
+        return new Command(bundle, name, commandDef, uri);
     }
 
     private static _getAreaScriptPath(bundlePath: string, areaName: string): string {
@@ -76,9 +85,7 @@ export class BundleManager {
                 area.hydrate(this._state);
             }
             catch (err: unknown) {
-                Logger.error(err.message);
-
-                throw new Error(err);
+                logAndRethrow(err);
             }
 
             this._state.areaManager.addArea(area);
@@ -118,14 +125,14 @@ export class BundleManager {
         Logger.verbose(`LOAD: Area \`${areaName}\`: Quests...`);
         definition.quests = await this._loadQuests(bundle, areaName);
 
-        Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
-        definition.rooms = await this._loadEntities(
-            bundle,
-            bundlePath,
-            areaName,
-            'items',
-            this._state.itemFactory
-        );
+        // Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
+        // definition.items = await this._loadEntities(
+        //     bundle,
+        //     bundlePath,
+        //     areaName,
+        //     'items',
+        //     this._state.itemFactory
+        // );
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: NPCs...`);
         definition.npcs = await this._loadEntities(
@@ -155,13 +162,18 @@ export class BundleManager {
 
         const loader = this._state.entityLoaderRegistry.get('areas');
 
+        if (!hasValue(loader)) {
+            Logger.error('No entity loader set for areas.');
+            return;
+        }
+
         loader.setBundle(bundle);
 
         if (!await loader.hasData()) {
             return;
         }
 
-        const areas: {[key: string]: AreaManifest} = await loader.fetchAll();
+        const areas = await loader.fetchAll<SimpleMap<AreaManifest>>();
 
         for (const [name, manifest] of Object.entries(areas)) {
             this._areas.push(name);
@@ -182,8 +194,8 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Attributes -- START`);
 
         /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-        const module: AttributeModule = await import(uri);
-        const attributes = module.default;
+        const attributeImport: AttributeModule = await import(uri);
+        const attributes = attributeImport.default;
 
         const error = `Attributes file [${uri}] from bundle [${bundle}]`;
 
@@ -201,20 +213,11 @@ export class BundleManager {
                 Logger.error(`${error} does not include required properties name and base`);
             }
             else {
-                let formula = null;
-
-                if (attribute.formula) {
-                    formula = new AttributeFormula(
-                        attribute.formula.requires,
-                        attribute.formula.fn
-                    );
-                }
-
                 Logger.verbose(`LOAD: ${bundle} - Attributes -> ${attribute.name}`);
 
                 this._state
                     .attributeFactory
-                    .add(attribute.name, attribute.base, formula, attribute.metadata);
+                    .add(attribute.name, attribute.base, attribute.formula ?? null, attribute.metadata);
             }
         }
 
@@ -254,8 +257,9 @@ export class BundleManager {
 
                     Logger.verbose(`LOAD: ${bundle} - Behaviors -> ${type} -> ${behaviorName}`);
 
-                    const behaviorImport = await import(behaviorPath);
-                    const loader: BehaviorEventListenerDefinition = behaviorImport.default;
+                    /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                    const behaviorImport: BehaviorModule = await import(behaviorPath);
+                    const loader = behaviorImport.default;
 
                     const {listeners} = loader;
 
@@ -272,6 +276,8 @@ export class BundleManager {
         await loadEntityBehaviors('room', this._state.roomBehaviorManager, this._state);
 
         Logger.info(`LOAD: ${bundle} - Behaviors -- END`);
+
+        return Promise.resolve();
     }
 
     private async _loadBundle(bundle: string, bundlePath: string): Promise<void> {
@@ -306,7 +312,7 @@ export class BundleManager {
             const bundlePath = path.join(bundlesPath, bundle);
 
             // only load bundles the user has configured to be loaded
-            if (this._isValidBundle(bundle, bundlePath) && this._isBundleEnabled(bundle, prefix)) {
+            if (BundleManager._isValidBundle(bundle, bundlePath) && this._isBundleEnabled(bundle, prefix)) {
                 await this._loadBundle(`${prefix}${bundle}`, bundlePath);
             }
         }
@@ -320,6 +326,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Commands -- START`);
+
         const files = await fs.readdir(uri);
 
         for (const commandFile of files) {
@@ -337,6 +344,8 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Commands -- END`);
+
+        return Promise.resolve();
     }
 
     private async _loadEffects(bundle: string, bundlePath: string): Promise<void> {
@@ -347,6 +356,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Effects -- START`);
+
         const files = fs.readdirSync(uri);
 
         for (const effectFile of files) {
@@ -355,7 +365,8 @@ export class BundleManager {
             if (Data.isScriptFile(effectPath, effectFile)) {
                 const effectName = path.basename(effectFile, path.extname(effectFile));
 
-                const effectImport = await import(effectPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const effectImport: EffectModule = await import(effectPath);
                 const loader = effectImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Effects -> ${effectName}`);
@@ -371,7 +382,11 @@ export class BundleManager {
         return Promise.resolve();
     }
 
-    private async _loadEntities<T extends EntityFactory<unknown, unknown>>(
+    private async _loadEntities<
+        E extends GameEntity | ScriptableEntity,
+        EDef extends GameEntityDefinition | ScriptableEntityDefinition,
+        T extends EntityFactory<E, EDef>
+    >(
         bundle: string,
         bundlePath: string,
         areaName: string,
@@ -393,24 +408,27 @@ export class BundleManager {
             return [];
         }
 
-        const entities = await loader.fetchAll();
+        const entities = await loader.fetchAll<EDef[]>();
         const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaName);
 
-        return entities.map(entity => {
+        return entities.map((entity: EDef) => {
             const ref = EntityFactory.createRef(areaName, entity.id);
 
             factory.setDefinition(ref, entity);
 
-            if (entity.script) {
-                const scriptUri = path.join(scriptPath, type, entity.script);
+            if ('script' in entity && hasValue(cast<ScriptableEntityDefinition>(entity).script)) {
+                const script = cast<ScriptableEntityDefinition>(entity).script!;
 
-                Logger.verbose(`Loading entity script - [${ref}] -> ${entity.script}`);
+                const scriptUri = path.join(scriptPath, type, script);
+
+                Logger.verbose(`Loading entity script - [${ref}] -> ${script}`);
 
                 try {
+                    /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
                     this._loadEntityScript(factory, ref, scriptUri);
                 }
-                catch (e) {
-                    Logger.warn(`Missing entity script - [${ref}] -> ${entity.script}`);
+                catch {
+                    Logger.warn(`Missing entity script - [${ref}] -> ${script}`);
                 }
             }
 
@@ -418,13 +436,17 @@ export class BundleManager {
         });
     }
 
-    private async _loadEntityScript(
-        factory: EntityFactory<unknown, unknown>,
+    private async _loadEntityScript<
+        E extends ScriptableEntity,
+        EDef extends ScriptableEntityDefinition,
+        T extends EntityFactory<E, EDef>
+    >(
+        factory: T,
         ref: string,
         scriptPath: string
     ): Promise<void> {
         const scriptImport = await import(scriptPath);
-        const loader: BehaviorDefinition = scriptImport.default;
+        const loader = scriptImport.default;
 
         const {listeners} = loader;
 
@@ -450,12 +472,12 @@ export class BundleManager {
 
         const files = await fs.readdir(uri);
 
-        for (const helpFile of files) {
-            const helpName = path.basename(helpFile, path.extname(helpFile));
+        for (const file of files) {
+            const helpName = path.basename(file, path.extname(file));
 
             Logger.verbose(`LOAD: ${bundle} - Help -> ${helpName}`);
 
-            const helpPath = path.join(uri, helpFile);
+            const helpPath = path.join(uri, file);
 
             let contents = await fs.readFile(helpPath, 'utf8');
 
@@ -470,11 +492,11 @@ export class BundleManager {
                 }
             }
 
-            const helpData: HelpfileOptions = yaml.load(contents);
+            const helpData: HelpfileOptions = yaml.load(contents) as HelpfileOptions;
 
-            const hfile = new Helpfile(bundle, helpName, helpData);
+            const helpFile = new Helpfile(bundle, helpName, helpData);
 
-            this._state.helpManager.add(hfile);
+            this._state.helpManager.add(helpFile);
         }
 
         Logger.info(`LOAD: ${bundle} - Help -- END`);
@@ -497,7 +519,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 const eventImport = await import(eventPath);
-                const inputEvent: StreamEventListenerFactory<unknown> = eventImport.default;
+                const inputEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
 
@@ -527,7 +549,7 @@ export class BundleManager {
                 const className = path.basename(classFile, path.extname(classFile));
 
                 const classImport = await import(classPath);
-                const classDef: NpcClass = classImport.default;
+                const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - NPC Classes -> ${className}`);
 
@@ -557,7 +579,7 @@ export class BundleManager {
                 const className = path.basename(classFile, path.extname(classFile));
 
                 const classImport = await import(classPath);
-                const classDef: PlayerClass = classImport.default;
+                const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Classes -> ${className}`);
 
@@ -586,7 +608,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 const eventImport = await import(eventPath);
-                const playerEvent: MudEventListenerFactory<unknown> = eventImport.default;
+                const playerEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Events -> ${playerEvent.name}`);
 
@@ -617,7 +639,7 @@ export class BundleManager {
                 const goalName = path.basename(goalFile, path.extname(goalFile));
 
                 const goalImport = await import(goalPath);
-                const loader: typeof QuestGoal = goalImport.default;
+                const loader = goalImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Goals -> ${goalName}`);
 
@@ -647,7 +669,7 @@ export class BundleManager {
                 const rewardName = path.basename(rewardFile, path.extname(rewardFile));
 
                 const rewardImport = await import(rewardPath);
-                const loader: QuestReward = rewardImport.default;
+                const loader = rewardImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Rewards -> ${rewardName}`);
 
@@ -671,7 +693,7 @@ export class BundleManager {
         try {
             quests = await loader.fetchAll();
         }
-        catch (err) {
+        catch {
             // no-op
         }
 
@@ -702,7 +724,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 const eventImport = await import(eventPath);
-                const serverEvent: MudEventListenerFactory<unknown> = eventImport.default;
+                const serverEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Server Events -> ${serverEvent.name}`);
 

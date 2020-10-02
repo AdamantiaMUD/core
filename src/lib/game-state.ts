@@ -5,7 +5,6 @@ import type {CommanderStatic} from 'commander';
 import type {EventEmitter} from 'events';
 
 import AbilityManager from './abilities/ability-manager';
-import GameStateData from './game-state-data';
 import PartyManager from './groups/party-manager';
 import AccountManager from './players/account-manager';
 import AreaFactory from './locations/area-factory';
@@ -32,10 +31,11 @@ import QuestRewardManager from './quests/quest-reward-manager';
 import RoomFactory from './locations/room-factory';
 import RoomManager from './locations/room-manager';
 import StreamEventManager from './events/stream-event-manager';
-import {UpdateTickEvent} from './common/common-events';
+import {UpdateTickEvent} from './common/events';
 
 import type CombatEngine from './combat/combat-engine';
 import type Config from './util/config';
+import type GameStateData from './game-state-data';
 import type Timeout from './util/timeout';
 import type TransportStream from './communication/transport-stream';
 import type {EntityLoaderDefinitions} from './data/entity-loader-registry';
@@ -43,6 +43,9 @@ import type {EntityLoaderDefinitions} from './data/entity-loader-registry';
 const DEFAULT_TICK_FREQUENCY = 100;
 
 export class GameState implements GameStateData {
+    /* eslint-disable-next-line no-undef */
+    [key: string]: unknown;
+
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _accountManager: AccountManager = new AccountManager();
     private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();

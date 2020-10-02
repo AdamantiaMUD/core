@@ -1,32 +1,34 @@
-import MudEventEmitter from '../events/mud-event-emitter';
-import {hasValue} from '../util/functions';
 import Area from './area';
-import GameStateData from '../game-state-data';
+import MudEventEmitter from '../events/mud-event-emitter';
 import Room from './room';
-import {UpdateTickEvent} from '../common/common-events';
+import {ADAMANTIA_INTERNAL_BUNDLE} from '../bundle-manager';
+import {UpdateTickEvent} from '../common/events';
+import {hasValue} from '../util/functions';
+
+import type GameStateData from '../game-state-data';
 
 /**
  * Stores references to, and handles distribution of, active areas
  */
 export class AreaManager extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private placeholder: Area;
-    private readonly state: GameState;
+    private _placeholder: Area;
+    private readonly _state: GameStateData;
 
-    public areas: Map<string, Area> = new Map();
+    public areas: Map<string, Area> = new Map<string, Area>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(state: GameState) {
+    public constructor(state: GameStateData) {
         super();
 
-        this.state = state;
+        this._state = state;
 
-        this.listen(UpdateTickEvent.getName(), this.tickAll.bind(this));
+        this.listen(UpdateTickEvent.getName(), this._tickAll.bind(this));
     }
 
-    private tickAll(): void {
+    private _tickAll(): void {
         for (const [, area] of this.areas) {
-            area.dispatch(new UpdateTickEvent({state: this.state}));
+            area.dispatch(new UpdateTickEvent({state: this._state}));
         }
     }
 
@@ -53,12 +55,12 @@ export class AreaManager extends MudEventEmitter {
      * an invalid room
      */
     public getPlaceholderArea(): Area {
-        if (this.placeholder) {
-            return this.placeholder;
+        if (hasValue(this._placeholder)) {
+            return this._placeholder;
         }
 
-        this.placeholder = new Area(
-            null,
+        this._placeholder = new Area(
+            ADAMANTIA_INTERNAL_BUNDLE,
             'placeholder',
             {name: 'Placeholder'}
         );
@@ -67,11 +69,11 @@ export class AreaManager extends MudEventEmitter {
             id: 'placeholder',
             title: 'Placeholder',
             description: 'You are not in a valid room. Please contact an administrator.',
-        }, this.placeholder);
+        }, this._placeholder);
 
-        this.placeholder.addRoom(placeholderRoom);
+        this._placeholder.addRoom(placeholderRoom);
 
-        return this.placeholder;
+        return this._placeholder;
     }
 
     public removeArea(area: Area): boolean {

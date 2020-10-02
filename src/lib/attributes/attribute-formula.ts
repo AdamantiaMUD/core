@@ -1,20 +1,22 @@
-import {safeBind} from '../util/functions';
-
-import type Attribute from './attribute';
+import type AttributeFormulaDefinition from './attribute-formula-definition';
+import type CharacterInterface from '../characters/character-interface';
+import type SimpleMap from '../util/simple-map';
 
 export class AttributeFormula {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _formula: (...args: number[]) => number;
+    private readonly _formula: AttributeFormulaDefinition['fn'];
+    private readonly _metadata: SimpleMap;
     public requires: string[];
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(requires: string[], fn: (...args: number[]) => number) {
+    public constructor(requires: string[], fn: AttributeFormulaDefinition['fn'], metadata: SimpleMap = {}) {
         this.requires = requires;
         this._formula = fn;
+        this._metadata = metadata;
     }
 
-    public evaluate(attribute: Attribute, ...args: number[]): number {
-        return safeBind(this._formula, attribute)(...args);
+    public evaluate(character: CharacterInterface, current: number, ...args: number[]): number {
+        return this._formula(character, current, ...args);
     }
 }
 

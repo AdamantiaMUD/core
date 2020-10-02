@@ -1,4 +1,5 @@
-import {InventoryFullError} from './equipment-errors';
+import {InventoryFullError} from './errors';
+import {hasValue} from '../util/functions';
 
 import type CharacterInterface from '../characters/character-interface';
 import type GameStateData from '../game-state-data';
@@ -14,21 +15,33 @@ export interface SerializedInventory extends SimpleMap {
  * Representation of a `Character` or container `Item` inventory
  */
 export class Inventory implements Serializable {
-    private readonly _items: Map<string, Item> = new Map();
+    private readonly _items: Map<string, Item> = new Map<string, Item>();
+
     public maxSize: number = Infinity;
 
-    public deserialize(data: SerializedInventory, carriedBy: CharacterInterface | Item, state?: GameStateData): void {
+    public deserialize(data: SerializedInventory, carriedBy: CharacterInterface | Item, state: GameStateData): void {
         for (const [uuid, itemData] of Object.entries(data)) {
             const area = state.areaManager.getAreaByReference(itemData.entityReference);
-            const newItem = state.itemFactory.create(itemData.entityReference, area);
 
-            newItem.carriedBy = carriedBy;
+            if (hasValue(area)) {
+                const newItem = state.itemFactory.create(itemData.entityReference, area);
 
-            newItem.deserialize(itemData, state);
+                if (hasValue(newItem)) {
+                    newItem.setCarrier(carriedBy);
 
-            this._items.set(uuid, newItem);
+                    newItem.deserialize(itemData, state);
 
-            state.itemManager.add(newItem);
+                    this._items.set(uuid, newItem);
+
+                    state.itemManager.add(newItem);
+                }
+                else {
+                    // @TODO: log warning
+                }
+            }
+            else {
+                // @TODO: log warning
+            }
         }
     }
 

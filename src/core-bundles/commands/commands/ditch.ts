@@ -7,7 +7,7 @@ const {sayAt} = Broadcast;
 
 const ditch: CommandDefinitionFactory = {
     name: 'ditch',
-    command: () => (arg: string, player: Player) => {
+    command: () => (arg: string, player: Player): void => {
         if (!arg || !arg.length) {
             sayAt(player, 'Ditch whom?');
 

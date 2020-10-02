@@ -1,4 +1,7 @@
-import type AttributeFormula from './attribute-formula';
+import AttributeFormula from './attribute-formula';
+import {hasValue} from '../util/functions';
+
+import type AttributeFormulaDefinition from './attribute-formula-definition';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
 
@@ -28,13 +31,16 @@ export class Attribute implements Serializable {
         name: string,
         base: number,
         delta: number = 0,
-        formula: AttributeFormula | null = null,
+        formula: AttributeFormulaDefinition | null = null,
         metadata: SimpleMap = {}
     ) {
         this._base = base;
         this._delta = delta;
 
-        this.formula = formula;
+        this.formula = hasValue(formula)
+            ? new AttributeFormula(formula.requires, formula.fn, formula.metadata)
+            : null;
+
         this.metadata = metadata;
         this.name = name;
     }

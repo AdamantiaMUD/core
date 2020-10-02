@@ -4,7 +4,7 @@ import {sprintf} from 'sprintf-js';
 import Player from '../players/player';
 
 export interface Broadcastable {
-    getBroadcastTargets(): Player[];
+    getBroadcastTargets: () => Broadcastable[];
 }
 
 export type MessageFormatter = (target: Broadcastable, message: string) => string;

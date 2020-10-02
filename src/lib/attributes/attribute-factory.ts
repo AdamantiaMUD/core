@@ -3,15 +3,9 @@ import {sprintf} from 'sprintf-js';
 import Attribute from './attribute';
 import {hasValue} from '../util/functions';
 
-import type AttributeFormula from './attribute-formula';
+import type AttributeDefinition from './attribute-definition';
+import type AttributeFormulaDefinition from './attribute-formula-definition';
 import type SimpleMap from '../util/simple-map';
-
-export interface AttributeDefinition {
-    base: number;
-    formula: AttributeFormula;
-    metadata: SimpleMap;
-    name: string;
-}
 
 export class AttributeFactory {
     private readonly _attributes: Map<string, AttributeDefinition> = new Map<string, AttributeDefinition>();
@@ -45,7 +39,7 @@ export class AttributeFactory {
     public add(
         name: string,
         base: number,
-        formula: AttributeFormula | null = null,
+        formula: AttributeFormulaDefinition | null = null,
         metadata: SimpleMap = {}
     ): void {
         if (!hasValue(formula)) {

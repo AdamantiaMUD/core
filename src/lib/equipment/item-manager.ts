@@ -1,5 +1,6 @@
-import Item from './item';
-import {UpdateTickEvent} from '../common/common-events';
+import {UpdateTickEvent} from '../common/events';
+
+import type Item from './item';
 
 /**
  * Keep track of all items in game
@@ -14,11 +15,11 @@ export class ItemManager {
     public remove(item: Item): void {
         item.room?.removeItem(item);
         item.carriedBy?.removeItem(item);
-        item.inventory?.items.forEach(childItem => this.remove(childItem));
+        item.inventory?.items.forEach((childItem: Item) => this.remove(childItem));
 
         item.stopListening();
 
-        item.__pruned = true;
+        item.setPruned();
 
         this._items.delete(item);
     }
