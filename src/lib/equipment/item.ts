@@ -10,7 +10,8 @@ import type CharacterInterface from '../characters/character-interface';
 import type GameStateData from '../game-state-data';
 import type Room from '../locations/room';
 import type Serializable from '../data/serializable';
-import type {ScriptableEntityDefinition, SerializedScriptableEntity} from '../entities/scriptable-entity';
+import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
+import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity';
 
 export interface ItemDefinition extends ScriptableEntityDefinition {
     description?: string;

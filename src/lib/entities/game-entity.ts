@@ -11,14 +11,10 @@ import type GameEntityInterface from './game-entity-interface';
 import type GameStateData from '../game-state-data';
 import type Metadatable from '../data/metadatable';
 import type Serializable from '../data/serializable';
+import type SerializedGameEntity from './serialized-game-entity';
 import type SimpleMap from '../util/simple-map';
 
 const clone = cloneFactory();
-
-export interface SerializedGameEntity extends SimpleMap {
-    entityReference: string | null;
-    metadata: SimpleMap | null;
-}
 
 export class GameEntity extends MudEventEmitter implements Metadatable, Serializable, GameEntityInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

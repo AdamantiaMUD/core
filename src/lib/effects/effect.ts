@@ -5,48 +5,18 @@ import {
     EffectActivatedEvent,
     EffectAddedEvent,
     EffectDeactivatedEvent,
-    EffectRemoveEvent,
-} from './effect-events';
+    EffectRemovedEvent,
+} from './events';
 
 import type Ability from '../abilities/ability';
 import type CharacterInterface from '../characters/character-interface';
 import type Damage from '../combat/damage';
+import type EffectConfig from './effect-config';
 import type EffectFlag from './effect-flag';
+import type EffectState from './effect-state';
 import type GameStateData from '../game-state-data';
 import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
-import type {EffectModifiers} from './effect-modifiers';
-
-export interface EffectConfig {
-    autoActivate?: boolean;
-    description?: string;
-    duration?: number;
-    hidden?: boolean;
-    maxStacks?: number;
-    name: string;
-    persists?: boolean;
-    refreshes?: boolean;
-    tickInterval?: number;
-    type?: string;
-    unique?: boolean;
-}
-
-export interface EffectState {
-    lastTick?: number;
-    stacks?: number;
-    tickInterval?: number;
-    ticks?: number;
-    [key: string]: unknown;
-}
-
-export interface SerializedEffect extends SimpleMap {
-    ability?: string;
-    config: EffectConfig;
-    elapsed: number;
-    id: string;
-    remaining: number;
-    state: EffectState;
-}
+import type {EffectModifiers} from './modifiers';
 
 const clone = cloneFactory();
 
@@ -70,9 +40,9 @@ const clone = cloneFactory();
  */
 export class Effect extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public ability: Ability = null;
+    public ability: Ability | null = null;
     public active: boolean;
-    public attacker: CharacterInterface = null;
+    public attacker: CharacterInterface | null = null;
     public config: EffectConfig;
     public flags: EffectFlag[] = [];
     public id: string;
@@ -261,9 +231,9 @@ export class Effect extends MudEventEmitter implements Serializable {
      */
     public remove(): void {
         /**
-         * @event Effect#remove
+         * @event Effect#removed
          */
-        this.dispatch(new EffectRemoveEvent());
+        this.dispatch(new EffectRemovedEvent());
     }
 
     /**

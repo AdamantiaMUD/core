@@ -11,14 +11,10 @@ import type Scriptable from './scriptable';
 import type ScriptableEntityDefinition from './scriptable-entity-definition';
 import type ScriptableEntityInterface from './scriptable-entity-interface';
 import type Serializable from '../data/serializable';
+import type SerializedScriptableEntity from './serialized-scriptable-entity';
 import type SimpleMap from '../util/simple-map';
-import type {SerializedGameEntity} from './game-entity';
 
 const clone = cloneFactory();
-
-export interface SerializedScriptableEntity extends SerializedGameEntity {
-    behaviors: {[key: string]: SimpleMap | true | null};
-}
 
 export class ScriptableEntity extends GameEntity implements Scriptable, Serializable, ScriptableEntityInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
