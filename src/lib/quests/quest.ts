@@ -1,11 +1,10 @@
-import cloneFactory from 'rfdc';
-
 import MudEventEmitter from '../events/mud-event-emitter';
 import {
     QuestCompletedEvent,
     QuestProgressEvent,
     QuestTurnInReadyEvent,
 } from './events';
+import {clone} from '../util/objects';
 
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
@@ -14,8 +13,6 @@ import type SimpleMap from '../util/simple-map';
 import type {QuestGoal, QuestGoalDefinition, SerializedQuestGoal} from './quest-goal';
 import type {QuestProgressPayload} from './events';
 import type {QuestRewardDefinition} from './quest-reward';
-
-const clone = cloneFactory();
 
 export interface QuestDefinition {
     autoComplete: boolean;

@@ -4,34 +4,38 @@
 import {sprintf} from 'sprintf-js';
 
 import Broadcast from '../communication/broadcast';
-import Character from '../characters/character';
-import GameStateData from '../game-state-data';
 import Item from '../equipment/item';
+import ItemQuality from '../equipment/item-quality';
 import ItemType from '../equipment/item-type';
-import Player from '../players/player';
 import {clone} from './objects';
+import {hasValue} from './functions';
+
+import type CharacterInterface from '../characters/character-interface';
+import type GameStateData from '../game-state-data';
+import type ItemStats from '../equipment/item-stats';
+import type Player from '../players/player';
 
 const {line, wrap} = Broadcast;
 
-const qualityColors = {
-    poor: ['bold', 'black'],
-    common: ['bold', 'white'],
-    uncommon: ['bold', 'green'],
-    rare: ['bold', 'blue'],
-    epic: ['bold', 'magenta'],
-    legendary: ['bold', 'red'],
-    artifact: ['yellow'],
+const qualityColors: {[key in ItemQuality]: [string, string?]} = {
+    [ItemQuality.POOR]: ['bold', 'black'],
+    [ItemQuality.COMMON]: ['bold', 'white'],
+    [ItemQuality.UNCOMMON]: ['bold', 'green'],
+    [ItemQuality.RARE]: ['bold', 'blue'],
+    [ItemQuality.EPIC]: ['bold', 'magenta'],
+    [ItemQuality.LEGENDARY]: ['bold', 'red'],
+    [ItemQuality.ARTIFACT]: ['yellow'],
 };
 
-export const findCarrier = (item: Item): Character | Item | null => {
+export const findCarrier = (item: Item): CharacterInterface | Item | null => {
     let owner = item.carriedBy;
 
-    while (owner) {
+    while (hasValue(owner)) {
         if (!(owner instanceof Item)) {
             return owner;
         }
 
-        if (!owner.carriedBy) {
+        if (!hasValue(owner.carriedBy)) {
             return owner;
         }
 
@@ -45,7 +49,7 @@ export const findCarrier = (item: Item): Character | Item | null => {
  * Colorize the given string according to this item's quality
  */
 export const qualityColorize = (item: Item, string: string): string => {
-    const colors = qualityColors[item.getMeta<string>('quality') ?? 'common'];
+    const colors = qualityColors[item.getMeta<ItemQuality>('quality') ?? ItemQuality.COMMON];
     const open = `<${colors.join('><')}>`;
     const close = `</${colors.reverse().join('></')}>`;
 
@@ -60,33 +64,41 @@ export const display = (item: Item): string => qualityColorize(item, `[${item.na
 /**
  * Render a pretty display of an item
  */
-export const renderItem = (state: GameState, item: Item, player: Player): string => {
+export const renderItem = (state: GameStateData, item: Item, player: Player): string => {
     let buf = `${qualityColorize(item, `.${line(38)}.`)}\r\n`;
 
     buf += `| ${qualityColorize(item, sprintf('%-36s', item.name))} |\r\n`;
 
     buf += sprintf('| %-36s |\r\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
 
+    /* eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check */
     switch (item.type) {
         case ItemType.WEAPON: {
+            const max = item.getMeta<number>('maxDamage') ?? Infinity;
+            const min = item.getMeta<number>('minDamage') ?? 0;
+            const speed = item.getMeta<number>('speed') ?? 1;
+
             buf += sprintf(
                 '| %-18s%18s |\r\n',
-                `${item.getMeta<number>('minDamage')} - ${item.getMeta<number>('maxDamage')} Damage`,
-                `Speed ${item.getMeta<number>('speed')}`
+                `${min} - ${max} Damage`,
+                `Speed ${speed}`
             );
 
-            const dps = ((item.getMeta<number>('minDamage') + item.getMeta<number>('maxDamage')) / 2) / item.getMeta<number>('speed');
+            const dps = ((min + max) / 2) / speed;
 
-            buf += sprintf('| %-36s |\r\n', `(${dps.toPrecision(2)} damage per second)`);
+            buf += sprintf('| %-36s |\r\n', `(avg. ${dps.toPrecision(2)} damage per second)`);
             break;
         }
 
-        case ItemType.ARMOR:
+        case ItemType.ARMOR: {
+            const slot = item.getMeta<string>('slot') ?? 'Unknown slot';
+
             buf += sprintf(
                 '| %-36s |\r\n',
-                item.getMeta<string>('slot')[0].toUpperCase() + item.getMeta<string>('slot').slice(1)
+                `${slot[0].toUpperCase()}${slot.slice(1)}`
             );
             break;
+        }
 
         case ItemType.CONTAINER:
             buf += sprintf('| %-36s |\r\n', `Holds ${item.maxItems} items`);
@@ -95,42 +107,39 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
         /* no default */
     }
 
-    // @TODO: make stats an interface
     // copy stats to make sure we don't accidentally modify it
-    const stats: any = clone(item.getMeta('stats'));
+    const stats: ItemStats = clone(item.getMeta<ItemStats>('stats') ?? {});
 
     // always show armor first
-    if (stats.armor) {
+    if (hasValue(stats.armor)) {
         buf += sprintf('| %-36s |\r\n', `${stats.armor} Armor`);
         delete stats.armor;
     }
 
     // non-armor stats
-    for (const stat in stats) {
-        const value = stats[stat];
-
+    for (const [stat, value] of Object.entries(stats)) {
         buf += sprintf(
             '| %-36s |\r\n',
-            `${(value > 0 ? '+' : '') + value} ${stat[0].toUpperCase()}${stat.slice(1)}`
+            `${value > 0 ? '+' : ''}${value} ${stat[0].toUpperCase()}${stat.slice(1)}`
         );
     }
 
-    // custom special effect rendering
-    if (item.getMeta('specialEffects')) {
-        item.getMeta<string[]>('specialEffects')
-            .forEach((effectText: string) => {
-                const text = wrap(effectText, 36).split(/\r\n/gu);
+    const specialEffects = item.getMeta<string[]>('specialEffects') ?? [];
 
-                text.forEach(textLine => {
-                    buf += sprintf('| <b><green>%-36s</green></b> |\r\n', textLine);
-                });
-            });
-    }
+    specialEffects.forEach((effectText: string) => {
+        const text = wrap(effectText, 36).split(/\r\n/gu);
 
-    if (item.getMeta<number>('level')) {
-        const cantUse = item.getMeta<number>('level') > player.level ? '<red>%-36s</red>' : '%-36s';
+        text.forEach((textLine: string) => {
+            buf += sprintf('| <b><green>%-36s</green></b> |\r\n', textLine);
+        });
+    });
 
-        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${item.getMeta<number>('level')}`);
+    const level = item.getMeta<number>('level');
+
+    if (hasValue(level)) {
+        const cantUse = level > player.level ? '<red>%-36s</red>' : '%-36s';
+
+        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${level}`);
     }
 
     buf += `${qualityColorize(item, `'${line(38)}'`)}\r\n`;
@@ -165,9 +174,11 @@ export const renderItem = (state: GameState, item: Item, player: Player): string
     return buf;
 };
 
-export default {
+const utils = {
     display,
     qualityColorize,
     qualityColors,
     renderItem,
 };
+
+export default utils;

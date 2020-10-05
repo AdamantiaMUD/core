@@ -1,16 +1,15 @@
-import LevelUtil from '~/lib/util/level-util';
-import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
-import {
-    PlayerExperienceEvent,
-    PlayerExperiencePayload,
-    PlayerLevelUpEvent,
-} from '~/lib/players/player-events';
-import {progress, sayAt} from '~/lib/communication/broadcast';
+import LevelUtil from '../../../lib/util/level-util';
+import {PlayerExperienceEvent, PlayerLevelUpEvent} from '../../../lib/players/events';
+import {progress, sayAt} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerFactory<PlayerExperiencePayload> = {
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {PlayerExperiencePayload} from '../../../lib/players/events';
+
+export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
     name: PlayerExperienceEvent.getName(),
-    listener: (): MudEventListener<PlayerExperiencePayload> => (
+    listener: (): PlayerEventListener<PlayerExperiencePayload> => (
         player: Player,
         {amount}: PlayerExperiencePayload
     ): void => {

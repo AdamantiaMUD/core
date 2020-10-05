@@ -8,26 +8,10 @@ import ScriptableEntity from '../entities/scriptable-entity';
 import type Area from '../locations/area';
 import type CharacterInterface from '../characters/character-interface';
 import type GameStateData from '../game-state-data';
+import type ItemDefinition from './item-definition';
 import type Room from '../locations/room';
 import type Serializable from '../data/serializable';
-import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
-import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity';
-
-export interface ItemDefinition extends ScriptableEntityDefinition {
-    description?: string;
-    flags?: string[];
-    id: string;
-    keywords: string[];
-    level?: number;
-    maxItems?: number;
-    name: string;
-    roomDesc: string;
-    type: ItemType;
-}
-
-export interface SerializedItem extends SerializedScriptableEntity {
-    uuid: string;
-}
+import type SerializedItem from './serialized-item';
 
 export class Item extends ScriptableEntity implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

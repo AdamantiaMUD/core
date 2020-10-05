@@ -3,7 +3,7 @@ import Item from './item';
 import {hasValue} from '../util/functions';
 
 import type Area from '../locations/area';
-import type {ItemDefinition} from './item';
+import type ItemDefinition from './item-definition';
 
 /**
  * Stores definitions of items to allow for easy creation/cloning of objects

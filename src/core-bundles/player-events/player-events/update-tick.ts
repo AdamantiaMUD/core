@@ -1,28 +1,31 @@
-import GameStateData from '~/lib/game-state-data';
-import Logger from '~/lib/util/logger';
-import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
-import {prompt, sayAt, sayAtExcept} from '~/lib/communication/broadcast';
+import Logger from '../../../lib/util/logger';
+import {UpdateTickEvent} from '../../../lib/common/events';
+import {prompt, sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerFactory<UpdateTickPayload> = {
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {UpdateTickPayload} from '../../../lib/common/events';
+
+export const evt: PlayerEventListenerDefinition<UpdateTickPayload> = {
     name: UpdateTickEvent.getName(),
-    listener: (state: GameState): MudEventListener<UpdateTickPayload> => (player: Player): void => {
+    listener: (state: GameStateData): PlayerEventListener<UpdateTickPayload> => (player: Player): void => {
         if (player.commandQueue.hasPending && player.commandQueue.lagRemaining <= 0) {
             sayAt(player);
             player.commandQueue.execute();
             prompt(player);
         }
 
-        const lastCommandTime: number = player.getMeta('lastCommandTime') ?? Infinity;
+        const lastCommandTime: number = player.getMeta<number>('lastCommandTime') ?? Infinity;
         const timeSinceLastCommand = Date.now() - lastCommandTime;
-        const maxIdleTime = Math.abs(state.config.get('maxIdleTime') as number) * 60000 ?? Infinity;
+        const maxIdleTime = Math.abs(state.config.get<number>('maxIdleTime', Infinity)) * 60000;
 
         if (timeSinceLastCommand > maxIdleTime) {
             player.save(() => {
                 /* eslint-disable-next-line max-len */
                 sayAt(player, `You were kicked for being idle for more than ${maxIdleTime / 60000} minutes!`);
-                sayAtExcept(player.room, `${player.name} disappears.`, player);
+                sayAtExcept(player.room!, `${player.name} disappears.`, player);
 
                 Logger.log(`Kicked ${player.name} for being idle.`);
 

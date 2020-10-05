@@ -1,5 +1,3 @@
-import cloneFactory from 'rfdc';
-
 import MudEventEmitter from '../events/mud-event-emitter';
 import {
     EffectActivatedEvent,
@@ -7,38 +5,22 @@ import {
     EffectDeactivatedEvent,
     EffectRemovedEvent,
 } from './events';
+import {clone} from '../util/objects';
+import {hasValue, isPositiveNumber} from '../util/functions';
 
 import type Ability from '../abilities/ability';
 import type CharacterInterface from '../characters/character-interface';
 import type Damage from '../combat/damage';
 import type EffectConfig from './effect-config';
+import type EffectDefinition from './effect-definition';
 import type EffectFlag from './effect-flag';
+import type EffectInterface from './effect-interface';
 import type EffectState from './effect-state';
 import type GameStateData from '../game-state-data';
-import type Serializable from '../data/serializable';
+import type SerializedEffect from './serialized-effect';
 import type {EffectModifiers} from './modifiers';
 
-const clone = cloneFactory();
-
-/**
- * See the {@link http://ranviermud.com/extending/effects/|Effect guide} for usage.
- * @property {Object}  config Effect configuration (name/desc/duration/etc.)
- * @property {boolean} config.autoActivate If this effect immediately activates itself when added to the target
- * @property {boolean} config.hidden       If this effect is shown in the character's effect list
- * @property {boolean} config.refreshes    If an effect with the same type is applied it will trigger an effectRefresh
- *   event instead of applying the additional effect.
- * @property {boolean} config.unique       If multiple effects with the same `config.type` can be applied at once
- * @property {number}  config.maxStacks    When adding an effect of the same type it adds a stack to the current
- *     effect up to maxStacks instead of adding the effect. Implies `config.unique`
- * @property {boolean} config.persists     If false the effect will not save to the player
- * @property {string}  config.type         The effect category, mainly used when disallowing stacking
- * @property {boolean|number} config.tickInterval Number of seconds between calls to the `updateTick` listener
- * @property {string}    description
- * @property {Object}    state  Configuration of this _type_ of effect (magnitude, element, stat, etc.)
- *
- * @listens Effect#effectAdded
- */
-export class Effect extends MudEventEmitter implements Serializable {
+export class Effect extends MudEventEmitter implements EffectInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public ability: Ability | null = null;
     public active: boolean;
@@ -47,25 +29,25 @@ export class Effect extends MudEventEmitter implements Serializable {
     public flags: EffectFlag[] = [];
     public id: string;
     public modifiers: EffectModifiers;
-    public paused: number = 0;
-    public startedAt: number = 0;
+    public paused: number | null = null;
+    public startedAt: number | null = null;
     public state: EffectState;
-    public target: CharacterInterface;
+
+    private _target: CharacterInterface | null;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     // @TODO: not done
-    public constructor(id, def) {
+    public constructor(id: string, def: EffectDefinition) {
         super();
 
         this.id = id;
-        this.flags = def.flags || [];
+        this.flags = def.flags ?? [];
         this.config = {
             autoActivate: true,
             description: '',
             duration: Infinity,
             hidden: false,
             maxStacks: 0,
-            name: 'Unnamed Effect',
             persists: true,
             refreshes: false,
             tickInterval: 0,
@@ -76,8 +58,8 @@ export class Effect extends MudEventEmitter implements Serializable {
 
         this.modifiers = {
             attributes: {},
-            incomingDamage: (effect, damage, current) => current,
-            outgoingDamage: (effect, damage, current) => current,
+            incomingDamage: (effect: Effect, damage: Damage, current: number): number => current,
+            outgoingDamage: (effect: Effect, damage: Damage, current: number): number => current,
             ...clone(def.modifiers),
         };
 
@@ -86,9 +68,9 @@ export class Effect extends MudEventEmitter implements Serializable {
          * damage shield remaining, whatever
          * Default state can be found in config.state
          */
-        this.state = clone(def.state);
+        this.state = clone(def.state ?? {});
 
-        if (this.config.maxStacks) {
+        if (isPositiveNumber(this.config.maxStacks)) {
             this.state.stacks = 1;
         }
 
@@ -108,11 +90,11 @@ export class Effect extends MudEventEmitter implements Serializable {
     }
 
     public get description(): string {
-        return this.config.description;
+        return this.config.description ?? this.config.name;
     }
 
     public get duration(): number {
-        return this.config.duration;
+        return this.config.duration ?? Infinity;
     }
 
     public set duration(dur: number) {
@@ -123,18 +105,22 @@ export class Effect extends MudEventEmitter implements Serializable {
      * Elapsed time in milliseconds since event was activated
      */
     public get elapsed(): number {
-        if (!this.startedAt) {
-            return null;
+        if (!hasValue(this.startedAt)) {
+            return 0;
         }
 
-        return this.paused || (Date.now() - this.startedAt);
+        return this.paused ?? Date.now() - this.startedAt;
     }
 
     /**
      * Remaining time in seconds
      */
     public get remaining(): number {
-        return this.config.duration - this.elapsed;
+        return this.duration - this.elapsed;
+    }
+
+    public get target(): CharacterInterface | null {
+        return this._target;
     }
 
     /**
@@ -169,10 +155,14 @@ export class Effect extends MudEventEmitter implements Serializable {
         this.active = false;
     }
 
+    public hasTarget(): boolean {
+        return this._target !== null;
+    }
+
     /**
      * Reinitialize from persisted data
      */
-    public hydrate(state: GameStateData, data: unknown): void {
+    public hydrate(state: GameStateData, data: Effect): void {
         data.config.duration = data.config.duration === -1 ? Infinity : data.config.duration;
 
         this.config = data.config;
@@ -195,7 +185,7 @@ export class Effect extends MudEventEmitter implements Serializable {
      * Whether this effect has lapsed
      */
     public isCurrent(): boolean {
-        return this.elapsed < this.config.duration;
+        return this.elapsed < this.duration;
     }
 
     public modifyAttribute(attrName: string, currentValue: number): number {
@@ -240,13 +230,16 @@ export class Effect extends MudEventEmitter implements Serializable {
      * Resume a paused effect
      */
     public resume(): void {
+        if (this.paused === null) {
+            return;
+        }
+
         this.startedAt = Date.now() - this.paused;
         this.paused = null;
     }
 
     /**
      * Gather data to persist
-     * @returns {Object}
      */
     public serialize(): SerializedEffect {
         const config = clone(this.config);
@@ -271,6 +264,10 @@ export class Effect extends MudEventEmitter implements Serializable {
             remaining: this.remaining,
             state: state,
         };
+    }
+
+    public setTarget(target: CharacterInterface | null): void {
+        this._target = target;
     }
 }
 

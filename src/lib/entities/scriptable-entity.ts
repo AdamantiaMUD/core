@@ -1,22 +1,18 @@
-import cloneFactory from 'rfdc';
 import {sprintf} from 'sprintf-js';
 
 import GameEntity from './game-entity';
 import Logger from '../util/logger';
+import {clone} from '../util/objects';
 import {hasValue} from '../util/functions';
 
 import type BehaviorManager from '../behaviors/behavior-manager';
 import type GameStateData from '../game-state-data';
-import type Scriptable from './scriptable';
 import type ScriptableEntityDefinition from './scriptable-entity-definition';
 import type ScriptableEntityInterface from './scriptable-entity-interface';
-import type Serializable from '../data/serializable';
 import type SerializedScriptableEntity from './serialized-scriptable-entity';
 import type SimpleMap from '../util/simple-map';
 
-const clone = cloneFactory();
-
-export class ScriptableEntity extends GameEntity implements Scriptable, Serializable, ScriptableEntityInterface {
+export class ScriptableEntity extends GameEntity implements ScriptableEntityInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected _behaviors: Map<string, SimpleMap | true | null>;
     protected _script: string | null;

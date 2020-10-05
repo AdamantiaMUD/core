@@ -1,19 +1,30 @@
-import GameStateData from '~/lib/game-state-data';
-import Player from '~/lib/players/player';
-import {Door} from '~/lib/locations/room';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
-import {PlayerMoveEvent, PlayerMovePayload} from '~/lib/players/player-events';
-import {sayAt, sayAtExcept} from '~/lib/communication/broadcast';
+import {PlayerMoveEvent} from '../../../lib/players/events';
+import {hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
+import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerFactory<PlayerMovePayload> = {
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {Door} from '../../../lib/locations/room';
+import type {PlayerMovePayload} from '../../../lib/players/events';
+
+export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
     name: PlayerMoveEvent.getName(),
-    listener: (state: GameState): MudEventListener<PlayerMovePayload> => (
+    listener: (state: GameStateData): PlayerEventListener<PlayerMovePayload> => (
         player: Player,
         {roomExit}: PlayerMovePayload
     ): void => {
-        if (!roomExit) {
+        if (!hasValue(roomExit)) {
             sayAt(player, "You can't go that way!");
+
+            return;
+        }
+
+        if (!hasValue(player.room)) {
+            // @TODO: invalid state; error?
+            sayAt(player, "Where are you? You have to be somewhere before you can go anywhere!");
 
             return;
         }
@@ -27,9 +38,9 @@ export const evt: MudEventListenerFactory<PlayerMovePayload> = {
         const nextRoom = state.roomManager.getRoom(roomExit.roomId);
         const oldRoom = player.room;
 
-        const door: Door = oldRoom.getDoor(nextRoom) ?? nextRoom.getDoor(oldRoom);
+        const door: Door | null = oldRoom.getDoor(nextRoom) ?? nextRoom.getDoor(oldRoom);
 
-        if (door) {
+        if (hasValue(door)) {
             if (door.locked) {
                 sayAt(player, 'The door is locked.');
 
@@ -44,7 +55,7 @@ export const evt: MudEventListenerFactory<PlayerMovePayload> = {
         }
 
         player.moveTo(nextRoom, (): void => {
-            state.commandManager.get('look').execute('', player);
+            state.commandManager.get('look')?.execute('', player);
         });
 
         sayAt(oldRoom, `${player.name} leaves.`);

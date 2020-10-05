@@ -5,6 +5,18 @@ export const hasValue = <T>(thing: T | null | undefined): thing is T => !(thing 
 
 export const ident = <T = unknown>(obj: T): T => obj;
 
+export const isPositiveNumber = (thing: unknown | null | undefined): thing is number => {
+    if (!hasValue(thing)) {
+        return false;
+    }
+
+    if (Number.isNaN(thing)) {
+        return false;
+    }
+
+    return thing as number > 0;
+};
+
 export const noop = (): undefined => undefined;
 
 /* eslint-disable-next-line @typescript-eslint/ban-types */

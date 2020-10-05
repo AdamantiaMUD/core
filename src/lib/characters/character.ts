@@ -25,9 +25,9 @@ import type GameStateData from '../game-state-data';
 import type Item from '../equipment/item';
 import type Room from '../locations/room';
 import type Serializable from '../data/serializable';
+import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity';
 import type TransportStream from '../communication/transport-stream';
 import type {SerializedCharacterAttributes} from '../attributes/character-attributes';
-import type {SerializedScriptableEntity} from '../entities/scriptable-entity';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;

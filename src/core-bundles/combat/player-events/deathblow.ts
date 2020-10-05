@@ -3,12 +3,12 @@ import {isNpc} from '../../../lib/util/characters';
 import LevelUtil from '../../../lib/util/level-util';
 import Player from '../../../lib/players/player';
 import {CharacterDeathblowEvent, CharacterDeathblowPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 import {PlayerExperienceEvent} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
-export const evt: MudEventListenerFactory<CharacterDeathblowPayload> = {
+export const evt: MudEventListenerDefinition<CharacterDeathblowPayload> = {
     name: CharacterDeathblowEvent.getName(),
     listener: (): MudEventListener<CharacterDeathblowPayload> => (player: Player, payload: CharacterDeathblowPayload) => {
         const {target, skipParty = false} = payload;

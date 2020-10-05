@@ -1,23 +1,27 @@
-import Attribute from '../attributes/attribute';
-import Damage from '../combat/damage';
-import Serializable from '../data/serializable';
 import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/events';
 import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
-    EffectRemoveEvent,
+    EffectRemovedEvent,
     EffectAddedEvent,
-} from './effect-events';
+} from './events';
 
+import type Attribute from '../attributes/attribute';
 import type CharacterInterface from '../characters/character-interface';
-import type {Effect, SerializedEffect} from './effect';
+import type Damage from '../combat/damage';
+import type GameStateData from '../game-state-data';
+import type Effect from './effect';
+import type Serializable from '../data/serializable';
+import type SerializedEffect from './serialized-effect';
 
 /**
  * Self-managing list of effects for a target
  */
 export class EffectList implements Serializable {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _effects: Set<Effect> = new Set();
     private readonly _target: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(target: CharacterInterface) {
         this._target = target;
@@ -37,13 +41,16 @@ export class EffectList implements Serializable {
      * @fires Character#effectAdded
      */
     public add(effect: Effect): boolean {
-        if (effect.target) {
+        if (effect.hasTarget()) {
             throw new Error('Cannot add effect, already has a target.');
         }
 
         for (const activeEffect of this._effects) {
             if (effect.config.type === activeEffect.config.type) {
-                if (activeEffect.config.maxStacks && activeEffect.state.stacks < activeEffect.config.maxStacks) {
+                if (
+                    Boolean(activeEffect.config.maxStacks)
+                    && activeEffect.state.stacks < activeEffect.config.maxStacks
+                ) {
                     activeEffect.state.stacks = Math.min(activeEffect.config.maxStacks, activeEffect.state.stacks + 1);
 
                     activeEffect.dispatch(new EffectStackAddedEvent({effect}));
@@ -64,13 +71,13 @@ export class EffectList implements Serializable {
         }
 
         this._effects.add(effect);
-        effect.target = this._target;
+        effect.setTarget(this._target);
 
         effect.dispatch(new EffectAddedEvent());
 
         this._target.dispatch(new CharacterEffectAddedEvent({effect}));
 
-        effect.listen(EffectRemoveEvent.getName(), (eff: Effect) => this.remove(eff));
+        effect.listen(EffectRemovedEvent.getName(), (eff: Effect) => this.remove(eff));
 
         return true;
     }
@@ -181,13 +188,13 @@ export class EffectList implements Serializable {
         return this.getByType(type) !== undefined;
     }
 
-    public hydrate(state): void {
+    public hydrate(state: GameStateData): void {
         const effects = this._effects;
 
         this._effects.clear();
 
         for (const newEffect of effects) {
-            const effect = state.EffectFactory.create(newEffect.id);
+            const effect = state.effectFactory.create(newEffect.id);
 
             effect.hydrate(state, newEffect);
             this.add(effect);

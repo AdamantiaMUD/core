@@ -334,7 +334,7 @@ export const sayAtExcept = (
     excludes,
     wrapWidth,
     useColor,
-    (target, mess) => `${formatter(target, mess)}\r\n`
+    (target: Broadcastable, mess: string) => `${formatter(target, mess)}\r\n`
 );
 
 /**

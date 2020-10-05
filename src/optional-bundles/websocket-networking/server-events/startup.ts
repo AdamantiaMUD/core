@@ -3,7 +3,7 @@ import WebSocket from 'ws';
 import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
 import {GameServerStartupEvent, GameServerStartupPayload} from '../../../lib/game-server-events';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 import {StreamIntroEvent} from '../../../core-bundles/input-events/input-events/intro';
 
 // import our adapter
@@ -11,7 +11,7 @@ import WebsocketStream from '../lib/WebsocketStream';
 
 const DEFAULT_WEBSOCKET_PORT = 4001;
 
-export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
+export const evt: MudEventListenerDefinition<GameServerStartupPayload> = {
     name: GameServerStartupEvent.getName(),
     listener: (state: GameState): MudEventListener<GameServerStartupPayload> => () => {
         const port = state.config.get('port.websocket', DEFAULT_WEBSOCKET_PORT);

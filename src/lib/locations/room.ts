@@ -1,3 +1,4 @@
+import {hasValue} from '../util/functions';
 import Logger from '../util/logger';
 import ScriptableEntity from '../entities/scriptable-entity';
 import {ItemSpawnEvent} from '../equipment/events';
@@ -189,12 +190,12 @@ export class Room extends ScriptableEntity implements Broadcastable {
         return [...this._players];
     }
 
-    public getDoor(fromRoom: Room = null): Door {
-        if (!fromRoom) {
+    public getDoor(fromRoom: Room | null = null): Door | null {
+        if (!hasValue(fromRoom) || !hasValue(fromRoom.entityReference)) {
             return null;
         }
 
-        return this._doors.get(fromRoom.entityReference);
+        return this._doors.get(fromRoom.entityReference) ?? null;
     }
 
     public getExits(): RoomExitDefinition[] {

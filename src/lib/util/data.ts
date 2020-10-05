@@ -8,7 +8,7 @@ import {hasValue, noop} from './functions';
 let dataPath: string | null = null;
 
 /**
- * Class for loading/parsing data files from disk
+ * Utilities for loading/parsing data files from disk
  */
 export const Data = {
     /**

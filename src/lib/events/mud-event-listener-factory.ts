@@ -1,7 +1,6 @@
-import type GameState from '../game-state';
-import type {MudEventListener} from './mud-event-listener';
+import type GameStateData from '../game-state-data';
+import type MudEventListener from './mud-event-listener';
 
-export interface MudEventListenerFactory<T> {
-    name: string;
-    listener: (state?: GameState) => MudEventListener<T>;
-}
+export type MudEventListenerFactory<T extends unknown[]> = (state?: GameStateData) => MudEventListener<T>;
+
+export default MudEventListenerFactory;

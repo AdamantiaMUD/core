@@ -2,11 +2,11 @@ import Broadcast from '../../../lib/communication/broadcast';
 import GameStateData from '../../../lib/game-state-data';
 import Player from '../../../lib/players/player';
 import {CharacterDamagedEvent, CharacterDamagedPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
-export const evt: MudEventListenerFactory<CharacterDamagedPayload> = {
+export const evt: MudEventListenerDefinition<CharacterDamagedPayload> = {
     name: CharacterDamagedEvent.getName(),
     listener: (state: GameState): MudEventListener<CharacterDamagedPayload> => (player: Player, {source, amount}) => {
         if (source.metadata.hidden || source.attribute !== 'hp') {

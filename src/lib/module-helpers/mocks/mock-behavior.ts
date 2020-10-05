@@ -1,4 +1,4 @@
-import type {BehaviorDefinition} from '../../behaviors/behavior';
+import type BehaviorDefinition from '../../behaviors/behavior-definition';
 
 const mockBehavior: BehaviorDefinition = {listeners: {}};
 

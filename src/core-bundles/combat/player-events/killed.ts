@@ -3,13 +3,13 @@ import GameStateData from '../../../lib/game-state-data';
 import {isNpc} from '../../../lib/util/characters';
 import Logger from '../../../lib/util/logger';
 import Player from '../../../lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 import {PlayerKilledEvent, PlayerKilledPayload} from '../../../lib/players/player-events';
 
 const {prompt, sayAt, sayAtExcept} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerFactory<PlayerKilledPayload> = {
+export const evt: MudEventListenerDefinition<PlayerKilledPayload> = {
     name: PlayerKilledEvent.getName(),
     listener: (state: GameState): MudEventListener<PlayerKilledPayload> => {
         const startingRoomRef = state.config.get('startingRoom');

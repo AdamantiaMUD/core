@@ -2,7 +2,7 @@
 import ItemType from '../equipment/item-type';
 
 import type Npc from '../mobs/npc';
-import type {ItemDefinition} from '../equipment/item';
+import type ItemDefinition from '../equipment/item-definition';
 
 export const makeCorpse = (npc: Npc): ItemDefinition => ({
     id: 'corpse',

@@ -1,27 +1,27 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
 import CommandParser from '../../../lib/commands/command-parser';
 import CommandType from '../../../lib/commands/command-type';
 import Broadcast from '../../../lib/communication/broadcast';
-import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands/command-errors';
+import StreamEvent from '../../../lib/events/stream-event';
+import {InvalidCommandError, RestrictedCommandError} from '../../../lib/commands/errors';
 import {
     NoMessageError,
     NoPartyError,
     NoRecipientError,
-} from '../../../lib/communication/channels/channel-errors';
-import {PlayerMoveEvent, PlayerMovePayload} from '../../../lib/players/player-events';
-import {RoomCommandEvent} from '../../../lib/locations/room-events';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+} from '../../../lib/communication/channels/errors';
+import {PlayerMoveEvent} from '../../../lib/players/events';
+import {RoomCommandEvent} from '../../../lib/locations/events';
+
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type StreamEventConstructor from '../../../lib/events/stream-event-constructor';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {PlayerMovePayload} from '../../../lib/players/events';
 
 /*
  * const {
@@ -48,7 +48,7 @@ export const StreamCommandsEvent: StreamEventConstructor<StreamCommandsPayload> 
  */
 export const evt: StreamEventListenerFactory<StreamCommandsPayload> = {
     name: StreamCommandsEvent.getName(),
-    listener: (state: GameState): StreamEventListener<StreamCommandsPayload> => (stream: TransportStream<EventEmitter>, {player}) => {
+    listener: (state: GameStateData): StreamEventListener<StreamCommandsPayload> => (stream: TransportStream<EventEmitter>, {player}) => {
         stream.socket.once('data', (buf: Buffer) => {
             const loop = (): void => {
                 stream.dispatch(new StreamCommandsEvent({player}));

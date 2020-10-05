@@ -1,6 +1,3 @@
-import type MudEventEmitter from './mud-event-emitter';
-import type SimpleMap from '../util/simple-map';
-
-type MudEventListener<T> = (emitter: MudEventEmitter, args?: T, config?: SimpleMap) => void;
+type MudEventListener<T extends unknown[] = unknown[]> = (...args: T) => void;
 
 export default MudEventListener;

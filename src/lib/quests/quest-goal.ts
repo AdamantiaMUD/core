@@ -1,13 +1,10 @@
-import cloneFactory from 'rfdc';
-
 import MudEventEmitter from '../events/mud-event-emitter';
+import {clone} from '../util/objects';
 
 import type Player from '../players/player';
 import type Quest from './quest';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
-
-const clone = cloneFactory();
 
 export interface QuestGoalDefinition {
     config: SimpleMap;

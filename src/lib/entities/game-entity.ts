@@ -1,9 +1,9 @@
-import cloneFactory from 'rfdc';
 import get from 'lodash.get';
 import set from 'lodash.set';
 
 import MudEventEmitter from '../events/mud-event-emitter';
 import {MetadataUpdatedEvent} from '../data/events';
+import {clone} from '../util/objects';
 import {hasValue} from '../util/functions';
 
 import type GameEntityDefinition from './game-entity-definition';
@@ -14,17 +14,17 @@ import type Serializable from '../data/serializable';
 import type SerializedGameEntity from './serialized-game-entity';
 import type SimpleMap from '../util/simple-map';
 
-const clone = cloneFactory();
-
 export class GameEntity extends MudEventEmitter implements Metadatable, Serializable, GameEntityInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private _metadata: SimpleMap = {};
-    protected _state: GameStateData | null;
-    /* eslint-disable-next-line @typescript-eslint/naming-convention */
-    public __pruned: boolean = false;
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __hydrated: boolean = false;
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
+    public __pruned: boolean = false;
     public entityReference: string | null = '';
+
+    protected _state: GameStateData | null;
+
+    private _metadata: SimpleMap = {};
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(def?: GameEntityDefinition) {

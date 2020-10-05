@@ -9,7 +9,7 @@ import type MudEventListener from '../events/mud-event-listener';
 export class BehaviorManager {
     private readonly _behaviors: Map<string, MudEventManager> = new Map<string, MudEventManager>();
 
-    public addListener(behaviorName: string, event: string, listener: MudEventListener<unknown>): void {
+    public addListener<T = unknown>(behaviorName: string, event: string, listener: MudEventListener<T>): void {
         if (!this._behaviors.has(behaviorName)) {
             this._behaviors.set(behaviorName, new MudEventManager());
         }

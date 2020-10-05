@@ -6,8 +6,8 @@ const DEFAULT_MAX_LENGTH = 16;
 const DEFAULT_MIN_LENGTH = 4;
 
 const checkEasyStuff = (config: Config, name: string): void => {
-    const maxLength = config.get('maxAccountNameLength', DEFAULT_MAX_LENGTH);
-    const minLength = config.get('minAccountNameLength', DEFAULT_MIN_LENGTH);
+    const maxLength = config.get<number>('maxAccountNameLength', DEFAULT_MAX_LENGTH);
+    const minLength = config.get<number>('minAccountNameLength', DEFAULT_MIN_LENGTH);
 
     if (!hasValue(name)) {
         throw new Error('Please enter a name.');
@@ -36,11 +36,4 @@ export const validateCharacterName = (config: Config, name: string): void => {
     if (!(/^[a-z]+$/iu).test(name)) {
         throw new Error('Your name may only contain A-Z without spaces or special characters.');
     }
-
-    /*
-     * @TODO: Is this feasible? Needs thought before implementing
-     * if (!(/^\p{L}+$/iu).test(name)) {
-     *     throw new Error('Your name may only contain Latin characters without spaces or special characters.');
-     * }
-     */
 };

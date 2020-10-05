@@ -1,13 +1,16 @@
 import {sprintf} from 'sprintf-js';
 
-import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
-import {PlayerCommandQueuedEvent, PlayerCommandQueuedPayload} from '~/lib/players/player-events';
-import {sayAt} from '~/lib/communication/broadcast';
+import {PlayerCommandQueuedEvent} from '../../../lib/players/events';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerFactory<PlayerCommandQueuedPayload> = {
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {PlayerCommandQueuedPayload} from '../../../lib/players/events';
+
+export const evt: PlayerEventListenerDefinition<PlayerCommandQueuedPayload> = {
     name: PlayerCommandQueuedEvent.getName(),
-    listener: (): MudEventListener<PlayerCommandQueuedPayload> => (
+    listener: (): PlayerEventListener<PlayerCommandQueuedPayload> => (
         player: Player,
         {idx}: PlayerCommandQueuedPayload
     ): void => {

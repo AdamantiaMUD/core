@@ -27,10 +27,6 @@ module.exports = {
         'import/dynamic-import-chunkname': 'off',
         'import/no-nodejs-modules': 'off',
 
-        // @TODO: figure out why these two rules are erroring
-        // 'import/extensions': 'off',
-        // 'import/no-unresolved': 'off',
-
         'no-restricted-imports': 'off',
 
         'no-sync': 'off',

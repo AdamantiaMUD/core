@@ -1,8 +1,8 @@
 import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '~/lib/events/mud-event';
 import {QuestRewardEvent, QuestRewardPayload} from '~/lib/quests/quest-events';
 
-export const evt: MudEventListenerFactory<QuestRewardPayload> = {
+export const evt: MudEventListenerDefinition<QuestRewardPayload> = {
     name: QuestRewardEvent.getName(),
     listener: (): MudEventListener<QuestRewardPayload> => (player: Player, {reward}) => {
         /*

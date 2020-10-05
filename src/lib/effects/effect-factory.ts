@@ -1,15 +1,12 @@
-import cloneFactory from 'rfdc';
-
 import Effect from './effect';
 import MudEventManager from '../events/mud-event-manager';
+import {clone} from '../util/objects';
 import {hasValue} from '../util/functions';
 
+import type EffectConfig from './effect-config';
 import type EffectDefinition from './effect-definition';
 import type GameStateData from '../game-state-data';
 import type SimpleMap from '../util/simple-map';
-import type {EffectConfig} from './effect';
-
-const clone = cloneFactory();
 
 interface EffectInfo {
     definition: EffectDefinition;
@@ -48,7 +45,7 @@ export class EffectFactory {
 
     public create(
         id: string,
-        config: EffectConfig = {} as EffectConfig,
+        config: EffectConfig,
         state: SimpleMap = {}
     ): Effect {
         const entry = this.effects.get(id);

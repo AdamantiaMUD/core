@@ -1,6 +1,7 @@
 import type {EventEmitter} from 'events';
 
 import Player from '../players/player';
+
 import type TransportStream from '../communication/transport-stream';
 
 /**

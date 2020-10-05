@@ -6,12 +6,12 @@ import TelnetServer from '../lib/server';
 import TelnetSocket from '../lib/telnet-socket';
 import TelnetStream from '../lib/telnet-stream';
 import {GameServerStartupEvent, GameServerStartupPayload} from '~/lib/game-server-events';
-import {MudEventListener, MudEventListenerFactory} from '~/lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '~/lib/events/mud-event';
 import {StreamIntroEvent} from '../../input-events/input-events/intro';
 
 const DEFAULT_TELNET_PORT = 4000;
 
-export const evt: MudEventListenerFactory<GameServerStartupPayload> = {
+export const evt: MudEventListenerDefinition<GameServerStartupPayload> = {
     name: GameServerStartupEvent.getName(),
     listener: (state: GameState): MudEventListener<GameServerStartupPayload> => () => {
         const port = state.config.get('port.telnet', DEFAULT_TELNET_PORT);

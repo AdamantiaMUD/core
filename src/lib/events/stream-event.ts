@@ -1,8 +1,3 @@
-import EventEmitter from 'events';
-
-import GameStateData from '../game-state-data';
-import TransportStream from '../communication/transport-stream';
-
 export class StreamEvent<T> {
     public NAME: string = '';
     public payload: T;
@@ -33,19 +28,9 @@ export class StreamEvent<T> {
         });
     }
 
-    getName(): string {
+    public getName(): string {
         return this.NAME;
     }
 }
 
-export interface StreamEventConstructor<T> {
-    new (props?: T);
-    getName?: () => string;
-}
-
-export type StreamEventListener<T> = (socket: TransportStream<EventEmitter>, args?: T) => void;
-
-export interface StreamEventListenerFactory<T> {
-    name: string;
-    listener: (state?: GameState) => StreamEventListener<T>;
-}
+export default StreamEvent;

@@ -1,12 +1,12 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
 import {CharacterHealEvent, CharacterHealPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 
 const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerFactory<CharacterHealPayload> = {
+export const evt: MudEventListenerDefinition<CharacterHealPayload> = {
     name: CharacterHealEvent.getName(),
     listener: (): MudEventListener<CharacterHealPayload> => (player: Player, {source, target, amount}) => {
         if (source.metadata.hidden) {

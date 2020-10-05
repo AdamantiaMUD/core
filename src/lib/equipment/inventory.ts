@@ -4,12 +4,8 @@ import {hasValue} from '../util/functions';
 import type CharacterInterface from '../characters/character-interface';
 import type GameStateData from '../game-state-data';
 import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
-import type {Item, SerializedItem} from './item';
-
-export interface SerializedInventory extends SimpleMap {
-    [key: string]: SerializedItem;
-}
+import type Item from './item';
+import type SerializedInventory from './serialized-inventory';
 
 /**
  * Representation of a `Character` or container `Item` inventory

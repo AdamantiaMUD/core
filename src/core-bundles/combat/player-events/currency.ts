@@ -1,12 +1,12 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import Player from '../../../lib/players/player';
-import {MudEventListener, MudEventListenerFactory} from '../../../lib/events/mud-event';
+import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
 import {PlayerCurrencyGainedEvent, PlayerCurrencyGainedPayload} from '../../../lib/players/player-events';
 
 const {sayAt} = Broadcast;
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerFactory<PlayerCurrencyGainedPayload> = {
+export const evt: MudEventListenerDefinition<PlayerCurrencyGainedPayload> = {
     name: PlayerCurrencyGainedEvent.getName(),
     listener: (): MudEventListener<PlayerCurrencyGainedPayload> => (player: Player, {denomination, amount}) => {
         const friendlyName = denomination

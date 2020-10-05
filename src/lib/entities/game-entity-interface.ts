@@ -1,12 +1,12 @@
 import type GameStateData from '../game-state-data';
 import type MudEventEmitterInterface from '../events/mud-event-emitter-interface';
-import type {SerializedGameEntity} from './game-entity';
+import type SerializedGameEntity from './serialized-game-entity';
 
 export interface GameEntityInterface extends MudEventEmitterInterface {
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
-    __pruned: boolean;
-    /* eslint-disable-next-line @typescript-eslint/naming-convention */
     __hydrated: boolean;
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
+    __pruned: boolean;
     entityReference: string | null;
     deserialize: (data?: SerializedGameEntity, state?: GameStateData | null) => void;
     getMeta: <T = unknown>(key: string) => (T | null);

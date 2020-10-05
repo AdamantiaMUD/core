@@ -23,8 +23,12 @@ import type {AreaDefinition, AreaManifest} from './locations/area';
 import type {
     AttributeModule,
     BehaviorModule,
+    CharacterClassModule,
     CommandModule,
     EffectModule,
+    EntityScriptModule,
+    InputEventModule,
+    PlayerEventModule,
 } from './module-helpers';
 import type {CommandDefinition} from './commands/command';
 import type {QuestDefinition} from './quests/quest';
@@ -411,7 +415,7 @@ export class BundleManager {
         const entities = await loader.fetchAll<EDef[]>();
         const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaName);
 
-        return entities.map((entity: EDef) => {
+        return Promise.all(entities.map(async (entity: EDef) => {
             const ref = EntityFactory.createRef(areaName, entity.id);
 
             factory.setDefinition(ref, entity);
@@ -424,16 +428,15 @@ export class BundleManager {
                 Logger.verbose(`Loading entity script - [${ref}] -> ${script}`);
 
                 try {
-                    /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
-                    this._loadEntityScript(factory, ref, scriptUri);
+                    await this._loadEntityScript(factory, ref, scriptUri);
                 }
                 catch {
                     Logger.warn(`Missing entity script - [${ref}] -> ${script}`);
                 }
             }
 
-            return ref;
-        });
+            return Promise.resolve(ref);
+        }));
     }
 
     private async _loadEntityScript<
@@ -445,7 +448,8 @@ export class BundleManager {
         ref: string,
         scriptPath: string
     ): Promise<void> {
-        const scriptImport = await import(scriptPath);
+        /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+        const scriptImport: EntityScriptModule = await import(scriptPath);
         const loader = scriptImport.default;
 
         const {listeners} = loader;
@@ -518,7 +522,8 @@ export class BundleManager {
             const eventPath = path.join(uri, eventFile);
 
             if (Data.isScriptFile(eventPath, eventFile)) {
-                const eventImport = await import(eventPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const eventImport: InputEventModule = await import(eventPath);
                 const inputEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
@@ -548,7 +553,8 @@ export class BundleManager {
             if (Data.isScriptFile(classPath, classFile)) {
                 const className = path.basename(classFile, path.extname(classFile));
 
-                const classImport = await import(classPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const classImport: CharacterClassModule = await import(classPath);
                 const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - NPC Classes -> ${className}`);
@@ -578,7 +584,8 @@ export class BundleManager {
             if (Data.isScriptFile(classPath, classFile)) {
                 const className = path.basename(classFile, path.extname(classFile));
 
-                const classImport = await import(classPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const classImport: CharacterClassModule = await import(classPath);
                 const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Classes -> ${className}`);
@@ -607,7 +614,8 @@ export class BundleManager {
             const eventPath = path.join(uri, eventFile);
 
             if (Data.isScriptFile(eventPath, eventFile)) {
-                const eventImport = await import(eventPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const eventImport: PlayerEventModule = await import(eventPath);
                 const playerEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Events -> ${playerEvent.name}`);
