@@ -1,4 +1,4 @@
-import Config from '~/lib/util/config';
+import Config from '../../../src/lib/util/config';
 
 describe('config.ts', () => {
     it('`load()` should populate the data correctly', () => {

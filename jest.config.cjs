@@ -1,4 +1,4 @@
-/* eslint-disable array-bracket-newline, array-element-newline */
+/* eslint-disable array-bracket-newline, array-element-newline, import/no-commonjs, import/unambiguous */
 const path = require('path');
 
 module.exports = {

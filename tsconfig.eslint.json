@@ -24,6 +24,7 @@
         "src/**/*",
         "src/**/*.json",
         "test/**/*",
-        ".eslintrc.cjs"
+        ".eslintrc.cjs",
+        "jest.config.cjs"
     ]
 }

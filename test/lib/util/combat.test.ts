@@ -1,10 +1,11 @@
 import each from 'jest-each';
 
-import * as Combat from '~/lib/util/combat';
-import Area from '~/lib/locations/area';
-import ItemType from '~/lib/equipment/item-type';
-import Npc from '~/lib/mobs/npc';
-import {ItemDefinition} from '../../../src';
+import * as Combat from '../../../src/lib/util/combat';
+import Area from '../../../src/lib/locations/area';
+import ItemType from '../../../src/lib/equipment/item-type';
+import Npc from '../../../src/lib/mobs/npc';
+
+import type ItemDefinition from '../../../src/lib/equipment/item-definition';
 
 const makeArea = (name: string): Area => new Area(
     'test-bundle',

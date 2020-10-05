@@ -12,7 +12,7 @@ export default class MudEventEmitter implements MudEventEmitterInterface {
         this._emitter.emit(event.NAME, event);
     }
 
-    public listen<T = unknown>(eventKey: string, listener: MudEventListener<T>, config?: SimpleMap): void {
+    public listen<T = unknown>(eventKey: string, listener: MudEventListener<T>, config?: SimpleMap | null): void {
         this._emitter.on(eventKey, (data: T) => listener(this, data, config));
     }
 

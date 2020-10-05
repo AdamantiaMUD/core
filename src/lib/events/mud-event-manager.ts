@@ -11,7 +11,7 @@ export class MudEventManager {
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
     /* eslint-disable-next-line max-len */
-    private readonly _events: Map<string, Set<MudEventListener<unknown>>> = new Map<string, Set<MudEventListener<unknown>>>();
+    private readonly _events: Map<string, Set<MudEventListener>> = new Map<string, Set<MudEventListener>>();
 
     public get size(): number {
         return this._events.size;
@@ -21,7 +21,7 @@ export class MudEventManager {
      * Add a new listener for the given event. If no listeners have been
      * previously added for the event, it is first initialized with an empty set.
      */
-    public add(name: string, listener: MudEventListener<unknown>): void {
+    public add(name: string, listener: MudEventListener): void {
         if (!this._events.has(name)) {
             this._events.set(name, new Set());
         }
@@ -32,7 +32,7 @@ export class MudEventManager {
     /**
      * Attach all currently added events to the given emitter
      */
-    public attach(emitter: MudEventEmitter, config?: SimpleMap): void {
+    public attach(emitter: MudEventEmitter, config?: SimpleMap | null): void {
         for (const [event, listeners] of this._events) {
             for (const listener of listeners) {
                 emitter.listen(event, listener, config);
@@ -72,7 +72,7 @@ export class MudEventManager {
     /**
      * Fetch all listeners for a given event
      */
-    public get(name: string): Set<MudEventListener<unknown>> {
+    public get(name: string): Set<MudEventListener> {
         return this._events.get(name) ?? new Set();
     }
 }

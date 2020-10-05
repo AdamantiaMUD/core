@@ -6,9 +6,9 @@ import {hasValue} from '../util/functions';
 import type GameStateData from '../game-state-data';
 import type Npc from '../mobs/npc';
 import type Room from './room';
+import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
 import type SimpleMap from '../util/simple-map';
 import type {Broadcastable} from '../communication/broadcast';
-import type {ScriptableEntityDefinition} from '../entities/scriptable-entity';
 
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
