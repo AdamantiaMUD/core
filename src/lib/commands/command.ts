@@ -1,38 +1,10 @@
 import CommandType from './command-type';
 import PlayerRole from '../players/player-role';
 
-import type GameStateData from '../game-state-data';
+import type CommandDefinition from './command-definition';
+import type CommandExecutable from './command-executable';
 import type Player from '../players/player';
 import type SimpleMap from '../util/simple-map';
-
-export interface CommandDefinition {
-    aliases?: string[];
-    command: CommandExecutable;
-    metadata?: SimpleMap;
-    name: string;
-    requiredRole?: PlayerRole;
-    type?: CommandType;
-    usage?: string;
-}
-
-export type CommandDefinitionBuilder = (state?: GameStateData) => CommandDefinition;
-
-export interface CommandDefinitionFactory {
-    aliases?: string[];
-    command: (state?: GameStateData) => CommandExecutable;
-    metadata?: SimpleMap;
-    name: string;
-    requiredRole?: PlayerRole;
-    type?: CommandType;
-    usage?: string;
-}
-
-export type CommandExecutable = (
-    args: string,
-    player: Player,
-    alias?: string,
-    ...argV: unknown[]
-) => void;
 
 /**
  * In game command. See the {@link http://ranviermud.com/extending/commands/|Command guide}
@@ -62,7 +34,7 @@ export class Command {
         this.metadata = def.metadata ?? {};
     }
 
-    public execute(args: string, player: Player, alias: string = '', ...argV: unknown[]): void {
+    public execute(args: string | null, player: Player, alias: string = '', ...argV: unknown[]): void {
         this.func(args, player, alias, ...argV);
     }
 }

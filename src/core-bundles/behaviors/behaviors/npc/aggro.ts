@@ -1,13 +1,15 @@
-import Character from '~/lib/characters/character';
-import Logger from '~/lib/util/logger';
-import Npc from '~/lib/mobs/npc';
-import Player from '~/lib/players/player';
-import {BehaviorDefinition} from '~/lib/behaviors/behavior';
-import {MEL} from '~/lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
-import {sayAt} from '~/lib/communication/broadcast';
-
+import Logger from '../../../../lib/util/logger';
+import {UpdateTickEvent} from '../../../../lib/common/events';
+import {sayAt} from '../../../../lib/communication/broadcast';
+import {hasValue} from '../../../../lib/util/functions';
 import {isNpc} from '../../../../lib/util/characters';
+
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type Character from '../../../../lib/characters/character';
+import type MudEventListener from '../../../../lib/events/mud-event-listener';
+import type Npc from '../../../../lib/mobs/npc';
+import type Player from '../../../../lib/players/player';
+import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 interface AggroConfig {
     delay: number;
@@ -74,7 +76,7 @@ const getConfig = (config: true | {[key: string]: unknown}): AggroConfig => {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (): MEL<UpdateTickPayload> => (
+        [UpdateTickEvent.getName()]: (): MudEventListener<[Npc, UpdateTickPayload]> => (
             npc: Npc,
             payload: UpdateTickPayload
         ): void => {
@@ -82,7 +84,7 @@ export const aggro: BehaviorDefinition = {
                 return;
             }
 
-            const config = getConfig(payload?.config ?? {});
+            const config = getConfig(payload.config ?? {});
 
             if (npc.combat.isFighting()) {
                 return;
@@ -90,7 +92,7 @@ export const aggro: BehaviorDefinition = {
 
             const aggroTarget = npc.getMeta<Character>('aggroTarget');
 
-            if (aggroTarget !== undefined) {
+            if (hasValue(aggroTarget)) {
                 if (aggroTarget.room !== npc.room) {
                     npc.setMeta('aggroTarget', null);
                     npc.setMeta('aggroWarned', false);
@@ -105,7 +107,7 @@ export const aggro: BehaviorDefinition = {
                 if (sinceLastCheck >= delayLength) {
                     if (isNpc(aggroTarget)) {
                         /* eslint-disable-next-line max-len */
-                        Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`);
+                        Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference!}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference!}] in room ${npc.room.entityReference!}.`);
                     }
                     else {
                         sayAt(aggroTarget as Player, config.attackMessage.replace(/%name%/u, npc.name));
@@ -133,21 +135,21 @@ export const aggro: BehaviorDefinition = {
             }
 
             // try to find a player to be aggressive towards first
-            if (config.towards.players && npc.room.players.size) {
+            if (config.towards.players && npc.room.players.size > 0) {
                 npc.setMeta('aggroTarget', [...npc.room.players][0]);
                 npc.setMeta('aggroTimer', Date.now());
 
                 return;
             }
 
-            if (config.towards.npcs && npc.room.npcs.size) {
+            if (hasValue(config.towards.npcs) && npc.room.npcs.size > 0) {
                 for (const roomNpc of npc.room.npcs) {
                     if (roomNpc !== npc) {
                         if (
                             config.towards.npcs === true
                             || (
                                 Array.isArray(config.towards.npcs)
-                                && config.towards.npcs.includes(roomNpc.entityReference)
+                                && config.towards.npcs.includes(roomNpc.entityReference!)
                             )
                         ) {
                             npc.setMeta('aggroTarget', roomNpc);

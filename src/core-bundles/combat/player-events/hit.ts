@@ -1,60 +1,65 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CharacterHitEvent, CharacterHitPayload} from '../../../lib/characters/character-events';
-import {ItemHitEvent} from '../../../lib/equipment/item-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CharacterHitEvent} from '../../../lib/characters/events';
+import {ItemHitEvent} from '../../../lib/equipment/events';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {CharacterHitPayload} from '../../../lib/characters/events';
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerDefinition<CharacterHitPayload> = {
+export const evt: MudEventListenerDefinition<[Player, CharacterHitPayload]> = {
     name: CharacterHitEvent.getName(),
-    listener: (): MudEventListener<CharacterHitPayload> => (player: Player, {source, target, amount}) => {
-        if (source.metadata.hidden) {
+    listener: (): MudEventListener<[Player, CharacterHitPayload]> => (
+        player: Player,
+        {source, target, amount}: CharacterHitPayload
+    ): void => {
+        if (source.metadata.hidden as boolean) {
             return;
         }
 
-        let buf = '';
+        let playerMessage;
 
-        if (source.source === player) {
-            buf = 'You hit';
+        if (source.source === player || !hasValue(source.source)) {
+            playerMessage = 'You ';
         }
         else {
-            buf = `Your <b>${source.source.name}</b> hit`;
+            playerMessage = `Your <b>${source.source.name}</b> `;
         }
 
-        buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
+        playerMessage += `hit <b>${target.name}</b> for <b>${amount}</b> damage.`;
 
-        if (source.metadata.critical) {
-            buf += ' <red><b>(Critical)</b></red>';
+        if (source.metadata.critical as boolean) {
+            playerMessage += ' <red><b>(Critical)</b></red>';
         }
 
-        sayAt(player, buf);
+        sayAt(player, playerMessage);
 
-        if (player.equipment.has('wield')) {
-            player.equipment
-                .get('wield')
-                .dispatch(new ItemHitEvent({amount, source, target}));
+        const wielded = player.equipment.get('wield');
+
+        if (hasValue(wielded)) {
+            wielded.dispatch(new ItemHitEvent({amount, source, target}));
         }
 
         // show damage to party members
-        if (!player.party) {
+        if (!hasValue(player.party)) {
             return;
         }
 
+        let partyMessage;
+
+        if (source.source === player || !hasValue(source.source)) {
+            partyMessage = `${player.name} hit `;
+        }
+        else {
+            partyMessage = `${player.name}'s <b>${source.source.name}</b> hit `;
+        }
+
+        partyMessage += `<b>${target.name}</b> for <b>${amount}</b> damage.`;
+
         for (const member of player.party) {
             if (!(member === player || member.room !== player.room)) {
-                buf = '';
-
-                if (source.source === player) {
-                    buf = `${player.name} hit`;
-                }
-                else {
-                    buf = `${player.name} <b>${source.source.name}</b> hit`;
-                }
-
-                buf += ` <b>${target.name}</b> for <b>${amount}</b> damage.`;
-                sayAt(member, buf);
+                sayAt(member, partyMessage);
             }
         }
     },

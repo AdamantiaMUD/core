@@ -1,16 +1,18 @@
-import Player from '~/lib/players/player';
-import {CommandDefinitionFactory} from '~/lib/commands/command';
-import {sayAt} from '~/lib/communication/broadcast';
+import {sayAt} from '../../../lib/communication/broadcast';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'pvp',
-    command: () => (args: string, player: Player) => {
-        const previousPvpSetting = player.getMeta('pvp') || false;
-        const newPvpSetting = !previousPvpSetting;
+    command: (): CommandExecutable => (args: string, player: Player): void => {
+        const wasPvp = player.getMeta<boolean>('pvp') ?? false;
+        const isPvp = !wasPvp;
 
-        player.setMeta('pvp', newPvpSetting);
+        player.setMeta<boolean>('pvp', isPvp);
 
-        const message = newPvpSetting
+        const message = isPvp
             ? 'You are now able to enter into player-on-player duels.'
             : 'You are now a pacifist and cannot enter player-on-player duels.';
 

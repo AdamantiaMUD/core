@@ -1,28 +1,27 @@
-import GameStateData from '~/lib/game-state-data';
-import Item from '~/lib/equipment/item';
-import Logger from '~/lib/util/logger';
-import Player from '~/lib/players/player';
-import {BehaviorDefinition} from '~/lib/behaviors/behavior';
-import {
-    MEL,
-    MudEvent,
-    MudEventConstructor,
-} from '~/lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
-import {findCarrier} from '~/lib/util/items';
-import {sayAt} from '~/lib/communication/broadcast';
+import Logger from '../../../../lib/util/logger';
+import Player from '../../../../lib/players/player';
+import MudEvent from '../../../../lib/events/mud-event';
+import {UpdateTickEvent} from '../../../../lib/common/events';
+import {findCarrier} from '../../../../lib/util/items';
+import {sayAt} from '../../../../lib/communication/broadcast';
+
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type GameStateData from '../../../../lib/game-state-data';
+import type Item from '../../../../lib/equipment/item';
+import type MudEventListener from '../../../../lib/events/mud-event-listener';
+import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 export class ItemDecayEvent extends MudEvent<void> {
     public NAME: string = 'item-decay';
-};
+}
 
 export const decay: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (): MEL<UpdateTickPayload> => (
+        [UpdateTickEvent.getName()]: (): MudEventListener<[Item, UpdateTickPayload]> => (
             item: Item,
             payload: UpdateTickPayload
         ): void => {
-            const config = (payload?.config ?? {}) as {[key: string]: unknown};
+            const config = (payload.config ?? {}) as {[key: string]: unknown};
 
             const now = Date.now();
 
@@ -42,7 +41,7 @@ export const decay: BehaviorDefinition = {
             }
         },
 
-        [ItemDecayEvent.getName()]: (state: GameState): MEL<void> => (item: Item): void => {
+        [ItemDecayEvent.getName()]: (state: GameStateData): MudEventListener<[Item]> => (item: Item): void => {
             const {room} = item;
 
             const owner = findCarrier(item);

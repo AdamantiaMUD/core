@@ -1,5 +1,5 @@
-import WebSocket from 'ws';
-import {AddressInfo} from 'net';
+import type WebSocket from 'ws';
+import type {AddressInfo} from 'net';
 
 import TransportStream from '../../../lib/communication/transport-stream';
 

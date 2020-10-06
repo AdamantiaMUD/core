@@ -1,34 +1,36 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameStateData from '../../../lib/game-state-data';
-import Player from '../../../lib/players/player';
 import WebsocketStream from '../../../optional-bundles/websocket-networking/lib/WebsocketStream';
-import {CombatInvalidTargetError} from '../../../lib/combat/combat-errors';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../lib/common/common-events';
+import {CombatInvalidTargetError} from '../../../lib/combat/errors';
+import {UpdateTickEvent} from '../../../lib/common/events';
+
+import type GameStateData from '../../../lib/game-state-data';
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {UpdateTickPayload} from '../../../lib/common/events';
 
 const {prompt, sayAt} = Broadcast;
 
-/* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerDefinition<UpdateTickPayload> = {
+export const evt: MudEventListenerDefinition<[Player, UpdateTickPayload]> = {
     name: UpdateTickEvent.getName(),
-    listener: (state: GameState): MudEventListener<UpdateTickPayload> => (player: Player) => {
+    listener: (state: GameStateData): MudEventListener<[Player, UpdateTickPayload]> => (player: Player): void => {
         if (!player.combat.isFighting()) {
             return;
         }
 
-        state.combat.startRegeneration(state, player);
+        state.combat?.startRegeneration(state, player);
 
         let hadActions = false;
 
         try {
-            hadActions = state.combat.updateRound(state, player);
+            hadActions = state.combat?.updateRound(state, player) ?? false;
         }
-        catch (e) {
-            if (e instanceof CombatInvalidTargetError) {
+        catch (err: unknown) {
+            if (err instanceof CombatInvalidTargetError) {
                 sayAt(player, "You can't attack that target.");
             }
             else {
-                throw e;
+                throw err;
             }
         }
 
@@ -36,15 +38,16 @@ export const evt: MudEventListenerDefinition<UpdateTickPayload> = {
             return;
         }
 
-        const usingWebsockets = player.socket instanceof WebsocketStream;
+        // @TODO: figure out a better way of determining socket type. Maybe add a `type` field to the TransportSocket class and its subclasses?
+        const isUsingWebsockets = player.socket instanceof WebsocketStream;
 
         // don't show the combat prompt to a websockets server
-        if (!player.hasPrompt('combat') && !usingWebsockets) {
-            player.addPrompt('combat', () => state.combat.buildPrompt(player));
+        if (!player.hasPrompt('combat') && !isUsingWebsockets) {
+            player.addPrompt('combat', () => state.combat?.buildPrompt(player) ?? '');
         }
 
         sayAt(player, '');
-        if (!usingWebsockets) {
+        if (!isUsingWebsockets) {
             prompt(player);
         }
     },

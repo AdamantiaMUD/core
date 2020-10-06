@@ -1,16 +1,18 @@
-import {Random} from 'rando-js';
+import Logger from '../../../../lib/util/logger';
+import {AreaRoomAddedEvent, RoomRespawnTickEvent} from '../../../../lib/locations/events';
+import {UpdateTickEvent} from '../../../../lib/common/events';
+import {cast, hasValue} from '../../../../lib/util/functions';
+import {probability} from '../../../../lib/util/random';
 
-import Area from '~/lib/locations/area';
-import GameStateData from '~/lib/game-state-data';
-import Item from '~/lib/equipment/item';
-import Logger from '~/lib/util/logger';
-import Npc from '~/lib/mobs/npc';
-import Room, {RoomEntityDefinition} from '~/lib/locations/room';
-import {AreaRoomAddedEvent, AreaRoomAddedPayload} from '~/lib/locations/area-events';
-import {BehaviorDefinition} from '~/lib/behaviors/behavior';
-import {MEL} from '~/lib/events/mud-event';
-import {RoomRespawnTickEvent, RoomRespawnTickPayload} from '~/lib/locations/room-events';
-import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
+import type Area from '../../../../lib/locations/area';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type GameStateData from '../../../../lib/game-state-data';
+import type Item from '../../../../lib/equipment/item';
+import type MudEventListener from '../../../../lib/events/mud-event-listener';
+import type Npc from '../../../../lib/mobs/npc';
+import type {AreaRoomAddedPayload, RoomRespawnTickPayload} from '../../../../lib/locations/events';
+import type {Room, RoomEntityDefinition} from '../../../../lib/locations/room';
+import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 /**
  * Behavior for having a constant respawn tick happening every [interval]
@@ -23,14 +25,14 @@ import {UpdateTickEvent, UpdateTickPayload} from '~/lib/common/common-events';
  */
 export const progressiveRespawn: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameState): MEL<UpdateTickPayload> => {
+        [UpdateTickEvent.getName()]: (state: GameStateData): MudEventListener<[Area, UpdateTickPayload]> => {
             let lastRespawnTick = Date.now();
 
             return (area: Area, payload: UpdateTickPayload): void => {
-                const config = (payload?.config ?? {}) as {[key: string]: unknown};
+                const config = (payload.config ?? {}) as {[key: string]: unknown};
 
                 // setup respawnTick to only happen every [interval] seconds
-                const respawnInterval: number = config?.interval as number ?? 30;
+                const respawnInterval: number = config.interval as number ?? 30;
                 const sinceLastTick = Date.now() - lastRespawnTick;
 
                 if (sinceLastTick >= respawnInterval * 1000) {
@@ -42,7 +44,7 @@ export const progressiveRespawn: BehaviorDefinition = {
             };
         },
 
-        [AreaRoomAddedEvent.getName()]: (): MEL<AreaRoomAddedPayload> => (
+        [AreaRoomAddedEvent.getName()]: (): MudEventListener<[Area, AreaRoomAddedPayload]> => (
             area: Area,
             {room}: AreaRoomAddedPayload
         ): void => {
@@ -65,18 +67,18 @@ export const progressiveRespawn: BehaviorDefinition = {
                                 .filter((npc: Npc) => npc.entityReference === entityDefinition.id)
                                 .length;
 
-                            const needsRespawn = entityCount < entityDefinition.maxLoad;
+                            const shouldRespawn = entityCount < (entityDefinition.maxLoad ?? 1);
 
-                            if (!needsRespawn) {
+                            if (!shouldRespawn || !hasValue(state)) {
                                 return;
                             }
 
-                            if (Random.probability(entityDefinition.respawnChance)) {
+                            if (probability(entityDefinition.respawnChance ?? 0)) {
                                 try {
                                     rm.spawnNpc(state, entityDefinition.id);
                                 }
-                                catch (err) {
-                                    Logger.error(err.message);
+                                catch (err: unknown) {
+                                    Logger.error(cast<Error>(err).message);
                                 }
                             }
                         });
@@ -94,13 +96,13 @@ export const progressiveRespawn: BehaviorDefinition = {
                                 .filter((item: Item) => item.entityReference === entityDef.id)
                                 .length;
 
-                            const needsRespawn = entityCount < entityDef.maxLoad;
+                            const shouldRespawn = entityCount < (entityDef.maxLoad ?? 1);
 
-                            if (!needsRespawn && !entityDef.replaceOnRespawn) {
+                            if ((!shouldRespawn && !entityDef.replaceOnRespawn) || !hasValue(state)) {
                                 return;
                             }
 
-                            if (Random.probability(entityDef.respawnChance)) {
+                            if (probability(entityDef.respawnChance ?? 0)) {
                                 if (entityDef.replaceOnRespawn) {
                                     rm.items.forEach((item: Item) => {
                                         if (item.entityReference === entityDef.id) {

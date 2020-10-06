@@ -6,7 +6,7 @@ export interface CombatEngine {
     buildPrompt: (player: Player) => string;
     chooseCombatant: (attacker: CharacterInterface) => CharacterInterface;
     findCombatant: (attacker: Player, search: string) => CharacterInterface;
-    handleDeath: (state: GameStateData, victim: CharacterInterface, killer?: CharacterInterface) => void;
+    handleDeath: (state: GameStateData, victim: CharacterInterface, killer?: CharacterInterface | null) => void;
     startRegeneration: (state: GameStateData, combatant: CharacterInterface) => void;
     updateRound: (state: GameStateData, attacker: CharacterInterface) => boolean;
 }

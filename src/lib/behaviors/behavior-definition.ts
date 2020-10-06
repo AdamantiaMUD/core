@@ -1,9 +1,9 @@
-import GameStateData from '../game-state-data';
-import MudEventListener from '../events/mud-event-listener';
+import type GameStateData from '../game-state-data';
+import type MudEventListener from '../events/mud-event-listener';
 
 export interface BehaviorDefinition {
     listeners: {
-        [key: string]: (state: GameStateData) => MudEventListener<unknown>;
+        [key: string]: (state: GameStateData) => MudEventListener;
     };
 }
 

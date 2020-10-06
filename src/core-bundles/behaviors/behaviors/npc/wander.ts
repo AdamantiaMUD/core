@@ -1,14 +1,15 @@
-import {Random} from 'rando-js';
-
-import GameStateData from '../../../../lib/game-state-data';
 import Logger from '../../../../lib/util/logger';
-import Npc from '../../../../lib/mobs/npc';
-import {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import Room, {Door} from '../../../../lib/locations/room';
-import {MEL} from '../../../../lib/events/mud-event';
-import {UpdateTickEvent, UpdateTickPayload} from '../../../../lib/common/events';
+import random from '../../../../lib/util/random';
+import {UpdateTickEvent} from '../../../../lib/common/events';
 import {hasValue} from '../../../../lib/util/functions';
 import {sayAt} from '../../../../lib/communication/broadcast';
+
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type GameStateData from '../../../../lib/game-state-data';
+import type MudEventListener from '../../../../lib/events/mud-event-listener';
+import type Npc from '../../../../lib/mobs/npc';
+import type {Door, Room} from '../../../../lib/locations/room';
+import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 interface WanderConfig {
     areaRestricted: boolean;
@@ -56,7 +57,7 @@ const getDoor = (npc: Npc, room?: Room): Door | null => {
  */
 export const wander: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (state: GameStateData): MEL<UpdateTickPayload> => (
+        [UpdateTickEvent.getName()]: (state: GameStateData): MudEventListener<[Npc, UpdateTickPayload]> => (
             npc: Npc,
             payload: UpdateTickPayload
         ): void => {
@@ -68,15 +69,17 @@ export const wander: BehaviorDefinition = {
 
             const lastWanderTime = npc.getMeta<number>('lastWanderTime');
 
-            if (lastWanderTime === undefined) {
-                npc.setMeta('lastWanderTime', Date.now());
+            if (!hasValue(lastWanderTime)) {
+                npc.setMeta<number>('lastWanderTime', Date.now());
+
+                return;
             }
 
             if (Date.now() - lastWanderTime < config.interval * 1000) {
                 return;
             }
 
-            npc.setMeta('lastWanderTime', Date.now());
+            npc.setMeta<number>('lastWanderTime', Date.now());
 
             const exits = npc.room.getExits();
 
@@ -84,9 +87,9 @@ export const wander: BehaviorDefinition = {
                 return;
             }
 
-            const roomExit = Random.fromArray(exits);
+            const roomExit = random.pickone(exits);
             const randomRoom = state.roomManager.getRoom(roomExit.roomId);
-            const door: Door = getDoor(npc, randomRoom);
+            const door: Door | null = getDoor(npc, randomRoom);
 
             if (door?.locked || door?.closed) {
                 /*
@@ -99,15 +102,15 @@ export const wander: BehaviorDefinition = {
             }
 
             if (
-                randomRoom === undefined
-                || !config.restrictTo?.includes(randomRoom.entityReference)
+                !hasValue(randomRoom)
+                || !config.restrictTo.includes(randomRoom.entityReference!)
                 || (config.areaRestricted && randomRoom.area !== npc.area)
             ) {
                 return;
             }
 
             /* eslint-disable-next-line max-len */
-            Logger.verbose(`NPC [${npc.uuid}] wandering from ${npc.room.entityReference} to ${randomRoom.entityReference}.`);
+            Logger.verbose(`NPC [${npc.uuid}] wandering from ${npc.room.entityReference!} to ${randomRoom.entityReference!}.`);
             sayAt(npc.room, `${npc.name} wanders ${roomExit.direction}.`);
             npc.moveTo(randomRoom);
         },

@@ -1,8 +1,13 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameStateData from '../../../lib/game-state-data';
 import Logger from '../../../lib/util/logger';
-import {CombatError} from '../../../lib/combat/combat-errors';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {CombatError} from '../../../lib/combat/errors';
+import {cast, hasValue} from '../../../lib/util/functions';
+
+import type CharacterInterface from '../../../lib/characters/character-interface';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
 
 const {sayAt} = Broadcast;
 
@@ -11,35 +16,37 @@ export const cmd: CommandDefinitionFactory = {
     aliases: ['con'],
     usage: 'consider <target>',
 
-    command: (state: GameState) => (args, player) => {
-        if (!args || !args.length) {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Who do you want to size up for a fight?');
 
             return;
         }
 
-        let target = null;
+        let target: CharacterInterface | null = null;
 
         try {
-            target = state.combat.findCombatant(player, args);
+            target = state.combat?.findCombatant(player, args) ?? null;
         }
-        catch (e) {
-            if (e instanceof CombatError) {
-                sayAt(player, e.message);
+        catch (err: unknown) {
+            if (err instanceof CombatError) {
+                sayAt(player, err.message);
 
                 return;
             }
 
-            Logger.error(e.message);
+            Logger.error(cast<Error>(err).message);
         }
 
-        if (!target) {
-            sayAt(player, 'They aren\'t here.');
+        if (!hasValue(target)) {
+            sayAt(player, "They aren't here.");
 
             return;
         }
 
-        let description = '';
+        let description;
 
         switch (true) {
             case player.level - target.level > 4:
@@ -49,7 +56,7 @@ export const cmd: CommandDefinitionFactory = {
 
             case target.level - player.level > 9:
                 /* eslint-disable-next-line max-len */
-                description = 'They are <b>much</b> stronger than you. They will kill you and it will hurt the whole time you\'re dying.';
+                description = "They are <b>much</b> stronger than you. They will kill you, and it will hurt the whole time you're dying.";
                 break;
 
             case target.level - player.level > 5:
@@ -59,7 +66,7 @@ export const cmd: CommandDefinitionFactory = {
 
             case target.level - player.level > 3:
                 /* eslint-disable-next-line max-len */
-                description = 'They are a bit stronger than you. You may survive but it would be hard won.';
+                description = 'They are a bit stronger than you. You may survive, but it would be hard won.';
                 break;
 
             default:

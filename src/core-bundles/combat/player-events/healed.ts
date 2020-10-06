@@ -1,52 +1,57 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CharacterHealedEvent, CharacterHealedPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CharacterHealedEvent} from '../../../lib/characters/events';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {CharacterHealedPayload} from '../../../lib/characters/events';
 
-export const evt: MudEventListenerDefinition<CharacterHealedPayload> = {
+export const evt: MudEventListenerDefinition<[Player, CharacterHealedPayload]> = {
     name: CharacterHealedEvent.getName(),
-    listener: (): MudEventListener<CharacterHealedPayload> => (player: Player, {source, amount}) => {
-        if (source.metadata.hidden) {
+    listener: (): MudEventListener<[Player, CharacterHealedPayload]> => (
+        player: Player,
+        {source, amount}: CharacterHealedPayload
+    ): void => {
+        if (source.metadata.hidden as boolean) {
             return;
         }
 
-        let buf = '',
+        let playerMessage,
             attacker = '',
             sourceName = '';
 
-        if (source.attacker && source.attacker !== player) {
+        if (hasValue(source.attacker) && source.attacker !== player) {
             attacker = `<b>${source.attacker.name}</b> `;
         }
 
-        if (source.source !== source.attacker) {
-            attacker = attacker ? `${attacker}'s ` : '';
+        if (hasValue(source.source) && source.source !== source.attacker) {
+            attacker = attacker.length > 0 ? `${attacker}'s ` : '';
             sourceName = `<b>${source.source.name}</b>`;
         }
-        else if (!source.attacker) {
+        else if (!hasValue(source.attacker)) {
             sourceName = 'Something';
         }
 
         if (source.attribute === 'hp') {
-            buf = `${attacker}${sourceName} heals you for <b><red>${amount}</red></b>.`;
+            playerMessage = `${attacker}${sourceName} heals you for <b><red>${amount}</red></b>.`;
         }
         else {
-            buf = `${attacker}${sourceName} restores <b>${amount}</b> ${source.attribute}.`;
+            playerMessage = `${attacker}${sourceName} restores <b>${amount}</b> ${source.attribute}.`;
         }
-        sayAt(player, buf);
+
+        sayAt(player, playerMessage);
 
         // show heal to party members only if it's to hp and not restoring a different pool
-        if (!player.party || source.attribute !== 'hp') {
+        if (!hasValue(player.party) || source.attribute !== 'hp') {
             return;
         }
 
-        for (const member of player.party) {
-            if (!(member === player || member.room !== player.room)) {
-                /* eslint-disable-next-line max-len */
-                buf = `${attacker}${sourceName} heals ${player.name} for <b><red>${amount}</red></b>.`;
+        const partyMessage = `${attacker}${sourceName} heals ${player.name} for <b><red>${amount}</red></b>.`;
 
-                sayAt(member, buf);
+        for (const member of player.party) {
+            if (member !== player && member.room === player.room) {
+                sayAt(member, partyMessage);
             }
         }
     },

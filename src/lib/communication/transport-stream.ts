@@ -1,8 +1,6 @@
 import type {AddressInfo} from 'net';
 import type {EventEmitter} from 'events';
 
-import {SocketCloseEvent} from './socket-events';
-
 import type StreamEvent from '../events/stream-event';
 import type StreamEventListener from '../events/stream-event-listener';
 

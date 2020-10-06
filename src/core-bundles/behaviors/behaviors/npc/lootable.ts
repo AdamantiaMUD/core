@@ -4,31 +4,43 @@ import LootTable from '../../../../lib/combat/loot-table';
 import Player from '../../../../lib/players/player';
 import {NpcKilledEvent} from '../../../../lib/mobs/events';
 import {PlayerCurrencyGainedEvent} from '../../../../lib/players/events';
+import {hasValue} from '../../../../lib/util/functions';
 import {makeCorpse} from '../../../../lib/util/combat';
 
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
 import type GameStateData from '../../../../lib/game-state-data';
+import type ItemDefinition from '../../../../lib/equipment/item-definition';
 import type MudEventListener from '../../../../lib/events/mud-event-listener';
 import type Npc from '../../../../lib/mobs/npc';
 import type SimpleMap from '../../../../lib/util/simple-map';
-import type {BehaviorDefinition} from '../../../../lib/behaviors/behavior';
-import type {ItemDefinition} from '../../../../lib/equipment/item';
 import type {NpcKilledPayload} from '../../../../lib/mobs/events';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
-        [NpcKilledEvent.getName()]: (state: GameStateData): MudEventListener<NpcKilledPayload> => async (
+        [NpcKilledEvent.getName()]: (state: GameStateData): MudEventListener<[
+            Npc,
+            NpcKilledPayload,
+            SimpleMap,
+        ]> => async (
             npc: Npc,
             payload: NpcKilledPayload,
             config: SimpleMap
         ): Promise<void> => {
-            const killer = payload?.killer ?? null;
+            const killer = payload.killer ?? null;
 
             const {room, area} = npc;
+
+            if (!hasValue(room)) {
+                // @TODO: throw?
+                return;
+            }
 
             const lootTable = new LootTable(state, config);
             const currencies = lootTable.currencies();
             const roll = await lootTable.roll();
-            const items = roll.map((item: string): Item => state.itemFactory.create(item, area));
+            const items: Item[] = roll
+                .map((item: string): Item | null => state.itemFactory.create(item, area))
+                .filter(hasValue);
 
             const corpseDef: ItemDefinition = makeCorpse(npc);
 
@@ -49,11 +61,11 @@ export const lootable: BehaviorDefinition = {
 
             state.itemManager.add(corpse);
 
-            if (killer !== null && killer instanceof Player) {
-                if (currencies) {
-                    currencies.forEach(currency => {
+            if (hasValue(killer) && killer instanceof Player) {
+                if (hasValue(currencies)) {
+                    currencies.forEach((currency: {amount: number; name: string}) => {
                         // distribute currency among group members in the same room
-                        const recipients = (killer.party ? [...killer.party] : [killer])
+                        const recipients = (hasValue(killer.party) ? [...killer.party] : [killer])
                             .filter((recipient: Player) => recipient.room === killer.room);
 
                         let remaining = currency.amount;
@@ -75,7 +87,7 @@ export const lootable: BehaviorDefinition = {
                                 denomination: currency.name,
                             }));
 
-                            state.commandManager.get('look').execute(corpse.uuid, recipient);
+                            state.commandManager.get('look')?.execute(corpse.uuid, recipient);
                         }
                     });
                 }

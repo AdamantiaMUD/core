@@ -1,65 +1,70 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import GameStateData from '../../../lib/game-state-data';
-import Player from '../../../lib/players/player';
-import {CharacterDamagedEvent, CharacterDamagedPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CharacterDamagedEvent} from '../../../lib/characters/events';
+import {hasValue} from '../../../lib/util/functions';
+
+import type Damage from '../../../lib/combat/damage';
+import type GameStateData from '../../../lib/game-state-data';
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {CharacterDamagedPayload} from '../../../lib/characters/events';
 
 const {sayAt} = Broadcast;
 
-export const evt: MudEventListenerDefinition<CharacterDamagedPayload> = {
+const getSourceName = (source: Damage): string => {
+    let buf = '';
+
+    if (hasValue(source.attacker)) {
+        buf = `<b>${source.attacker.name}</b>`;
+
+        if (hasValue(source.source) && source.source !== source.attacker) {
+            buf += "'s ";
+        }
+    }
+
+    if (hasValue(source.source)) {
+        buf += `<b>${source.source.name}</b>`;
+    }
+    else if (!hasValue(source.attacker)) {
+        buf += 'Something';
+    }
+
+    return buf;
+};
+
+export const evt: MudEventListenerDefinition<[Player, CharacterDamagedPayload]> = {
     name: CharacterDamagedEvent.getName(),
-    listener: (state: GameState): MudEventListener<CharacterDamagedPayload> => (player: Player, {source, amount}) => {
-        if (source.metadata.hidden || source.attribute !== 'hp') {
+    listener: (state: GameStateData): MudEventListener<[Player, CharacterDamagedPayload]> => (
+        player: Player,
+        {source, amount}: CharacterDamagedPayload
+    ): void => {
+        if (source.metadata.hidden as boolean || source.attribute !== 'hp') {
             return;
         }
 
-        let buf = '';
+        const sourceName = getSourceName(source);
 
-        if (source.attacker) {
-            buf = `<b>${source.attacker.name}</b>`;
+        let playerMessage = `${sourceName} hit <b>you</b> for <b><red>${amount}</red></b> damage.`;
+
+        if (source.metadata.critical as boolean) {
+            playerMessage += ' <red><b>(Critical)</b></red>';
         }
 
-        if (source.source !== source.attacker) {
-            buf += `${source.attacker ? "'s " : ' '}<b>${source.source.name}</b>`;
-        }
-        else if (!source.attacker) {
-            buf += 'Something';
-        }
+        sayAt(player, playerMessage);
 
-        buf += ` hit <b>you</b> for <b><red>${amount}</red></b> damage.`;
+        if (hasValue(player.party)) {
+            const partyMessage = `${sourceName} hit <b>${player.name}</b> for <b><red>${amount}</red></b> damage`;
 
-        if (source.metadata.critical) {
-            buf += ' <red><b>(Critical)</b></red>';
-        }
-
-        sayAt(player, buf);
-
-        if (player.party) {
             // show damage to party members
             for (const member of player.party) {
                 if (!(member === player || member.room !== player.room)) {
-                    buf = '';
-
-                    if (source.attacker) {
-                        buf = `<b>${source.attacker.name}</b>`;
-                    }
-
-                    if (source.source !== source.attacker) {
-                        buf += `${source.attacker ? "'s " : ' '}<b>${source.source.name}</b>`;
-                    }
-                    else if (!source.attacker) {
-                        buf += 'Something';
-                    }
-
-                    /* eslint-disable-next-line max-len */
-                    buf += ` hit <b>${player.name}</b> for <b><red>${amount}</red></b> damage`;
-                    sayAt(member, buf);
+                    sayAt(member, partyMessage);
                 }
             }
         }
 
         if (player.getAttribute('hp') <= 0) {
-            state.combat.handleDeath(state, player, source.attacker);
+            state.combat?.handleDeath(state, player, source.attacker);
         }
     },
 };

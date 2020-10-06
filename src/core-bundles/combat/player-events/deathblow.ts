@@ -1,22 +1,29 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import {isNpc} from '../../../lib/util/characters';
 import LevelUtil from '../../../lib/util/level-util';
-import Player from '../../../lib/players/player';
-import {CharacterDeathblowEvent, CharacterDeathblowPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
-import {PlayerExperienceEvent} from '../../../lib/players/player-events';
+import {CharacterDeathblowEvent} from '../../../lib/characters/events';
+import {PlayerExperienceEvent} from '../../../lib/players/events';
+import {hasValue} from '../../../lib/util/functions';
+import {isNpc} from '../../../lib/util/characters';
+
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {CharacterDeathblowPayload} from '../../../lib/characters/events';
 
 const {sayAt} = Broadcast;
 
-export const evt: MudEventListenerDefinition<CharacterDeathblowPayload> = {
+export const evt: MudEventListenerDefinition<[Player, CharacterDeathblowPayload]> = {
     name: CharacterDeathblowEvent.getName(),
-    listener: (): MudEventListener<CharacterDeathblowPayload> => (player: Player, payload: CharacterDeathblowPayload) => {
-        const {target, skipParty = false} = payload;
+    listener: (): MudEventListener<[Player, CharacterDeathblowPayload]> => (
+        player: Player,
+        payload: CharacterDeathblowPayload,
+    ): void => {
+        const {target, shouldSkipParty = false} = payload;
 
         /* eslint-disable-next-line id-length */
         const xp = LevelUtil.mobExp(target.level);
 
-        if (player.party && !skipParty) {
+        if (hasValue(player.party) && !shouldSkipParty) {
             /*
              * If they're in a party, proxy the deathblow to all members of
              * the party in the same room. this will make sure party members
@@ -25,14 +32,14 @@ export const evt: MudEventListenerDefinition<CharacterDeathblowPayload> = {
              */
             for (const member of player.party) {
                 if (member.room === player.room) {
-                    member.dispatch(new CharacterDeathblowEvent({skipParty: true, target: target}));
+                    member.dispatch(new CharacterDeathblowEvent({shouldSkipParty: true, target: target}));
                 }
             }
 
             return;
         }
 
-        if (target && !isNpc(player)) {
+        if (hasValue(target) && !isNpc(player)) {
             sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
         }
 

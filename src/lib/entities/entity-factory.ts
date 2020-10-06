@@ -2,7 +2,7 @@ import BehaviorManager from '../behaviors/behavior-manager';
 
 import type GameEntity from './game-entity';
 import type GameEntityDefinition from './game-entity-definition';
-import type {Behavior} from '../behaviors/behavior';
+import type Behavior from '../behaviors/behavior';
 
 export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntityDefinition> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
