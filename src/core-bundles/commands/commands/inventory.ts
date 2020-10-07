@@ -1,7 +1,9 @@
 import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 /* eslint-disable-next-line id-length */
 const {at, sayAt} = Broadcast;
@@ -9,7 +11,7 @@ const {at, sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'inventory',
     usage: 'inventory',
-    command: () => (args: string, player: Player) => {
+    command: (): CommandExecutable => (args: string, player: Player) => {
         if (player.inventory.size === 0) {
             sayAt(player, "You aren't carrying anything.");
 

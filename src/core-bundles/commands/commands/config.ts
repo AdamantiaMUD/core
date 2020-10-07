@@ -1,30 +1,43 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type SimpleMap from '../../../lib/util/simple-map';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'config',
     usage: 'config <set/list> [setting] [value]',
-    aliases: ['toggle', 'options', 'set'],
-    command: state => (args: string, player: Player) => {
-        if (!args.length) {
+    aliases: [
+        'toggle',
+        'options',
+        'set',
+    ],
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Configure what?');
 
-            state.commandManager.get('help').execute('config', player);
+            state.commandManager.get('help')?.execute('config', player);
 
             return;
         }
 
         const possibleCommands = ['set', 'list'];
 
-        const [command, configToSet, valueToSet] = args.split(' ');
+        const [
+            command,
+            configToSet,
+            valueToSet,
+        ] = args.split(' ');
 
         if (!possibleCommands.includes(command)) {
             sayAt(player, `<red>Invalid config command: ${command}</red>`);
 
-            state.commandManager.get('help').execute('config', player);
+            state.commandManager.get('help')?.execute('config', player);
 
             return;
         }
@@ -32,7 +45,7 @@ export const cmd: CommandDefinitionFactory = {
         if (command === 'list') {
             sayAt(player, 'Current Settings:');
 
-            const config = player.getMeta('config');
+            const config = player.getMeta<SimpleMap<boolean>>('config');
 
             for (const key in config) {
                 if (Object.prototype.hasOwnProperty.call(config, key)) {
@@ -45,29 +58,34 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        if (!configToSet) {
+        if (!hasValue(configToSet)) {
             sayAt(player, 'Set what?');
 
-            state.commandManager.get('help').execute('config', player);
+            state.commandManager.get('help')?.execute('config', player);
 
             return;
         }
 
-        const possibleSettings = ['brief', 'autoloot', 'minimap'];
+        // @TODO: make player-level configs something that can be extended by bundles; i.e. make this an enum, interface, registry, or something along those lines
+        const possibleSettings = [
+            'brief',
+            'autoloot',
+            'minimap',
+        ];
 
         if (!possibleSettings.includes(configToSet)) {
             /* eslint-disable-next-line max-len */
             sayAt(player, `<red>Invalid setting: ${configToSet}. Possible settings: ${possibleSettings.join(', ')}`);
 
-            state.commandManager.get('help').execute('config', player);
+            state.commandManager.get('help')?.execute('config', player);
 
             return;
         }
 
-        if (!valueToSet) {
+        if (!hasValue(valueToSet)) {
             sayAt(player, `<red>What value do you want to set for ${configToSet}?</red>`);
 
-            state.commandManager.get('help').execute('config', player);
+            state.commandManager.get('help')?.execute('config', player);
 
             return;
         }
@@ -81,11 +99,11 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        if (!player.getMeta('config')) {
-            player.setMeta('config', {});
+        if (!hasValue(player.getMeta<SimpleMap<boolean>>('config'))) {
+            player.setMeta<SimpleMap<boolean>>('config', {});
         }
 
-        player.setMeta(`config.${configToSet}`, possibleValues[valueToSet]);
+        player.setMeta<SimpleMap<boolean>>(`config.${configToSet}`, possibleValues[valueToSet]);
 
         sayAt(player, 'Configuration value saved');
     },

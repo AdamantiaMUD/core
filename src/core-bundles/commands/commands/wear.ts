@@ -1,19 +1,20 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
 import Item from '../../../lib/equipment/item';
 import ItemUtil from '../../../lib/util/items';
 import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-import {EquipSlotTakenError} from '../../../lib/equipment/equipment-errors';
+import {sayAt, sayAtColumns} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import {SlotTakenError} from '../../../lib/equipment/errors';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'wear',
     aliases: ['wield'],
     usage: 'wear <item>',
-    command: () => (rawArgs: string, player: Player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player) => {
         const arg = rawArgs.trim();
 
         if (!arg.length) {

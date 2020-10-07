@@ -3,9 +3,11 @@ import CommandParser from '../../../lib/commands/command-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Item from '../../../lib/equipment/item';
 import ItemUtil from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
 import Room, {Door} from '../../../lib/locations/room';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
@@ -241,7 +243,7 @@ export const cmd: CommandDefinitionFactory = {
     aliases: ['close', 'lock', 'unlock'],
     /* eslint-disable-next-line max-len */
     usage: '[open/close/lock/unlock] <item> / [open/close/lock/unlock] <door direction>/ [open/close/lock/unlock] <door direction>',
-    command: state => (args, player, arg0) => {
+    command: (state): CommandExecutable => (args, player, arg0) => {
         const action = arg0.toString().toLowerCase();
 
         if (!args || !args.length) {

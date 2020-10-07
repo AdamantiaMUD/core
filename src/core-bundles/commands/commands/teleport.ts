@@ -1,17 +1,18 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
 import {isNpc} from '../../../lib/util/characters';
+import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
-const {sayAt, sayAtExcept} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'teleport',
     aliases: ['tp'],
     usage: 'teleport <player/room>',
     requiredRole: PlayerRole.ADMIN,
-    command: state => (args, player) => {
+    command: (state): CommandExecutable => (args, player) => {
         if (!args || !args.length) {
             /* eslint-disable-next-line max-len */
             sayAt(player, 'Must specify a destination using an online player or room entity reference.');

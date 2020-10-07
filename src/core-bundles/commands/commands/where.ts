@@ -1,15 +1,16 @@
-import Broadcast from '../../../lib/communication/broadcast';
 import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt, sayAtColumns} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'where',
     requiredRole: PlayerRole.BUILDER,
-    command: () => (args, player: Player) => {
+    command: (): CommandExecutable => (args, player: Player) => {
         if (!player.room) {
             Logger.error(`${player.name} is in limbo.`);
 

@@ -1,15 +1,16 @@
-import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'equipment',
     aliases: ['worn'],
     usage: 'equipment',
-    command: () => (args, player) => {
-        if (!player.equipment.size) {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+        if (player.equipment.size === 0) {
             sayAt(player, 'You are completely naked!');
 
             return;

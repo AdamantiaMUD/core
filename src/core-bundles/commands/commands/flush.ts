@@ -1,7 +1,8 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 /**
  * Flush the command queue
@@ -9,7 +10,7 @@ const {sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'flush',
     usage: 'flush',
-    command: () => (args, player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         player.commandQueue.flush();
         sayAt(player, '<b><yellow>Queue flushed.</yellow></b>');
     },

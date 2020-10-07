@@ -1,15 +1,16 @@
-import Broadcast from '../../../lib/communication/broadcast';
 import LevelUtil from '../../../lib/util/level-util';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt, progress} from '../../../lib/communication/broadcast';
 
-const {progress, sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'tnl',
     aliases: ['level', 'experience'],
     usage: 'tnl',
-    command: () => (args: string, player: Player) => {
+    command: (): CommandExecutable => (args: string, player: Player) => {
         const totalTnl = LevelUtil.expToLevel(player.level + 1);
         const currentPercent = player.experience
             ? Math.floor((player.experience / totalTnl) * 100)

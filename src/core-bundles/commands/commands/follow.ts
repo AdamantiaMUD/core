@@ -1,24 +1,29 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
 const follow: CommandDefinitionFactory = {
     name: 'follow',
-    command: () => (arg: string, player: Player) => {
-        if (!arg || !arg.length) {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Follow whom?');
 
             return;
         }
 
-        let target = ArgParser.parseDot(arg, player.room.players);
+        let target = ArgParser.parseDot(args, Array.from(player.room?.players ?? new Set<Player>()));
 
-        if (!target) {
-            if (arg === 'self') {
+        if (!hasValue(target)) {
+            if (args === 'self') {
                 target = player;
             }
             else {
@@ -30,7 +35,10 @@ const follow: CommandDefinitionFactory = {
 
         // follow self un-follows the person they're currently following
         if (target === player) {
-            if (player.following !== null) {
+            if (player.following === null) {
+                sayAt(player, "You can't follow yourself...");
+            }
+            else {
                 if (!isNpc(player.following)) {
                     sayAt(player.following as Player, `${player.name} stops following you.`);
                 }
@@ -39,15 +47,15 @@ const follow: CommandDefinitionFactory = {
 
                 player.unfollow();
             }
-            else {
-                sayAt(player, "You can't follow yourself...");
-            }
 
             return;
         }
 
         sayAt(player, `You start following ${target.name}.`);
-        sayAt(target, `${player.name} starts following you.`);
+
+        if (!isNpc(target)) {
+            sayAt(target, `${player.name} starts following you.`);
+        }
 
         player.follow(target);
     },

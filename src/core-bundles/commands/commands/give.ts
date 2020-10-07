@@ -5,9 +5,11 @@ import Item from '../../../lib/equipment/item';
 import {isNpc} from '../../../lib/util/characters';
 import ItemUtil from '../../../lib/util/items';
 import Npc from '../../../lib/mobs/npc';
-import Player from '../../../lib/players/player';
 import SimpleMap from '../../../lib/util/simple-map';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const dot = ArgParser.parseDot;
 
@@ -20,7 +22,7 @@ interface AcceptBehaviorConfig extends SimpleMap {
 export const cmd: CommandDefinitionFactory = {
     name: 'give',
     usage: 'give <item> <target>',
-    command: () => (args: string, player: Player) => {
+    command: (): CommandExecutable => (args: string, player: Player) => {
         if (!args || !args.length) {
             sayAt(player, 'Give what to whom?');
 

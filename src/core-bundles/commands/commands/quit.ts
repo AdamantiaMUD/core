@@ -1,12 +1,14 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
 
 const {sayAt, sayAtExcept} = Broadcast;
 
 export const cmd: CommandDefinitionFactory = {
     name: 'quit',
     usage: 'quit',
-    command: state => (args, player) => {
+    command: (state): CommandExecutable => (args, player) => {
         if (player.combat.isFighting()) {
             sayAt(player, "You're too busy fighting for your life!");
 

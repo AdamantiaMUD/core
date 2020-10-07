@@ -4,14 +4,17 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Command, {
     CommandDefinition,
-    CommandDefinitionBuilder, CommandDefinitionFactory,
+    CommandDefinitionBuilder,
 } from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
 import GameStateData from '../../../lib/game-state-data';
 import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtils from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {center, line, sayAt} = Broadcast;
 
@@ -290,7 +293,7 @@ export const cmd: CommandDefinitionFactory = {
         'offer',
     ],
     usage: 'list [search], buy <item>, sell <item>, appraise <item>',
-    command: (state: GameState) => {
+    command: (state: GameState): CommandExecutable => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('vendor-npcs', 'list', listLoader(state), ''));

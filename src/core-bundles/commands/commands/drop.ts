@@ -1,35 +1,35 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
-import {ItemDroppedEvent} from '../../../lib/equipment/item-events';
-import {NpcPlayerDropItemEvent} from '../../../lib/mobs/npc-events';
-import {PlayerDropItemEvent} from '../../../lib/players/player-events';
+import {ItemDroppedEvent} from '../../../lib/equipment/events';
+import {NpcPlayerDropItemEvent} from '../../../lib/mobs/events';
+import {PlayerDropItemEvent} from '../../../lib/players/events';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'drop',
     usage: 'drop <item>',
-    command: () => (rawArgs: string, player: Player) => {
+    command: () => (rawArgs: string, player: Player): void => {
         const args = rawArgs.trim();
 
-        if (!args.length) {
+        if (args.length === 0) {
             sayAt(player, 'Drop what?');
 
             return;
         }
 
-        if (!player.room) {
+        if (!hasValue(player.room)) {
             sayAt(player, 'You are floating in the nether, it would disappear forever.');
 
             return;
         }
 
-        const item = ArgParser.parseDot(args, player.inventory.items);
+        const item = ArgParser.parseDot(args, Array.from(player.inventory.items.entries()));
 
-        if (!item) {
+        if (!hasValue(item)) {
             sayAt(player, "You aren't carrying anything like that.");
 
             return;

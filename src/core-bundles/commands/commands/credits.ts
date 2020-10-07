@@ -1,9 +1,12 @@
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'credits',
-    command: state => (args, player) => {
-        state.commandManager.get('help').execute('credits', player);
+    command: (state: GameStateData): CommandExecutable => (args: string, player: Player): void => {
+        state.commandManager.get('help')?.execute('credits', player);
     },
 };
 

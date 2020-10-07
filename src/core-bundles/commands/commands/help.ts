@@ -2,8 +2,10 @@ import Broadcast from '../../../lib/communication/broadcast';
 import GameStateData from '../../../lib/game-state-data';
 import Helpfile from '../../../lib/help/helpfile';
 import Logger from '../../../lib/util/logger';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {
     center,
@@ -90,7 +92,7 @@ const searchHelpFiles = (rawArgs: string, player: Player, state: GameState): voi
 export const cmd: CommandDefinitionFactory = {
     name: 'help',
     usage: 'help [search] [topic keyword]',
-    command: state => (args: string, player: Player) => {
+    command: (state): CommandExecutable => (args: string, player: Player) => {
         if (!args.length) {
             // look at `help help` if they haven't specified a file
             state.commandManager.get('help').execute('help', player);

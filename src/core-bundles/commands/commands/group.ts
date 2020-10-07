@@ -2,11 +2,14 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import Command, {
     CommandDefinition,
-    CommandDefinitionBuilder, CommandDefinitionFactory,
+    CommandDefinitionBuilder,
 } from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
 import GameStateData from '../../../lib/game-state-data';
-import Player from '../../../lib/players/player';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {center, prompt, sayAt} = Broadcast;
 
@@ -208,7 +211,7 @@ const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 export const cmd: CommandDefinitionFactory = {
     name: 'group',
     aliases: ['party'],
-    command: (state: GameState) => {
+    command: (state: GameState): CommandExecutable => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('player-groups', 'create', createLoader(state), ''));

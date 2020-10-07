@@ -1,7 +1,9 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt, sayAtColumns} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 /* eslint-disable array-element-newline */
 const getRoleString = (role: number = 0): string => [
@@ -14,7 +16,7 @@ const getRoleString = (role: number = 0): string => [
 export const cmd: CommandDefinitionFactory = {
     name: 'who',
     usage: 'who',
-    command: state => (args, player) => {
+    command: (state): CommandExecutable => (args, player) => {
         sayAt(player, "<b><red>                  Who's Online</b></red>");
         sayAt(player, '<b><red>===============================================</b></red>');
         sayAt(player, '');

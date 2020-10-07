@@ -3,10 +3,12 @@ import Broadcast from '../../../lib/communication/broadcast';
 import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
 import {ItemPickedUpEvent} from '../../../lib/equipment/item-events';
 import {PlayerGetItemEvent} from '../../../lib/players/player-events';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
@@ -36,7 +38,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'get',
     usage: 'get <item> [container]',
     aliases: ['take', 'pick', 'loot'],
-    command: () => (rawArgs: string, player: Player, alias: string) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player, alias: string) => {
         if (!rawArgs.length) {
             sayAt(player, 'Get what?');
 

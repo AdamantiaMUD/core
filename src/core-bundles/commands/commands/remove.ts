@@ -1,8 +1,10 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
@@ -10,7 +12,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'remove',
     aliases: ['unwield', 'unequip'],
     usage: 'remove <item>',
-    command: () => (arg: string, player: Player) => {
+    command: (): CommandExecutable => (arg: string, player: Player) => {
         if (!arg.length) {
             sayAt(player, 'Remove what?');
 

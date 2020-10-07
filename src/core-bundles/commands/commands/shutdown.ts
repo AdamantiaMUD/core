@@ -1,9 +1,11 @@
 /* eslint-disable no-process-exit */
-import Broadcast from '../../../lib/communication/broadcast';
 import PlayerRole from '../../../lib/players/player-role';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
 
 /**
  * Shut down the MUD from within the game.
@@ -11,7 +13,7 @@ const {sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'shutdown',
     requiredRole: PlayerRole.ADMIN,
-    command: state => async (time, player) => {
+    command: (state): CommandExecutable => async (time, player) => {
         if (time === 'now') {
             sayAt(state.playerManager, '<b><yellow>Game is shutting down now!</yellow></b>');
             await state.playerManager.saveAll();

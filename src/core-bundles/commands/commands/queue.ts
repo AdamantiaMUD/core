@@ -1,7 +1,8 @@
 import {sprintf} from 'sprintf-js';
 
 import Broadcast from '../../../lib/communication/broadcast';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
 
 const {sayAt} = Broadcast;
 
@@ -12,7 +13,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'queue',
     aliases: ['pending'],
     usage: 'queue',
-    command: () => (args, player) => {
+    command: (): CommandExecutable => (args, player) => {
         sayAt(player, '<b><yellow>Command Queue:</yellow></b>');
 
         if (!player.commandQueue.hasPending) {

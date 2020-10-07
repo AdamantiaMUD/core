@@ -1,15 +1,17 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
 import PlayerRole from '../../../lib/players/player-role';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
 export const cmd: CommandDefinitionFactory = {
     name: 'setrole',
     requiredRole: PlayerRole.ADMIN,
-    command: () => (rawArgs: string, player: Player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player) => {
         const args = rawArgs.trim();
 
         if (!args.length) {

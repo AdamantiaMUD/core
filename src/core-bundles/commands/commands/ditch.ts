@@ -1,29 +1,35 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+import {cast, hasValue} from '../../../lib/util/functions';
+import {isNpc} from '../../../lib/util/characters';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 
 const ditch: CommandDefinitionFactory = {
     name: 'ditch',
-    command: () => (arg: string, player: Player): void => {
-        if (!arg || !arg.length) {
+    command: () => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Ditch whom?');
 
             return;
         }
 
-        const target = ArgParser.parseDot(arg, player.followers);
+        const target = ArgParser.parseDot(args, Array.from(player.followers));
 
-        if (!target) {
+        if (!hasValue(target)) {
             sayAt(player, "They aren't following you.");
 
             return;
         }
 
         sayAt(player, `You ditch ${target.name} and they stop following you.`);
-        sayAt(target, `${player.name} ditches you and you stop following them.`);
+
+        if (!isNpc(target)) {
+            sayAt(cast<Player>(target), `${player.name} ditches you and you stop following them.`);
+        }
 
         target.unfollow();
     },

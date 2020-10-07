@@ -5,11 +5,13 @@ import GameStateData from '../../../lib/game-state-data';
 import ItemUtil from '../../../lib/util/items';
 import Logger from '../../../lib/util/logger';
 import Npc from '../../../lib/mobs/npc';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
 import {humanize} from '../../../lib/util/time';
 import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 /* eslint-disable-next-line id-length */
 const {at, sayAt} = Broadcast;
@@ -273,7 +275,7 @@ const lookEntity = (state: GameState, player: Player, rawArgs: string): void => 
 export const cmd: CommandDefinitionFactory = {
     name: 'look',
     usage: 'look [thing]',
-    command: state => (args, player: Player) => {
+    command: (state): CommandExecutable => (args, player: Player) => {
         if (!player.room) {
             Logger.error(`${player.name} is in limbo.`);
 

@@ -13,7 +13,6 @@ export interface GameEntityInterface extends MudEventEmitterInterface {
     hydrate: (state: GameStateData) => void;
     serialize: () => SerializedGameEntity;
     setMeta: <T = unknown>(key: string, newValue: T) => void;
-
 }
 
 export default GameEntityInterface;

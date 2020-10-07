@@ -3,8 +3,10 @@ import Broadcast from '../../../lib/communication/broadcast';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
 import {CharacterPutItemEvent} from '../../../lib/characters/character-events';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
 import {ItemPutAwayEvent} from '../../../lib/equipment/item-events';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
 
 const dot = ArgParser.parseDot;
 
@@ -13,7 +15,7 @@ const {sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'put',
     usage: 'put <item> <container>',
-    command: () => (rawArgs, player) => {
+    command: (): CommandExecutable => (rawArgs, player) => {
         const args = rawArgs.trim();
 
         if (!args.length) {

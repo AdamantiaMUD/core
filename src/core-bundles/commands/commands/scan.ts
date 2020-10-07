@@ -1,6 +1,8 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Player from '../../../lib/players/player';
-import {CommandDefinitionFactory} from '../../../lib/commands/command';
+
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Player from '../../../lib/players/player';
 
 const {sayAt} = Broadcast;
 
@@ -10,7 +12,7 @@ const {sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'scan',
     usage: 'scan',
-    command: state => (args: string, player: Player) => {
+    command: (state): CommandExecutable => (args: string, player: Player) => {
         for (const exit of player.room.exits) {
             const room = state.roomManager.getRoom(exit.roomId);
 
