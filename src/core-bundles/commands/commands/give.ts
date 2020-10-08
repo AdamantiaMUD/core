@@ -1,19 +1,14 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Character from '../../../lib/characters/character';
-import Item from '../../../lib/equipment/item';
-import {isNpc} from '../../../lib/util/characters';
 import ItemUtil from '../../../lib/util/items';
-import Npc from '../../../lib/mobs/npc';
-import SimpleMap from '../../../lib/util/simple-map';
+import {hasValue} from '../../../lib/util/functions';
+import {isNpc} from '../../../lib/util/characters';
+import {sayAt} from '../../../lib/communication/broadcast';
 
+import type CharacterInterface from '../../../lib/characters/character-interface';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type Player from '../../../lib/players/player';
-
-const dot = ArgParser.parseDot;
-
-const {sayAt} = Broadcast;
+import type SimpleMap from '../../../lib/util/simple-map';
 
 interface AcceptBehaviorConfig extends SimpleMap {
     items: string[];
@@ -22,56 +17,62 @@ interface AcceptBehaviorConfig extends SimpleMap {
 export const cmd: CommandDefinitionFactory = {
     name: 'give',
     usage: 'give <item> <target>',
-    command: (): CommandExecutable => (args: string, player: Player) => {
-        if (!args || !args.length) {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Give what to whom?');
 
             return;
         }
 
-        /* eslint-disable-next-line prefer-const */
-        let [itemKey, recipientName] = args.split(' ');
+        if (!hasValue(player.room)) {
+            sayAt(player, 'You are floating in the nether, there is nobody with you.');
 
-        // give foo to bar
-        if (recipientName === 'to') {
-            recipientName = args.split(' ')[2];
+            return;
         }
 
-        if (!recipientName) {
+        const [itemKey, recipientName] = args.split(' ')
+            .filter((part: string) => part !== 'to');
+
+        if (!hasValue(recipientName)) {
             sayAt(player, 'Who do you want to give it to?');
 
             return;
         }
 
-        const item = dot(itemKey, player.inventory.items) as Item;
+        const item = ArgParser.parseDot(itemKey, Array.from(player.inventory.items));
 
-        if (!item) {
-            sayAt(player, 'You don\'t have that.');
+        if (!hasValue(item)) {
+            sayAt(player, "You don't have that.");
 
             return;
         }
 
         // prioritize players before npcs
-        let target = dot(recipientName, player.room.players) as Character;
+        let target: CharacterInterface = ArgParser.parseDot(
+            recipientName,
+            Array.from(player.room.players)
+        ) as CharacterInterface;
 
-        if (!target) {
-            target = dot(recipientName, player.room.npcs);
-
-            if (target) {
-                const accepts: AcceptBehaviorConfig = (target as Npc).getBehavior('accepts') as AcceptBehaviorConfig;
-
-                if (typeof accepts === 'undefined' || !accepts.items.includes(item.entityReference)) {
-                    sayAt(player, "They don't want that.");
-
-                    return;
-                }
-            }
+        if (!hasValue(target)) {
+            target = ArgParser.parseDot(recipientName, Array.from(player.room.npcs)) as CharacterInterface;
         }
 
-        if (!target) {
+        if (!hasValue(target)) {
             sayAt(player, "They aren't here.");
 
             return;
+        }
+
+        if (hasValue(target) && isNpc(target)) {
+            const accepts: AcceptBehaviorConfig = target.getBehavior('accepts') as AcceptBehaviorConfig;
+
+            if (!hasValue(accepts) || !accepts.items.includes(item.entityReference!)) {
+                sayAt(player, "They don't want that.");
+
+                return;
+            }
         }
 
         if (target === player) {

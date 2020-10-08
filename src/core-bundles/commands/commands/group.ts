@@ -1,53 +1,59 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Command, {
-    CommandDefinition,
-    CommandDefinitionBuilder,
-} from '../../../lib/commands/command';
+import Command from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
-import GameStateData from '../../../lib/game-state-data';
+import {center, prompt, sayAt} from '../../../lib/communication/broadcast';
+import {hasValue} from '../../../lib/util/functions';
 
+import type CommandDefinition from '../../../lib/commands/command-definition';
+import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
 import type Player from '../../../lib/players/player';
 
-const {center, prompt, sayAt} = Broadcast;
-
-const createLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const createLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'create',
-    command: (args, player) => {
-        if (player.party) {
+    command: (rawArgs: string, player: Player): void => {
+        if (hasValue(player.party)) {
             sayAt(player, "You're already in a group.");
 
             return;
         }
 
         state.partyManager.create(player);
-        /* eslint-disable-next-line max-len */
+
         sayAt(player, "<b><green>You created a group, invite players with '<white>group invite <name></white>'</green></b>");
     },
 });
 
 const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'invite',
-    command: (args, player) => {
-        if (!player.party) {
+    command: (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (!hasValue(player.party)) {
             sayAt(player, "You don't have a group, create one with '<b>group create</b>'.");
 
             return;
         }
 
-        if (player.party && player !== player.party.leader) {
+        if (player !== player.party.leader) {
             sayAt(player, "You aren't the leader of the group.");
         }
 
-        if (!args.length) {
+        if (args.length === 0) {
             sayAt(player, 'Invite whom?');
 
             return;
         }
 
-        const target = ArgParser.parseDot(args, player.room.players);
+        if (!hasValue(player.room)) {
+            sayAt(player, 'You are floating in the nether, there is nobody here with you.');
+
+            return;
+        }
+
+        const target = ArgParser.parseDot(args, Array.from(player.room.players));
 
         if (target === player) {
             /* eslint-disable-next-line max-len */
@@ -56,19 +62,18 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
             return;
         }
 
-        if (!target) {
+        if (!hasValue(target)) {
             sayAt(player, "They aren't here.");
 
             return;
         }
 
-        if (target.party) {
+        if (hasValue(target.party)) {
             sayAt(player, 'They are already in a group.');
 
             return;
         }
 
-        /* eslint-disable-next-line max-len */
         sayAt(target, `<b><green>${player.name} invited you to join their group. Join/decline with '<white>group join/decline ${player.name}</white>'</green></b>`);
         sayAt(player, `<b><green>You invite ${target.name} to join your group.</green></b>`);
 
@@ -78,10 +83,12 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     },
 });
 
-const disbandLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const disbandLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'disband',
-    command: (args, player) => {
-        if (!player.party) {
+    command: (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (!hasValue(player.party)) {
             sayAt(player, "You aren't in a group.");
 
             return;
@@ -93,36 +100,44 @@ const disbandLoader: CommandDefinitionBuilder = (state: GameState): CommandDefin
             return;
         }
 
-        if (!args || args !== 'sure') {
-            /* eslint-disable-next-line max-len */
+        if (args.length === 0 || args !== 'sure') {
             sayAt(player, "<b><green>You have to confirm disbanding your group with '<white>group disband sure</white>'</green></b>");
 
             return;
         }
 
         sayAt(player.party, '<b><green>Your group was disbanded!</green></b>');
+
         state.partyManager.disband(player.party);
     },
 });
 
 const joinLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'join',
-    command: (args, player) => {
-        if (!args.length) {
+    command: (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Join whose group?');
 
             return;
         }
 
-        const target = ArgParser.parseDot(args, player.room.players);
+        if (!hasValue(player.room)) {
+            sayAt(player, 'You are floating in the nether, there is nobody here with you.');
 
-        if (!target) {
+            return;
+        }
+
+        const target = ArgParser.parseDot(args, Array.from(player.room.players));
+
+        if (!hasValue(target)) {
             sayAt(player, "They aren't here.");
 
             return;
         }
 
-        if (!target.party || target !== target.party.leader) {
+        if (!hasValue(target.party) || target !== target.party.leader) {
             sayAt(player, "They aren't leading a group.");
 
             return;
@@ -136,50 +151,69 @@ const joinLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
         sayAt(player, `<b><green>You join ${target.name}'s group.</green></b>`);
         sayAt(target.party, `<b><green>${player.name} joined the group.</green></b>`);
+
         target.party.add(player);
+
         player.follow(target);
     },
 });
 
 const declineLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'decline',
-    command: (args, player) => {
-        if (!args.length) {
+    command: (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Decline whose invite?');
 
             return;
         }
 
-        const target = ArgParser.parseDot(args, player.room.players);
+        if (!hasValue(player.room)) {
+            sayAt(player, 'You are floating in the nether, there is nobody here with you.');
 
-        if (!target) {
+            return;
+        }
+
+        const target = ArgParser.parseDot(args, Array.from(player.room.players));
+
+        if (!hasValue(target)) {
             sayAt(player, "They aren't here.");
+
+            return;
+        }
+
+        if (!hasValue(target.party) || target !== target.party.leader) {
+            sayAt(player, "They aren't leading a group.");
 
             return;
         }
 
         sayAt(player, `<b><green>You decline to join ${target.name}'s group.</green></b>`);
         sayAt(target, `<b><green>${player.name} declined to join your group.</green></b>`);
+
         target.party.removeInvite(player);
     },
 });
 
 const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'list',
-    command: (args, player) => {
-        if (!player.party) {
+    command: (rawArgs: string, player: Player): void => {
+        if (!hasValue(player.party)) {
             sayAt(player, "You're not in a group.");
 
             return;
         }
 
         sayAt(player, `<b>${center(80, 'Group', 'green', '-')}</b>`);
+
         for (const member of player.party) {
             let tag = '   ';
 
             if (member === player.party.leader) {
                 tag = '[L]';
             }
+
             sayAt(player, `<b><green>${tag} ${member.name}</green></b>`);
         }
     },
@@ -187,8 +221,8 @@ const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
 const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'leave',
-    command: (args, player) => {
-        if (!player.party) {
+    command: (rawArgs: string, player: Player): void => {
+        if (!hasValue(player.party)) {
             sayAt(player, "You're not in a group.");
 
             return;
@@ -203,6 +237,7 @@ const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
         const {party} = player;
 
         player.party.delete(player);
+
         sayAt(party, `<b><green>${player.name} left the group.</green></b>`);
         sayAt(player, '<b><green>You leave the group.</green></b>');
     },
@@ -211,7 +246,7 @@ const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 export const cmd: CommandDefinitionFactory = {
     name: 'group',
     aliases: ['party'],
-    command: (state: GameState): CommandExecutable => {
+    command: (state: GameStateData): CommandExecutable => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('player-groups', 'create', createLoader(state), ''));
@@ -222,16 +257,18 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('player-groups', 'list', listLoader(state), ''));
         subcommands.add(new Command('player-groups', 'leave', leaveLoader(state), ''));
 
-        return (args: string, player: Player) => {
+        return (rawArgs: string, player: Player): void => {
+            const args = rawArgs.trim();
+
             const [command, ...commandArgs] = args.split(' ');
 
             let subcommand = subcommands.get('list');
 
-            if (command) {
+            if (hasValue(command)) {
                 subcommand = subcommands.find(command);
             }
 
-            if (!subcommand) {
+            if (!hasValue(subcommand)) {
                 sayAt(player, 'Not a valid party command.');
 
                 return;

@@ -1,15 +1,15 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import CommandParser from '../../../lib/commands/command-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Item from '../../../lib/equipment/item';
 import ItemUtil from '../../../lib/util/items';
-import Room, {Door} from '../../../lib/locations/room';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Item from '../../../lib/equipment/item';
 import type Player from '../../../lib/players/player';
-
-const {sayAt} = Broadcast;
+import type {Door, Room} from '../../../lib/locations/room';
 
 const handleDoor = (
     player: Player,
@@ -68,7 +68,7 @@ const handleDoor = (
                 return;
             }
 
-            if (!door.lockedBy) {
+            if (!hasValue(door.lockedBy)) {
                 sayAt(player, "You can't lock that door.");
 
                 return;
@@ -98,7 +98,7 @@ const handleDoor = (
                 return;
             }
 
-            if (door.lockedBy) {
+            if (hasValue(door.lockedBy)) {
                 if (player.hasItem(door.lockedBy)) {
                     sayAt(player, '*Click* The door unlocks.');
 
@@ -129,7 +129,7 @@ const handleDoor = (
 const handleItem = (player: Player, item: Item, action: string): void => {
     const itemName = ItemUtil.display(item);
 
-    if (!item.getMeta('closeable')) {
+    if (!item.getMeta<boolean>('closeable')) {
         sayAt(player, `${itemName} is not a container.`);
 
         return;
@@ -137,13 +137,13 @@ const handleItem = (player: Player, item: Item, action: string): void => {
 
     switch (action) {
         case 'open': {
-            if (item.getMeta('locked')) {
+            if (item.getMeta<boolean>('locked')) {
                 sayAt(player, `${itemName} is locked.`);
 
                 return;
             }
 
-            if (item.getMeta('closed')) {
+            if (item.getMeta<boolean>('closed')) {
                 sayAt(player, `You open ${itemName}.`);
 
                 item.setMeta('closed', false);
@@ -157,7 +157,7 @@ const handleItem = (player: Player, item: Item, action: string): void => {
         }
 
         case 'close': {
-            if (item.getMeta('locked') || item.getMeta('closed')) {
+            if (item.getMeta<boolean>('locked') || item.getMeta<boolean>('closed')) {
                 sayAt(player, "It's already closed.");
 
                 return;
@@ -171,19 +171,21 @@ const handleItem = (player: Player, item: Item, action: string): void => {
         }
 
         case 'lock': {
-            if (item.getMeta('locked')) {
+            if (item.getMeta<boolean>('locked')) {
                 sayAt(player, "It's already locked.");
 
                 return;
             }
 
-            if (!item.getMeta('lockedBy')) {
+            const key = item.getMeta<string>('lockedBy');
+
+            if (!hasValue(key)) {
                 sayAt(player, `You can't lock ${itemName}.`);
 
                 return;
             }
 
-            if (player.hasItem(item.getMeta('lockedBy'))) {
+            if (player.hasItem(key)) {
                 sayAt(player, `*click* You lock ${itemName}.`);
 
                 item.setMeta('locked', true);
@@ -197,24 +199,25 @@ const handleItem = (player: Player, item: Item, action: string): void => {
         }
 
         case 'unlock': {
-            if (!item.getMeta('locked')) {
+            if (!item.getMeta<boolean>('locked')) {
                 sayAt(player, `${itemName} isn't locked...`);
 
                 return;
             }
 
-            if (!item.getMeta('closed')) {
+            if (!item.getMeta<boolean>('closed')) {
                 sayAt(player, `${itemName} isn't closed...`);
 
                 return;
             }
 
-            if (item.getMeta('lockedBy')) {
-                if (player.hasItem(item.getMeta('lockedBy'))) {
-                    const key = player.getItem(item.getMeta('lockedBy'));
+            const keyRef = item.getMeta<string>('lockedBy');
 
-                    /* eslint-disable-next-line max-len */
-                    sayAt(player, `*click* You unlock ${itemName} with ${ItemUtil.display(key)}.`);
+            if (hasValue(keyRef)) {
+                if (player.hasItem(keyRef)) {
+                    const key = player.getItem(keyRef);
+
+                    sayAt(player, `*click* You unlock ${itemName} with ${ItemUtil.display(key!)}.`);
 
                     item.setMeta('locked', false);
 
@@ -240,19 +243,28 @@ const handleItem = (player: Player, item: Item, action: string): void => {
 
 export const cmd: CommandDefinitionFactory = {
     name: 'open',
-    aliases: ['close', 'lock', 'unlock'],
+    aliases: [
+        'close',
+        'lock',
+        'unlock',
+    ],
     /* eslint-disable-next-line max-len */
     usage: '[open/close/lock/unlock] <item> / [open/close/lock/unlock] <door direction>/ [open/close/lock/unlock] <door direction>',
-    command: (state): CommandExecutable => (args, player, arg0) => {
+    command: (state: GameStateData): CommandExecutable => (
+        rawArgs: string,
+        player: Player,
+        arg0: string
+    ): void => {
         const action = arg0.toString().toLowerCase();
+        const args = rawArgs.trim();
 
-        if (!args || !args.length) {
+        if (args.length === 0) {
             sayAt(player, `What do you want to ${action}?`);
 
             return;
         }
 
-        if (!player.room) {
+        if (!hasValue(player.room)) {
             sayAt(player, 'You are floating in the nether.');
 
             return;
@@ -269,19 +281,20 @@ export const cmd: CommandDefinitionFactory = {
 
         const roomExit = CommandParser.canGo(player, exitDirection);
 
-        if (roomExit) {
+        if (hasValue(roomExit)) {
             const roomExitRoom = state.roomManager.getRoom(roomExit.roomId);
             let doorRoom = player.room,
                 targetRoom = roomExitRoom,
                 door = doorRoom.getDoor(targetRoom);
 
-            if (!door) {
+            if (!hasValue(door)) {
                 doorRoom = roomExitRoom;
                 targetRoom = player.room;
+
                 door = doorRoom.getDoor(targetRoom);
             }
 
-            if (door) {
+            if (hasValue(door)) {
                 handleDoor(player, doorRoom, targetRoom, door, action);
 
                 return;
@@ -290,7 +303,7 @@ export const cmd: CommandDefinitionFactory = {
 
         const item = ArgParser.parseDot(args, [...player.inventory.items, ...player.room.items]);
 
-        if (item) {
+        if (hasValue(item)) {
             handleItem(player, item, action);
 
             return;

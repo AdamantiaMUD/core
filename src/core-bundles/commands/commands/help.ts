@@ -1,20 +1,19 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import GameStateData from '../../../lib/game-state-data';
-import Helpfile from '../../../lib/help/helpfile';
 import Logger from '../../../lib/util/logger';
-
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type Player from '../../../lib/players/player';
-
-const {
+import {
     center,
     line,
     sayAt,
     wrap,
-} = Broadcast;
+} from '../../../lib/communication/broadcast';
+import {cast, hasValue} from '../../../lib/util/functions';
 
-const render = (state: GameState, helpFile: Helpfile): string => {
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Helpfile from '../../../lib/help/helpfile';
+import type Player from '../../../lib/players/player';
+
+const render = (state: GameStateData, helpFile: Helpfile): string => {
     const body = helpFile.body;
     const name = helpFile.name;
 
@@ -25,22 +24,22 @@ const render = (state: GameState, helpFile: Helpfile): string => {
 
     const formatHeaderItem = (item: string, value: string): string => `${item}: ${value}\r\n\r\n`;
 
-    if (helpFile.command) {
-        const actualCommand = state.commandManager.get(helpFile.command);
+    if (hasValue(helpFile.command)) {
+        const actualCommand = state.commandManager.get(helpFile.command)!;
 
         header += formatHeaderItem('Syntax', actualCommand.usage);
 
-        if (actualCommand.aliases && actualCommand.aliases.length > 0) {
+        if (actualCommand.aliases.length > 0) {
             header += formatHeaderItem('Aliases', actualCommand.aliases.join(', '));
         }
     }
-    else if (helpFile.channel) {
+    else if (hasValue(helpFile.channel)) {
         header += formatHeaderItem('Syntax', state.channelManager.get(helpFile.channel).getUsage());
     }
 
     let footer = bar;
 
-    if (helpFile.related.length) {
+    if (helpFile.related.length > 0) {
         footer = `${center(width, 'RELATED', 'yellow', '-')}\r\n`;
         const related = helpFile.related.join(', ');
 
@@ -51,25 +50,26 @@ const render = (state: GameState, helpFile: Helpfile): string => {
     return header + wrap(body, 80) + footer;
 };
 
-const searchHelpFiles = (rawArgs: string, player: Player, state: GameState): void => {
+const searchHelpFiles = (rawArgs: string, player: Player, state: GameStateData): void => {
     const args = rawArgs.split(' ')
         .slice(1)
         .join(' ');
 
-    if (!args.length) {
+    if (args.length === 0) {
         // `help search` syntax is included in `help help`
-        state.commandManager.get('help').execute('help', player);
+        state.commandManager.get('help')?.execute('help', player);
 
         return;
     }
 
     const results = state.helpManager.find(args);
 
-    if (!results.size) {
+    if (results.size === 0) {
         sayAt(player, 'Sorry, no results were found for your search.');
 
         return;
     }
+
     if (results.size === 1) {
         const [, helpFile] = [...results][0];
 
@@ -92,10 +92,12 @@ const searchHelpFiles = (rawArgs: string, player: Player, state: GameState): voi
 export const cmd: CommandDefinitionFactory = {
     name: 'help',
     usage: 'help [search] [topic keyword]',
-    command: (state): CommandExecutable => (args: string, player: Player) => {
-        if (!args.length) {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             // look at `help help` if they haven't specified a file
-            state.commandManager.get('help').execute('help', player);
+            state.commandManager.get('help')?.execute('help', player);
 
             return;
         }
@@ -109,7 +111,7 @@ export const cmd: CommandDefinitionFactory = {
 
         const helpfile = state.helpManager.get(args);
 
-        if (!helpfile) {
+        if (!hasValue(helpfile)) {
             Logger.error(`MISSING-HELP: [${args}]`);
 
             sayAt(player, "Sorry, I couldn't find an entry for that topic.");
@@ -120,9 +122,9 @@ export const cmd: CommandDefinitionFactory = {
         try {
             sayAt(player, render(state, helpfile));
         }
-        catch (e) {
+        catch (err: unknown) {
             Logger.warn(`UNRENDERABLE-HELP: [${args}]`);
-            Logger.warn(e);
+            Logger.warn(cast<Error>(err).message);
 
             sayAt(player, `Invalid help file for ${args}.`);
         }

@@ -1,29 +1,28 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Item from '../../../lib/equipment/item';
+import {sayAt} from '../../../lib/communication/broadcast';
 import ItemType from '../../../lib/equipment/item-type';
+import {hasValue} from '../../../lib/util/functions';
 import ItemUtil from '../../../lib/util/items';
-import {ItemPickedUpEvent} from '../../../lib/equipment/item-events';
-import {PlayerGetItemEvent} from '../../../lib/players/player-events';
+import {ItemPickedUpEvent} from '../../../lib/equipment/events';
+import {PlayerGetItemEvent} from '../../../lib/players/events';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Item from '../../../lib/equipment/item';
 import type Player from '../../../lib/players/player';
 
-const {sayAt} = Broadcast;
-
-const pickup = (item: Item, container: Item, player: Player): void => {
-    if (item.getMeta('noPickup')) {
+const pickup = (item: Item, container: Item | null, player: Player): void => {
+    if (item.getMeta<boolean>('noPickup')) {
         sayAt(player, `${ItemUtil.display(item)} can't be picked up.`);
 
         return;
     }
 
-    if (container) {
+    if (hasValue(container)) {
         container.removeItem(item);
     }
     else {
-        player.room.removeItem(item);
+        player.room!.removeItem(item);
     }
 
     player.addItem(item);
@@ -37,15 +36,22 @@ const pickup = (item: Item, container: Item, player: Player): void => {
 export const cmd: CommandDefinitionFactory = {
     name: 'get',
     usage: 'get <item> [container]',
-    aliases: ['take', 'pick', 'loot'],
-    command: (): CommandExecutable => (rawArgs: string, player: Player, alias: string) => {
-        if (!rawArgs.length) {
+    aliases: ['take', 'loot'],
+    command: (): CommandExecutable => (rawArgs: string, player: Player, alias: string): void => {
+        let args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Get what?');
 
             return;
         }
 
-        if (!player.room) {
+        // 'loot' is an alias for 'get all'
+        if (alias === 'loot') {
+            args = `all ${args}`;
+        }
+
+        if (!hasValue(player.room)) {
             sayAt(player, 'You are floating in the nether, there is nothing to get.');
 
             return;
@@ -57,37 +63,27 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        let args = rawArgs;
-
-        // 'loot' is an alias for 'get all'
-        if (alias === 'loot') {
-            args = `all ${rawArgs}`.trim();
-        }
-
         // get 3.foo from bar -> get 3.foo bar
-        let parts = args.split(' ')
-            .filter(arg => !arg.match(/from/u));
+        const parts = args.split(' ')
+            .filter((arg: string): boolean => (/from/u).exec(arg) === null);
 
-        // pick up <item>
-        if (parts.length > 1 && parts[0] === 'up') {
-            parts = parts.slice(1);
-        }
+        let source: Item[] = [],
+            container: Item | null = null;
 
-        let source = null,
-            search = null,
-            container = null;
+        const searchKey = parts[0];
+        const containerKey = parts[1];
 
         if (parts.length === 1) {
-            search = parts[0];
-            source = player.room.items;
+            source = Array.from(player.room.items);
         }
         else {
             /*
              * Newest containers should go first, so that if you type get all
              * corpse you get from the most recent corpse. See issue #247.
              */
-            container = ArgParser.parseDot(parts[1], [...player.room.items].reverse());
-            if (!container) {
+            container = ArgParser.parseDot(containerKey, [...player.room.items].reverse());
+
+            if (!hasValue(container)) {
                 sayAt(player, "You don't see anything like that here.");
 
                 return;
@@ -99,44 +95,39 @@ export const cmd: CommandDefinitionFactory = {
                 return;
             }
 
-            if (container.closed) {
+            if (container.getMeta<boolean>('closed')) {
                 sayAt(player, `${ItemUtil.display(container)} is closed.`);
 
                 return;
             }
 
-            search = parts[0];
-            source = container.inventory;
+            source = Array.from(container.inventory?.items.values() ?? []);
         }
 
-        if (search === 'all') {
-            if (!source || ![...source].length) {
+        if (searchKey === 'all') {
+            if (source.length === 0) {
                 sayAt(player, "There isn't anything to take.");
 
                 return;
             }
 
-            for (let srcItem of source) {
-                // account for Set vs Map source
-                if (Array.isArray(srcItem)) {
-                    srcItem = srcItem[1];
-                }
-
+            for (const item of source) {
+                /* eslint-disable-next-line @typescript-eslint/no-unnecessary-condition -- The player's inventory may be full after picking up more items */
                 if (player.inventory.isFull) {
                     sayAt(player, "You can't carry any more.");
 
                     return;
                 }
 
-                pickup(srcItem, container, player);
+                pickup(item, container, player);
             }
 
             return;
         }
 
-        const item = ArgParser.parseDot(search, source);
+        const item = ArgParser.parseDot(searchKey, source);
 
-        if (!item) {
+        if (!hasValue(item)) {
             sayAt(player, "You don't see anything like that here.");
 
             return;

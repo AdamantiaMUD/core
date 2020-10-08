@@ -14,20 +14,22 @@ import type Serializable from '../data/serializable';
 import type SerializedGameEntity from './serialized-game-entity';
 import type SimpleMap from '../util/simple-map';
 
-export class GameEntity extends MudEventEmitter implements Metadatable, Serializable, GameEntityInterface {
+export abstract class GameEntity extends MudEventEmitter implements Metadatable, Serializable, GameEntityInterface {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __hydrated: boolean = false;
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __pruned: boolean = false;
+    public description: string = '';
     public entityReference: string | null = '';
+    public name: string = '';
 
     protected _state: GameStateData | null;
 
     private _metadata: SimpleMap = {};
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(def?: GameEntityDefinition) {
+    protected constructor(def?: GameEntityDefinition) {
         super();
 
         this._metadata = clone(def?.metadata ?? {});
