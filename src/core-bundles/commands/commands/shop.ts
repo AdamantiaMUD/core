@@ -1,52 +1,77 @@
 import {sprintf} from 'sprintf-js';
 
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import Command, {
-    CommandDefinition,
-    CommandDefinitionBuilder,
-} from '../../../lib/commands/command';
+import Command from '../../../lib/commands/command';
 import CommandManager from '../../../lib/commands/command-manager';
-import GameStateData from '../../../lib/game-state-data';
-import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtils from '../../../lib/util/items';
+import {center, line, sayAt} from '../../../lib/communication/broadcast';
+import {hasValue} from '../../../lib/util/functions';
 
+import type CommandDefinition from '../../../lib/commands/command-definition';
+import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
+import type Item from '../../../lib/equipment/item';
+import type Npc from '../../../lib/mobs/npc';
 import type Player from '../../../lib/players/player';
 
-const {center, line, sayAt} = Broadcast;
+interface VendorConfig {
+    items: {
+        [key: string]: {
+            cost: number;
+            currency: string;
+        };
+    };
+}
 
-const getVendorItems = (state, vendorConfig): Item[] => Object.entries(vendorConfig)
-    .map(([itemRef]) => {
-        const area = state.AreaManager.getAreaByReference(itemRef);
+const getVendorItems = (state: GameStateData, itemRefs: string[]): Item[] => {
+    const items: Item[] = [];
 
-        return state.ItemFactory.create(itemRef, area);
-    });
+    for (const itemRef of itemRefs) {
+        const area = state.areaManager.getAreaByReference(itemRef);
 
-const genTell = (state, vendor, player): Function => (message: string): void => {
-    state.ChannelManager
-        .get('tell')
-        .send(state, vendor, `${player.name} ${message}`);
+        if (hasValue(area)) {
+            const item = state.itemFactory.create(itemRef, area);
+
+            if (hasValue(item)) {
+                items.push(item);
+            }
+        }
+    }
+
+    return items;
+};
+
+type TellFn = (msg: string) => void;
+
+const genTell = (
+    state: GameStateData,
+    vendor: Npc,
+    player: Player
+): TellFn => (message: string): void => {
+    state.channelManager.get('tell').send(state, vendor, `${player.name} ${message}`);
 };
 
 const friendlyCurrencyName = (currency: string): string => currency
     .replace('_', ' ')
     .replace(/\b\w/gu, str => str.toUpperCase());
 
-const listLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'list',
-    command: (args, player, alias, vendor) => {
-        const vendorConfig = vendor.getMeta('vendor');
-        const items = getVendorItems(state, vendorConfig.items);
+    command: (rawArgs: string, player: Player, alias: string, vendor: Npc): void => {
+        const args = rawArgs.trim();
+
+        const vendorConfig = vendor.getMeta<VendorConfig>('vendor')!;
+        const items = getVendorItems(state, Object.keys(vendorConfig.items));
         const tell = genTell(state, vendor, player);
 
         // show item to player before purchasing
-        if (args) {
+        if (hasValue(args)) {
             const item = ArgParser.parseDot(args, items);
 
-            if (!item) {
+            if (!hasValue(item)) {
                 tell("I don't carry that item and no, I won't check in back.");
 
                 return;
@@ -125,7 +150,7 @@ const listLoader: CommandDefinitionBuilder = (state: GameState): CommandDefiniti
     },
 });
 
-const buyLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'buy',
     command: (args, player, alias, vendor) => {
         const vendorConfig = vendor.getMeta('vendor');
@@ -185,7 +210,7 @@ const buyLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinitio
     },
 });
 
-const sellLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'sell',
     command: (args, player, alias, vendor) => {
         const tell = genTell(state, vendor, player);
@@ -240,7 +265,7 @@ const sellLoader: CommandDefinitionBuilder = (state: GameState): CommandDefiniti
     },
 });
 
-const valueLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const valueLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'value',
     aliases: ['appraise', 'offer'],
     command: (args, player, alias, vendor) => {
@@ -293,7 +318,7 @@ export const cmd: CommandDefinitionFactory = {
         'offer',
     ],
     usage: 'list [search], buy <item>, sell <item>, appraise <item>',
-    command: (state: GameState): CommandExecutable => {
+    command: (state: GameStateData): CommandExecutable => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('vendor-npcs', 'list', listLoader(state), ''));
@@ -306,7 +331,7 @@ export const cmd: CommandDefinitionFactory = {
             const args = (['vendor', 'shop'].includes(alias) ? '' : `${alias} `) + rawArgs;
 
             const vendor = Array.from(player.room.npcs)
-                .find(npc => npc.getMeta('vendor'));
+                .find((npc: Npc) => npc.getMeta('vendor'));
 
             if (!vendor) {
                 sayAt(player, "You aren't in a shop.");
@@ -317,7 +342,7 @@ export const cmd: CommandDefinitionFactory = {
             const [command, ...commandArgs] = args.split(' ');
             const subcommand = subcommands.find(command);
 
-            if (!subcommand) {
+            if (!hasValue(subcommand)) {
                 sayAt(player, "Not a valid shop command. See '<b>help shops</b>'");
 
                 return;

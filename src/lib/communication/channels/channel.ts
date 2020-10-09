@@ -3,15 +3,15 @@ import PartyAudience from '../audiences/party-audience';
 import Player from '../../players/player';
 import PrivateAudience from '../audiences/private-audience';
 import WorldAudience from '../audiences/world-audience';
-import {ChannelReceiveEvent} from './channel-events';
-import {NoMessageError, NoPartyError, NoRecipientError} from './channel-errors';
+import {ChannelReceiveEvent} from './events';
+import {NoMessageError, NoPartyError, NoRecipientError} from './errors';
 import {hasValue} from '../../util/functions';
 
 import type ChannelAudience from '../audiences/channel-audience';
 import type ChannelDefinition from './channel-definition';
 import type ChannelInterface from './channel-interface';
 import type ChannelMessageFormatter from './channel-message-formatter';
-import type Character from '../../characters/character';
+import type CharacterInterface from '../../characters/character-interface';
 import type GameStateData from '../../game-state-data';
 import type PlayerRole from '../../players/player-role';
 import type {Colorizer} from '../colorizer';
@@ -84,7 +84,7 @@ export class Channel implements ChannelInterface {
         return open + message + close;
     }
 
-    public describeSelf(sender: Character): void {
+    public describeSelf(sender: CharacterInterface): void {
         if (sender instanceof Player) {
             sayAt(sender, `\r\nChannel: ${this.name}`);
             sayAt(sender, `Syntax: ${this.getUsage()}`);
@@ -105,8 +105,8 @@ export class Channel implements ChannelInterface {
      * @returns {string}
      */
     public formatToRecipient(
-        sender: Player,
-        target: Player | null,
+        sender: CharacterInterface,
+        target: CharacterInterface | null,
         message: string,
         colorify: Colorizer
     ): string {
@@ -118,8 +118,8 @@ export class Channel implements ChannelInterface {
      * E.g., you may want "chat" to say "You chat, 'message here'"
      */
     public formatToSender(
-        sender: Player,
-        target: Player | null,
+        sender: CharacterInterface,
+        target: CharacterInterface | null,
         message: string,
         colorify: Colorizer
     ): string {
@@ -140,7 +140,7 @@ export class Channel implements ChannelInterface {
      * @param {string}    msg
      * @fires ScriptableEntity#channelReceive
      */
-    public send(state: GameStateData, sender: Player, msg: string): void {
+    public send(state: GameStateData, sender: CharacterInterface, msg: string): void {
         // If they don't include a message, explain how to use the channel.
         if (msg.length === 0) {
             throw new NoMessageError();
@@ -185,7 +185,7 @@ export class Channel implements ChannelInterface {
         sayAtFormatted(
             this.audience,
             message,
-            (target: Player, mess: string) => this.formatter.target(
+            (target: CharacterInterface, mess: string) => this.formatter.target(
                 sender,
                 target,
                 mess,

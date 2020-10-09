@@ -1,14 +1,13 @@
-import Broadcast from '../../../lib/communication/broadcast';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
-
-const {sayAt} = Broadcast;
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'save',
     usage: 'save',
-    command: (): CommandExecutable => (args, player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         player.save(() => {
             sayAt(player, 'Saved.');
         });

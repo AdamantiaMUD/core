@@ -1,10 +1,10 @@
 import {sprintf} from 'sprintf-js';
 
-import Broadcast from '../../../lib/communication/broadcast';
+import {sayAt} from '../../../lib/communication/broadcast';
+
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
-
-const {sayAt} = Broadcast;
+import type Player from '../../../lib/players/player';
 
 /**
  * View command queue
@@ -13,7 +13,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'queue',
     aliases: ['pending'],
     usage: 'queue',
-    command: (): CommandExecutable => (args, player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         sayAt(player, '<b><yellow>Command Queue:</yellow></b>');
 
         if (!player.commandQueue.hasPending) {
@@ -35,7 +35,7 @@ export const cmd: CommandDefinitionFactory = {
             sayAt(player, buf);
         }
 
-        sayAt(player, '<b><yellow>Use the "flush" command to flush the queue</yellow></b>');
+        sayAt(player, '<b><yellow>Use the &quot;flush&quot; command to flush the queue</yellow></b>');
     },
 };
 

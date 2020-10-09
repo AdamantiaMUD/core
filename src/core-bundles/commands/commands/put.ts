@@ -1,24 +1,22 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
 import ItemType from '../../../lib/equipment/item-type';
 import ItemUtil from '../../../lib/util/items';
-import {CharacterPutItemEvent} from '../../../lib/characters/character-events';
-import {ItemPutAwayEvent} from '../../../lib/equipment/item-events';
+import {CharacterPutItemEvent} from '../../../lib/characters/events';
+import {ItemPutAwayEvent} from '../../../lib/equipment/events';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
-
-const dot = ArgParser.parseDot;
-
-const {sayAt} = Broadcast;
+import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'put',
     usage: 'put <item> <container>',
-    command: (): CommandExecutable => (rawArgs, player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         const args = rawArgs.trim();
 
-        if (!args.length) {
+        if (args.length === 0) {
             sayAt(player, 'Put what where?');
 
             return;
@@ -26,7 +24,7 @@ export const cmd: CommandDefinitionFactory = {
 
         // put 3.foo in(to) bar -> put 3.foo bar
         const parts = args.split(' ')
-            .filter(arg => !arg.match(/in(to)?/u));
+            .filter((arg: string) => !hasValue((/^in(?:to)?$/u).exec(arg)));
 
         if (parts.length === 1) {
             sayAt(player, 'Where do you want to put it?');
@@ -34,21 +32,21 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const fromList = player.inventory.items;
         const fromArg = parts[0];
         const toArg = parts[1];
-        const item = dot(fromArg, fromList);
-        const toContainer = dot(toArg, player.room.items)
-                        || dot(toArg, player.inventory.items)
-                        || dot(toArg, player.equipment);
 
-        if (!item) {
+        const item = ArgParser.parseDot(fromArg, Array.from(player.inventory.items));
+        const toContainer = ArgParser.parseDot(toArg, Array.from(player.room?.items ?? []))
+            ?? ArgParser.parseDot(toArg, Array.from(player.inventory.items))
+            ?? ArgParser.parseDot(toArg, Array.from(player.equipment));
+
+        if (!hasValue(item)) {
             sayAt(player, "You don't have that item.");
 
             return;
         }
 
-        if (!toContainer) {
+        if (!hasValue(toContainer)) {
             sayAt(player, "You don't see anything like that here.");
 
             return;
@@ -60,13 +58,13 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        if (toContainer.isInventoryFull()) {
+        if (toContainer.inventory?.isFull) {
             sayAt(player, `${ItemUtil.display(toContainer)} can't hold any more.`);
 
             return;
         }
 
-        if (toContainer.closed) {
+        if (toContainer.getMeta<boolean>('closed')) {
             sayAt(player, `${ItemUtil.display(toContainer)} is closed.`);
 
             return;

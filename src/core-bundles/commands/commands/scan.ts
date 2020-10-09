@@ -1,10 +1,10 @@
-import Broadcast from '../../../lib/communication/broadcast';
+import {at, sayAt} from '../../../lib/communication/broadcast';
+import {hasValue} from '../../../lib/util/functions';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type GameStateData from '../../../lib/game-state-data';
 import type Player from '../../../lib/players/player';
-
-const {sayAt} = Broadcast;
 
 /**
  * See brief details of npcs/players in nearby rooms
@@ -12,12 +12,17 @@ const {sayAt} = Broadcast;
 export const cmd: CommandDefinitionFactory = {
     name: 'scan',
     usage: 'scan',
-    command: (state): CommandExecutable => (args: string, player: Player) => {
+    command: (state: GameStateData): CommandExecutable => (args: string, player: Player): void => {
+        if (!hasValue(player.room)) {
+            // @TODO: throw
+            return;
+        }
+
         for (const exit of player.room.exits) {
             const room = state.roomManager.getRoom(exit.roomId);
 
-            Broadcast.at(player, `(${exit.direction}) ${room.title}`);
-            if (room.npcs.size || room.players.size) {
+            at(player, `(${exit.direction}) ${room.title}`);
+            if (room.npcs.size > 0 || room.players.size > 0) {
                 sayAt(player, ':');
             }
             else {

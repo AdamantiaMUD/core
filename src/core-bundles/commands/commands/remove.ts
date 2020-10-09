@@ -1,27 +1,28 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
 import ItemUtil from '../../../lib/util/items';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type Player from '../../../lib/players/player';
 
-const {sayAt} = Broadcast;
-
 export const cmd: CommandDefinitionFactory = {
     name: 'remove',
     aliases: ['unwield', 'unequip'],
     usage: 'remove <item>',
-    command: (): CommandExecutable => (arg: string, player: Player) => {
-        if (!arg.length) {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
+
+        if (args.length === 0) {
             sayAt(player, 'Remove what?');
 
             return;
         }
 
-        const result = ArgParser.parseDot(arg, player.equipment, true);
+        const result = ArgParser.parseDot(args, Array.from(player.equipment), true);
 
-        if (!result) {
+        if (!hasValue(result)) {
             sayAt(player, "You aren't wearing anything like that.");
 
             return;

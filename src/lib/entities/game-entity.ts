@@ -20,10 +20,10 @@ export abstract class GameEntity extends MudEventEmitter implements Metadatable,
     public __hydrated: boolean = false;
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __pruned: boolean = false;
-    public description: string = '';
-    public entityReference: string | null = '';
-    public name: string = '';
+    public entityReference: string = '';
 
+    protected _description: string = '';
+    protected _name: string = '';
     protected _state: GameStateData | null;
 
     private _metadata: SimpleMap = {};
@@ -33,6 +33,14 @@ export abstract class GameEntity extends MudEventEmitter implements Metadatable,
         super();
 
         this._metadata = clone(def?.metadata ?? {});
+    }
+
+    public get description(): string {
+        return this._description;
+    }
+
+    public get name(): string {
+        return this._name;
     }
 
     public deserialize(data?: SerializedGameEntity, state: GameStateData | null = null): void {

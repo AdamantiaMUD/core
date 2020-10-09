@@ -1,20 +1,19 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
 import PlayerRole from '../../../lib/players/player-role';
+import {hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type Player from '../../../lib/players/player';
 
-const {sayAt} = Broadcast;
-
 export const cmd: CommandDefinitionFactory = {
     name: 'setrole',
     requiredRole: PlayerRole.ADMIN,
-    command: (): CommandExecutable => (rawArgs: string, player: Player) => {
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         const args = rawArgs.trim();
 
-        if (!args.length) {
+        if (args.length === 0) {
             sayAt(player, 'setrole <player> <role>');
 
             return;
@@ -28,24 +27,24 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        let role: PlayerRole = null;
+        let role: PlayerRole;
 
         if (typeof parts[1] === 'string') {
-            role = PlayerRole[parts[1].toUpperCase()];
+            role = PlayerRole[parts[1].toUpperCase()] as PlayerRole;
         }
         else {
-            role = PlayerRole[PlayerRole[parts[1]]];
+            role = PlayerRole[PlayerRole[parts[1]]] as PlayerRole;
         }
 
-        if (role === null || role === undefined) {
+        if (!hasValue(role)) {
             sayAt(player, 'That is not a valid role.');
 
             return;
         }
 
-        const target: Player = ArgParser.parseDot(args, player.room.players);
+        const target: Player | null = ArgParser.parseDot(args, Array.from(player.room?.players ?? []));
 
-        if (!target) {
+        if (!hasValue(target)) {
             sayAt(player, 'They are not here.');
 
             return;
@@ -57,9 +56,9 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const result = target.setRole(role, player);
+        const didAssign = target.setRole(role, player);
 
-        if (result) {
+        if (didAssign) {
             sayAt(target, `Your role has been set to ${role} by ${player.name}.`);
             sayAt(player, `${target.name} has been given role ${role}.`);
         }

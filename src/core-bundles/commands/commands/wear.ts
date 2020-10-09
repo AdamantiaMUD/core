@@ -1,39 +1,39 @@
 import ArgParser from '../../../lib/commands/arg-parser';
-import Item from '../../../lib/equipment/item';
 import ItemUtil from '../../../lib/util/items';
 import Logger from '../../../lib/util/logger';
-import {sayAt, sayAtColumns} from '../../../lib/communication/broadcast';
+import {SlotTakenError} from '../../../lib/equipment/errors';
+import {cast, hasValue} from '../../../lib/util/functions';
+import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameStateData from '../../../lib/game-state-data';
+import type Item from '../../../lib/equipment/item';
 import type Player from '../../../lib/players/player';
-import {SlotTakenError} from '../../../lib/equipment/errors';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'wear',
     aliases: ['wield'],
     usage: 'wear <item>',
-    command: (): CommandExecutable => (rawArgs: string, player: Player) => {
-        const arg = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+        const args = rawArgs.trim();
 
-        if (!arg.length) {
+        if (args.length === 0) {
             sayAt(player, 'Wear what?');
 
             return;
         }
 
-        const item: Item = ArgParser.parseDot(arg, player.inventory.items);
+        const item: Item | null = ArgParser.parseDot(args, Array.from(player.inventory.items));
 
-        if (!item) {
+        if (!hasValue(item)) {
             sayAt(player, "You aren't carrying anything like that.");
 
             return;
         }
 
-        const slot: string | false = item.getMeta('slot');
+        const slot: string | false | null = item.getMeta<string | false>('slot');
 
-        if (slot === false) {
+        if (slot === false || !hasValue(slot)) {
             sayAt(player, `You can't wear ${ItemUtil.display(item)}.`);
 
             return;
@@ -48,16 +48,16 @@ export const cmd: CommandDefinitionFactory = {
         try {
             player.equip(item, slot);
         }
-        catch (err) {
-            if (err instanceof EquipSlotTakenError) {
+        catch (err: unknown) {
+            if (err instanceof SlotTakenError) {
                 const conflict = player.equipment.get(slot);
 
-                sayAt(player, `You will have to remove ${ItemUtil.display(conflict)} first.`);
+                sayAt(player, `You will have to remove ${ItemUtil.display(conflict!)} first.`);
 
                 return;
             }
 
-            Logger.error(err);
+            Logger.error(cast<Error>(err).message);
 
             return;
         }

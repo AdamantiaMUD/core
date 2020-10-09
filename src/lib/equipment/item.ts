@@ -20,15 +20,14 @@ export class Item extends ScriptableEntity implements Serializable {
 
     private readonly _area: Area;
     private readonly _definition: ItemDefinition;
-    private readonly _description: string;
     private readonly _flags: string[];
     private readonly _inventory: Inventory = new Inventory();
     private readonly _keywords: string[];
     private readonly _level: number;
     private readonly _maxItems: number;
-    private readonly _name: string;
     private readonly _roomDesc: string;
     private readonly _type: ItemType;
+
     private _carriedBy: CharacterInterface | Item | null = null;
     private _uuid: string = uuid();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
@@ -57,10 +56,6 @@ export class Item extends ScriptableEntity implements Serializable {
         return this._carriedBy;
     }
 
-    public get description(): string {
-        return this._description;
-    }
-
     public get flags(): string[] {
         return this._flags;
     }
@@ -84,10 +79,6 @@ export class Item extends ScriptableEntity implements Serializable {
 
     public get maxItems(): number {
         return this._maxItems;
-    }
-
-    public get name(): string {
-        return this._name;
     }
 
     public get roomDesc(): string {

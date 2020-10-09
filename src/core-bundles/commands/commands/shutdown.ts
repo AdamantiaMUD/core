@@ -13,8 +13,10 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'shutdown',
     requiredRole: PlayerRole.ADMIN,
-    command: (state): CommandExecutable => async (time, player) => {
-        if (time === 'now') {
+    command: (state: GameStateData): CommandExecutable => async (rawArgs: string, player: Player): Promise<void> => {
+        const args = rawArgs.trim();
+
+        if (args === 'now') {
             sayAt(state.playerManager, '<b><yellow>Game is shutting down now!</yellow></b>');
             await state.playerManager.saveAll();
 
@@ -23,7 +25,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        if (!time.length || time !== 'sure') {
+        if (args.length === 0 || args !== 'sure') {
             /* eslint-disable-next-line max-len */
             sayAt(player, 'You must confirm the shutdown with "shutdown sure" or force immediate shutdown with "shutdown now"');
 
@@ -32,12 +34,11 @@ export const cmd: CommandDefinitionFactory = {
 
         sayAt(state.playerManager, '<b><yellow>Game will shut down in 30 seconds.</yellow></b>');
 
-        setTimeout(async () => {
+        setTimeout(() => {
             sayAt(state.playerManager, '<b><yellow>Game is shutting down now!</yellow></b>');
 
-            await state.playerManager.saveAll();
-
-            process.exit();
+            /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
+            state.playerManager.saveAll().then(() => process.exit());
         }, 30000);
     },
 };
