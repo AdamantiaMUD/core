@@ -1,75 +1,83 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
-import GameStateData from '../../../lib/game-state-data';
-import Logger from '../../../lib/util/logger';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamAccountPasswordEvent} from './password';
-import {StreamCreateAccountEvent} from './create-account';
+import Logger from '../../../lib/common/logger';
 import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+    BeginLoginEvent,
+    CreateAccountEvent,
+    InputPasswordEvent,
+} from '../lib/events';
+import {cast, hasValue} from '../../../lib/util/functions';
 import {validateAccountName} from '../../../lib/util/player';
 
-export const StreamLoginEvent: StreamEventConstructor<void> = class extends StreamEvent<void> {
-    public NAME: string = 'stream-login';
-};
+import type Account from '../../../lib/players/account';
+import type GameStateData from '../../../lib/game-state-data';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
 
 export const evt: StreamEventListenerFactory<void> = {
-    name: StreamLoginEvent.getName(),
-    listener: (state: GameState): StreamEventListener<void> => (stream: TransportStream<EventEmitter>) => {
+    name: BeginLoginEvent.getName(),
+    listener: (state: GameStateData): StreamEventListener<void> => (stream: TransportStream<EventEmitter>): void => {
         stream.write('Welcome, what is your username? ');
 
-        stream.socket.once('data', async (buf: Buffer) => {
-            const name = buf.toString().trim()
-                .toLowerCase();
+        stream.socket.once('data', (buf: Buffer) => {
+            const runner = async (): Promise<void> => {
+                const name = buf.toString().trim()
+                    .toLowerCase();
 
-            try {
-                validateAccountName(state.config, name);
-            }
-            catch (err) {
-                stream.write(`${err.message}\r\n`);
+                try {
+                    validateAccountName(state.config, name);
+                }
+                catch (err: unknown) {
+                    stream.write(`${cast<Error>(err).message}\r\n`);
 
-                stream.dispatch(new StreamLoginEvent());
+                    stream.dispatch(new BeginLoginEvent());
 
-                return;
-            }
+                    return;
+                }
 
-            let account: Account = null;
+                let account: Account | null = null;
 
-            try {
-                account = await state.accountManager.loadAccount(name);
-            }
-            catch (e) {
-                Logger.error(e.message);
-            }
+                try {
+                    account = await state.accountManager.loadAccount(name);
+                }
+                catch (err: unknown) {
+                    Logger.error(cast<Error>(err).message);
 
-            if (!account) {
-                Logger.error(`No account found as ${name}.`);
+                    stream.dispatch(new CreateAccountEvent({name}));
 
-                stream.dispatch(new StreamCreateAccountEvent({name}));
+                    return;
+                }
 
-                return;
-            }
+                if (!hasValue(account)) {
+                    Logger.error(`No account found as ${name}.`);
 
-            if (account.isBanned) {
-                stream.write('This account has been banned.\r\n');
-                stream.end();
+                    stream.dispatch(new CreateAccountEvent({name}));
 
-                return;
-            }
+                    return;
+                }
 
-            if (account.isDeleted) {
-                stream.write('This account has been deleted.\r\n');
-                stream.end();
+                if (account.isBanned) {
+                    stream.write('This account has been banned.\r\n');
+                    stream.end();
 
-                return;
-            }
+                    return;
+                }
 
-            stream.dispatch(new StreamAccountPasswordEvent({account}));
+                if (account.isDeleted) {
+                    stream.write('This account has been deleted.\r\n');
+                    stream.end();
+
+                    return;
+                }
+
+                stream.dispatch(new InputPasswordEvent({account}));
+            };
+
+            /* eslint-disable @typescript-eslint/no-floating-promises */
+            // noinspection JSIgnoredPromiseFromCall
+            runner();
+            /* eslint-enable @typescript-eslint/no-floating-promises */
         });
     },
 };

@@ -1,11 +1,17 @@
-import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerDefinition} from '~/lib/events/mud-event';
-import {PlayerQuestTurnInReadyEvent, PlayerQuestTurnInReadyPayload} from '~/lib/players/player-events';
-import {sayAt} from '~/lib/communication/broadcast';
+import {PlayerQuestTurnInReadyEvent} from '../../../lib/players/events';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerDefinition<PlayerQuestTurnInReadyPayload> = {
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {PlayerQuestTurnInReadyPayload} from '../../../lib/players/events';
+
+export const evt: PlayerEventListenerDefinition<PlayerQuestTurnInReadyPayload> = {
     name: PlayerQuestTurnInReadyEvent.getName(),
-    listener: (): MudEventListener<PlayerQuestTurnInReadyPayload> => (player: Player, {quest}) => {
+    listener: (): PlayerEventListener<PlayerQuestTurnInReadyPayload> => (
+        player: Player,
+        {quest}: PlayerQuestTurnInReadyPayload
+    ): void => {
         sayAt(player, `<b><yellow>${quest.config.title} ready to turn in!</yellow></b>`);
     },
 };

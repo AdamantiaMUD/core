@@ -1,12 +1,12 @@
 import MudEvent from '../../../events/mud-event';
 
 import type ChannelInterface from '../channel-interface';
-import type Character from '../../../characters/character';
+import type CharacterInterface from '../../../characters/character-interface';
 
 export interface ChannelReceivePayload {
     channel: ChannelInterface;
     message: string;
-    sender: Character;
+    sender: CharacterInterface;
 }
 
 export class ChannelReceiveEvent extends MudEvent<ChannelReceivePayload> {
@@ -14,7 +14,7 @@ export class ChannelReceiveEvent extends MudEvent<ChannelReceivePayload> {
     public NAME: string = 'channel-receive';
     public channel: ChannelInterface;
     public message: string;
-    public sender: Character;
+    public sender: CharacterInterface;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

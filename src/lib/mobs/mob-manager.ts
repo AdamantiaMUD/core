@@ -1,10 +1,12 @@
-import Npc from './npc';
+import {hasValue} from '../util/functions';
+
+import type Npc from './npc';
 
 /**
  * Keeps track of all the individual mobs in the game
  */
 export class MobManager {
-    private readonly _mobs: Map<string, Npc> = new Map();
+    private readonly _mobs: Map<string, Npc> = new Map<string, Npc>();
 
     public add(mob: Npc): void {
         this._mobs.set(mob.uuid, mob);
@@ -18,12 +20,12 @@ export class MobManager {
 
         const room = mob.room;
 
-        if (room) {
+        if (hasValue(room)) {
             room.area.removeNpc(mob);
             room.removeNpc(mob, true);
         }
 
-        mob.__pruned = true;
+        mob.setPruned();
         mob.stopListening();
         this._mobs.delete(mob.uuid);
     }

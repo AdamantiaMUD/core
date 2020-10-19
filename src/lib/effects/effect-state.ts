@@ -1,9 +1,8 @@
-export interface EffectState {
+export type EffectState = {[key: string]: unknown} & {
     lastTick?: number;
     stacks?: number;
     tickInterval?: number;
     ticks?: number;
-    [key: string]: unknown;
-}
+};
 
 export default EffectState;

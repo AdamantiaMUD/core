@@ -1,9 +1,10 @@
-import GameStateData from '~/lib/game-state-data';
-import Player from '~/lib/players/player';
-import Quest from '~/lib/quests/quest';
-import QuestReward from '~/lib/quests/quest-reward';
-import SimpleMap from '~/lib/util/simple-map';
-import {PlayerCurrencyGainedEvent} from '~/lib/players/player-events';
+import {PlayerCurrencyGainedEvent} from '../../../lib/players/events';
+
+import type GameStateData from '../../../lib/game-state-data';
+import type Player from '../../../lib/players/player';
+import type Quest from '../../../lib/quests/quest';
+import type QuestReward from '../../../lib/quests/quest-reward';
+import type SimpleMap from '../../../lib/util/simple-map';
 
 interface CurrencyRewardConfig extends SimpleMap {
     currency: string;
@@ -18,34 +19,27 @@ interface CurrencyRewardConfig extends SimpleMap {
  *   amount: number, required
  */
 export class CurrencyReward implements QuestReward {
-    private getAmount(quest: Quest, config: CurrencyRewardConfig): number {
-        if (!config.currency) {
-            throw new Error(`Quest [${quest.id}] currency reward has invalid configuration`);
-        }
-
-        return config.amount;
-    }
-
     public display(
-        state: GameState,
+        state: GameStateData,
         quest: Quest,
+        player: Player,
         config: CurrencyRewardConfig
     ): string {
-        const amount = this.getAmount(quest, config);
+        const {amount} = config;
         const friendlyName = config.currency
             .replace('_', ' ')
-            .replace(/\b\w/gu, str => str.toUpperCase());
+            .replace(/\b\w/gu, (str: string) => str.toUpperCase());
 
         return `Currency: <b>${amount}</b> x <b><white>[${friendlyName}]</white></b>`;
     }
 
     public reward(
-        state: GameState,
+        state: GameStateData,
         quest: Quest,
-        config: CurrencyRewardConfig,
-        player: Player
+        player: Player,
+        config: CurrencyRewardConfig
     ): void {
-        const amount = this.getAmount(quest, config);
+        const {amount} = config;
 
         player.dispatch(new PlayerCurrencyGainedEvent({
             amount: amount,

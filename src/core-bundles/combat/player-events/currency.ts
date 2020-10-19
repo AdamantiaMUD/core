@@ -28,7 +28,6 @@ export const evt: MudEventListenerDefinition<[Player, PlayerCurrencyGainedPayloa
         player.setMeta(key, (player.getMeta<number>(key) ?? 0) + amount);
         player.save();
 
-        /* eslint-disable-next-line max-len */
         sayAt(player, `<green>You receive currency: <b><white>[${friendlyName}]</white></b> x${amount}.`);
     },
 };

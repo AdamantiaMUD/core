@@ -68,7 +68,7 @@ export const cmd: CommandDefinitionFactory = {
         if (hasValue(target) && isNpc(target)) {
             const accepts: AcceptBehaviorConfig = target.getBehavior('accepts') as AcceptBehaviorConfig;
 
-            if (!hasValue(accepts) || !accepts.items.includes(item.entityReference!)) {
+            if (!hasValue(accepts) || !accepts.items.includes(item.entityReference)) {
                 sayAt(player, "They don't want that.");
 
                 return;
@@ -76,7 +76,6 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         if (target === player) {
-            /* eslint-disable-next-line max-len */
             sayAt(player, `<green>You move ${ItemUtil.display(item)} from one hand to the other. That was productive.</green>`);
 
             return;

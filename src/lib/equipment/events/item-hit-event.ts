@@ -10,10 +10,12 @@ export interface ItemHitPayload {
 }
 
 export class ItemHitEvent extends MudEvent<ItemHitPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'item-hit';
     public amount: number;
     public source: Damage;
     public target: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default ItemHitEvent;

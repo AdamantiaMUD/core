@@ -2,7 +2,7 @@ import {v4 as uuid} from 'uuid';
 
 import Inventory from './inventory';
 import ItemType from './item-type';
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import ScriptableEntity from '../entities/scriptable-entity';
 
 import type Area from '../locations/area';
@@ -15,7 +15,6 @@ import type SerializedItem from './serialized-item';
 
 export class Item extends ScriptableEntity implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public room: Room | null = null;
     public sourceRoom: Room | null = null;
 
     private readonly _area: Area;
@@ -29,6 +28,7 @@ export class Item extends ScriptableEntity implements Serializable {
     private readonly _type: ItemType;
 
     private _carriedBy: CharacterInterface | Item | null = null;
+    private _room: Room | null = null;
     private _uuid: string = uuid();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
@@ -79,6 +79,10 @@ export class Item extends ScriptableEntity implements Serializable {
 
     public get maxItems(): number {
         return this._maxItems;
+    }
+
+    public get room(): Room | null {
+        return this._room;
     }
 
     public get roomDesc(): string {
@@ -142,6 +146,10 @@ export class Item extends ScriptableEntity implements Serializable {
 
     public setCarrier(carrier: CharacterInterface | Item | null): void {
         this._carriedBy = carrier;
+    }
+
+    public setRoom(room: Room | null): void {
+        this._room = room;
     }
 }
 

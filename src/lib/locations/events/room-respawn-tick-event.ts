@@ -7,8 +7,10 @@ export interface RoomRespawnTickPayload {
 }
 
 export class RoomRespawnTickEvent extends MudEvent<RoomRespawnTickPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'room-respawn-tick';
     public state?: GameStateData;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default RoomRespawnTickEvent;

@@ -1,7 +1,6 @@
-import type Character from '../../characters/character';
+import type Broadcastable from '../broadcastable';
+import type CharacterInterface from '../../characters/character-interface';
 import type GameStateData from '../../game-state-data';
-import type Player from '../../players/player';
-import type {Broadcastable} from '../broadcast';
 
 /**
  * Base channel audience class
@@ -9,7 +8,7 @@ import type {Broadcastable} from '../broadcast';
 export class ChannelAudience implements Broadcastable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public message: string;
-    public sender: Character;
+    public sender: CharacterInterface;
     public state: GameStateData;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
@@ -20,13 +19,13 @@ export class ChannelAudience implements Broadcastable {
     /**
      * Configure the current state for the audience. Called by {@link Channel#send}
      */
-    public configure(options: {state: GameStateData; sender: Character; message: string}): void {
+    public configure(options: {state: GameStateData; sender: CharacterInterface; message: string}): void {
         this.state = options.state;
         this.sender = options.sender;
         this.message = options.message;
     }
 
-    public getBroadcastTargets(): Player[] {
+    public getBroadcastTargets(): Broadcastable[] {
         return this.state.playerManager.getPlayersAsArray();
     }
 }

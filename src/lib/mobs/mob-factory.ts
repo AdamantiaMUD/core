@@ -1,6 +1,9 @@
-import Area from '../locations/area';
 import EntityFactory from '../entities/entity-factory';
-import Npc, {NpcDefinition} from './npc';
+import Npc from './npc';
+import {hasValue} from '../util/functions';
+
+import type Area from '../locations/area';
+import type NpcDefinition from './npc-definition';
 
 /**
  * Stores definitions of npcs to allow for easy creation/cloning
@@ -18,7 +21,7 @@ export class MobFactory extends EntityFactory<Npc, NpcDefinition> {
     public create(entityRef: string, area: Area): Npc {
         const definition = this.getDefinition(entityRef);
 
-        if (!definition) {
+        if (!hasValue(definition)) {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 

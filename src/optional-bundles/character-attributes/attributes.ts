@@ -1,4 +1,6 @@
-export default [
+import type AttributeDefinition from '../../lib/attributes/attribute-definition';
+
+const atts: AttributeDefinition[] = [
     // Core stats
     {name: 'hp', base: 1},
     {name: 'move', base: 80},
@@ -39,12 +41,12 @@ export default [
     {name: 'damage-resistance.sonic', base: 0},
 
     // Resistances, alignment
-    {name: 'damage-resistance.chaotic', base: 0},
-    {name: 'damage-resistance.evil', base: 0},
-    {name: 'damage-resistance.good', base: 0},
     {name: 'damage-resistance.lawful', base: 0},
-    {name: 'damage-resistance.necrotic', base: 0},
+    {name: 'damage-resistance.chaotic', base: 0},
+    {name: 'damage-resistance.good', base: 0},
+    {name: 'damage-resistance.evil', base: 0},
     {name: 'damage-resistance.radiant', base: 0},
+    {name: 'damage-resistance.necrotic', base: 0},
 
     // Resistances, other
     {name: 'damage-resistance.mental', base: 0},
@@ -52,3 +54,5 @@ export default [
     {name: 'damage-resistance.spells', base: 0},
     {name: 'magic-resistance', base: 0},
 ];
+
+export default atts;

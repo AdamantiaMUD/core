@@ -17,7 +17,6 @@ export const evt: PlayerEventListenerDefinition<PlayerCommandQueuedPayload> = {
         const command = player.commandQueue.queue[idx];
         const ttr = sprintf('%.1f', player.commandQueue.getTimeTilRun(idx));
 
-        /* eslint-disable-next-line max-len */
         sayAt(player, `<b><yellow>Executing</yellow> '<white>${command.label}</white>' <yellow>in</yellow> <white>${ttr}</white> <yellow>seconds.</yellow>`);
     },
 };

@@ -5,14 +5,18 @@ import type MudEventEmitterInterface from './mud-event-emitter-interface';
 import type MudEventListener from './mud-event-listener';
 import type SimpleMap from '../util/simple-map';
 
-export default class MudEventEmitter implements MudEventEmitterInterface {
+export class MudEventEmitter implements MudEventEmitterInterface {
     protected _emitter: EventEmitter = new EventEmitter();
 
     public dispatch<T = unknown>(event: MudEvent<T>): void {
         this._emitter.emit(event.NAME, event);
     }
 
-    public listen<T = unknown>(eventKey: string, listener: MudEventListener<T>, config?: SimpleMap | null): void {
+    public listen<T = unknown>(
+        eventKey: string,
+        listener: MudEventListener<[MudEventEmitterInterface, T, SimpleMap | null | undefined]>,
+        config?: SimpleMap | null
+    ): void {
         this._emitter.on(eventKey, (data: T) => listener(this, data, config));
     }
 
@@ -20,3 +24,5 @@ export default class MudEventEmitter implements MudEventEmitterInterface {
         this._emitter.removeAllListeners(eventKey);
     }
 }
+
+export default MudEventEmitter;

@@ -24,7 +24,6 @@ export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
          * needed for multiple levels
          */
         if (player.experience + amt > totalTnl) {
-            /* eslint-disable-next-line max-len */
             sayAt(player, '                                   <b><blue>!Level Up!</blue></b>');
             sayAt(player, progress(80, 100, 'blue'));
 

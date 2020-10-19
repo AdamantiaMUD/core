@@ -2,37 +2,16 @@ import {v4 as uuid} from 'uuid';
 
 import Character from '../characters/character';
 import Inventory from '../equipment/inventory';
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import {NpcEnterRoomEvent} from './events';
 import {RoomNpcEnterEvent, RoomNpcLeaveEvent} from '../locations/events';
 import {hasValue, noop} from '../util/functions';
 
 import type Area from '../locations/area';
 import type GameStateData from '../game-state-data';
+import type NpcDefinition from './npc-definition';
 import type Room from '../locations/room';
 import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
-
-export interface NpcDefinition {
-    attributes?: SimpleMap;
-    behaviors?: {[key: string]: SimpleMap};
-    corpseDesc?: string;
-    defaultEquipment?: {[key: string]: string};
-    description: string;
-    entityReference?: string;
-    id: string;
-    items?: string[];
-    keywords: string[];
-    level: number;
-    metadata?: SimpleMap;
-    name: string;
-    quests?: string[];
-    roomDesc?: string;
-    script?: string;
-    shortName?: string;
-    type?: string;
-    uuid?: string;
-}
 
 export class Npc extends Character implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -40,7 +19,6 @@ export class Npc extends Character implements Serializable {
     public corpseDesc: string | null;
     public defaultEquipment: {[key: string]: string};
     public defaultItems: string[];
-    public description: string;
     public id: string;
     public keywords: string[];
     public quests: string[];
@@ -54,16 +32,17 @@ export class Npc extends Character implements Serializable {
     public constructor(area: Area, data: NpcDefinition) {
         super();
 
+        this._description = data.description;
+        this._name = data.name;
+
         this.area = area;
         this.script = data.script ?? null;
         this.corpseDesc = data.corpseDesc ?? '';
         this.defaultEquipment = data.defaultEquipment ?? {};
         this.defaultItems = data.items ?? [];
-        this.description = data.description;
-        this.entityReference = data.entityReference ?? null;
+        this.entityReference = data.entityReference;
         this.id = data.id;
         this.keywords = data.keywords;
-        this.name = data.name;
         this.quests = data.quests ?? [];
         this.roomDesc = data.roomDesc ?? '';
         this.shortName = data.shortName ?? '';
@@ -103,20 +82,23 @@ export class Npc extends Character implements Serializable {
             Logger.verbose(`DIST: Adding item [${defaultItemId}] to npc [${this.name}]`);
             const newItem = state.itemFactory.create(defaultItemId, this.area);
 
-            newItem.hydrate(state);
-            state.itemManager.add(newItem);
-            this.addItem(newItem);
+            if (hasValue(newItem)) {
+                newItem.hydrate(state);
+                state.itemManager.add(newItem);
+                this.addItem(newItem);
+            }
         }
 
         for (const [slot, defaultEqId] of Object.entries(this.defaultEquipment)) {
-            /* eslint-disable-next-line max-len */
             Logger.verbose(`DIST: Equipping item [${defaultEqId}] to npc [${this.name}] in slot [${slot}]`);
 
             const newItem = state.itemFactory.create(defaultEqId, this.area);
 
-            newItem.hydrate(state);
-            state.itemManager.add(newItem);
-            this.equip(newItem, slot);
+            if (hasValue(newItem)) {
+                newItem.hydrate(state);
+                state.itemManager.add(newItem);
+                this.equip(newItem, slot);
+            }
         }
 
         return true;
@@ -143,7 +125,7 @@ export class Npc extends Character implements Serializable {
             this.room.removeNpc(this);
         }
 
-        this.room = nextRoom;
+        this.setRoom(nextRoom);
         nextRoom.addNpc(this);
 
         onMoved();

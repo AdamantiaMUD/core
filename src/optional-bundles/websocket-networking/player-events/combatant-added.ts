@@ -1,20 +1,14 @@
-import Player from '../../../lib/players/player';
 import updateTargets from '../util/update-targets';
-import {CombatantAddedEvent, CombatantAddedPayload} from '../../../lib/combat/combat-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CombatantAddedEvent} from '../../../lib/combat/events';
+
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {CombatantAddedPayload} from '../../../lib/combat/events';
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerDefinition<CombatantAddedPayload> = {
+export const evt: PlayerEventListenerDefinition<CombatantAddedPayload> = {
     name: CombatantAddedEvent.getName(),
-    listener: (): MudEventListener<CombatantAddedPayload> =>
-
-        /**
-         * @listens Player#combatantAdded
-         */
-        (player: Player) => {
-            updateTargets(player);
-        }
-    ,
+    listener: (): PlayerEventListener<CombatantAddedPayload> => updateTargets,
 };
 
 export default evt;

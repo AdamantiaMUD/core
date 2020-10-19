@@ -1,28 +1,25 @@
-import Player from '../../../lib/players/player';
 import updateAttributes from '../util/update-attributes';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
-import {PlayerLoginEvent} from '../../../lib/players/player-events';
+import {PlayerLoginEvent} from '../../../lib/players/events';
 
-export const evt: MudEventListenerDefinition<void> = {
+import type Effect from '../../../lib/effects/effect';
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+
+export const evt: PlayerEventListenerDefinition<void> = {
     name: PlayerLoginEvent.getName(),
-    listener: (): MudEventListener<void> =>
+    listener: (): PlayerEventListener<void> => (player: Player): void => {
+        player.socket?.command('sendData', 'quests', player.questTracker.serialize().active);
 
-        /**
-         * @listens Player#login
-         */
-        (player: Player) => {
-            player.socket.command('sendData', 'quests', player.questTracker.serialize().active);
+        const effects = player.effects
+            .entries()
+            .filter((effect: Effect) => !effect.config.hidden)
+            .map((effect: Effect) => effect.serialize());
 
-            const effects = player.effects
-                .entries()
-                .filter(effect => !effect.config.hidden)
-                .map(effect => effect.serialize());
+        player.socket?.command('sendData', 'effects', effects);
 
-            player.socket.command('sendData', 'effects', effects);
-
-            updateAttributes(player);
-        }
-    ,
+        updateAttributes(player);
+    },
 };
 
 export default evt;

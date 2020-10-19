@@ -1,9 +1,11 @@
-import fs from 'fs';
+/* eslint-disable-next-line id-length */
+import fs from 'fs-extra';
 import path from 'path';
 
-import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
 import JsonDataSource from './json-data-source';
+
+import type DataSourceConfig from './data-source-config';
 
 /**
  * Data source when you have a directory of json files and each entity is stored in
@@ -17,66 +19,60 @@ import JsonDataSource from './json-data-source';
  * Config:
  *   path: string: relative path to directory containing .json files from project root
  */
-class JsonDirectoryDataSource extends FileDataSource {
+export class JsonDirectoryDataSource extends FileDataSource {
     public async hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<{[key: string]: T}> {
         const dirPath = this.resolvePath(config);
 
-        if (!this.hasData(config)) {
+        const hasData = await this.hasData(config);
+
+        if (!hasData) {
             throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
         }
 
-        return new Promise((resolve, reject) => {
-            const data = {};
+        const data: {[key: string]: T} = {};
 
-            fs.readdir(fs.realpathSync(dirPath), async (err, files) => {
-                if (err) {
-                    reject(err);
+        const files: string[] = await fs.readdir(fs.realpathSync(dirPath));
 
-                    return;
-                }
+        for (const file of files) {
+            if (path.extname(file) === '.json') {
+                const id = path.basename(file, '.json');
 
-                for (const file of files) {
-                    if (path.extname(file) === '.json') {
-                        const id = path.basename(file, '.json');
-
-                        // eslint-disable-next-line no-await-in-loop
-                        data[id] = await this.fetch(config, id);
-                    }
-                }
-
-                resolve(data);
-            });
-        });
-    }
-
-    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
-        const dirPath = this.resolvePath(config);
-
-        if (!fs.existsSync(dirPath)) {
-            throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
+                // eslint-disable-next-line no-await-in-loop
+                data[id] = await this.fetch(id, config);
+            }
         }
 
-        const source = new JsonDataSource(this.appConfig);
-
-        return source.fetchAll({path: path.join(dirPath, `${id}.json`)});
+        return data;
     }
+
+    // public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
+    //     const dirPath = this.resolvePath(config);
+    //
+    //     if (!fs.existsSync(dirPath)) {
+    //         throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
+    //     }
+    //
+    //     const source = new JsonDataSource(this.appConfig);
+    //
+    //     return source.fetchAll({path: path.join(dirPath, `${id}.json`)});
+    // }
 
     public async replace<T = unknown>(
         /* eslint-disable @typescript-eslint/no-unused-vars */
-        config: DataSourceConfig = {},
-        data: T
+        data: T,
+        config: DataSourceConfig = {}
         /* eslint-enable @typescript-eslint/no-unused-vars */
-    ): Promise<T> {
+    ): Promise<boolean> {
         return Promise.reject(new Error('You cannot replace an entire directory'));
     }
 
-    public async update<T = unknown>(config: DataSourceConfig = {}, id: string, data: T): Promise<T> {
+    public async update<T = unknown>(id: string, data: T, config: DataSourceConfig = {}): Promise<boolean> {
         const dirPath = this.resolvePath(config);
 
         if (!fs.existsSync(dirPath)) {

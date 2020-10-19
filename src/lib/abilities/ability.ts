@@ -11,13 +11,14 @@ import type AbilityResource from './ability-resource';
 import type AbilityRunner from './ability-runner';
 import type CharacterInterface from '../characters/character-interface';
 import type Effect from '../effects/effect';
+import type EffectDefinition from '../effects/effect-definition';
 import type GameStateData from '../game-state-data';
 import type SimpleMap from '../util/simple-map';
-import type {EffectDefinition} from '../effects/effect-factory';
 
 const {sayAt} = Broadcast;
 
 export const ABILITY_DEFAULTS: AbilityDefinition = {
+    canTargetSelf: false,
     configureEffect: null,
     cooldown: 0,
     effect: null,
@@ -28,13 +29,13 @@ export const ABILITY_DEFAULTS: AbilityDefinition = {
     requiresTarget: true,
     resource: null,
     run: () => noop,
-    targetSelf: false,
     type: AbilityType.SKILL,
     options: {},
 };
 
-class Ability {
+export class Ability {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
+    public canTargetSelf: boolean;
     public configureEffect: (effect: Effect) => Effect;
     public cooldownGroup: string | null;
     public cooldownLength: number;
@@ -50,7 +51,6 @@ class Ability {
     public resource: AbilityDefinition['resource'];
     public run: AbilityRunner;
     public state: GameStateData;
-    public targetSelf: boolean;
     public type: AbilityType;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
@@ -61,17 +61,19 @@ class Ability {
         };
 
         const {
+            canTargetSelf,
             configureEffect,
             cooldown,
             effect,
             flags,
             info,
+            /* eslint-disable-next-line @typescript-eslint/naming-convention */
             initiatesCombat,
             name,
+            /* eslint-disable-next-line @typescript-eslint/naming-convention */
             requiresTarget,
             resource,
             run,
-            targetSelf,
             type,
             options,
         } = config;
@@ -101,7 +103,7 @@ class Ability {
         this.resource = resource;
         this.run = (run ?? noop).bind(this) as AbilityRunner;
         this.state = state;
-        this.targetSelf = targetSelf;
+        this.canTargetSelf = canTargetSelf;
         this.type = type;
     }
 
@@ -226,8 +228,7 @@ class Ability {
             listeners: {
                 effectDeactivated: (effect: Effect): void => {
                     if (effect.target instanceof Player) {
-                        /* eslint-disable-next-line max-len */
-                        sayAt(effect.target, `You may now use <b>${effect.ability.name}</b> again.`);
+                        sayAt(effect.target, `You may now use <b>${effect.ability!.name}</b> again.`);
                     }
                 },
             },

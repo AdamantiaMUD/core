@@ -1,4 +1,4 @@
-import {Socket} from 'net';
+import type {Socket} from 'net';
 
 export type AdamantiaSocket = Socket & {
     ended: boolean;

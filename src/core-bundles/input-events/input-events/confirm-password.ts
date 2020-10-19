@@ -1,36 +1,22 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamChangePasswordEvent} from './change-password';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
 
-export interface StreamConfirmPasswordPayload {
-    account: Account;
-    NextEvent: StreamEventConstructor<{account: Account}>;
-}
-
-export const StreamConfirmPasswordEvent: StreamEventConstructor<StreamConfirmPasswordPayload> = class extends StreamEvent<StreamConfirmPasswordPayload> {
-    public NAME: string = 'stream-confirm-password';
-    public account: Account;
-    public NextEvent: StreamEventConstructor<{account: Account}>;
-};
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {ConfirmPasswordPayload} from '../lib/events';
 
 /**
  * Account password confirmation station
  */
-export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
-    name: StreamConfirmPasswordEvent.getName(),
-    listener: (): StreamEventListener<StreamConfirmPasswordPayload> => (
+export const evt: StreamEventListenerFactory<ConfirmPasswordPayload> = {
+    name: ConfirmPasswordEvent.getName(),
+    listener: (): StreamEventListener<ConfirmPasswordPayload> => (
         stream: TransportStream<EventEmitter>,
-        args: StreamConfirmPasswordPayload
-    ) => {
+        args: ConfirmPasswordPayload
+    ): void => {
         const write = EventUtil.genWrite(stream);
         const say = EventUtil.genSay(stream);
 
@@ -38,13 +24,15 @@ export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
 
         stream.command('toggleEcho');
 
-        stream.socket.once('data', pass => {
+        stream.socket.once('data', (buf: Buffer) => {
+            const pass = buf.toString('utf8').trim();
+
             stream.command('toggleEcho');
 
-            if (!args.account.checkPassword(pass.toString().trim())) {
+            if (!args.account.checkPassword(pass)) {
                 say('<red>Passwords do not match.</red>');
 
-                stream.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new ChangePasswordEvent(args));
 
                 return;
             }
@@ -52,9 +40,7 @@ export const evt: StreamEventListenerFactory<StreamConfirmPasswordPayload> = {
             // echo was disabled, the user's Enter didn't make a newline
             say('');
 
-            const {NextEvent} = args;
-
-            stream.dispatch(new NextEvent({account: args.account}));
+            stream.dispatch(args.nextEvent);
         });
     },
 };

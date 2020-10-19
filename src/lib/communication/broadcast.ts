@@ -1,18 +1,17 @@
+import chalk from 'chalk';
 import wrapAnsi from 'wrap-ansi';
 import {sprintf} from 'sprintf-js';
 
-import Player from '../players/player';
+import {cast} from '../util/functions';
+import {
+    fixNewlines,
+    isBroadcastable,
+    NOOP_FORMATTER,
+} from '../util/communication';
 
-export interface Broadcastable {
-    getBroadcastTargets: () => Broadcastable[];
-}
-
-export type MessageFormatter = (target: Broadcastable, message: string) => string;
-
-const NOOP_FORMATTER: MessageFormatter = (
-    target: Broadcastable,
-    message: string
-): string => message;
+import type Player from '../players/player';
+import type Broadcastable from './broadcastable';
+import type MessageFormatter from './message-formatter';
 
 /**
  * Functions used for sending text to the player. All output to the player
@@ -20,29 +19,11 @@ const NOOP_FORMATTER: MessageFormatter = (
  */
 const DEFAULT_LINE_LENGTH = 80;
 
-/**
- * Fix LF unpaired with CR for windows output
- */
-
-const fixNewlines = (message: string): string => {
-    // Correct \n not in a \r\n pair to prevent bad rendering on windows
-    const msg = message
-        .replace(/\r\n/gu, '<NEWLINE>')
-        .split('\n')
-        .join('\r\n')
-        .replace(/<NEWLINE>/gu, '\r\n');
-
-    // Correct sty's incredibly stupid default of always appending ^[[0m
-    /* eslint-disable-next-line no-control-regex */
-    return msg.replace(/\x1B\[0m$/u, '');
-};
-
 /* eslint-disable-next-line id-length */
 export const at = (
     source: Broadcastable,
     message: string = '',
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true,
+    wrapWidth: number = 0,
     formatter: MessageFormatter = NOOP_FORMATTER
 ): void => {
     if (!isBroadcastable(source)) {
@@ -55,19 +36,23 @@ export const at = (
     const cleanMessage = fixNewlines(message);
 
     for (const target of source.getBroadcastTargets()) {
-        if (target.socket && target.socket.writable) {
-            if (target.socket._prompted) {
-                target.socket.write('\r\n');
-                target.socket._prompted = false;
+        if ('socket' in target) {
+            const playerTarget = cast<Player>(target);
+
+            if (playerTarget.socket?.writable) {
+                if (playerTarget.socket.prompted) {
+                    playerTarget.socket.write('\r\n');
+                    playerTarget.socket.setPrompted(false);
+                }
+
+                let targetMessage = formatter(playerTarget, cleanMessage);
+
+                targetMessage = wrapWidth > 0
+                    ? wrapAnsi(targetMessage, Number(wrapWidth))
+                    : chalk`${targetMessage}`;
+
+                playerTarget.socket.write(targetMessage);
             }
-
-            let targetMessage = formatter(target, cleanMessage);
-
-            targetMessage = wrapWidth
-                ? wrapAnsi(targetMessage, Number(wrapWidth))
-                : ansi.parse(targetMessage);
-
-            target.socket.write(targetMessage);
         }
     }
 };
@@ -79,9 +64,8 @@ export const at = (
 export const atExcept = (
     source: Broadcastable,
     message: string = '',
-    excludes: Player | Player[] = [],
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true,
+    excludes: Broadcastable | Broadcastable[] = [],
+    wrapWidth: number = 0,
     formatter: MessageFormatter = NOOP_FORMATTER
 ): void => {
     if (!isBroadcastable(source)) {
@@ -91,16 +75,16 @@ export const atExcept = (
         ));
     }
 
-    const excludesArr = [].concat(excludes);
+    const excludesArr: Broadcastable[] = Array.isArray(excludes) ? excludes : [excludes];
 
     const targets = source.getBroadcastTargets()
-        .filter(target => !excludesArr.includes(target));
+        .filter((target: Broadcastable) => !excludesArr.includes(target));
 
     const newSource = {
-        getBroadcastTargets: () => targets,
+        getBroadcastTargets: (): Broadcastable[] => targets,
     };
 
-    at(newSource, message, wrapWidth, useColor, formatter);
+    at(newSource, message, wrapWidth, formatter);
 };
 
 /**
@@ -111,9 +95,25 @@ export const atFormatted = (
     source: Broadcastable,
     message: string = '',
     formatter: MessageFormatter = NOOP_FORMATTER,
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true
-): void => at(source, message, wrapWidth, useColor, formatter);
+    wrapWidth: number = 0
+): void => at(source, message, wrapWidth, formatter);
+
+/**
+ * Render a line of a specific width/color
+ */
+export const line = (width: number, fillChar: string = '-', color: string = ''): string => {
+    let openColor = '',
+        closeColor = '';
+
+    if (color !== '') {
+        openColor = `<${color}>`;
+        closeColor = `</${color}>`;
+    }
+
+    const arr = new Array(width + 1);
+
+    return `${openColor}${arr.join(fillChar)}${closeColor}`;
+};
 
 /**
  * Center a string in the middle of a given width
@@ -129,7 +129,7 @@ export const center = (
     let openColor = '',
         closeColor = '';
 
-    if (color) {
+    if (color !== '') {
         openColor = `<${color}>`;
         closeColor = `</${color}>`;
     }
@@ -144,30 +144,11 @@ export const center = (
 /**
  * Indent all lines of a given string by a given amount
  */
-export const indent = (msg: string, indent: number): string => {
+export const indent = (msg: string, padSize: number): string => {
     const message = fixNewlines(msg);
-    const padding = line(indent, ' ');
+    const padding = line(padSize, ' ');
 
     return padding + message.replace(/\r\n/gu, `\r\n${padding}`);
-};
-
-export const isBroadcastable = (source: Broadcastable): boolean => source && typeof source.getBroadcastTargets === 'function';
-
-/**
- * Render a line of a specific width/color
- */
-export const line = (width: number, fillChar: string = '-', color: string = ''): string => {
-    let openColor = '',
-        closeColor = '';
-
-    if (color) {
-        openColor = `<${color}>`;
-        closeColor = `</${color}>`;
-    }
-
-    const arr = new Array(width + 1);
-
-    return `${openColor}${arr.join(fillChar)}${closeColor}`;
 };
 
 /**
@@ -205,23 +186,38 @@ export const progress = (
 };
 
 /**
+ * `at` with a newline
+ * @see {@link Broadcast#at}
+ */
+export const sayAt = (
+    source: Broadcastable,
+    message: string = '',
+    wrapWidth: number = 0,
+    formatter: MessageFormatter = NOOP_FORMATTER
+): void => at(
+    source,
+    message,
+    wrapWidth,
+    (target: Broadcastable, msg: string) => `${formatter(target, msg)}\r\n`
+);
+
+/**
  * Render the player's prompt including any extra prompts
  */
 export const prompt = (
     player: Player,
     extra: {[key: string]: unknown} = {},
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true
+    wrapWidth: number = 0
 ): void => {
-    player.socket._prompted = false;
+    player.socket!.setPrompted(false);
 
     at(
         player,
         `\r\n${player.interpolatePrompt(player.prompt, extra)} `,
-        wrapWidth,
-        useColor
+        wrapWidth
     );
 
+    /* eslint-disable-next-line @typescript-eslint/naming-convention */
     const needsNewline = player.extraPrompts.size > 0;
 
     if (needsNewline) {
@@ -229,7 +225,7 @@ export const prompt = (
     }
 
     for (const [id, extraPrompt] of player.extraPrompts) {
-        sayAt(player, extraPrompt.renderer(), wrapWidth, useColor);
+        sayAt(player, extraPrompt.renderer(), wrapWidth);
 
         if (extraPrompt.removeOnRender) {
             player.removePrompt(id);
@@ -240,30 +236,12 @@ export const prompt = (
         at(player, '> ');
     }
 
-    player.socket._prompted = true;
+    player.socket!.setPrompted(true);
 
-    if (player.socket.writable) {
-        player.socket.command('goAhead');
+    if (player.socket!.writable) {
+        player.socket!.command('goAhead');
     }
 };
-
-/**
- * `at` with a newline
- * @see {@link Broadcast#at}
- */
-export const sayAt = (
-    source: Broadcastable,
-    message: string = '',
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true,
-    formatter: MessageFormatter = NOOP_FORMATTER
-): void => at(
-    source,
-    message,
-    wrapWidth,
-    useColor,
-    (target, mess) => `${formatter(target, mess)}\r\n`
-);
 
 export const sayAtColumns = (target: Player, strings: string[], numCols: number): void => {
     // Build a 2D map of strings by col/row
@@ -274,28 +252,26 @@ export const sayAtColumns = (target: Player, strings: string[], numCols: number)
     let rowCount = 0;
     const colWidth = Math.floor((3 * 20) / numCols);
 
-    const columnedStrings = strings.reduce((map, string) => {
+    const columnedStrings = strings.reduce((map: string[][], str: string) => {
         if (rowCount >= perCol) {
             rowCount = 0;
             col += 1;
-        }
-        map[col] = map[col] || [];
 
-        if (!map[col]) {
             map.push([]);
         }
 
-        map[col].push(string);
+        map[col].push(str);
+
         rowCount += 1;
 
         return map;
-    }, []);
+    }, [[]]);
 
-    const said = [];
+    const said: string[] = [];
 
     col = 0;
     while (said.length < strings.length) {
-        if (columnedStrings[col] && columnedStrings[col][row]) {
+        if (columnedStrings[col]?.[row]?.length > 0) {
             const string = columnedStrings[col][row];
 
             said.push(string);
@@ -325,15 +301,13 @@ export const sayAtExcept = (
     source: Broadcastable,
     message: string = '',
     excludes: Player | Player[] = [],
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true,
+    wrapWidth: number = 0,
     formatter: MessageFormatter = NOOP_FORMATTER
 ): void => atExcept(
     source,
     message,
     excludes,
     wrapWidth,
-    useColor,
     (target: Broadcastable, mess: string) => `${formatter(target, mess)}\r\n`
 );
 
@@ -345,9 +319,8 @@ export const sayAtFormatted = (
     source: Broadcastable,
     message: string = '',
     formatter: MessageFormatter = NOOP_FORMATTER,
-    wrapWidth: number | boolean = false,
-    useColor: boolean = true
-): void => sayAt(source, message, wrapWidth, useColor, formatter);
+    wrapWidth: number = 0
+): void => sayAt(source, message, wrapWidth, formatter);
 
 /**
  * Wrap a message to a given width. Note: Evaluates color tags
@@ -355,9 +328,10 @@ export const sayAtFormatted = (
 export const wrap = (
     message: string,
     width: number = DEFAULT_LINE_LENGTH
-): string => fixNewlines(wrapAnsi(ansi.parse(message), width));
+): string => fixNewlines(wrapAnsi(chalk`${message}`, width));
 
-export default {
+const broadcast = {
+    /* eslint-disable-next-line id-length */
     at,
     atExcept,
     atFormatted,
@@ -373,3 +347,5 @@ export default {
     sayAtFormatted,
     wrap,
 };
+
+export default broadcast;

@@ -10,35 +10,12 @@ import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
-import type {QuestGoal, QuestGoalDefinition, SerializedQuestGoal} from './quest-goal';
+import type QuestDefinition from './quest-definition';
+import type QuestGoal from './quest-goal';
+import type QuestProgress from './quest-progress';
+import type SerializedQuest from './serialized-quest';
+import type SerializedQuestGoal from './serialized-quest-goal';
 import type {QuestProgressPayload} from './events';
-import type {QuestRewardDefinition} from './quest-reward';
-
-export interface QuestDefinition {
-    autoComplete: boolean;
-    completionMessage?: string | null;
-    description?: string;
-    entityReference?: string;
-    goals: QuestGoalDefinition[];
-    id: string;
-    level?: number;
-    npc?: string;
-    repeatable: boolean;
-    requires?: string[];
-    rewards: QuestRewardDefinition[];
-    title: string;
-}
-
-export interface QuestProgress {
-    display: string;
-    percent: number;
-}
-
-export interface SerializedQuest extends SimpleMap {
-    config: {desc: string; level: number; title: string};
-    progress: QuestProgress;
-    state: SerializedQuestGoal[];
-}
 
 export class Quest extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -64,7 +41,6 @@ export class Quest extends MudEventEmitter implements Serializable {
         this.id = id;
         this.entityReference = config.entityReference ?? id;
         this.config = {
-            description: 'Missing Quest Description',
             completionMessage: null,
             requires: [],
             level: 1,
@@ -156,11 +132,15 @@ export class Quest extends MudEventEmitter implements Serializable {
             state: this.goals.map((goal: QuestGoal) => goal.serialize()),
             progress: this.getProgress(),
             config: {
-                desc: this.config.description ?? 'Missing Quest Description',
+                desc: this.config.description,
                 level: this.config.level ?? 1,
                 title: this.config.title,
             },
         };
+    }
+
+    public setStartTime(started: string): void {
+        this.started = started;
     }
 }
 

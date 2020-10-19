@@ -35,10 +35,10 @@ import {UpdateTickEvent} from './common/events';
 
 import type CombatEngine from './combat/combat-engine';
 import type Config from './util/config';
+import type EntityLoaderDefinitions from './data/entity-loader-definitions';
 import type GameStateData from './game-state-data';
 import type Timeout from './util/timeout';
 import type TransportStream from './communication/transport-stream';
-import type {EntityLoaderDefinitions} from './data/entity-loader-registry';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 

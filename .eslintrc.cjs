@@ -19,6 +19,15 @@ module.exports = {
         es6: true,
         node: true,
     },
+    'settings': {
+        'import/parsers': {
+            '@typescript-eslint/parser': [
+                '.ts',
+                '.tsx',
+                '.d.ts',
+            ],
+        },
+    },
     'rules': {
         'max-params': ['warn', 8],
 

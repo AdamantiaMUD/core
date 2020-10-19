@@ -10,24 +10,14 @@ import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from '.
 import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/events';
 import {hasValue, noop} from '../util/functions';
 
+import type Broadcastable from '../communication/broadcastable';
 import type GameStateData from '../game-state-data';
 import type Party from '../groups/party';
+import type PromptDefinition from '../communication/prompt-definition';
 import type Room from '../locations/room';
+import type SerializedPlayer from './serialized-player';
 import type SimpleMap from '../util/simple-map';
-import type {Broadcastable} from '../communication/broadcast';
 import type {ExecutableCommand} from '../commands/command-queue';
-import type {SerializedCharacter} from '../characters/character';
-
-export interface PromptDefinition {
-    removeOnRender: boolean;
-    renderer: () => string;
-}
-
-export interface SerializedPlayer extends SerializedCharacter {
-    experience: number;
-    prompt: string;
-    role: PlayerRole;
-}
 
 const DEFAULT_MAX_INVENTORY = 20;
 
@@ -36,8 +26,9 @@ export class Player extends Character implements Broadcastable {
     private _experience: number = 0;
     private _party: Party | null = null;
     private _prompt: string = '> ';
-    private readonly _questTracker: QuestTracker;
     private _role: PlayerRole = PlayerRole.PLAYER;
+
+    private readonly _questTracker: QuestTracker;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public extraPrompts: Map<string, PromptDefinition> = new Map<string, PromptDefinition>();
@@ -57,11 +48,10 @@ export class Player extends Character implements Broadcastable {
             this._inventory = new Inventory();
 
             if (!isNpc(this) && !isFinite(this._inventory.getMax())) {
-                this._inventory
-                    .setMax(this._state.config.get(
-                        'maxPlayerInventory',
-                        DEFAULT_MAX_INVENTORY
-                    ));
+                const maxInv = this._state?.config
+                    .get<number>('maxPlayerInventory', DEFAULT_MAX_INVENTORY) ?? DEFAULT_MAX_INVENTORY;
+
+                this._inventory.setMax(maxInv);
             }
         }
 
@@ -170,7 +160,7 @@ export class Player extends Character implements Broadcastable {
             this.room.removePlayer(this);
         }
 
-        this.room = nextRoom;
+        this.setRoom(nextRoom);
         nextRoom.addPlayer(this);
 
         onMoved();
@@ -209,6 +199,10 @@ export class Player extends Character implements Broadcastable {
             prompt: this._prompt,
             role: this._role,
         };
+    }
+
+    public setName(name: string): void {
+        this._name = name;
     }
 
     public setParty(party: Party | null): void {

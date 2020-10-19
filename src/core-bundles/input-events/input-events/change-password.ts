@@ -1,37 +1,24 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import GameStateData from '../../../lib/game-state-data';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamConfirmPasswordEvent} from './confirm-password';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
+import {hasValue} from '../../../lib/util/functions';
 
-export interface StreamChangePasswordPayload {
-    account: Account;
-    NextEvent: StreamEventConstructor<{account: Account}>;
-}
-
-export const StreamChangePasswordEvent: StreamEventConstructor<StreamChangePasswordPayload> = class extends StreamEvent<StreamChangePasswordPayload> {
-    public NAME: string = 'stream-change-password';
-    public account: Account;
-    public NextEvent: StreamEventConstructor<{account: Account}>;
-};
+import type GameStateData from '../../../lib/game-state-data';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {ChangePasswordPayload} from '../lib/events';
 
 /**
  * Change password event
  */
-export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
-    name: StreamChangePasswordEvent.getName(),
-    listener: (state: GameState): StreamEventListener<StreamChangePasswordPayload> => (
+export const evt: StreamEventListenerFactory<ChangePasswordPayload> = {
+    name: ChangePasswordEvent.getName(),
+    listener: (state: GameStateData): StreamEventListener<ChangePasswordPayload> => (
         stream: TransportStream<EventEmitter>,
-        args: StreamChangePasswordPayload
-    ) => {
+        args: ChangePasswordPayload
+    ): void => {
         const say = EventUtil.genSay(stream);
         const write = EventUtil.genWrite(stream);
 
@@ -49,10 +36,10 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
 
             const pass = buf.toString().trim();
 
-            if (!pass) {
+            if (!hasValue(pass) || pass.length === 0) {
                 say('You must use a password.');
 
-                stream.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new ChangePasswordEvent(args));
 
                 return;
             }
@@ -60,7 +47,7 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
             if (pass.length < 8) {
                 say('Your password is not long enough.');
 
-                stream.dispatch(new StreamChangePasswordEvent(args));
+                stream.dispatch(new ChangePasswordEvent(args));
 
                 return;
             }
@@ -70,7 +57,7 @@ export const evt: StreamEventListenerFactory<StreamChangePasswordPayload> = {
             state.accountManager.setAccount(account.username, account);
             account.save();
 
-            stream.dispatch(new StreamConfirmPasswordEvent(args));
+            stream.dispatch(new ConfirmPasswordEvent(args));
         });
     },
 };

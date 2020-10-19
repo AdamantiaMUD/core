@@ -2,21 +2,10 @@ import CommandType from './command-type';
 import {InvalidCommandError} from './errors';
 import {hasValue} from '../util/functions';
 
-import type Command from './command';
 import type GameStateData from '../game-state-data';
+import type ParsedCommand from './parsed-command';
 import type Player from '../players/player';
-import type PlayerRole from '../players/player-role';
-import type SimpleMap from '../util/simple-map';
-import type {RoomExitDefinition} from '../locations/room';
-
-export interface ParsedCommand {
-    args: string;
-    command?: Command;
-    originalCommand?: string;
-    payload?: SimpleMap;
-    requiredRole?: PlayerRole;
-    type: CommandType;
-}
+import type RoomExitDefinition from '../locations/room-exit-definition';
 
 /**
  * Interpreter.. you guessed it, interprets command input
@@ -134,9 +123,7 @@ export const CommandParser = {
                 type: CommandType.MOVEMENT,
                 args: args,
                 originalCommand: command,
-                payload: {
-                    roomExit: roomExit,
-                },
+                payload: {roomExit},
             };
         }
 
@@ -162,31 +149,31 @@ export const CommandParser = {
             };
         }
 
-        // // check channels
-        // const foundChannel = state.ChannelManager.find(command);
-        //
-        // if (foundChannel) {
-        //     return {
-        //         type: CommandType.CHANNEL,
-        //         payload: {
-        //             channel: foundChannel,
-        //         },
-        //         args: args,
-        //     };
-        // }
+        // check channels
+        const foundChannel = state.channelManager.find(command);
 
-        // // finally check skills
-        // const foundSkill = state.SkillManager.find(command);
-        //
-        // if (foundSkill) {
-        //     return {
-        //         type: CommandType.SKILL,
-        //         payload: {
-        //             skill: foundSkill
-        //         },
-        //         args: args,
-        //     };
-        // }
+        if (hasValue(foundChannel)) {
+            return {
+                type: CommandType.CHANNEL,
+                payload: {
+                    channel: foundChannel,
+                },
+                args: args,
+            };
+        }
+
+        // finally check skills
+        const foundSkill = state.skillManager.find(command);
+
+        if (hasValue(foundSkill)) {
+            return {
+                type: CommandType.SKILL,
+                payload: {
+                    skill: foundSkill,
+                },
+                args: args,
+            };
+        }
 
         throw new InvalidCommandError();
     },

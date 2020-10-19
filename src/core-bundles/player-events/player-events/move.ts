@@ -3,11 +3,11 @@ import {hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
 import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
+import type Door from '../../../lib/locations/door';
 import type GameStateData from '../../../lib/game-state-data';
 import type Player from '../../../lib/players/player';
 import type PlayerEventListener from '../../../lib/events/player-event-listener';
 import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {Door} from '../../../lib/locations/room';
 import type {PlayerMovePayload} from '../../../lib/players/events';
 
 export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
@@ -24,7 +24,7 @@ export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
 
         if (!hasValue(player.room)) {
             // @TODO: invalid state; error?
-            sayAt(player, "Where are you? You have to be somewhere before you can go anywhere!");
+            sayAt(player, 'Where are you? You have to be somewhere before you can go anywhere!');
 
             return;
         }
@@ -38,7 +38,7 @@ export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
         const nextRoom = state.roomManager.getRoom(roomExit.roomId);
         const oldRoom = player.room;
 
-        const door: Door | null = oldRoom.getDoor(nextRoom) ?? nextRoom.getDoor(oldRoom);
+        const door: Door | null = oldRoom.getDoor(nextRoom) ?? nextRoom?.getDoor(oldRoom) ?? null;
 
         if (hasValue(door)) {
             if (door.locked) {
@@ -54,22 +54,22 @@ export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
             }
         }
 
-        player.moveTo(nextRoom, (): void => {
+        player.moveTo(nextRoom!, (): void => {
             state.commandManager.get('look')?.execute('', player);
         });
 
         sayAt(oldRoom, `${player.name} leaves.`);
-        sayAtExcept(nextRoom, `${player.name} enters.`, player);
+        sayAtExcept(nextRoom!, `${player.name} enters.`, player);
 
         for (const follower of player.followers) {
             if (!(follower.room !== oldRoom)) {
                 if (isNpc(follower)) {
-                    follower.moveTo(nextRoom);
+                    follower.moveTo(nextRoom!);
                 }
                 else {
                     sayAt(
                         follower as Player,
-                        `\r\nYou follow ${player.name} to ${nextRoom.title}.`
+                        `\r\nYou follow ${player.name} to ${nextRoom!.title}.`
                     );
                     follower.dispatch(new PlayerMoveEvent({roomExit}));
                 }

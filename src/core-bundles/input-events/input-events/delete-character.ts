@@ -1,32 +1,26 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import EventUtil from '../../../lib/events/event-util';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamChooseCharacterEvent} from './choose-character';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+import {ChooseCharacterEvent, DeleteCharacterEvent} from '../lib/events';
+import {hasValue} from '../../../lib/util/functions';
 
-export interface StreamDeleteCharacterPayload {
-    account: Account;
-}
-
-export const StreamDeleteCharacterEvent: StreamEventConstructor<StreamDeleteCharacterPayload> = class extends StreamEvent<StreamDeleteCharacterPayload> {
-    public NAME: string = 'delete-character';
-    public account: Account;
-};
+import type InputMenuOption from '../../../lib/events/input-menu-option';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {CharacterBrief} from '../../../lib/players/account';
+import type {DeleteCharacterPayload} from '../lib/events';
 
 /**
  * Delete character event
  */
-export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
-    name: StreamDeleteCharacterEvent.getName(),
-    listener: (): StreamEventListener<StreamDeleteCharacterPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
+export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
+    name: DeleteCharacterEvent.getName(),
+    listener: (): StreamEventListener<DeleteCharacterPayload> => (
+        stream: TransportStream<EventEmitter>,
+        {account}: DeleteCharacterPayload
+    ): void => {
         const say = EventUtil.genSay(stream);
         const write = EventUtil.genWrite(stream);
 
@@ -34,15 +28,14 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
         say('|      Delete a Character');
         say('------------------------------');
 
-        const characters = account.characters.filter(currChar => currChar.isDeleted === false);
+        const characters = account.characters.filter((char: CharacterBrief) => !char.isDeleted);
 
-        const options = [];
+        const options: InputMenuOption[] = [];
 
-        characters.forEach(char => {
+        characters.forEach((char: CharacterBrief) => {
             options.push({
                 display: `Delete <b>${char.username}</b>`,
                 onSelect: () => {
-                    /* eslint-disable-next-line max-len */
                     write(`<b>Are you sure you want to delete <b>${char.username}</b>?</b> <cyan>[Y/n]</cyan> `);
 
                     stream.socket.once('data', (buf: Buffer) => {
@@ -55,7 +48,7 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
                         if (!(/[yn]/u).test(confirmation)) {
                             say('<b>Invalid Option</b>');
 
-                            stream.dispatch(new StreamChooseCharacterEvent({account}));
+                            stream.dispatch(new ChooseCharacterEvent({account}));
 
                             return;
                         }
@@ -63,7 +56,7 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
                         if (confirmation === 'n') {
                             say('No one was deleted...');
 
-                            stream.dispatch(new StreamChooseCharacterEvent({account}));
+                            stream.dispatch(new ChooseCharacterEvent({account}));
 
                             return;
                         }
@@ -72,7 +65,7 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
                         account.deleteCharacter(char.username);
                         say('Character deleted.');
 
-                        stream.dispatch(new StreamChooseCharacterEvent({account}));
+                        stream.dispatch(new ChooseCharacterEvent({account}));
                     });
                 },
             });
@@ -83,14 +76,14 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
         options.push({
             display: 'Go back to main menu',
             onSelect: () => {
-                stream.dispatch(new StreamChooseCharacterEvent({account}));
+                stream.dispatch(new ChooseCharacterEvent({account}));
             },
         });
 
         let optionI = 0;
 
-        options.forEach(opt => {
-            if (opt.onSelect) {
+        options.forEach((opt: InputMenuOption) => {
+            if (hasValue(opt.onSelect)) {
                 optionI += 1;
                 say(`| <cyan>[${optionI}]</cyan> ${opt.display}`);
             }
@@ -105,22 +98,22 @@ export const evt: StreamEventListenerFactory<StreamDeleteCharacterPayload> = {
             const choice = parseInt(buf.toString().trim(), 10) - 1;
 
             if (isNaN(choice)) {
-                stream.dispatch(new StreamChooseCharacterEvent({account}));
+                stream.dispatch(new ChooseCharacterEvent({account}));
 
                 return;
             }
 
-            const selection = options.filter(opt => Boolean(opt.onSelect))[choice];
+            const selection = options.filter((opt: InputMenuOption) => Boolean(opt.onSelect))[choice];
 
-            if (selection) {
+            if (hasValue(selection)) {
                 Logger.log(`Selected ${selection.display}`);
 
-                selection.onSelect();
+                selection.onSelect!();
 
                 return;
             }
 
-            stream.dispatch(new StreamChooseCharacterEvent({account}));
+            stream.dispatch(new ChooseCharacterEvent({account}));
         });
     },
 };

@@ -1,4 +1,4 @@
-export default class MudEvent<T> {
+export class MudEvent<T> {
     public NAME: string = '';
 
     public payload: T | undefined;
@@ -29,3 +29,5 @@ export default class MudEvent<T> {
         return inst.NAME;
     }
 }
+
+export default MudEvent;

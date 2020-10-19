@@ -2,14 +2,10 @@ import QuestStartedEvent from './events/quest-started-event';
 
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
-import type {Quest, SerializedQuest} from './quest';
+import type Quest from './quest';
 import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
-
-export interface SerializedQuestTracker extends SimpleMap {
-    active: {[key: string]: SerializedQuest};
-    completed: {[key: string]: SerializedQuest};
-}
+import type SerializedQuest from './serialized-quest';
+import type SerializedQuestTracker from './serialized-quest-tracker';
 
 /**
  * Keeps track of player quest progress
@@ -21,13 +17,8 @@ export class QuestTracker implements Serializable {
     private readonly _player: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(player: Player, active: unknown[] = [], completed: unknown[] = []) {
+    public constructor(player: Player) {
         this._player = player;
-
-        /*
-         * this.activeQuests = new Map(active);
-         * this.completedQuests = new Map(completed);
-         */
     }
 
     public get active(): Map<string, Quest> {
@@ -118,7 +109,7 @@ export class QuestTracker implements Serializable {
             throw new Error('Quest already started');
         }
 
-        quest.started = new Date().toJSON();
+        quest.setStartTime(new Date().toJSON());
         this._activeQuests.set(qid, quest);
         quest.dispatch(new QuestStartedEvent());
     }

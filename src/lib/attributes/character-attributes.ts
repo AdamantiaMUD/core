@@ -1,4 +1,4 @@
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import {CharacterAttributeUpdateEvent} from '../characters/events';
 
 import type CharacterInterface from '../characters/character-interface';

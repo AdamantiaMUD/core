@@ -20,10 +20,10 @@ export class EntityLoader {
     }
 
     public async fetch<T = unknown>(id: string): Promise<T> {
-        return this._dataSource.fetch<T>(this._config, id);
+        return this._dataSource.fetch<T>(id, this._config);
     }
 
-    public async fetchAll<T = unknown>(): Promise<T> {
+    public async fetchAll<T = unknown>(): Promise<{[key: string]: T}> {
         return this._dataSource.fetchAll<T>(this._config);
     }
 
@@ -31,8 +31,8 @@ export class EntityLoader {
         return this._dataSource.hasData(this._config);
     }
 
-    public async replace<T = unknown>(data: T): Promise<T> {
-        return this._dataSource.replace<T>(this._config, data);
+    public async replace<T = unknown>(data: T): Promise<boolean> {
+        return this._dataSource.replace<T>(data, this._config);
     }
 
     public setArea(name: string): void {
@@ -43,8 +43,8 @@ export class EntityLoader {
         this._config.bundle = name;
     }
 
-    public async update<T = unknown>(id: string, data: T): Promise<T> {
-        return this._dataSource.update<T>(this._config, id, data);
+    public async update<T = unknown>(id: string, data: T): Promise<boolean> {
+        return this._dataSource.update<T>(id, data, this._config);
     }
 }
 

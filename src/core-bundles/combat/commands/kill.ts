@@ -1,4 +1,4 @@
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {CombatError} from '../../../lib/combat/errors';
 import {cast, hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';

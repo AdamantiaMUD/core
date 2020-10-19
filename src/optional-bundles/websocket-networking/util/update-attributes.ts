@@ -1,4 +1,4 @@
-import Player from '../../../lib/players/player';
+import type Player from '../../../lib/players/player';
 
 export const updateAttributes = (player: Player): void => {
     /*
@@ -14,7 +14,7 @@ export const updateAttributes = (player: Player): void => {
         };
     }
 
-    player.socket.command('sendData', 'attributes', attributes);
+    player.socket?.command('sendData', 'attributes', attributes);
 };
 
 export default updateAttributes;

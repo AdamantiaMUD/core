@@ -1,39 +1,34 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
 import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamChangePasswordEvent} from './change-password';
-import {StreamCreateCharacterEvent} from './create-character';
 import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
-import {StreamLoginEvent} from './login';
+    BeginLoginEvent,
+    ChangePasswordEvent,
+    CreateAccountEvent,
+    CreateCharacterEvent,
+} from '../lib/events';
+import {hasValue} from '../../../lib/util/functions';
 
-export interface StreamCreateAccountPayload {
-    name: string;
-}
-
-export const StreamCreateAccountEvent: StreamEventConstructor<StreamCreateAccountPayload> = class extends StreamEvent<StreamCreateAccountPayload> {
-    public NAME: string = 'stream-create-account';
-    public name: string;
-};
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {CreateAccountPayload} from '../lib/events';
 
 /**
  * Account creation event
  */
-export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
-    name: StreamCreateAccountEvent.getName(),
-    listener: (): StreamEventListener<StreamCreateAccountPayload> => (stream: TransportStream<EventEmitter>, {name}) => {
+export const evt: StreamEventListenerFactory<CreateAccountPayload> = {
+    name: CreateAccountEvent.getName(),
+    listener: (): StreamEventListener<CreateAccountPayload> => (
+        stream: TransportStream<EventEmitter>,
+        {name}: CreateAccountPayload
+    ): void => {
         const write = EventUtil.genWrite(stream);
         const say = EventUtil.genSay(stream);
 
-        let newAccount = null;
+        let newAccount: Account | null = null;
 
-        /* eslint-disable-next-line max-len */
         write(`<b>Do you want your account's username to be ${name}?</b> <cyan>[y/n]</cyan> `);
 
         stream.socket.once('data', (buf: Buffer) => {
@@ -47,23 +42,23 @@ export const evt: StreamEventListenerFactory<StreamCreateAccountPayload> = {
                 newAccount = new Account();
                 newAccount.username = name;
 
-                stream.dispatch(new StreamChangePasswordEvent({
+                stream.dispatch(new ChangePasswordEvent({
                     account: newAccount,
-                    NextEvent: StreamCreateCharacterEvent,
+                    nextEvent: new CreateCharacterEvent({account: newAccount}),
                 }));
 
                 return;
             }
 
-            if (data && (data === 'n' || data === 'no')) {
+            if (hasValue(data) && (data === 'n' || data === 'no')) {
                 say("Let's try again!");
 
-                stream.dispatch(new StreamLoginEvent());
+                stream.dispatch(new BeginLoginEvent());
 
                 return;
             }
 
-            stream.dispatch(new StreamCreateAccountEvent({name}));
+            stream.dispatch(new CreateAccountEvent({name}));
         });
     },
 };

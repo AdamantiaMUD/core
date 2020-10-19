@@ -1,8 +1,12 @@
-import {AddressInfo} from 'net';
+import type {AddressInfo} from 'net';
+import type {ExecFileOptionsWithOtherEncoding} from 'child_process';
 
 import Sequences from './sequences';
-import TelnetSocket from './telnet-socket';
 import TransportStream from '../../../lib/communication/transport-stream';
+
+import type TelnetSocket from './telnet-socket';
+
+type BufferEncoding = ExecFileOptionsWithOtherEncoding['encoding'];
 
 /**
  * Thin wrapper around a @worldofpannotia/ranvier-telnet `TelnetSocket`
@@ -20,8 +24,8 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
         });
     }
 
-    public destroy(): void {
-    }
+    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
+    public destroy(): void {}
 
     public end(): void {
         this.socket.end();
@@ -44,14 +48,14 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
     }
 
     public setEncoding(): this {
-        return undefined;
+        return this;
     }
 
     public get writable(): boolean {
         return this.socket.writable;
     }
 
-    public write(message: string, encoding: string = 'utf8'): boolean {
+    public write(message: string, encoding: BufferEncoding = 'utf8'): boolean {
         if (!this.writable) {
             return false;
         }

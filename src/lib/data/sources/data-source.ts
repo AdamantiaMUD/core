@@ -18,19 +18,19 @@ export class DataSource {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public async fetchAll<T = unknown>(config: DataSourceConfig): Promise<T> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig): Promise<{[key: string]: T}> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public async fetch<T = unknown>(config: DataSourceConfig, id: string): Promise<T> {
+    public async fetch<T = unknown>(id: string, config: DataSourceConfig): Promise<T> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public async replace<T = unknown>(config: DataSourceConfig, data: T): Promise<T> {
+    public async replace<T = unknown>(data: T, config: DataSourceConfig): Promise<boolean> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 
-    public async update<T = unknown>(config: DataSourceConfig, id: string, data: T): Promise<T> {
+    public async update<T = unknown>(id: string, data: T, config: DataSourceConfig): Promise<boolean> {
         return Promise.reject('This must be implemented in a sub-class.');
     }
 }

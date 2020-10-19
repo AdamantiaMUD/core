@@ -1,6 +1,9 @@
-import Area from './area';
 import EntityFactory from '../entities/entity-factory';
-import Room, {RoomDefinition} from './room';
+import Room from './room';
+import {hasValue} from '../util/functions';
+
+import type Area from './area';
+import type RoomDefinition from './room-definition';
 
 /**
  * Stores definitions of npcs to allow for easy creation/cloning
@@ -16,7 +19,7 @@ export class RoomFactory extends EntityFactory<Room, RoomDefinition> {
     public create(entityRef: string, area: Area): Room {
         const definition = this.getDefinition(entityRef);
 
-        if (!definition) {
+        if (!hasValue(definition)) {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 

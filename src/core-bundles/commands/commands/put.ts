@@ -73,7 +73,6 @@ export const cmd: CommandDefinitionFactory = {
         player.removeItem(item);
         toContainer.addItem(item);
 
-        /* eslint-disable-next-line max-len */
         sayAt(player, `<green>You put </green>${ItemUtil.display(item)}<green> into </green>${ItemUtil.display(toContainer)}<green>.</green>`);
 
         item.dispatch(new ItemPutAwayEvent({character: player, container: toContainer}));

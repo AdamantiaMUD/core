@@ -1,6 +1,6 @@
 import ArgParser from '../../../lib/commands/arg-parser';
 import ItemUtil from '../../../lib/util/items';
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {SlotTakenError} from '../../../lib/equipment/errors';
 import {cast, hasValue} from '../../../lib/util/functions';
 import {sayAt} from '../../../lib/communication/broadcast';

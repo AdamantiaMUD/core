@@ -1,4 +1,4 @@
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {UpdateTickEvent} from '../../../lib/common/events';
 import {prompt, sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
@@ -23,7 +23,6 @@ export const evt: PlayerEventListenerDefinition<UpdateTickPayload> = {
 
         if (timeSinceLastCommand > maxIdleTime) {
             player.save(() => {
-                /* eslint-disable-next-line max-len */
                 sayAt(player, `You were kicked for being idle for more than ${maxIdleTime / 60000} minutes!`);
                 sayAtExcept(player.room!, `${player.name} disappears.`, player);
 

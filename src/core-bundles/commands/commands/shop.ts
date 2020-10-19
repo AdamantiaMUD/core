@@ -26,6 +26,11 @@ interface VendorConfig {
     };
 }
 
+interface ItemSellableConfig {
+    currency: string;
+    value: number;
+}
+
 const getVendorItems = (state: GameStateData, itemRefs: string[]): Item[] => {
     const items: Item[] = [];
 
@@ -51,12 +56,12 @@ const genTell = (
     vendor: Npc,
     player: Player
 ): TellFn => (message: string): void => {
-    state.channelManager.get('tell').send(state, vendor, `${player.name} ${message}`);
+    state.channelManager.get('tell')?.send(state, vendor, `${player.name} ${message}`);
 };
 
 const friendlyCurrencyName = (currency: string): string => currency
     .replace('_', ' ')
-    .replace(/\b\w/gu, str => str.toUpperCase());
+    .replace(/\b\w/gu, (str: string) => str.toUpperCase());
 
 const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'list',
@@ -93,7 +98,12 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
         }
 
         // group vendor's items by category then display them
-        const itemCategories = {
+        const itemCategories: {
+            [key in ItemType]?: {
+                title: string;
+                items: Item[];
+            };
+        } = {
             [ItemType.POTION]: {
                 title: 'Potions',
                 items: [],
@@ -117,14 +127,17 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
         };
 
         for (const item of items) {
-            itemCategories[item.type].items.push(item);
+            if (hasValue(itemCategories[item.type])) {
+                itemCategories[item.type]!.items.push(item);
+            }
         }
 
         for (const [, itemCategory] of Object.entries(ItemType)) {
             const category = itemCategories[itemCategory];
 
-            if (category && category.items.length > 0) {
+            if (hasValue(category) && category.items.length > 0) {
                 sayAt(player, `.${center(78, category.title, 'yellow', '-')}.`);
+
                 for (const item of category.items) {
                     const vendorItem = vendorConfig.items[item.entityReference];
 
@@ -152,20 +165,22 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 
 const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'buy',
-    command: (args, player, alias, vendor) => {
-        const vendorConfig = vendor.getMeta('vendor');
+    command: (rawArgs: string, player: Player, alias: string, vendor: Npc): void => {
+        const args = rawArgs.trim();
+
+        const vendorConfig = vendor.getMeta<VendorConfig>('vendor')!;
         const tell = genTell(state, vendor, player);
 
-        if (!args || !args.length) {
+        if (args.length === 0) {
             tell('Well, what do you want to buy?');
 
             return;
         }
 
-        const items = getVendorItems(state, vendorConfig.items);
+        const items = getVendorItems(state, Object.keys(vendorConfig.items));
         const item = ArgParser.parseDot(args, items);
 
-        if (!item) {
+        if (!hasValue(item)) {
             tell("I don't carry that item and no, I won't check in back.");
 
             return;
@@ -174,10 +189,10 @@ const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
         const vendorItem = vendorConfig.items[item.entityReference];
 
         const currencyKey = `currencies.${vendorItem.currency}`;
-        const playerCurrency = player.getMeta(currencyKey);
+        const playerCurrency = player.getMeta<number>(currencyKey);
         const itemCurrency = friendlyCurrencyName(vendorItem.currency);
 
-        if (!playerCurrency || playerCurrency < vendorItem.cost) {
+        if (!hasValue(playerCurrency) || playerCurrency < vendorItem.cost) {
             tell(`You can't afford that, it costs ${vendorItem.cost} ${itemCurrency}.`);
 
             return;
@@ -190,8 +205,11 @@ const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
         }
 
         player.setMeta(currencyKey, playerCurrency - vendorItem.cost);
+
         item.hydrate(state);
+
         state.itemManager.add(item);
+
         player.addItem(item);
 
         const itemName = ItemUtils.display(item);
@@ -212,31 +230,38 @@ const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
 
 const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'sell',
-    command: (args, player, alias, vendor) => {
-        const tell = genTell(state, vendor, player);
-        const [itemArg, confirm] = args.split(' ');
+    command: (rawArgs: string, player: Player, alias: string, vendor: Npc): void => {
+        const args = rawArgs.trim();
 
-        if (!args || !args.length) {
+        const tell = genTell(state, vendor, player);
+
+        if (args.length === 0) {
             tell('What did you want to sell?');
+
+            return;
         }
 
-        const item = ArgParser.parseDot(itemArg, player.inventory.items);
+        const [itemArg, confirm] = args.split(' ');
 
-        if (!item) {
+        const item = ArgParser.parseDot(itemArg, Array.from(player.inventory.items));
+
+        if (!hasValue(item)) {
             sayAt(player, "You don't have that.");
 
             return;
         }
 
-        const sellable = item.getMeta('sellable');
+        const sellable = item.getMeta<ItemSellableConfig>('sellable');
 
-        if (!sellable) {
+        if (!hasValue(sellable)) {
             sayAt(player, "You can't sell that item.");
 
             return;
         }
 
-        if (!['poor', 'common'].includes(item.metadata.quality || 'common') && confirm !== 'sure') {
+        const itemQuality = item.getMeta<string>('quality') ?? 'common';
+
+        if (!['poor', 'common'].includes(itemQuality) && confirm !== 'sure') {
             sayAt(player, "To sell higher quality items use '<b>sell <item> sure</b>'.");
 
             return;
@@ -244,10 +269,11 @@ const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 
         const currencyKey = `currencies.${sellable.currency}`;
 
-        if (!player.getMeta('currencies')) {
+        if (!hasValue(player.getMeta<{[key: string]: number}>('currencies'))) {
             player.setMeta('currencies', {});
         }
-        player.setMeta(currencyKey, (player.getMeta(currencyKey) || 0) + sellable.value);
+
+        player.setMeta(currencyKey, (player.getMeta<number>(currencyKey) ?? 0) + sellable.value);
 
         const currency = friendlyCurrencyName(sellable.currency);
         const itemName = ItemUtils.display(item);
@@ -261,6 +287,7 @@ const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
                 currency
             )
         );
+
         state.itemManager.remove(item);
     },
 });
@@ -268,27 +295,29 @@ const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 const valueLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'value',
     aliases: ['appraise', 'offer'],
-    command: (args, player, alias, vendor) => {
+    command: (rawArgs: string, player: Player, alias: string, vendor: Npc): void => {
+        const args = rawArgs.trim();
+
         const tell = genTell(state, vendor, player);
 
-        if (!args || !args.length) {
+        if (args.length === 0) {
             tell('What did you want me to appraise?');
 
             return;
         }
 
         const [itemArg] = args.split(' ');
-        const targetItem = ArgParser.parseDot(itemArg, player.inventory.items);
+        const targetItem = ArgParser.parseDot(itemArg, Array.from(player.inventory.items));
 
-        if (!targetItem) {
+        if (!hasValue(targetItem)) {
             sayAt(player, "You don't have that.");
 
             return;
         }
 
-        const sellable = targetItem.getMeta('sellable');
+        const sellable = targetItem.getMeta<ItemSellableConfig>('sellable');
 
-        if (!sellable) {
+        if (!hasValue(sellable)) {
             sayAt(player, "You can't sell that item.");
 
             return;
@@ -326,14 +355,20 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('vendor-npcs', 'sell', sellLoader(state), ''));
         subcommands.add(new Command('vendor-npcs', 'value', valueLoader(state), ''));
 
-        return (rawArgs: string, player: Player, alias: string) => {
+        return (rawArgs: string, player: Player, alias: string): void => {
             // if list/buy aliases were used then prepend that to the args
             const args = (['vendor', 'shop'].includes(alias) ? '' : `${alias} `) + rawArgs;
+
+            if (!hasValue(player.room)) {
+                sayAt(player, "You aren't in a shop. In fact, you don't seem to be anywhere!");
+
+                return;
+            }
 
             const vendor = Array.from(player.room.npcs)
                 .find((npc: Npc) => npc.getMeta('vendor'));
 
-            if (!vendor) {
+            if (!hasValue(vendor)) {
                 sayAt(player, "You aren't in a shop.");
 
                 return;

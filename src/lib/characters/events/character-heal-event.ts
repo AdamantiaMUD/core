@@ -10,10 +10,12 @@ export interface CharacterHealPayload {
 }
 
 export class CharacterHealEvent extends MudEvent<CharacterHealPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'heal';
     public amount: number;
     public source: Heal;
     public target: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default CharacterHealEvent;

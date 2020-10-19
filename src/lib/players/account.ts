@@ -6,7 +6,7 @@ import {hasValue} from '../util/functions';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
 
-interface CharacterBrief {
+export interface CharacterBrief {
     username: string;
     isDeleted: boolean;
 }
@@ -29,7 +29,7 @@ const hashPassword = (pass: string): string => {
 /**
  * Representation of a player's account
  */
-class Account implements Serializable {
+export class Account implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public isBanned: boolean = false;
     public characters: CharacterBrief[] = [];

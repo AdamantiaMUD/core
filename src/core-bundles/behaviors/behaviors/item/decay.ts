@@ -1,7 +1,8 @@
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import Player from '../../../../lib/players/player';
 import MudEvent from '../../../../lib/events/mud-event';
 import {UpdateTickEvent} from '../../../../lib/common/events';
+import {cast} from '../../../../lib/util/functions';
 import {findCarrier} from '../../../../lib/util/items';
 import {sayAt} from '../../../../lib/communication/broadcast';
 
@@ -25,7 +26,9 @@ export const decay: BehaviorDefinition = {
 
             const now = Date.now();
 
-            let duration: number = config.duration as number ?? 60;
+            let duration: number = cast<number>(config.duration) > 0
+                ? cast<number>(config.duration)
+                : 60;
 
             duration *= 1000;
 

@@ -1,4 +1,4 @@
-import Player from '../players/player';
+import type Player from '../players/player';
 
 /**
  * Representation of an adventuring party

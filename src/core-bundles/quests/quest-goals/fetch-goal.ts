@@ -1,38 +1,38 @@
-import Inventory from '~/lib/equipment/inventory';
-import Item from '~/lib/equipment/item';
-import Player from '~/lib/players/player';
-import Quest, {QuestProgress} from '~/lib/quests/quest';
-import QuestGoal from '~/lib/quests/quest-goal';
-import SimpleMap from '~/lib/util/simple-map';
-import {
-    PlayerGetItemEvent,
-    PlayerDropItemEvent,
-    PlayerQuestStartedEvent,
-} from '~/lib/players/player-events';
-import {QuestProgressEvent} from '~/lib/quests/quest-events';
+import QuestGoal from '../../../lib/quests/quest-goal';
+import {PlayerGetItemEvent, PlayerDropItemEvent, PlayerQuestStartedEvent} from '../../../lib/players/events';
+import {QuestProgressEvent} from '../../../lib/quests/events';
 import {ItemDecayEvent} from '../../behaviors/behaviors/item/decay';
+
+import type Item from '../../../lib/equipment/item';
+import type Player from '../../../lib/players/player';
+import type Quest from '../../../lib/quests/quest';
+import type QuestProgress from '../../../lib/quests/quest-progress';
+import type SimpleMap from '../../../lib/util/simple-map';
+
+interface FetchGoalConfig extends SimpleMap {
+    title: string;
+    removeItem: boolean;
+    count: number;
+    item: string;
+}
+
+interface FetchGoalState extends SimpleMap {
+    count: number;
+}
 
 /**
  * A quest goal requiring the player picks up a certain number of a particular item
  */
-export class FetchGoal extends QuestGoal {
-    public constructor(quest: Quest, cfg: SimpleMap, player: Player) {
-        const config = {
-            title: 'Retrieve Item',
-            removeItem: false,
-            count: 1,
-            item: null,
-            ...cfg,
-        };
-
+export class FetchGoal extends QuestGoal<FetchGoalConfig, FetchGoalState> {
+    public constructor(quest: Quest, config: FetchGoalConfig, player: Player) {
         super(quest, config, player);
 
         this.state = {count: 0};
 
-        this.listen(PlayerGetItemEvent.getName(), this.getItem.bind(this));
-        this.listen(PlayerDropItemEvent.getName(), this.dropItem.bind(this));
-        this.listen(ItemDecayEvent.getName(), this.dropItem.bind(this));
-        this.listen(PlayerQuestStartedEvent.getName(), this.checkInventory.bind(this));
+        this.listen(PlayerGetItemEvent.getName(), this._getItem.bind(this));
+        this.listen(PlayerDropItemEvent.getName(), this._dropItem.bind(this));
+        this.listen(ItemDecayEvent.getName(), this._dropItem.bind(this));
+        this.listen(PlayerQuestStartedEvent.getName(), this._checkInventory.bind(this));
     }
 
     public getProgress(): QuestProgress {
@@ -66,22 +66,22 @@ export class FetchGoal extends QuestGoal {
         super.complete();
     }
 
-    private getItem(player: Player, item: Item): void {
+    private _getItem(player: Player, item: Item): void {
         if (item.entityReference !== this.config.item) {
             return;
         }
 
-        this.state.count = (this.state.count || 0) + 1;
+        this.state.count += 1;
 
-        if (this.state.count > this.config.count) {
+        if (this.state.count >= this.config.count) {
             return;
         }
 
         this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
-    private dropItem(emitter: Item | Player, item: Item): void {
-        if (!this.state.count || item.entityReference !== this.config.item) {
+    private _dropItem(emitter: Item | Player, item: Item): void {
+        if (this.state.count === 0 || item.entityReference !== this.config.item) {
             return;
         }
 
@@ -94,14 +94,10 @@ export class FetchGoal extends QuestGoal {
         this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
     }
 
-    private checkInventory(): void {
+    private _checkInventory(): void {
         // when the quest is first started check the player's inventory for items they need
-        if (!(this.player.inventory instanceof Inventory)) {
-            return;
-        }
-
         for (const [, item] of this.player.inventory.items) {
-            this.getItem(this.player, item);
+            this._getItem(this.player, item);
         }
     }
 }

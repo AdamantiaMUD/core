@@ -8,7 +8,7 @@ import type CommandDefinitionFactory from '../../../lib/commands/command-definit
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type GameStateData from '../../../lib/game-state-data';
 import type Player from '../../../lib/players/player';
-import type {RoomExitDefinition} from '../../../lib/locations/room';
+import type RoomExitDefinition from '../../../lib/locations/room-exit-definition';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'flee',

@@ -1,7 +1,9 @@
 import path from 'path';
 
 import DataSource from './data-source';
-import DataSourceConfig from './data-source-config';
+import {hasValue} from '../../util/functions';
+
+import type DataSourceConfig from './data-source-config';
 
 export class FileDataSource extends DataSource {
     /**
@@ -11,33 +13,33 @@ export class FileDataSource extends DataSource {
     public resolvePath(config: DataSourceConfig): string {
         const {path: filePath, bundle, area} = config;
 
-        if (!filePath) {
+        if (!hasValue(filePath)) {
             throw new Error('No path for DataSource');
         }
 
-        if (filePath.includes('[AREA]') && !area) {
+        if (filePath.includes('[AREA]') && !hasValue(area)) {
             throw new Error('No area configured for path with [AREA]');
         }
 
-        if (filePath.includes('[BUNDLE]') && !bundle) {
+        if (filePath.includes('[BUNDLE]') && !hasValue(bundle)) {
             throw new Error('No bundle configured for path with [BUNDLE]');
         }
 
         let safeBundle = bundle,
-            bundlesPath = this.appConfig.get('bundlesPath'),
-            rootPath = this.appConfig.get('rootPath');
+            bundlesPath = this.appConfig.get<string>('bundlesPath', ''),
+            rootPath = this.appConfig.get<string>('rootPath', '');
 
-        if (safeBundle && safeBundle.startsWith('core.')) {
+        if (safeBundle?.startsWith('core.')) {
             bundlesPath = this.appConfig.get('core.bundlesPath');
             rootPath = this.appConfig.get('core.rootPath');
             safeBundle = safeBundle.replace('core.', '');
         }
 
         return filePath
-            .replace('[AREA]', area)
-            .replace('[BUNDLE]', safeBundle)
+            .replace('[AREA]', area ?? '')
+            .replace('[BUNDLE]', safeBundle ?? '')
             .replace('[BUNDLES]', bundlesPath)
-            .replace('[DATA]', this.appConfig.get('dataPath'))
+            .replace('[DATA]', this.appConfig.get<string>('dataPath'))
             .replace('[ROOT]', rootPath)
             .replace('/', path.sep);
     }

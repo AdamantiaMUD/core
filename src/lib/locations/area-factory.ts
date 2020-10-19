@@ -1,5 +1,8 @@
-import Area, {AreaDefinition} from './area';
+import Area from './area';
 import EntityFactory from '../entities/entity-factory';
+import {hasValue} from '../util/functions';
+
+import type AreaDefinition from './area-definition';
 
 /**
  * Stores definitions of items to allow for easy creation/cloning of objects
@@ -17,7 +20,7 @@ export class AreaFactory extends EntityFactory<Area, AreaDefinition> {
     public create(entityRef: string): Area {
         const definition = this.getDefinition(entityRef);
 
-        if (!definition) {
+        if (!hasValue(definition)) {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 

@@ -4,6 +4,7 @@ import type GameEntity from './game-entity';
 import type GameEntityDefinition from './game-entity-definition';
 import type Behavior from '../behaviors/behavior';
 
+/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntityDefinition> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected _entities: Map<string, TDef> = new Map<string, TDef>();

@@ -1,7 +1,7 @@
 import type Ability from './ability';
 import type CharacterInterface from '../characters/character-interface';
 
-type AbilityRunner = (
+export type AbilityRunner = (
     skill: Ability,
     args: string | null,
     source: CharacterInterface,

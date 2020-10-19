@@ -7,8 +7,10 @@ export interface CharacterEffectAddedPayload {
 }
 
 export class CharacterEffectAddedEvent extends MudEvent<CharacterEffectAddedPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'effect-added';
     public effect: Effect;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default CharacterEffectAddedEvent;

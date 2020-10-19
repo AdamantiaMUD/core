@@ -1,8 +1,9 @@
-import fs from 'fs';
+/* eslint-disable-next-line id-length */
+import fs from 'fs-extra';
 
-import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
-import Logger from '../../util/logger';
+
+import type DataSourceConfig from './data-source-config';
 
 /**
  * Data source when you have all entities in a single json file
@@ -10,65 +11,59 @@ import Logger from '../../util/logger';
  * Config:
  *   path: string: relative path to .json file from project root
  */
-class JsonDataSource extends FileDataSource {
+export class JsonDataSource extends FileDataSource {
     public async hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<{[key: string]: T}> {
         const filepath = this.resolvePath(config);
 
-        if (!this.hasData(config)) {
+        const hasData = await this.hasData(config);
+
+        if (!hasData) {
             throw new Error(`Invalid path [${filepath}] for JsonDataSource`);
         }
 
-        return new Promise((resolve, reject) => {
-            try {
-                const realPath = fs.realpathSync(filepath);
-                const contents = fs.readFileSync(realPath, 'utf8');
+        const realPath = fs.realpathSync(filepath);
+        const contents = fs.readFileSync(realPath, 'utf8');
 
-                resolve(JSON.parse(contents));
-            }
-            catch (err) {
-                reject(err);
-            }
-        });
+        return JSON.parse(contents) as {[key: string]: T};
     }
 
-    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
-        const data = await this.fetchAll(config);
+    public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
+        const data = await this.fetchAll<T>(config);
 
-        if (!data.hasOwnProperty(id)) {
+        if (!(id in data)) {
             throw new ReferenceError(`Record with id [${id}] not found.`);
         }
 
         return data[id];
     }
 
-    public async replace<T = unknown>(config: DataSourceConfig = {}, data: T): Promise<T> {
+    public async replace<T = unknown>(data: T, config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
-        return new Promise((resolve, reject) => {
+        try {
             // eslint-disable-next-line no-magic-numbers
-            fs.writeFile(filepath, JSON.stringify(data, null, 4), err => {
-                if (err) {
-                    reject(err);
+            await fs.writeFile(filepath, JSON.stringify(data, null, 4));
+        }
+        catch {
+            // @TODO: log error / return some message
 
-                    return;
-                }
+            return false;
+        }
 
-                resolve();
-            });
-        });
+        return true;
     }
 
     public async update<T = unknown>(
-        config: DataSourceConfig = {},
         id: string,
-        data: T
-    ): Promise<T> {
+        data: T,
+        config: DataSourceConfig = {}
+    ): Promise<boolean> {
         const currentData = await this.fetchAll(config);
 
         if (Array.isArray(currentData)) {

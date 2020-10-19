@@ -1,9 +1,10 @@
 import {Chance} from 'chance';
 
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import {hasValue} from '../util/functions';
 
 import type GameStateData from '../game-state-data';
+import type SimpleMap from '../util/simple-map';
 
 export interface CurrencyDefinition {
     max: number;
@@ -34,7 +35,7 @@ export const DEFAULT_CONFIG = {
 /**
  * Map<area name, loot pools>
  */
-const loadedPools: {[key: string]: PoolDefinition} = {};
+const loadedPools: SimpleMap<SimpleMap<PoolDefinition>> = {};
 
 /**
  * A loot table is made up of one or more loot pools. The `roll()` method will
@@ -99,69 +100,71 @@ export class LootTable {
     }
 
     public async resolvePool(state: GameStateData, ref: PoolReference): Promise<PoolDefinition[]> {
-        if (typeof ref !== 'string') {
-            // pool is a ready-built pool definition
-            return [new Map(Object.entries(ref))];
-        }
+        return [];
 
-        /*
-         * otherwise pool entry is: "myarea:foopool" so try to load
-         * loot-pools.json from the appropriate area
-         */
-        const poolArea = state.areaManager.getAreaByReference(ref);
-
-        if (!hasValue(poolArea)) {
-            Logger.error(`Invalid item pool area: ${ref}`);
-
-            return [];
-        }
-
-        if (!hasValue(loadedPools[poolArea.name])) {
-            try {
-                const loader = state.entityLoaderRegistry.get('loot-pools');
-
-                if (hasValue(loader)) {
-                    loader.setBundle(poolArea.bundle);
-                    loader.setArea(poolArea.name);
-
-                    /* eslint-disable-next-line require-atomic-updates */
-                    loadedPools[poolArea.name] = await loader.fetchAll();
-                }
-            }
-            catch {
-                Logger.error(`Area has no pools definition: ${ref}`);
-
-                return [];
-            }
-        }
-
-        const availablePools = loadedPools[poolArea.name];
-
-        const [, poolName] = ref.split(':');
-
-        if (!(poolName in availablePools)) {
-            Logger.error(`Area item pools does not include ${poolName}`);
-
-            return [];
-        }
-
-        const resolvedPool = availablePools[poolName];
-
-        let pool = resolvedPool;
-
-        if (Array.isArray(resolvedPool)) {
-            const nestedResolved: PoolDefinition[][] = [];
-
-            for (const nestedPool of resolvedPool) {
-                /* eslint-disable-next-line no-await-in-loop */
-                nestedResolved.push(await this.resolvePool(state, nestedPool));
-            }
-
-            // resolved pool is a meta pool (pool of pools) so recursively resolve it
-            pool = nestedResolved.reduce((acc, val) => acc.concat(val), []);
-        }
-
-        return Array.isArray(pool) ? pool : [new Map(Object.entries(pool))];
+        // if (typeof ref !== 'string') {
+        //     // pool is a ready-built pool definition
+        //     return [new Map(Object.entries(ref))];
+        // }
+        //
+        // /*
+        //  * otherwise pool entry is: "myarea:foopool" so try to load
+        //  * loot-pools.json from the appropriate area
+        //  */
+        // const poolArea = state.areaManager.getAreaByReference(ref);
+        //
+        // if (!hasValue(poolArea)) {
+        //     Logger.error(`Invalid item pool area: ${ref}`);
+        //
+        //     return [];
+        // }
+        //
+        // if (!hasValue(loadedPools[poolArea.name])) {
+        //     try {
+        //         const loader = state.entityLoaderRegistry.get('loot-pools');
+        //
+        //         if (hasValue(loader)) {
+        //             loader.setBundle(poolArea.bundle);
+        //             loader.setArea(poolArea.name);
+        //
+        //             /* eslint-disable-next-line require-atomic-updates */
+        //             loadedPools[poolArea.name] = await loader.fetchAll<PoolDefinition>();
+        //         }
+        //     }
+        //     catch {
+        //         Logger.error(`Area has no pools definition: ${ref}`);
+        //
+        //         return [];
+        //     }
+        // }
+        //
+        // const availablePools = loadedPools[poolArea.name];
+        //
+        // const [, poolName] = ref.split(':');
+        //
+        // if (!(poolName in availablePools)) {
+        //     Logger.error(`Area item pools does not include ${poolName}`);
+        //
+        //     return [];
+        // }
+        //
+        // const resolvedPool = availablePools[poolName];
+        //
+        // let pool = resolvedPool;
+        //
+        // if (Array.isArray(resolvedPool)) {
+        //     const nestedResolved: PoolDefinition[][] = [];
+        //
+        //     for (const nestedPool of resolvedPool) {
+        //         /* eslint-disable-next-line no-await-in-loop */
+        //         nestedResolved.push(await this.resolvePool(state, nestedPool));
+        //     }
+        //
+        //     // resolved pool is a meta pool (pool of pools) so recursively resolve it
+        //     pool = nestedResolved.reduce((acc, val) => acc.concat(val), []);
+        // }
+        //
+        // return Array.isArray(pool) ? pool : [new Map(Object.entries(pool))];
     }
 
     public async roll(): Promise<string[]> {

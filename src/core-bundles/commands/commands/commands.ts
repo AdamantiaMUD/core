@@ -11,7 +11,6 @@ export const cmd: CommandDefinitionFactory = {
     command: (state: GameStateData): CommandExecutable => (args: string, player: Player): void => {
         // print standard commands
         sayAt(player, '<b><white>                  Commands</b></white>');
-        /* eslint-disable-next-line max-len */
         sayAt(player, '<b><white>===============================================</b></white>');
 
         const commands: string[] = [];
@@ -28,7 +27,6 @@ export const cmd: CommandDefinitionFactory = {
         // channels
         sayAt(player);
         sayAt(player, '<b><white>                  Channels</b></white>');
-        /* eslint-disable-next-line max-len */
         sayAt(player, '<b><white>===============================================</b></white>');
 
         const channelCommands: string[] = [];

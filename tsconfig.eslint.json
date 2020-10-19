@@ -5,12 +5,12 @@
         "baseUrl": ".",
         "declaration": false,
         "esModuleInterop": true,
-        "module": "CommonJS",
+        "module": "ESNext",
         "moduleResolution": "node",
         "outDir": "build",
         "resolveJsonModule": true,
         "sourceMap": true,
-        "target": "ES2019",
+        "target": "ESNext",
         "typeRoots": [
             "./types",
             "./node_modules/@types"
@@ -24,6 +24,7 @@
         "src/**/*",
         "src/**/*.json",
         "test/**/*",
+        "test/.eslintrc.cjs",
         ".eslintrc.cjs",
         "jest.config.cjs"
     ]

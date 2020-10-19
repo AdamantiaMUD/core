@@ -1,14 +1,15 @@
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import random from '../../../../lib/util/random';
 import {UpdateTickEvent} from '../../../../lib/common/events';
 import {hasValue} from '../../../../lib/util/functions';
 import {sayAt} from '../../../../lib/communication/broadcast';
 
 import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type Door from '../../../../lib/locations/door';
 import type GameStateData from '../../../../lib/game-state-data';
 import type MudEventListener from '../../../../lib/events/mud-event-listener';
 import type Npc from '../../../../lib/mobs/npc';
-import type {Door, Room} from '../../../../lib/locations/room';
+import type Room from '../../../../lib/locations/room';
 import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 interface WanderConfig {
@@ -31,7 +32,7 @@ const getConfig = (config: true | {[key: string]: unknown}): WanderConfig => {
     return {...defaultWanderConfig, ...config};
 };
 
-const getDoor = (npc: Npc, room?: Room): Door | null => {
+const getDoor = (npc: Npc, room: Room | null): Door | null => {
     if (!hasValue(room) || !hasValue(npc.room)) {
         return null;
     }
@@ -103,15 +104,16 @@ export const wander: BehaviorDefinition = {
 
             if (
                 !hasValue(randomRoom)
-                || !config.restrictTo.includes(randomRoom.entityReference!)
+                || !config.restrictTo.includes(randomRoom.entityReference)
                 || (config.areaRestricted && randomRoom.area !== npc.area)
             ) {
                 return;
             }
 
-            /* eslint-disable-next-line max-len */
-            Logger.verbose(`NPC [${npc.uuid}] wandering from ${npc.room.entityReference!} to ${randomRoom.entityReference!}.`);
+            Logger.verbose(`NPC [${npc.uuid}] wandering from ${npc.room.entityReference} to ${randomRoom.entityReference}.`);
+
             sayAt(npc.room, `${npc.name} wanders ${roomExit.direction}.`);
+
             npc.moveTo(randomRoom);
         },
     },

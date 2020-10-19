@@ -1,6 +1,8 @@
-import {createServer, Server} from 'net';
+import {createServer} from 'net';
 
-import AdamantiaSocket from '~/lib/communication/adamantia-socket';
+import type {Server} from 'net';
+
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 
 class TelnetServer {
     public netServer: Server;
@@ -9,8 +11,12 @@ class TelnetServer {
      * @param {function} listener   connected callback
      * @param {Object}   options options for the stream @see TelnetSocket
      */
-    public constructor(listener: Function, options = {}) {
+    public constructor(
+        listener: (socket: AdamantiaSocket) => void,
+        options: {allowHalfOpen?: boolean; pauseOnConnect?: boolean} = {}
+    ) {
         this.netServer = createServer(options, (socket: AdamantiaSocket) => {
+            /* eslint-disable-next-line no-param-reassign */
             socket.fresh = true;
             listener(socket);
         });

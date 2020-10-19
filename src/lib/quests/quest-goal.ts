@@ -4,17 +4,8 @@ import {clone} from '../util/objects';
 import type Player from '../players/player';
 import type Quest from './quest';
 import type Serializable from '../data/serializable';
+import type SerializedQuestGoal from './serialized-quest-goal';
 import type SimpleMap from '../util/simple-map';
-
-export interface QuestGoalDefinition {
-    config: SimpleMap;
-    type: string;
-}
-
-export interface SerializedQuestGoal extends SimpleMap {
-    config: SimpleMap;
-    state: SimpleMap;
-}
 
 /**
  * Representation of a goal of a quest.
@@ -22,15 +13,18 @@ export interface SerializedQuestGoal extends SimpleMap {
  * create new quest goals for quests
  * @extends EventEmitter
  */
-export class QuestGoal extends MudEventEmitter implements Serializable {
+export class QuestGoal<
+    QuestConfig extends SimpleMap = SimpleMap,
+    QuestState extends SimpleMap = SimpleMap
+> extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public config: SimpleMap;
+    public config: QuestConfig;
     public player: Player;
     public quest: Quest;
-    public state: SimpleMap = {};
+    public state: QuestState;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(quest: Quest, config: SimpleMap, player: Player) {
+    public constructor(quest: Quest, config: QuestConfig, player: Player) {
         super();
 
         // no defaults currently
@@ -48,12 +42,11 @@ export class QuestGoal extends MudEventEmitter implements Serializable {
     public getProgress(): {percent: number; display: string} {
         return {
             percent: 0,
-            /* eslint-disable-next-line max-len */
             display: '[WARNING] Quest does not have progress display configured. Please tell an admin',
         };
     }
 
-    public hydrate(state: SimpleMap): void {
+    public hydrate(state: QuestState): void {
         this.state = state;
     }
 

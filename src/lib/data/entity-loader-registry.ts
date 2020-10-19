@@ -3,15 +3,8 @@ import EntityLoader from './entity-loader';
 
 import type Config from '../util/config';
 import type DataSource from './sources/data-source';
-
-export interface EntityLoaderDefinition {
-    source: string;
-    config?: {[key: string]: unknown};
-}
-
-export interface EntityLoaderDefinitions {
-    [key: string]: EntityLoaderDefinition;
-}
+import type EntityLoaderDefinition from './entity-loader-definition';
+import type EntityLoaderDefinitions from './entity-loader-definitions';
 
 /**
  * Holds instances of configured EntityLoaders
@@ -30,6 +23,12 @@ export class EntityLoaderRegistry {
         this._initLoaders(loaderConfig);
     }
 
+    private static _validateLoader(name: string, settings: EntityLoaderDefinition): void {
+        if (!Object.prototype.hasOwnProperty.call(settings, 'source')) {
+            throw new Error(`EntityLoader [${name}] does not specify a 'source'`);
+        }
+    }
+
     private _getDataSource(entityName: string, settings: EntityLoaderDefinition): DataSource {
         const source = this._dataSourceFactory.getDataSource(settings.source);
 
@@ -42,22 +41,12 @@ export class EntityLoaderRegistry {
 
     private _initLoaders(config: EntityLoaderDefinitions): void {
         for (const [name, settings] of Object.entries(config)) {
-            this._validateLoader(name, settings);
+            EntityLoaderRegistry._validateLoader(name, settings);
 
             const source = this._getDataSource(name, settings);
             const sourceConfig = settings.config ?? {};
 
             this._loaders.set(name, new EntityLoader(source, sourceConfig));
-        }
-    }
-
-    private _validateLoader(name: string, settings: EntityLoaderDefinition): void {
-        if (!Object.prototype.hasOwnProperty.call(settings, 'source')) {
-            throw new Error(`EntityLoader [${name}] does not specify a 'source'`);
-        }
-
-        if (typeof settings.source !== 'string') {
-            throw new TypeError(`EntityLoader [${name}] has an invalid 'source'`);
         }
     }
 

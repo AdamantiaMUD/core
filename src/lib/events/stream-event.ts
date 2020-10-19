@@ -1,35 +1,32 @@
 export class StreamEvent<T> {
     public NAME: string = '';
-    public payload: T;
 
-    constructor(props?: T) {
-        if (typeof props === 'undefined') {
-            return;
-        }
+    public payload: T | undefined;
 
+    public constructor(props?: T) {
         this.payload = props;
 
+        /* eslint-disable-next-line no-constructor-return */
         return new Proxy(this, {
-            get: (obj: StreamEvent<T>, prop: 'NAME' | 'getName' | 'payload' | keyof T) => {
+            get: (obj: StreamEvent<T>, prop: 'NAME' | 'payload' | keyof T): string | T | unknown => {
                 switch (prop) {
                     case 'NAME':
                         return obj.NAME;
-
-                    case 'getName':
-                        return obj.getName;
 
                     case 'payload':
                         return obj.payload;
 
                     default:
-                        return obj.payload[prop];
+                        return obj.payload?.[prop];
                 }
             },
         });
     }
 
-    public getName(): string {
-        return this.NAME;
+    public static getName(): string {
+        const inst = new this();
+
+        return inst.NAME;
     }
 }
 

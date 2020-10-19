@@ -1,28 +1,24 @@
-import EventEmitter from 'events';
+/* eslint-disable-next-line id-length */
 import fs from 'fs';
 import path from 'path';
 
-import EventUtil from '../../../lib/events/event-util';
-import GameStateData from '../../../lib/game-state-data';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
-import {StreamLoginEvent} from './login';
+import type {EventEmitter} from 'events';
 
-export const StreamIntroEvent: StreamEventConstructor<void> = class extends StreamEvent<void> {
-    public NAME: string = 'stream-intro';
-};
+import EventUtil from '../../../lib/events/event-util';
+import {BeginLoginEvent, IntroEvent} from '../lib/events';
+import {hasValue} from '../../../lib/util/functions';
+
+import type GameStateData from '../../../lib/game-state-data';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
 
 /**
  * MOTD event
  */
 export const evt: StreamEventListenerFactory<void> = {
-    name: StreamIntroEvent.getName(),
-    listener: (state: GameState): StreamEventListener<void> => (stream: TransportStream<EventEmitter>) => {
+    name: IntroEvent.getName(),
+    listener: (state: GameStateData): StreamEventListener<void> => (stream: TransportStream<EventEmitter>): void => {
         /*
          * MotD generated here:
          * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
@@ -32,11 +28,11 @@ export const evt: StreamEventListenerFactory<void> = {
 
         const motd = fs.readFileSync(motdUri, 'utf8');
 
-        if (motd) {
+        if (hasValue(motd)) {
             EventUtil.genSay(stream)(motd);
         }
 
-        stream.dispatch(new StreamLoginEvent());
+        stream.dispatch(new BeginLoginEvent());
     },
 };
 

@@ -7,8 +7,10 @@ export interface NpcKilledPayload {
 }
 
 export class NpcKilledEvent extends MudEvent<NpcKilledPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'npc-killed';
     public killer?: Character;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default NpcKilledEvent;

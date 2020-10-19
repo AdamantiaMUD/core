@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {PlayerKilledEvent} from '../../../lib/players/events';
 import {cast, hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
@@ -60,7 +60,7 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
                 home = state.roomManager.getRoom(startingRoomRef);
             }
 
-            player.moveTo(home, () => {
+            player.moveTo(home!, () => {
                 state.commandManager.get('look')?.execute(null, player);
 
                 sayAt(player, '<b><red>Whoops, that sucked!</red></b>');

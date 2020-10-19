@@ -74,7 +74,6 @@ export const cmd: CommandDefinitionFactory = {
         ];
 
         if (!possibleSettings.includes(configToSet)) {
-            /* eslint-disable-next-line max-len */
             sayAt(player, `<red>Invalid setting: ${configToSet}. Possible settings: ${possibleSettings.join(', ')}`);
 
             state.commandManager.get('help')?.execute('config', player);

@@ -21,6 +21,7 @@ describe('combat.ts', () => {
                     makeArea('foo'),
                     {
                         description: 'Sample NPC #1',
+                        entityReference: 'sample-1',
                         id: 'sample-1',
                         keywords: [],
                         name: 'Sample Bob',

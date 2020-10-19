@@ -8,7 +8,8 @@ import type AbilityFlag from './ability-flag';
 import type Effect from '../effects/effect';
 import type SimpleMap from '../util/simple-map';
 
-export default interface AbilityDefinition {
+export interface AbilityDefinition {
+    canTargetSelf: boolean;
     configureEffect?: ((effect: Effect) => Effect) | null;
     cooldown?: number | {group: string; length: number} | null;
     effect?: string | null;
@@ -20,6 +21,7 @@ export default interface AbilityDefinition {
     requiresTarget: boolean;
     resource?: AbilityResource | AbilityResource[] | null;
     run?: ((state?: GameState) => AbilityRunner) | null;
-    targetSelf: boolean;
     type: AbilityType;
 }
+
+export default AbilityDefinition;

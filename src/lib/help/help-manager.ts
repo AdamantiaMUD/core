@@ -10,13 +10,13 @@ export class HelpManager {
     }
 
     public find(search: string): Map<string, Helpfile> {
-        const results: Map<string, Helpfile> = new Map();
+        const results: Map<string, Helpfile> = new Map<string, Helpfile>();
 
         for (const [name, help] of this.helps.entries()) {
             if (name.startsWith(search)) {
                 results.set(name, help);
             }
-            else if (help.keywords.some(keyword => keyword.includes(search))) {
+            else if (help.keywords.some((keyword: string) => keyword.includes(search))) {
                 results.set(name, help);
             }
         }

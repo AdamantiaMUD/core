@@ -1,14 +1,21 @@
-import Player from '~/lib/players/player';
-import {MudEventListener, MudEventListenerDefinition} from '~/lib/events/mud-event';
-import {PlayerQuestCompletedEvent, PlayerQuestCompletedPayload} from '~/lib/players/player-events';
-import {line, sayAt} from '~/lib/communication/broadcast';
+import {PlayerQuestCompletedEvent} from '../../../lib/players/events';
+import {hasValue} from '../../../lib/util/functions';
+import {line, sayAt} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerDefinition<PlayerQuestCompletedPayload> = {
+import type Player from '../../../lib/players/player';
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {PlayerQuestCompletedPayload} from '../../../lib/players/events';
+
+export const evt: PlayerEventListenerDefinition<PlayerQuestCompletedPayload> = {
     name: PlayerQuestCompletedEvent.getName(),
-    listener: (): MudEventListener<PlayerQuestCompletedPayload> => (player: Player, {quest}) => {
+    listener: (): PlayerEventListener<PlayerQuestCompletedPayload> => (
+        player: Player,
+        {quest}: PlayerQuestCompletedPayload
+    ): void => {
         sayAt(player, `<b><yellow>Quest Complete: ${quest.config.title}!</yellow></b>`);
 
-        if (quest.config.completionMessage) {
+        if (hasValue(quest.config.completionMessage)) {
             sayAt(player, line(80));
             sayAt(player, quest.config.completionMessage);
         }

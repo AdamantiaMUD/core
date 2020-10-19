@@ -1,4 +1,4 @@
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import PlayerRole from '../../../lib/players/player-role';
 import {hasValue} from '../../../lib/util/functions';
 import {sayAt} from '../../../lib/communication/broadcast';
@@ -19,7 +19,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        sayAt(player, player.room.entityReference!);
+        sayAt(player, player.room.entityReference);
     },
 };
 

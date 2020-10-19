@@ -1,7 +1,7 @@
 import {sprintf} from 'sprintf-js';
 
 import GameEntity from './game-entity';
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import {clone} from '../util/objects';
 import {hasValue} from '../util/functions';
 

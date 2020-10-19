@@ -1,5 +1,5 @@
 import Item from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import {
     CharacterDamagedEvent,
     CharacterDeathblowEvent,

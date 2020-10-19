@@ -38,7 +38,6 @@ export const cmd: CommandDefinitionFactory = {
             }
 
             if (targetRoom === player.room) {
-                /* eslint-disable-next-line max-len */
                 sayAt(player, "You try really hard to teleport before realizing you're already at your destination.");
 
                 return;

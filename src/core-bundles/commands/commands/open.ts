@@ -6,10 +6,11 @@ import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Door from '../../../lib/locations/door';
 import type GameStateData from '../../../lib/game-state-data';
 import type Item from '../../../lib/equipment/item';
 import type Player from '../../../lib/players/player';
-import type {Door, Room} from '../../../lib/locations/room';
+import type Room from '../../../lib/locations/room';
 
 const handleDoor = (
     player: Player,
@@ -248,7 +249,6 @@ export const cmd: CommandDefinitionFactory = {
         'lock',
         'unlock',
     ],
-    /* eslint-disable-next-line max-len */
     usage: '[open/close/lock/unlock] <item> / [open/close/lock/unlock] <door direction>/ [open/close/lock/unlock] <door direction>',
     command: (state: GameStateData): CommandExecutable => (
         rawArgs: string,
@@ -283,18 +283,19 @@ export const cmd: CommandDefinitionFactory = {
 
         if (hasValue(roomExit)) {
             const roomExitRoom = state.roomManager.getRoom(roomExit.roomId);
+
             let doorRoom = player.room,
                 targetRoom = roomExitRoom,
                 door = doorRoom.getDoor(targetRoom);
 
-            if (!hasValue(door)) {
+            if (!hasValue(door) && hasValue(roomExitRoom)) {
                 doorRoom = roomExitRoom;
                 targetRoom = player.room;
 
                 door = doorRoom.getDoor(targetRoom);
             }
 
-            if (hasValue(door)) {
+            if (hasValue(door) && hasValue(targetRoom)) {
                 handleDoor(player, doorRoom, targetRoom, door, action);
 
                 return;

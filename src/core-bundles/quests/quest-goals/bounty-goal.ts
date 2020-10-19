@@ -1,35 +1,42 @@
-import Logger from '~/lib/util/logger';
-import Player from '~/lib/players/player';
-import Quest, {QuestProgress} from '~/lib/quests/quest';
-import QuestGoal from '~/lib/quests/quest-goal';
-import SimpleMap from '~/lib/util/simple-map';
-import {PlayerEnterRoomEvent, PlayerEnterRoomPayload} from '~/lib/players/player-events';
-import {QuestProgressEvent} from '~/lib/quests/quest-events';
+import QuestGoal from '../../../lib/quests/quest-goal';
+import {PlayerEnterRoomEvent} from '../../../lib/players/events';
+import {QuestProgressEvent} from '../../../lib/quests/events';
+import {hasValue} from '../../../lib/util/functions';
 
-export class BountyGoal extends QuestGoal {
-    public constructor(quest: Quest, cfg: SimpleMap, player: Player) {
-        const config = {
-            title: 'Locate NPC',
+import type Player from '../../../lib/players/player';
+import type Quest from '../../../lib/quests/quest';
+import type QuestProgress from '../../../lib/quests/quest-progress';
+import type SimpleMap from '../../../lib/util/simple-map';
+import type {PlayerEnterRoomPayload} from '../../../lib/players/events';
 
-            // NPC ID to capture
-            npc: null,
+interface BountyGoalConfig extends SimpleMap {
+    title: string;
 
-            // Area ID to return to
-            home: null,
-            ...cfg,
-        };
+    // NPC ID to capture
+    npc: string;
 
+    // Area ID to return to
+    home?: string;
+}
+
+interface BountyGoalState extends SimpleMap {
+    delivered: boolean;
+    found: boolean;
+}
+
+export class BountyGoal extends QuestGoal<BountyGoalConfig, BountyGoalState> {
+    public constructor(quest: Quest, config: BountyGoalConfig, player: Player) {
         super(quest, config, player);
 
         this.state = {
-            found: false,
             delivered: false,
+            found: false,
         };
 
-        this.listen(PlayerEnterRoomEvent.getName(), this.enterRoom.bind(this));
+        this.listen(PlayerEnterRoomEvent.getName(), this._enterRoom.bind(this));
     }
 
-    private enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {
+    private _enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {
         const {room} = payload;
 
         if (this.state.found) {
@@ -40,23 +47,18 @@ export class BountyGoal extends QuestGoal {
             this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
         }
         else {
-            let located = false;
             const goalNpcId = this.config.npc;
 
-            if (goalNpcId === null) {
-                /* eslint-disable-next-line max-len */
-                Logger.error(`Quest: BountyGoal [${this.config.title}] does not have target npc defined.`);
-            }
-            else {
-                room.npcs.forEach(npc => {
-                    if (npc.entityReference === goalNpcId) {
-                        located = true;
-                        npc.follow(this.player);
-                    }
-                });
+            let isLocated = false;
+
+            for (const npc of room.npcs) {
+                if (npc.entityReference === goalNpcId) {
+                    isLocated = true;
+                    npc.follow(this.player);
+                }
             }
 
-            if (located) {
+            if (isLocated) {
                 this.state.found = true;
             }
 
@@ -68,7 +70,7 @@ export class BountyGoal extends QuestGoal {
         // Has target been located?
         let percent = this.state.found ? 50 : 0;
 
-        if (this.config.home) {
+        if (hasValue(this.config.home)) {
             // Has target been returned home?
             percent += this.state.delivered ? 50 : 0;
         }

@@ -7,8 +7,10 @@ export interface CharacterGainedFollowerPayload {
 }
 
 export class CharacterGainedFollowerEvent extends MudEvent<CharacterGainedFollowerPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'gained-follower';
     public follower: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default CharacterGainedFollowerEvent;

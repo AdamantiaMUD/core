@@ -1,10 +1,12 @@
-import fs from 'fs';
+/* eslint-disable-next-line id-length */
+import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 
-import DataSourceConfig from './data-source-config';
 import FileDataSource from './file-data-source';
-import Logger from '../../util/logger';
+import Logger from '../../common/logger';
+
+import type DataSourceConfig from './data-source-config';
 
 /**
  * Data source when you have all entities in a single yaml file
@@ -12,86 +14,83 @@ import Logger from '../../util/logger';
  * Config:
  *   path: string: relative path to .yml file from project root
  */
-class YamlDataSource extends FileDataSource {
-    public hasData(config: DataSourceConfig = {}): Promise<boolean> {
+export class YamlDataSource extends FileDataSource {
+    public async hasData(config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
         return Promise.resolve(fs.existsSync(filepath));
     }
 
-    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<T> {
+    public async fetchAll<T = unknown>(config: DataSourceConfig = {}): Promise<{[key: string]: T}> {
         const filepath = this.resolvePath(config);
 
-        if (!this.hasData(config)) {
+        const hasData = await this.hasData(config);
+
+        if (!hasData) {
             throw new Error(`Invalid path [${filepath}] for YamlDataSource`);
         }
 
-        return new Promise((resolve, reject) => {
-            try {
-                const realPath = fs.realpathSync(filepath);
+        try {
+            const realPath = fs.realpathSync(filepath);
 
-                Logger.verbose(`Loading file '${realPath}'`);
+            Logger.verbose(`Loading file '${realPath}'`);
 
-                const contents = fs.readFileSync(realPath, 'utf8');
+            const contents = fs.readFileSync(realPath, 'utf8');
 
-                const currentDirectory = path.dirname(realPath);
+            const currentDirectory = path.dirname(realPath);
 
-                if (contents.trim().endsWith('.yml')) {
-                    const referencedPath = path.join(currentDirectory, contents);
+            if (contents.trim().endsWith('.yml')) {
+                const referencedPath = path.join(currentDirectory, contents);
 
-                    Logger.verbose(`Loading actual file '${referencedPath}'`);
+                Logger.verbose(`Loading actual file '${referencedPath}'`);
 
-                    if (fs.existsSync(referencedPath)) {
-                        const referencedContents = fs.readFileSync(referencedPath, 'utf8');
+                if (fs.existsSync(referencedPath)) {
+                    const referencedContents = fs.readFileSync(referencedPath, 'utf8');
 
-                        resolve(yaml.load(referencedContents));
-                    }
-                    else {
-                        reject(`The file [${realPath}] referenced another file [${referencedPath}], which did not exist.`);
-                    }
+                    return yaml.load(referencedContents) as {[key: string]: T};
                 }
-                else {
-                    resolve(yaml.load(contents));
-                }
+
+                // reject(`The file [${realPath}] referenced another file [${referencedPath}], which did not exist.`);
+
+                return {};
             }
-            catch (err) {
-                reject(err);
-            }
-        });
+
+            return yaml.load(contents) as {[key: string]: T};
+        }
+        catch {
+            return {};
+        }
     }
 
-    public async fetch<T = unknown>(config: DataSourceConfig = {}, id: string): Promise<T> {
-        const data = await this.fetchAll(config);
+    public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
+        const data = await this.fetchAll<T>(config);
 
-        if (!data.hasOwnProperty(id)) {
+        if (!(id in data)) {
             throw new ReferenceError(`Record with id [${id}] not found.`);
         }
 
         return data[id];
     }
 
-    public async replace<T = unknown>(config: DataSourceConfig = {}, data: T): Promise<T> {
+    public async replace<T = unknown>(data: T, config: DataSourceConfig = {}): Promise<boolean> {
         const filepath = this.resolvePath(config);
 
-        return new Promise((resolve, reject) => {
-            fs.writeFile(filepath, yaml.dump(data), err => {
-                if (err) {
-                    reject(err);
+        try {
+            await fs.writeFile(filepath, yaml.dump(data));
+        }
+        catch {
+            return false;
+        }
 
-                    return;
-                }
-
-                resolve();
-            });
-        });
+        return true;
     }
 
     public async update<T = unknown>(
-        config: DataSourceConfig = {},
         id: string,
-        data: T
-    ): Promise<T> {
-        const currentData = await this.fetchAll(config);
+        data: T,
+        config: DataSourceConfig = {}
+    ): Promise<boolean> {
+        const currentData = await this.fetchAll<T>(config);
 
         if (Array.isArray(currentData)) {
             throw new TypeError('Yaml data stored as array, cannot update by id');
@@ -99,7 +98,7 @@ class YamlDataSource extends FileDataSource {
 
         currentData[id] = data;
 
-        return this.replace<T>(config, currentData);
+        return this.replace(currentData, config);
     }
 }
 

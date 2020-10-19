@@ -2,7 +2,7 @@ import produce from 'immer';
 
 import type {Draft} from 'immer';
 
-import Logger from '../util/logger';
+import Logger from '../common/logger';
 import Quest from './quest';
 import {
     PlayerQuestCompletedEvent,
@@ -22,8 +22,8 @@ import {hasValue} from '../util/functions';
 import type AbstractQuest from './abstract-quest';
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
+import type QuestDefinition from './quest-definition';
 import type SimpleMap from '../util/simple-map';
-import type {QuestDefinition} from './quest';
 import type {QuestProgressPayload} from './events';
 
 export class QuestFactory {
@@ -124,7 +124,7 @@ export class QuestFactory {
                 const rewardClass = state.questRewardManager.get(reward.type);
 
                 if (hasValue(rewardClass)) {
-                    rewardClass.reward(state, qst, reward.config, player);
+                    rewardClass.reward(state, qst, player, reward.config);
                     player.dispatch(new QuestRewardEvent({reward}));
                 }
                 else {

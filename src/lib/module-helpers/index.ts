@@ -6,3 +6,6 @@ export * from './effect-module';
 export * from './entity-script-module';
 export * from './input-event-module';
 export * from './player-event-module';
+export * from './quest-goal-module';
+export * from './quest-reward-module';
+export * from './server-event-module';

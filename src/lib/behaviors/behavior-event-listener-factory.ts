@@ -1,6 +1,7 @@
 import type GameStateData from '../game-state-data';
 import type MudEventListener from '../events/mud-event-listener';
 
-export type BehaviorEventListenerFactory<T> = (state?: GameStateData) => MudEventListener<T>;
+/* eslint-disable-next-line max-len */
+export type BehaviorEventListenerFactory<T extends unknown[] = unknown[]> = (state?: GameStateData) => MudEventListener<T>;
 
 export default BehaviorEventListenerFactory;

@@ -1,11 +1,17 @@
-import Quest from '~/lib/quests/quest';
-import {MudEventListener, MudEventListenerDefinition} from '~/lib/events/mud-event';
-import {QuestProgressEvent, QuestProgressPayload} from '~/lib/quests/quest-events';
-import {sayAt} from '~/lib/communication/broadcast';
+import {QuestProgressEvent} from '../../../lib/quests/events';
+import {sayAt} from '../../../lib/communication/broadcast';
 
-export const evt: MudEventListenerDefinition<QuestProgressPayload> = {
+import type Quest from '../../../lib/quests/quest';
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type {QuestProgressPayload} from '../../../lib/quests/events';
+
+export const evt: MudEventListenerDefinition<[Quest, QuestProgressPayload]> = {
     name: QuestProgressEvent.getName(),
-    listener: (): MudEventListener<QuestProgressPayload> => (quest: Quest, {progress}) => {
+    listener: (): MudEventListener<[Quest, QuestProgressPayload]> => (
+        quest: Quest,
+        {progress}: QuestProgressPayload
+    ): void => {
         sayAt(quest.player, `\r\n<b><yellow>${progress.display}</yellow></b>`);
     },
 };

@@ -1,12 +1,19 @@
-import GameStateData from '../../../lib/game-state-data';
-import Player from '../../../lib/players/player';
-import {CharacterEquipItemEvent, CharacterEquipItemPayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CharacterEquipItemEvent} from '../../../lib/characters/events';
+import {hasValue} from '../../../lib/util/functions';
 
-export const evt: MudEventListenerDefinition<CharacterEquipItemPayload> = {
+import type GameStateData from '../../../lib/game-state-data';
+import type MudEventListener from '../../../lib/events/mud-event-listener';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
+import type Player from '../../../lib/players/player';
+import type {CharacterEquipItemPayload} from '../../../lib/characters/events';
+
+export const evt: MudEventListenerDefinition<[Player, CharacterEquipItemPayload]> = {
     name: CharacterEquipItemEvent.getName(),
-    listener: (state: GameState): MudEventListener<CharacterEquipItemPayload> => (player: Player, {slot, item}) => {
-        if (!item.getMeta('stats')) {
+    listener: (state: GameStateData): MudEventListener<[Player, CharacterEquipItemPayload]> => (
+        player: Player,
+        {slot, item}: CharacterEquipItemPayload
+    ): void => {
+        if (!hasValue(item.getMeta('stats'))) {
             return;
         }
 

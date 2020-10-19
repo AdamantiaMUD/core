@@ -7,7 +7,7 @@ import type TransportStream from '../communication/transport-stream';
 /**
  * Helper methods for colored output during input-events
  */
-const EventUtil = {
+export const EventUtil = {
     /**
      * Generate a function for writing colored output to a socket with a newline
      */

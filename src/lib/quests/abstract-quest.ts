@@ -1,4 +1,4 @@
-import type {QuestDefinition} from './quest';
+import type QuestDefinition from './quest-definition';
 
 export interface AbstractQuest {
     area: string;

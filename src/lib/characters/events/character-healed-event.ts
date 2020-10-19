@@ -8,9 +8,11 @@ export interface CharacterHealedPayload {
 }
 
 export class CharacterHealedEvent extends MudEvent<CharacterHealedPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'healed';
     public amount: number;
     public source: Heal;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default CharacterHealedEvent;

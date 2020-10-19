@@ -17,7 +17,7 @@ export class Helpfile {
         this.bundle = bundle;
         this.name = name;
 
-        if (!hasValue(options) || options.body?.length === 0) {
+        if (!hasValue(options) || options.body.length === 0) {
             throw new Error(`Help file [${name}] has no content.`);
         }
 

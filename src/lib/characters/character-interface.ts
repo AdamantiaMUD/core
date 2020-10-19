@@ -1,5 +1,6 @@
 import type {EventEmitter} from 'events';
 
+import type Broadcastable from '../communication/broadcastable';
 import type CharacterAttributes from '../attributes/character-attributes';
 import type CharacterCombat from '../combat/character-combat';
 import type CommandQueue from '../commands/command-queue';
@@ -13,7 +14,7 @@ import type ScriptableEntityInterface from '../entities/scriptable-entity-interf
 import type TransportStream from '../communication/transport-stream';
 import type {SerializedCharacter} from './character';
 
-export interface CharacterInterface extends ScriptableEntityInterface {
+export interface CharacterInterface extends ScriptableEntityInterface, Broadcastable {
     readonly attributes: CharacterAttributes;
     readonly combat: CharacterCombat;
     readonly commandQueue: CommandQueue;

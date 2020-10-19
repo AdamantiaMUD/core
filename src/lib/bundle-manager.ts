@@ -8,18 +8,20 @@ import Command from './commands/command';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import Helpfile from './help/helpfile';
-import Logger, {logAndRethrow} from './util/logger';
+import Logger, {logAndRethrow} from './common/logger';
 import {cast, hasValue} from './util/functions';
 
+import type AreaDefinition from './locations/area-definition';
+import type AreaManifest from './locations/area-manifest';
 import type BehaviorManager from './behaviors/behavior-manager';
+import type CommandDefinition from './commands/command-definition';
 import type GameEntity from './entities/game-entity';
 import type GameEntityDefinition from './entities/game-entity-definition';
 import type GameStateData from './game-state-data';
 import type HelpfileOptions from './help/helpfile-options';
+import type QuestDefinition from './quests/quest-definition';
 import type ScriptableEntity from './entities/scriptable-entity';
 import type ScriptableEntityDefinition from './entities/scriptable-entity-definition';
-import type SimpleMap from './util/simple-map';
-import type {AreaDefinition, AreaManifest} from './locations/area';
 import type {
     AttributeModule,
     BehaviorModule,
@@ -29,9 +31,10 @@ import type {
     EntityScriptModule,
     InputEventModule,
     PlayerEventModule,
+    QuestGoalModule,
+    QuestRewardModule,
+    ServerEventModule,
 } from './module-helpers';
-import type {CommandDefinition} from './commands/command';
-import type {QuestDefinition} from './quests/quest';
 
 export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
 
@@ -120,6 +123,7 @@ export class BundleManager {
 
         const definition: AreaDefinition = {
             bundle: bundle,
+            id: areaName,
             manifest: manifest,
             npcs: [],
             quests: [],
@@ -129,14 +133,16 @@ export class BundleManager {
         Logger.verbose(`LOAD: Area \`${areaName}\`: Quests...`);
         definition.quests = await this._loadQuests(bundle, areaName);
 
-        // Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
-        // definition.items = await this._loadEntities(
-        //     bundle,
-        //     bundlePath,
-        //     areaName,
-        //     'items',
-        //     this._state.itemFactory
-        // );
+        /*
+         * Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
+         * definition.items = await this._loadEntities(
+         *     bundle,
+         *     bundlePath,
+         *     areaName,
+         *     'items',
+         *     this._state.itemFactory
+         * );
+         */
 
         Logger.verbose(`LOAD: Area \`${areaName}\`: NPCs...`);
         definition.npcs = await this._loadEntities(
@@ -177,7 +183,7 @@ export class BundleManager {
             return;
         }
 
-        const areas = await loader.fetchAll<SimpleMap<AreaManifest>>();
+        const areas = await loader.fetchAll<AreaManifest>();
 
         for (const [name, manifest] of Object.entries(areas)) {
             this._areas.push(name);
@@ -412,10 +418,10 @@ export class BundleManager {
             return [];
         }
 
-        const entities = await loader.fetchAll<EDef[]>();
+        const entities = await loader.fetchAll<EDef>();
         const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaName);
 
-        return Promise.all(entities.map(async (entity: EDef) => {
+        return Promise.all(Object.values(entities).map(async (entity: EDef) => {
             const ref = EntityFactory.createRef(areaName, entity.id);
 
             factory.setDefinition(ref, entity);
@@ -646,7 +652,8 @@ export class BundleManager {
             if (Data.isScriptFile(goalPath, goalFile)) {
                 const goalName = path.basename(goalFile, path.extname(goalFile));
 
-                const goalImport = await import(goalPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const goalImport: QuestGoalModule = await import(goalPath);
                 const loader = goalImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Goals -> ${goalName}`);
@@ -676,7 +683,8 @@ export class BundleManager {
             if (Data.isScriptFile(rewardPath, rewardFile)) {
                 const rewardName = path.basename(rewardFile, path.extname(rewardFile));
 
-                const rewardImport = await import(rewardPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const rewardImport: QuestRewardModule = await import(rewardPath);
                 const loader = rewardImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Rewards -> ${rewardName}`);
@@ -693,19 +701,21 @@ export class BundleManager {
     private async _loadQuests(bundle: string, areaName: string): Promise<string[]> {
         const loader = this._state.entityLoaderRegistry.get('quests');
 
-        loader.setBundle(bundle);
-        loader.setArea(areaName);
+        let quests: {[key: string]: QuestDefinition} = {};
 
-        let quests: QuestDefinition[] = [];
+        if (hasValue(loader)) {
+            loader.setBundle(bundle);
+            loader.setArea(areaName);
 
-        try {
-            quests = await loader.fetchAll();
+            try {
+                quests = await loader.fetchAll<QuestDefinition>();
+            }
+            catch {
+                // no-op
+            }
         }
-        catch {
-            // no-op
-        }
 
-        return quests.map(quest => {
+        return Object.values(quests).map((quest: QuestDefinition) => {
             const ref = `${areaName}:${quest.id}`;
 
             Logger.verbose(`LOAD: ${bundle} - Areas -> ${areaName} -> Quests -> ${ref}`);
@@ -731,7 +741,8 @@ export class BundleManager {
             const eventPath = path.join(uri, eventFile);
 
             if (Data.isScriptFile(eventPath, eventFile)) {
-                const eventImport = await import(eventPath);
+                /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                const eventImport: ServerEventModule = await import(eventPath);
                 const serverEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Server Events -> ${serverEvent.name}`);

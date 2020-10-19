@@ -1,95 +1,106 @@
-import EventEmitter from 'events';
-import {AddressInfo} from 'net';
+import {EventEmitter} from 'events';
+import type {ExecFileOptionsWithOtherEncoding} from 'child_process';
 
-import AdamantiaSocket from '~/lib/communication/adamantia-socket';
+import type {AddressInfo} from 'net';
+
 import Options from './options';
 import Sequences from './sequences';
+import {hasValue} from '../../../lib/util/functions';
+
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 
 export type Willingness = Sequences.WILL | Sequences.WONT | Sequences.DO | Sequences.DONT;
 
+type BufferEncoding = ExecFileOptionsWithOtherEncoding['encoding'];
+
 export class TelnetSocket extends EventEmitter {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public echoing: boolean;
-    public gaMode: Sequences;
+    public gaMode: Sequences | null = null;
     public maxInputLength: number;
-    public socket: AdamantiaSocket;
+    public socket: AdamantiaSocket | null = null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(opts: {maxInputLength?: number; [key: string]: unknown} = {}) {
         super();
 
-        this.socket = null;
-        this.maxInputLength = opts.maxInputLength || 512;
+        this.maxInputLength = opts.maxInputLength ?? 512;
         this.echoing = true;
-        this.gaMode = null;
     }
 
     public get readable(): boolean {
-        return this.socket.readable;
+        return this.socket?.readable ?? false;
     }
 
     public get writable(): boolean {
-        return this.socket.writable;
+        return this.socket?.writable ?? false;
     }
 
-    public address(): AddressInfo | string {
-        return this.socket && this.socket.address();
+    public address(): AddressInfo | string | null {
+        return this.socket?.address() ?? null;
     }
 
-    public end(str: Uint8Array | string = '', encoding: string = 'utf8'): void {
-        this.socket.end(str, encoding);
+    public end(str: Uint8Array | string = '', encoding: BufferEncoding = 'utf8'): void {
+        this.socket?.end(str, encoding);
     }
 
-    public write(data: Uint8Array | string, encoding?: string): void {
-        if (!Buffer.isBuffer(data)) {
-            data = Buffer.from(data as string, encoding as BufferEncoding);
+    public write(data: Uint8Array | string, encoding?: BufferEncoding): void {
+        let dataBuf: Buffer;
+
+        if (Buffer.isBuffer(data)) {
+            dataBuf = data;
+        }
+        else {
+            dataBuf = Buffer.from(data as string, encoding);
         }
 
         // escape IACs by duplicating
         let iacs = 0;
 
-        for (const val of data.values()) {
+        for (const val of dataBuf.values()) {
             if (val === Sequences.IAC) {
                 iacs += 1;
             }
         }
 
-        if (iacs) {
-            const b = Buffer.alloc(data.length + iacs);
+        if (iacs > 0) {
+            const buf = Buffer.alloc(data.length + iacs);
 
             for (let i = 0, j = 0; i < data.length; i++) {
-                b[j] = data[i];
+                buf[j] = dataBuf[i];
                 j += 1;
 
                 if (data[i] === Sequences.IAC) {
-                    b[j] = Sequences.IAC;
+                    buf[j] = Sequences.IAC;
                     j += 1;
                 }
             }
         }
 
         try {
-            if (!this.socket.ended && !this.socket.finished) {
-                this.socket.write(data);
+            if (!this.socket?.ended && !this.socket?.finished) {
+                this.socket?.write(data);
             }
         }
-        catch (e) {
-            this.emit('error', e);
+        catch (err: unknown) {
+            this.emit('error', err);
         }
     }
 
-    public setEncoding(encoding: string): void {
-        this.socket.setEncoding(encoding);
+    public setEncoding(encoding: BufferEncoding): void {
+        this.socket?.setEncoding(encoding);
     }
 
     public pause(): void {
-        this.socket.pause();
+        this.socket?.pause();
     }
 
     public resume(): void {
-        this.socket.resume();
+        this.socket?.resume();
     }
 
     public destroy(): void {
-        this.socket.destroy();
+        this.socket?.destroy();
     }
 
     /**
@@ -99,13 +110,13 @@ export class TelnetSocket extends EventEmitter {
         const seq = [Sequences.IAC, willingness];
 
         if (Array.isArray(command)) {
-            seq.push.apply(seq, command);
+            seq.push(...command);
         }
         else {
             seq.push(command);
         }
 
-        this.socket.write(Buffer.from(seq));
+        this.socket?.write(Buffer.from(seq));
     }
 
     public toggleEcho(): void {
@@ -121,45 +132,56 @@ export class TelnetSocket extends EventEmitter {
     public sendGMCP(gmcpPackage: string, data: unknown): void {
         const gmcpData = `${gmcpPackage} ${JSON.stringify(data)}`;
         const dataBuffer = Buffer.from(gmcpData);
-        const seqStartBuffer = Buffer.from([Sequences.IAC, Sequences.SB, Options.OPT_GMCP]);
+        const seqStartBuffer = Buffer.from([
+            Sequences.IAC,
+            Sequences.SB,
+            Options.OPT_GMCP,
+        ]);
         const seqEndBuffer = Buffer.from([Sequences.IAC, Sequences.SE]);
 
-        this.socket.write(Buffer.concat([seqStartBuffer, dataBuffer, seqEndBuffer], gmcpData.length + 5));
+        this.socket?.write(Buffer.concat(
+            [
+                seqStartBuffer,
+                dataBuffer,
+                seqEndBuffer,
+            ],
+            gmcpData.length + 5
+        ));
     }
 
     public attach(connection: AdamantiaSocket): void {
         this.socket = connection;
 
-        let inputbuf = Buffer.alloc(this.maxInputLength),
-            inputlen = 0;
+        let inputBuf = Buffer.alloc(this.maxInputLength),
+            inputLen = 0;
 
         /**
          * @event TelnetSocket#error
          * @param {Error} err
          */
-        connection.on('error', err => this.emit('error', err));
+        connection.on('error', (err: unknown) => this.emit('error', err));
 
         this.socket.write('\r\n');
 
-        connection.on('data', databuf => {
-            databuf.copy(inputbuf, inputlen);
-            inputlen += databuf.length;
+        connection.on('data', (dataBuf: Buffer) => {
+            dataBuf.copy(inputBuf, inputLen);
+            inputLen += dataBuf.length;
 
             /*
              * immediately start consuming data if we begin receiving normal data
              * instead of telnet negotiation
              */
-            if (connection.fresh && databuf[0] !== Sequences.IAC) {
+            if (connection.fresh && dataBuf[0] !== Sequences.IAC) {
                 connection.fresh = false;
             }
 
-            databuf = inputbuf.slice(0, inputlen);
+            dataBuf = inputBuf.slice(0, inputLen);
 
             /*
              * fresh makes sure that even if we haven't gotten a newline but the client
              * sent us some initial negotiations to still interpret them
              */
-            if (!databuf.toString().match(/[\r\n]/u) && !connection.fresh) {
+            if (!hasValue((/[\r\n]/u).exec(dataBuf.toString())) && !connection.fresh) {
                 return;
             }
 
@@ -167,24 +189,25 @@ export class TelnetSocket extends EventEmitter {
              * If multiple commands were sent \r\n separated in the same packet process
              * them separately. Some client auto-connect features do this
              */
-            let bucket = [];
+            let bucket: number[] = [];
 
-            for (let i = 0; i < inputlen; i++) {
-                if (databuf[i] !== 10) { // \n
-                    bucket.push(databuf[i]);
-                }
-                else {
+            for (let i = 0; i < inputLen; i++) {
+                // LF character (`\n`)
+                if (dataBuf[i] === 10) {
                     this.input(Buffer.from(bucket));
                     bucket = [];
                 }
+                else {
+                    bucket.push(dataBuf[i]);
+                }
             }
 
-            if (bucket.length) {
+            if (bucket.length > 0) {
                 this.input(Buffer.from(bucket));
             }
 
-            inputbuf = Buffer.alloc(this.maxInputLength);
-            inputlen = 0;
+            inputBuf = Buffer.alloc(this.maxInputLength);
+            inputLen = 0;
         });
 
         connection.on('close', () => {
@@ -199,7 +222,7 @@ export class TelnetSocket extends EventEmitter {
      * Parse telnet input socket, swallowing any negotiations
      * and emitting clean, fresh data
      *
-     * @param {Buffer} inputbuf
+     * @param {Buffer} inputBuf
      *
      * @fires TelnetSocket#DO
      * @fires TelnetSocket#DONT
@@ -210,24 +233,19 @@ export class TelnetSocket extends EventEmitter {
      * @fires TelnetSocket#data
      * @fires TelnetSocket#unknownAction
      */
-    public input(inputbuf: Buffer): void {
+    public input(inputBuf: Buffer): void {
         // strip any negotiations
-        const cleanbuf = Buffer.alloc(inputbuf.length);
+        const cleanBuf = Buffer.alloc(inputBuf.length);
 
         let i = 0,
-            cleanlen = 0,
-            subnegBuffer = null,
-            subnegOpt = null;
+            cleanLen = 0,
+            subNegBuffer: Buffer | null = null,
+            subNegOpt: number | null = null;
 
-        while (i < inputbuf.length) {
-            if (inputbuf[i] !== Sequences.IAC) {
-                cleanbuf[cleanlen] = inputbuf[i];
-                cleanlen += 1;
-                i += 1;
-            }
-            else {
-                const cmd = inputbuf[i + 1];
-                const opt = inputbuf[i + 2];
+        while (i < inputBuf.length) {
+            if (inputBuf[i] === Sequences.IAC) {
+                const cmd = inputBuf[i + 1];
+                const opt = inputBuf[i + 2];
 
                 switch (cmd) {
                     case Sequences.DO:
@@ -283,36 +301,42 @@ export class TelnetSocket extends EventEmitter {
 
                     case Sequences.SB: {
                         i += 2;
-                        subnegOpt = inputbuf[i];
+                        subNegOpt = inputBuf[i];
 
                         i += 1;
-                        subnegBuffer = Buffer.alloc(inputbuf.length - i, ' ');
+                        subNegBuffer = Buffer.alloc(inputBuf.length - i, ' ');
 
-                        let sublen = 0;
+                        let subLen = 0;
 
-                        while (inputbuf[i] !== Sequences.IAC) {
-                            subnegBuffer[sublen] = inputbuf[i];
+                        while (inputBuf[i] !== Sequences.IAC) {
+                            subNegBuffer[subLen] = inputBuf[i];
 
-                            sublen += 1;
+                            subLen += 1;
                             i += 1;
                         }
                         break;
                     }
 
                     case Sequences.SE:
-                        if (subnegOpt === Options.OPT_GMCP) {
-                            let gmcpString = subnegBuffer.toString().trim(),
-                                [gmcpPackage, ...gmcpData] = gmcpString.split(' ');
+                        if (subNegOpt === Options.OPT_GMCP) {
+                            const gmcpString = subNegBuffer?.toString().trim() ?? '';
+                            const gmcpData = gmcpString.split(' ');
 
-                            gmcpData = gmcpData.join(' ');
-                            gmcpData = gmcpData.length ? JSON.parse(gmcpData) : null;
+                            const gmcpPackage = gmcpData.shift();
+
+                            const gmcpPayloadString = gmcpData.join(' ');
+
+                            /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
+                            const gmcpPayload = gmcpPayloadString.length > 0
+                                ? JSON.parse(gmcpPayloadString)
+                                : null;
 
                             /**
                              * @event TelnetSocket#GMCP
                              * @param {string} gmcpPackage
                              * @param {*} gmcpData
                              */
-                            this.emit('GMCP', gmcpPackage, gmcpData);
+                            this.emit('GMCP', gmcpPackage, gmcpPayload);
                         }
                         else {
                             /**
@@ -320,7 +344,7 @@ export class TelnetSocket extends EventEmitter {
                              * @param {number} subnegOpt SB option
                              * @param {Buffer} subnegBuffer Buffer of data inside subnegotiation package
                              */
-                            this.emit('SUBNEG', subnegOpt, subnegBuffer);
+                            this.emit('SUBNEG', subNegOpt, subNegBuffer);
                         }
 
                         i += 2;
@@ -338,9 +362,14 @@ export class TelnetSocket extends EventEmitter {
                         break;
                 }
             }
+            else {
+                cleanBuf[cleanLen] = inputBuf[i];
+                cleanLen += 1;
+                i += 1;
+            }
         }
 
-        if (this.socket.fresh) {
+        if (this.socket?.fresh) {
             this.socket.fresh = false;
 
             return;
@@ -350,7 +379,7 @@ export class TelnetSocket extends EventEmitter {
          * @event TelnetSocket#data
          * @param {Buffer} data
          */
-        this.emit('data', cleanbuf.slice(0, cleanlen - 1));
+        this.emit('data', cleanBuf.slice(0, cleanLen - 1));
     }
 }
 

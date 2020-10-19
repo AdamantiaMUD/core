@@ -1,20 +1,14 @@
-import Player from '../../../lib/players/player';
 import updateAttributes from '../util/update-attributes';
-import {CharacterAttributeUpdateEvent, CharacterAttributeUpdatePayload} from '../../../lib/characters/character-events';
-import {MudEventListener, MudEventListenerDefinition} from '../../../lib/events/mud-event';
+import {CharacterAttributeUpdateEvent} from '../../../lib/characters/events';
+
+import type PlayerEventListener from '../../../lib/events/player-event-listener';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type {CharacterAttributeUpdatePayload} from '../../../lib/characters/events';
 
 /* eslint-disable-next-line arrow-body-style */
-export const evt: MudEventListenerDefinition<CharacterAttributeUpdatePayload> = {
+export const evt: PlayerEventListenerDefinition<CharacterAttributeUpdatePayload> = {
     name: CharacterAttributeUpdateEvent.getName(),
-    listener: (): MudEventListener<CharacterAttributeUpdatePayload> =>
-
-        /**
-         * @listens Player#attributeUpdate
-         */
-        (player: Player) => {
-            updateAttributes(player);
-        }
-    ,
+    listener: (): PlayerEventListener<CharacterAttributeUpdatePayload> => updateAttributes,
 };
 
 export default evt;

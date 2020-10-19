@@ -1,5 +1,5 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {CombatError} from '../../../lib/combat/errors';
 import {cast, hasValue} from '../../../lib/util/functions';
 
@@ -50,27 +50,22 @@ export const cmd: CommandDefinitionFactory = {
 
         switch (true) {
             case player.level - target.level > 4:
-                /* eslint-disable-next-line max-len */
                 description = 'They are much weaker than you. You would have no trouble dealing with a few of them at once.';
                 break;
 
             case target.level - player.level > 9:
-                /* eslint-disable-next-line max-len */
                 description = "They are <b>much</b> stronger than you. They will kill you, and it will hurt the whole time you're dying.";
                 break;
 
             case target.level - player.level > 5:
-                /* eslint-disable-next-line max-len */
                 description = 'They are quite a bit more powerful than you. You would need to get lucky to defeat them.';
                 break;
 
             case target.level - player.level > 3:
-                /* eslint-disable-next-line max-len */
                 description = 'They are a bit stronger than you. You may survive, but it would be hard won.';
                 break;
 
             default:
-                /* eslint-disable-next-line max-len */
                 description = 'You are nearly evenly matched. You should be wary fighting more than one at a time.';
                 break;
         }

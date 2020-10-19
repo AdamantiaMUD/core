@@ -2,7 +2,7 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import ItemUtil from '../../../lib/util/items';
 import Item from '../../../lib/equipment/item';
 import ItemType from '../../../lib/equipment/item-type';
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import Player from '../../../lib/players/player';
 import {at, sayAt} from '../../../lib/communication/broadcast';
 import {hasValue} from '../../../lib/util/functions';
@@ -14,7 +14,7 @@ import type CommandExecutable from '../../../lib/commands/command-executable';
 import type GameEntityInterface from '../../../lib/entities/game-entity-interface';
 import type GameStateData from '../../../lib/game-state-data';
 import type Npc from '../../../lib/mobs/npc';
-import type {RoomExitDefinition} from '../../../lib/locations/room';
+import type RoomExitDefinition from '../../../lib/locations/room-exit-definition';
 import type {UsableConfig} from '../../behaviors/behaviors/item/usable';
 
 const exitMap = new Map<string, string>();
@@ -78,7 +78,7 @@ const lookRoom = (state: GameStateData, player: Player): void => {
 
     const exitList: string = foundExits.map((exit: RoomExitDefinition): string => {
         const exitRoom = state.roomManager.getRoom(exit.roomId);
-        const door = room.getDoor(exitRoom) ?? exitRoom.getDoor(room);
+        const door = room.getDoor(exitRoom) ?? exitRoom?.getDoor(room) ?? null;
 
         if (hasValue(door) && (door.locked || door.closed)) {
             return `#${exitMap.get(exit.direction)!}`;

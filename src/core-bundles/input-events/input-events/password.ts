@@ -1,39 +1,31 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamChooseCharacterEvent} from './choose-character';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+import {ChooseCharacterEvent, InputPasswordEvent} from '../lib/events';
+import {hasValue} from '../../../lib/util/functions';
+
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {InputPasswordPayload} from '../lib/events';
 
 const passwordAttempts = {};
 const maxFailedAttempts = 2;
 
-export interface StreamAccountPasswordPayload {
-    account: Account;
-}
-
-export const StreamAccountPasswordEvent: StreamEventConstructor<StreamAccountPasswordPayload> = class extends StreamEvent<StreamAccountPasswordPayload> {
-    public NAME: string = 'stream-account-password';
-    public account: Account;
-};
-
 /**
  * Account password event
  */
-export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
-    name: StreamAccountPasswordEvent.getName(),
-    listener: (): StreamEventListener<StreamAccountPasswordPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
+export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
+    name: InputPasswordEvent.getName(),
+    listener: (): StreamEventListener<InputPasswordPayload> => (
+        stream: TransportStream<EventEmitter>,
+        {account}: InputPasswordPayload
+    ): void => {
         const write = EventUtil.genWrite(stream);
 
         const name = account.username;
 
-        if (!passwordAttempts[name]) {
+        if (!hasValue(passwordAttempts[name])) {
             passwordAttempts[name] = 0;
         }
 
@@ -55,13 +47,13 @@ export const evt: StreamEventListenerFactory<StreamAccountPasswordPayload> = {
             const pass = buf.toString().trim();
 
             if (account.checkPassword(pass)) {
-                stream.dispatch(new StreamChooseCharacterEvent({account}));
+                stream.dispatch(new ChooseCharacterEvent({account}));
             }
             else {
                 write('<red>Incorrect password.</red>\r\n');
                 passwordAttempts[name] += 1;
 
-                stream.dispatch(new StreamAccountPasswordEvent({account}));
+                stream.dispatch(new InputPasswordEvent({account}));
             }
         });
     },

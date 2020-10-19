@@ -5,12 +5,12 @@
         "baseUrl": ".",
         "declaration": false,
         "esModuleInterop": true,
-        "module": "CommonJS",
+        "module": "ESNext",
         "moduleResolution": "node",
         "outDir": "build",
         "resolveJsonModule": true,
         "sourceMap": true,
-        "target": "ES2019",
+        "target": "ESNext",
         "typeRoots": [
             "./types",
             "./node_modules/@types"
@@ -21,7 +21,6 @@
     "exclude": ["node_modules"],
     "include": [
         "src/**/*",
-        "src/**/*.json",
-        "test/**/*"
+        "src/**/*.json"
     ]
 }

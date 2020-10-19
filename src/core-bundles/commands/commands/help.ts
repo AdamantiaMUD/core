@@ -1,4 +1,4 @@
-import Logger from '../../../lib/util/logger';
+import Logger from '../../../lib/common/logger';
 import {
     center,
     line,
@@ -34,7 +34,7 @@ const render = (state: GameStateData, helpFile: Helpfile): string => {
         }
     }
     else if (hasValue(helpFile.channel)) {
-        header += formatHeaderItem('Syntax', state.channelManager.get(helpFile.channel).getUsage());
+        header += formatHeaderItem('Syntax', state.channelManager.get(helpFile.channel)!.getUsage());
     }
 
     let footer = bar;
@@ -78,11 +78,9 @@ const searchHelpFiles = (rawArgs: string, player: Player, state: GameStateData):
         return;
     }
 
-    /* eslint-disable max-len */
     sayAt(player, '<yellow>---------------------------------------------------------------------------------</yellow>');
     sayAt(player, '<white>Search Results:</white>');
     sayAt(player, '<yellow>---------------------------------------------------------------------------------</yellow>');
-    /* eslint-enable max-len */
 
     for (const [name] of results) {
         sayAt(player, `<cyan>${name}</cyan>`);

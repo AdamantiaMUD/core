@@ -9,7 +9,7 @@ import {hasValue} from '../util/functions';
 import type EntityLoader from '../data/entity-loader';
 import type GameStateData from '../game-state-data';
 import type MudEventListener from '../events/mud-event-listener';
-import type {SerializedPlayer} from './player';
+import type SerializedPlayer from './serialized-player';
 
 /**
  * Keeps track of all active players in game
@@ -27,7 +27,7 @@ export class PlayerManager extends MudEventEmitter {
         this.listen(UpdateTickEvent.getName(), this.tickAll.bind(this));
     }
 
-    public addListener(event: string | symbol, listener: MudEventListener<unknown>): this {
+    public addListener(event: string | symbol, listener: MudEventListener): this {
         this.events.add(event as string, listener);
 
         return this;

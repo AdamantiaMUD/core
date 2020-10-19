@@ -29,7 +29,6 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHealPayload]> = {
                 playerMessage = `Your <b>${source.source.name}</b> healed `;
             }
 
-            /* eslint-disable-next-line max-len */
             playerMessage += `<b>${target.name}</b> for <b><green>${amount}</green></b> ${source.attribute}.`;
 
             sayAt(player, playerMessage);

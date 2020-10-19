@@ -5,13 +5,15 @@ import type Room from '../room';
 
 export interface RoomPlayerEnterPayload {
     player: Player;
-    prevRoom: Room;
+    prevRoom: Room | null;
 }
 
 export class RoomPlayerEnterEvent extends MudEvent<RoomPlayerEnterPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'player-enter';
     public player: Player;
-    public prevRoom: Room;
+    public prevRoom: Room | null;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default RoomPlayerEnterEvent;

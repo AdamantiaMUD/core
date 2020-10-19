@@ -1,4 +1,4 @@
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import {AreaRoomAddedEvent, RoomRespawnTickEvent} from '../../../../lib/locations/events';
 import {UpdateTickEvent} from '../../../../lib/common/events';
 import {cast, hasValue} from '../../../../lib/util/functions';
@@ -10,8 +10,9 @@ import type GameStateData from '../../../../lib/game-state-data';
 import type Item from '../../../../lib/equipment/item';
 import type MudEventListener from '../../../../lib/events/mud-event-listener';
 import type Npc from '../../../../lib/mobs/npc';
+import type Room from '../../../../lib/locations/room';
+import type RoomEntityDefinition from '../../../../lib/locations/room-entity-definition';
 import type {AreaRoomAddedPayload, RoomRespawnTickPayload} from '../../../../lib/locations/events';
-import type {Room, RoomEntityDefinition} from '../../../../lib/locations/room';
 import type {UpdateTickPayload} from '../../../../lib/common/events';
 
 /**
@@ -32,7 +33,9 @@ export const progressiveRespawn: BehaviorDefinition = {
                 const config = (payload.config ?? {}) as {[key: string]: unknown};
 
                 // setup respawnTick to only happen every [interval] seconds
-                const respawnInterval: number = config.interval as number ?? 30;
+                const respawnInterval: number = cast<number>(config.interval) > 0
+                    ? cast<number>(config.interval)
+                    : 30;
                 const sinceLastTick = Date.now() - lastRespawnTick;
 
                 if (sinceLastTick >= respawnInterval * 1000) {

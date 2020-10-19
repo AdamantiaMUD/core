@@ -1,21 +1,22 @@
-import Broadcast from '../../../../../../lib/communication/broadcast';
-import Room from '../../../../../../lib/locations/room';
-import {BehaviorDefinition} from '../../../../../../lib/behaviors/behavior';
-import {MudEventListener} from '../../../../../../lib/events/mud-event';
-import {RoomCommandPayload} from '../../../../../../lib/locations/room-events';
+import {sayAt} from '../../../../../../lib/communication/broadcast';
 
-const {sayAt} = Broadcast;
+import type BehaviorDefinition from '../../../../../../lib/behaviors/behavior-definition';
+import type MudEventListener from '../../../../../../lib/events/mud-event-listener';
+import type Room from '../../../../../../lib/locations/room';
+import type {RoomCommandPayload} from '../../../../../../lib/locations/events';
 
 const r0001: BehaviorDefinition = {
     listeners: {
-        command: (): MudEventListener<RoomCommandPayload> => (room: Room, {player, name}) => {
+        command: (): MudEventListener<[Room, RoomCommandPayload]> => (
+            room: Room,
+            {player, name}: RoomCommandPayload
+        ): void => {
             if (name !== 'begin') {
                 sayAt(player, 'Huh?');
 
                 return;
             }
 
-            /* eslint-disable-next-line max-len */
             sayAt(player, `You just executed room context command '${name}'`);
         },
     },

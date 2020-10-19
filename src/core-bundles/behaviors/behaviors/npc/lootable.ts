@@ -1,5 +1,5 @@
 import Item from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import LootTable from '../../../../lib/combat/loot-table';
 import Player from '../../../../lib/players/player';
 import {NpcKilledEvent} from '../../../../lib/mobs/events';

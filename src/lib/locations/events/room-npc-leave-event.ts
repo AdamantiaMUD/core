@@ -9,9 +9,11 @@ export interface RoomNpcLeavePayload {
 }
 
 export class RoomNpcLeaveEvent extends MudEvent<RoomNpcLeavePayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'npc-leave';
     public npc: Npc;
     public nextRoom: Room;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default RoomNpcLeaveEvent;

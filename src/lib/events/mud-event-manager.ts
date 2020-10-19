@@ -10,7 +10,6 @@ export class MudEventManager {
      * key: string - The name of the event
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
-    /* eslint-disable-next-line max-len */
     private readonly _events: Map<string, Set<MudEventListener>> = new Map<string, Set<MudEventListener>>();
 
     public get size(): number {

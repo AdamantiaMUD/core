@@ -1,4 +1,4 @@
-import Logger from '../../../../lib/util/logger';
+import Logger from '../../../../lib/common/logger';
 import {UpdateTickEvent} from '../../../../lib/common/events';
 import {sayAt} from '../../../../lib/communication/broadcast';
 import {hasValue} from '../../../../lib/util/functions';
@@ -106,8 +106,7 @@ export const aggro: BehaviorDefinition = {
                 // attack
                 if (sinceLastCheck >= delayLength) {
                     if (isNpc(aggroTarget)) {
-                        /* eslint-disable-next-line max-len */
-                        Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference!}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference!}] in room ${npc.room.entityReference!}.`);
+                        Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`);
                     }
                     else {
                         sayAt(aggroTarget as Player, config.attackMessage.replace(/%name%/u, npc.name));
@@ -149,7 +148,7 @@ export const aggro: BehaviorDefinition = {
                             config.towards.npcs === true
                             || (
                                 Array.isArray(config.towards.npcs)
-                                && config.towards.npcs.includes(roomNpc.entityReference!)
+                                && config.towards.npcs.includes(roomNpc.entityReference)
                             )
                         ) {
                             npc.setMeta('aggroTarget', roomNpc);

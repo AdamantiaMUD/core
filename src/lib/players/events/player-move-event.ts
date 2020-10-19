@@ -1,6 +1,6 @@
 import MudEvent from '../../events/mud-event';
 
-import type {RoomExitDefinition} from '../../locations/room';
+import type RoomExitDefinition from '../../locations/room-exit-definition';
 
 export interface PlayerMovePayload {
     roomExit: RoomExitDefinition;

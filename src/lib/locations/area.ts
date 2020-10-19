@@ -3,29 +3,14 @@ import {AreaRoomAddedEvent, RoomReadyEvent} from './events';
 import {UpdateTickEvent} from '../common/events';
 import {hasValue} from '../util/functions';
 
+import type AreaManifest from './area-manifest';
+import type Broadcastable from '../communication/broadcastable';
 import type GameStateData from '../game-state-data';
 import type Npc from '../mobs/npc';
 import type Room from './room';
-import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
-import type SimpleMap from '../util/simple-map';
-import type {Broadcastable} from '../communication/broadcast';
-
-export interface AreaDefinition extends ScriptableEntityDefinition {
-    bundle: string;
-    manifest: AreaManifest;
-    npcs: string[];
-    quests: string[];
-    rooms: string[];
-}
-
-export interface AreaManifest {
-    metadata?: SimpleMap;
-    name: string;
-}
 
 export class Area extends ScriptableEntity implements Broadcastable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public readonly name: string;
     public readonly bundle: string;
 
     private readonly _manifest: AreaManifest;
@@ -37,9 +22,10 @@ export class Area extends ScriptableEntity implements Broadcastable {
     public constructor(bundle: string, ref: string, manifest: AreaManifest) {
         super();
 
+        this._name = manifest.name;
+
         this.bundle = bundle;
         this.entityReference = ref;
-        this.name = manifest.name;
 
         this._manifest = manifest;
 

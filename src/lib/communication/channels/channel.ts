@@ -5,7 +5,7 @@ import PrivateAudience from '../audiences/private-audience';
 import WorldAudience from '../audiences/world-audience';
 import {ChannelReceiveEvent} from './events';
 import {NoMessageError, NoPartyError, NoRecipientError} from './errors';
-import {hasValue} from '../../util/functions';
+import {cast, hasValue} from '../../util/functions';
 
 import type ChannelAudience from '../audiences/channel-audience';
 import type ChannelDefinition from './channel-definition';
@@ -201,7 +201,11 @@ export class Channel implements ChannelInterface {
              * Docs limit this to be for ScriptableEntity (Area/Room/Item), but
              * also applies to NPC and Player
              */
-            target.dispatch(new ChannelReceiveEvent({channel: this, message: rawMessage, sender: sender}));
+            cast<CharacterInterface>(target).dispatch(new ChannelReceiveEvent({
+                channel: this,
+                message: rawMessage,
+                sender: sender,
+            }));
         }
     }
 }

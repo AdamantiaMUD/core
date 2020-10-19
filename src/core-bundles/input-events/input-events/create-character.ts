@@ -1,33 +1,25 @@
-import EventEmitter from 'events';
+import type {EventEmitter} from 'events';
 
-import Account from '../../../lib/players/account';
 import EventUtil from '../../../lib/events/event-util';
-import GameStateData from '../../../lib/game-state-data';
-import TransportStream from '../../../lib/communication/transport-stream';
-import {StreamCharacterNameCheckEvent} from './character-name-check';
-import {
-    StreamEvent,
-    StreamEventConstructor,
-    StreamEventListener,
-    StreamEventListenerFactory,
-} from '../../../lib/events/stream-event';
+import {CharacterNameCheckEvent, CreateCharacterEvent} from '../lib/events';
+import {cast} from '../../../lib/util/functions';
 import {validateCharacterName} from '../../../lib/util/player';
 
-export interface StreamCreateCharacterPayload {
-    account: Account;
-}
-
-export const StreamCreateCharacterEvent: StreamEventConstructor<StreamCreateCharacterPayload> = class extends StreamEvent<StreamCreateCharacterPayload> {
-    public NAME: string = 'create-character';
-    public account: Account;
-};
+import type GameStateData from '../../../lib/game-state-data';
+import type StreamEventListener from '../../../lib/events/stream-event-listener';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
+import type TransportStream from '../../../lib/communication/transport-stream';
+import type {CreateCharacterPayload} from '../lib/events';
 
 /**
  * Player creation event
  */
-export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
-    name: StreamCreateCharacterEvent.getName(),
-    listener: (state: GameState): StreamEventListener<StreamCreateCharacterPayload> => (stream: TransportStream<EventEmitter>, {account}) => {
+export const evt: StreamEventListenerFactory<CreateCharacterPayload> = {
+    name: CreateCharacterEvent.getName(),
+    listener: (state: GameStateData): StreamEventListener<CreateCharacterPayload> => (
+        stream: TransportStream<EventEmitter>,
+        {account}: CreateCharacterPayload
+    ): void => {
         const say = EventUtil.genSay(stream);
         const write = EventUtil.genWrite(stream);
 
@@ -41,25 +33,25 @@ export const evt: StreamEventListenerFactory<StreamCreateCharacterPayload> = {
             try {
                 validateCharacterName(state.config, name);
             }
-            catch (err) {
-                say(err.message);
+            catch (err: unknown) {
+                say(cast<Error>(err).message);
 
-                stream.dispatch(new StreamCreateCharacterEvent({account}));
+                stream.dispatch(new CreateCharacterEvent({account}));
 
                 return;
             }
 
-            const exists = state.playerManager.exists(name.toLowerCase());
+            const isTaken = state.playerManager.exists(name.toLowerCase());
 
-            if (exists) {
+            if (isTaken) {
                 say('That name is already taken.');
 
-                stream.dispatch(new StreamCreateCharacterEvent({account}));
+                stream.dispatch(new CreateCharacterEvent({account}));
 
                 return;
             }
 
-            stream.dispatch(new StreamCharacterNameCheckEvent({account, name}));
+            stream.dispatch(new CharacterNameCheckEvent({account, name}));
         });
     },
 };

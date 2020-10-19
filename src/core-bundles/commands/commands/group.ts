@@ -56,7 +56,6 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
         const target = ArgParser.parseDot(args, Array.from(player.room.players));
 
         if (target === player) {
-            /* eslint-disable-next-line max-len */
             sayAt(player, 'You ask yourself if you want to join your own group. You humbly accept.');
 
             return;

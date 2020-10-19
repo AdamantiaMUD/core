@@ -7,8 +7,10 @@ export interface CombatantRemovedPayload {
 }
 
 export class CombatantRemovedEvent extends MudEvent<CombatantRemovedPayload> {
+    /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'combatant-removed';
     public target: CharacterInterface;
+    /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 
 export default CombatantRemovedEvent;

@@ -26,7 +26,6 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         if (args.length === 0 || args !== 'sure') {
-            /* eslint-disable-next-line max-len */
             sayAt(player, 'You must confirm the shutdown with "shutdown sure" or force immediate shutdown with "shutdown now"');
 
             return;

@@ -5,6 +5,7 @@ import {
     EffectRemovedEvent,
     EffectAddedEvent,
 } from './events';
+import {hasValue} from '../util/functions';
 
 import type Attribute from '../attributes/attribute';
 import type CharacterInterface from '../characters/character-interface';
@@ -47,11 +48,11 @@ export class EffectList implements Serializable {
 
         for (const activeEffect of this._effects) {
             if (effect.config.type === activeEffect.config.type) {
-                if (
-                    Boolean(activeEffect.config.maxStacks)
-                    && activeEffect.state.stacks < activeEffect.config.maxStacks
-                ) {
-                    activeEffect.state.stacks = Math.min(activeEffect.config.maxStacks, activeEffect.state.stacks + 1);
+                const stacks = activeEffect.state.stacks ?? null;
+                const maxStacks = activeEffect.config.maxStacks ?? null;
+
+                if (hasValue(stacks) && hasValue(maxStacks) && stacks < maxStacks) {
+                    activeEffect.state.stacks = Math.min(maxStacks, stacks + 1);
 
                     activeEffect.dispatch(new EffectStackAddedEvent({effect}));
 
@@ -138,16 +139,16 @@ export class EffectList implements Serializable {
 
     /**
      * Gets the effective "max" value of an attribute (before subtracting delta).
-     * Does the work of actaully applying attribute modification
+     * Does the work of actually applying attribute modification
      */
     public evaluateAttribute(attr: Attribute): number {
         this.validateEffects();
 
         const attrName = attr.name;
-        let attrValue = attr.base || 0;
+        let attrValue = attr.base;
 
         for (const effect of this._effects) {
-            if (!effect.paused) {
+            if (!hasValue(effect.paused)) {
                 attrValue = effect.modifyAttribute(attrName, attrValue);
             }
         }
@@ -168,7 +169,7 @@ export class EffectList implements Serializable {
          * Don't allow a modifier to make damage go negative, it would cause weird
          * behavior where damage raises an attribute
          */
-        return Math.max(currentAmount, 0) || 0;
+        return Math.max(currentAmount, 0);
     }
 
     public evaluateOutgoingDamage(damage: Damage, amount: number): number {
@@ -181,11 +182,11 @@ export class EffectList implements Serializable {
         }
 
         // Same thing, mutatis mutandis, for outgoing damage
-        return Math.max(currentAmount, 0) || 0;
+        return Math.max(currentAmount, 0);
     }
 
     public hasEffectType(type: string): boolean {
-        return this.getByType(type) !== undefined;
+        return hasValue(this.getByType(type));
     }
 
     public hydrate(state: GameStateData): void {
@@ -194,15 +195,15 @@ export class EffectList implements Serializable {
         this._effects.clear();
 
         for (const newEffect of effects) {
-            const effect = state.effectFactory.create(newEffect.id);
+            const effect = state.effectFactory.create(newEffect.id, newEffect.config);
 
             effect.hydrate(state, newEffect);
             this.add(effect);
         }
     }
 
-    public getByType(type: string): Effect {
-        return [...this._effects].find(effect => effect.config.type === type);
+    public getByType(type: string): Effect | null {
+        return [...this._effects].find((effect: Effect) => effect.config.type === type) ?? null;
     }
 
     /**
@@ -225,7 +226,7 @@ export class EffectList implements Serializable {
     public serialize(): SerializedEffect[] {
         this.validateEffects();
 
-        const serialized = [];
+        const serialized: SerializedEffect[] = [];
 
         for (const effect of this._effects) {
             if (effect.config.persists) {

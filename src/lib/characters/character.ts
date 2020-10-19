@@ -19,6 +19,7 @@ import {
 import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equipment/errors';
 import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events';
 
+import type Broadcastable from '../communication/broadcastable';
 import type CharacterInterface from './character-interface';
 import type Effect from '../effects/effect';
 import type GameStateData from '../game-state-data';
@@ -44,11 +45,12 @@ export abstract class Character extends ScriptableEntity implements Serializable
     protected readonly _effects: EffectList;
     protected readonly _equipment: Map<string, Item> = new Map<string, Item>();
     protected readonly _followers: Set<CharacterInterface> = new Set<CharacterInterface>();
+
     protected _following: CharacterInterface | null = null;
     protected _inventory: Inventory | null = null;
     protected _level: number = 1;
-    public name: string = '';
-    public room: Room | null = null;
+    protected _room: Room | null = null;
+
     public socket: TransportStream<EventEmitter> | null = null;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
@@ -94,6 +96,10 @@ export abstract class Character extends ScriptableEntity implements Serializable
         return this._level;
     }
 
+    public get room(): Room | null {
+        return this._room;
+    }
+
     public addEffect(effect: Effect): boolean {
         return this._effects.add(effect);
     }
@@ -118,15 +124,15 @@ export abstract class Character extends ScriptableEntity implements Serializable
         this._attributes.deserialize(data.attributes, state);
 
         this._level = data.level;
-        this.name = data.name;
+        this._name = data.name;
 
         if (hasValue(data.room)) {
-            this.room = state.roomManager.getRoom(data.room);
+            this._room = state.roomManager.getRoom(data.room);
         }
         else {
             const startingRoom = state.config.get<string>('startingRoom');
 
-            this.room = state.roomManager.getRoom(startingRoom);
+            this._room = state.roomManager.getRoom(startingRoom);
         }
     }
 
@@ -190,6 +196,10 @@ export abstract class Character extends ScriptableEntity implements Serializable
         const att = this._attributes.get(attr);
 
         return att?.base ?? 0;
+    }
+
+    public getBroadcastTargets(): Broadcastable[] {
+        return [this];
     }
 
     public getItem(itemRef: string): Item | null {
@@ -298,6 +308,10 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
     public setFollowing(target: CharacterInterface | null): void {
         this._following = target;
+    }
+
+    public setRoom(room: Room | null): void {
+        this._room = room;
     }
 
     /**

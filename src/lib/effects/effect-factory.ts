@@ -5,13 +5,9 @@ import {hasValue} from '../util/functions';
 
 import type EffectConfig from './effect-config';
 import type EffectDefinition from './effect-definition';
+import type EffectInfo from './effect-info';
 import type GameStateData from '../game-state-data';
 import type SimpleMap from '../util/simple-map';
-
-interface EffectInfo {
-    definition: EffectDefinition;
-    eventManager: MudEventManager;
-}
 
 export class EffectFactory {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

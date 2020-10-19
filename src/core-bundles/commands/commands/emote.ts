@@ -31,7 +31,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        const FIND_TARGETS_REGEXP = /~((?:\d+\.)?[^\s.,!?"']+)/giu;
+        const FIND_TARGETS_REGEXP = /~(?<name>(?:\d+\.)?[^\s.,!?"']+)/giu;
         const REPLACE_TARGETS_REGEXP = /~(?:\d+\.)?[^\s.,!?"']+/u;
 
         // Build an array of items matching the emote targets (specified by ~<target> in the emote.
@@ -61,7 +61,7 @@ export const cmd: CommandDefinitionFactory = {
             )
 
             // Enforce punctuation
-            .replace(/([^.?!])$/u, '$1.');
+            .replace(/(?<lastCharacter>[^.?!])$/u, '$1.');
 
         player.room?.players.forEach((presentPlayer: Player) => {
             if (presentPlayer === player) {

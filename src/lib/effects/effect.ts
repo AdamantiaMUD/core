@@ -75,7 +75,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
         }
 
         // If an effect has a tickInterval it should always apply when first activated
-        if (this.config.tickInterval && !this.state.tickInterval) {
+        if (hasValue(this.config.tickInterval) && !hasValue(this.state.tickInterval)) {
             this.state.lastTick = -Infinity;
             this.state.ticks = 0;
         }
@@ -128,7 +128,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
      * @fires Effect#effectActivated
      */
     public activate(): void {
-        if (!this.target) {
+        if (!hasValue(this.target)) {
             throw new Error('Cannot activate an effect without a target');
         }
 
@@ -163,21 +163,22 @@ export class Effect extends MudEventEmitter implements EffectInterface {
      * Reinitialize from persisted data
      */
     public hydrate(state: GameStateData, data: Effect): void {
-        data.config.duration = data.config.duration === -1 ? Infinity : data.config.duration;
+        this.config = {
+            ...data.config,
+            duration: data.config.duration === -1 ? Infinity : data.config.duration,
+        };
 
-        this.config = data.config;
-
-        if (!isNaN(data.elapsed)) {
+        if (hasValue(data.elapsed)) {
             this.startedAt = Date.now() - data.elapsed;
         }
 
-        if (!isNaN(data.state.lastTick)) {
-            data.state.lastTick = Date.now() - data.state.lastTick;
-        }
-        this.state = data.state;
+        this.state = {
+            ...data.state,
+            lastTick: hasValue(data.state.lastTick) ? Date.now() - data.state.lastTick : data.state.lastTick,
+        };
 
-        if (data.ability) {
-            this.ability = state.skillManager.get(data.ability) || state.spellManager.get(data.ability);
+        if (hasValue(data.ability)) {
+            this.ability = state.skillManager.get(data.ability.id) ?? state.spellManager.get(data.ability.id);
         }
     }
 
@@ -193,7 +194,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
             return this.modifiers.attributes(this, attrName, currentValue);
         }
 
-        if (attrName in this.modifiers.attributes) {
+        if (hasValue(this.modifiers.attributes) && attrName in this.modifiers.attributes) {
             return this.modifiers.attributes[attrName](this, currentValue);
         }
 
@@ -201,11 +202,11 @@ export class Effect extends MudEventEmitter implements EffectInterface {
     }
 
     public modifyIncomingDamage(damage: Damage, currentAmount: number): number {
-        return this.modifiers.incomingDamage(this, damage, currentAmount);
+        return this.modifiers.incomingDamage?.(this, damage, currentAmount) ?? currentAmount;
     }
 
     public modifyOutgoingDamage(damage: Damage, currentAmount: number): number {
-        return this.modifiers.outgoingDamage(this, damage, currentAmount);
+        return this.modifiers.outgoingDamage?.(this, damage, currentAmount) ?? currentAmount;
     }
 
     /**
@@ -252,12 +253,12 @@ export class Effect extends MudEventEmitter implements EffectInterface {
          * store lastTick as a difference so we can make sure to start where we
          * left off when we hydrate
          */
-        if (state.lastTick && isFinite(state.lastTick)) {
+        if (hasValue(state.lastTick) && isFinite(state.lastTick)) {
             state.lastTick = Date.now() - state.lastTick;
         }
 
         return {
-            ability: this.ability && this.ability.id,
+            ability: this.ability?.id,
             config: config,
             elapsed: this.elapsed,
             id: this.id,

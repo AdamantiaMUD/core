@@ -20,11 +20,12 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         super.attach(socket);
 
         // websocket uses 'message' instead of the 'data' event net.Socket uses
-        socket.on('message', message => {
+        socket.on('message', (message: string) => {
             this.socket.emit('data', message);
         });
     }
 
+    /* eslint-disable-next-line @typescript-eslint/no-empty-function */
     public destroy(): void {}
 
     public end(): void {
@@ -32,7 +33,7 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         this.socket.close(1000);
     }
 
-    public executeSendData(group, data): void {
+    public executeSendData(group: unknown, data: unknown): void {
         if (!this.writable) {
             return;
         }

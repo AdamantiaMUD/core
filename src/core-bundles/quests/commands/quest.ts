@@ -1,14 +1,7 @@
-import ArgParser from '~/lib/commands/arg-parser';
-import Command, {
-    CommandDefinition,
-    CommandDefinitionBuilder,
-    CommandDefinitionFactory,
-} from '~/lib/commands/command';
-import CommandManager from '~/lib/commands/command-manager';
-import GameStateData from '~/lib/game-state-data';
-import Npc from '~/lib/mobs/npc';
-import Player from '~/lib/players/player';
-import {QuestProgressEvent} from '~/lib/quests/quest-events';
+import ArgParser from '../../../lib/commands/arg-parser';
+import Command from '../../../lib/commands/command';
+import CommandManager from '../../../lib/commands/command-manager';
+import {QuestProgressEvent} from '../../../lib/quests/events';
 import {
     at,
     center,
@@ -17,36 +10,52 @@ import {
     progress,
     sayAt,
     wrap,
-} from '~/lib/communication/broadcast';
+} from '../../../lib/communication/broadcast';
+import {hasValue} from '../../../lib/util/functions';
 
-const getAvailableQuests = (
-    state: GameState,
-    player: Player,
-    npc: Npc
-): string[] => npc.quests
-    .filter(ref => state.questFactory.canStart(player, ref) || player.questTracker.isActive(ref));
+import type CommandDefinition from '../../../lib/commands/command-definition';
+import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type GameStateData from '../../../lib/game-state-data';
+import type Npc from '../../../lib/mobs/npc';
+import type Player from '../../../lib/players/player';
+import type Room from '../../../lib/locations/room';
 
-const listLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const isPresent = (
+    npcRef: string,
+    room: Room
+): boolean => hasValue([...room.npcs].find((npc: Npc) => npc.entityReference === npcRef));
+
+const getAvailableQuests = (state: GameStateData, player: Player, npc: Npc): string[] => npc.quests
+    .filter((ref: string) => state.questFactory.canStart(player, ref) || player.questTracker.isActive(ref));
+
+const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'list',
-    command: (args: string, player: Player) => {
+    command: (args: string, player: Player): void => {
         const options = args.split(' ');
 
-        if (!options.length) {
+        if (options.length === 0) {
             sayAt(player, 'List quests from whom? quest list <npc>');
 
             return;
         }
 
-        const search = options[0];
-        const npc = ArgParser.parseDot(search, player.room.npcs);
+        if (!hasValue(player.room)) {
+            sayAt(player, "You're floating in the ether. There isn't anyone here to give you a quest!");
 
-        if (!npc) {
+            return;
+        }
+
+        const search = options[0];
+        const npc = ArgParser.parseDot(search, Array.from(player.room.npcs));
+
+        if (!hasValue(npc)) {
             sayAt(player, `No quest giver [${search}] found.`);
 
             return;
         }
 
-        if (!npc.quests) {
+        if (npc.quests.length === 0) {
             sayAt(player, `${npc.name} has no quests.`);
 
             return;
@@ -54,39 +63,37 @@ const listLoader: CommandDefinitionBuilder = (state: GameState): CommandDefiniti
 
         const availableQuests = getAvailableQuests(state, player, npc);
 
-        if (!availableQuests.length) {
+        if (availableQuests.length === 0) {
             sayAt(player, `${npc.name} has no quests.`);
 
             return;
         }
 
-        for (const i in availableQuests) {
-            if (Object.prototype.hasOwnProperty.call(availableQuests, i)) {
-                const ref = availableQuests[i];
-                const displayIndex = parseInt(i, 10) + 1;
-                const quest = state.questFactory.get(ref);
+        let displayIndex = 0;
 
-                if (state.questFactory.canStart(player, ref)) {
-                    /* eslint-disable-next-line max-len */
-                    sayAt(player, `[<b><yellow>!</yellow></b>] - ${displayIndex}. ${quest.config.title}`);
-                }
-                else if (player.questTracker.isActive(ref)) {
-                    const activeQuest = player.questTracker.get(ref);
+        for (const ref of availableQuests) {
+            const quest = state.questFactory.get(ref);
 
-                    const symbol = activeQuest.getProgress().percent >= 100 ? '?' : '%';
-
-                    /* eslint-disable-next-line max-len */
-                    sayAt(player, `[<b><yellow>${symbol}</yellow></b>] - ${displayIndex}. ${activeQuest.config.title}`);
-                }
+            if (state.questFactory.canStart(player, ref)) {
+                sayAt(player, `[<b><yellow>!</yellow></b>] - ${displayIndex}. ${quest!.config.title}`);
             }
+            else if (player.questTracker.isActive(ref)) {
+                const activeQuest = player.questTracker.get(ref);
+
+                const symbol = activeQuest!.getProgress().percent >= 100 ? '?' : '%';
+
+                sayAt(player, `[<b><yellow>${symbol}</yellow></b>] - ${displayIndex}. ${activeQuest!.config.title}`);
+            }
+
+            displayIndex += 1;
         }
     },
 });
 
-const startLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const startLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'start',
     aliases: ['accept'],
-    command: (args: string, player: Player) => {
+    command: (args: string, player: Player): void => {
         const options = args.split(' ');
 
         if (options.length < 2) {
@@ -95,18 +102,24 @@ const startLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinit
             return;
         }
 
+        if (!hasValue(player.room)) {
+            sayAt(player, "You're floating in the ether. There isn't anyone here to give you a quest!");
+
+            return;
+        }
+
         const search: string = options[0];
         const questIndex: number = parseInt(options[1], 10);
 
-        const npc = ArgParser.parseDot(search, player.room.npcs);
+        const npc = ArgParser.parseDot(search, Array.from(player.room.npcs));
 
-        if (!npc) {
+        if (!hasValue(npc)) {
             sayAt(player, `No quest giver [${search}] found.`);
 
             return;
         }
 
-        if (!npc.quests || !npc.quests.length) {
+        if (npc.quests.length === 0) {
             sayAt(player, `${npc.name} has no quests.`);
 
             return;
@@ -123,7 +136,6 @@ const startLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinit
         const targetQuest = availableQuests[questIndex - 1];
 
         if (player.questTracker.isActive(targetQuest)) {
-            /* eslint-disable-next-line max-len */
             sayAt(player, "You've already started that quest. Use 'quest log' to see your active quests.");
 
             return;
@@ -136,31 +148,32 @@ const startLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinit
     },
 });
 
-const logLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const logLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'log',
-    command: (args: string, player: Player) => {
+    command: (args: string, player: Player): void => {
         const active = [...player.questTracker.active];
 
-        if (!active.length) {
+        if (active.length === 0) {
             sayAt(player, 'You have no active quests.');
 
             return;
         }
 
-        for (const i in active) {
-            const [, quest] = active[i];
-            const prog = quest.getProgress();
+        let displayIndex = 1;
 
-            at(player, `<b><yellow>${parseInt(i, 10) + 1}</yellow></b>: `);
-            /* eslint-disable-next-line max-len */
-            sayAt(player, `${progress(60, prog.percent, 'yellow')} ${prog.percent}%`);
-            /* eslint-disable-next-line max-len */
+        for (const [, quest] of active) {
+            const questProgress = quest.getProgress();
+
+            at(player, `<b><yellow>${displayIndex}</yellow></b>: `);
+            sayAt(player, `${progress(60, questProgress.percent, 'yellow')} ${questProgress.percent}%`);
             sayAt(player, indent(`<b><yellow>${quest.getProgress().display}</yellow></b>`, 2));
 
-            if (quest.config.npc) {
+            if (hasValue(quest.config.npc)) {
                 const npc = state.mobFactory.getDefinition(quest.config.npc);
 
-                sayAt(player, `  <b><yellow>Questor: ${npc.name}</yellow></b>`);
+                if (hasValue(npc)) {
+                    sayAt(player, `  <b><yellow>Questor: ${npc.name}</yellow></b>`);
+                }
             }
 
             sayAt(player, `  ${line(78)}`);
@@ -172,7 +185,7 @@ const logLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinitio
                 )
             );
 
-            if (quest.config.rewards.length) {
+            if (quest.config.rewards.length > 0) {
                 sayAt(player);
                 sayAt(player, `<b><yellow>${center(80, 'Rewards')}</yellow></b>`);
                 sayAt(player, `<b><yellow>${center(80, '-------')}</yellow></b>`);
@@ -180,25 +193,36 @@ const logLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinitio
                 for (const reward of quest.config.rewards) {
                     const rewardClass = state.questRewardManager.get(reward.type);
 
-                    sayAt(player, `  ${rewardClass.display(state, quest, reward.config, player)}`);
+                    if (hasValue(rewardClass)) {
+                        sayAt(player, `  ${rewardClass.display(state, quest, player, reward.config)}`);
+                    }
                 }
             }
 
             sayAt(player, `  ${line(78)}`);
+
+            displayIndex += 1;
         }
     },
 });
 
-const completeLoader: CommandDefinitionBuilder = (state: GameState): CommandDefinition => ({
+const completeLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'complete',
-    command: (args: string, player: Player) => {
+    command: (args: string, player: Player): void => {
         const options = args.split(' ');
         const active = [...player.questTracker.active];
         let targetQuest = parseInt(options[0], 10);
 
         targetQuest = isNaN(targetQuest) ? -1 : targetQuest - 1;
-        if (!active[targetQuest]) {
+
+        if (!hasValue(active[targetQuest])) {
             sayAt(player, "Invalid quest, use 'quest log' to see your active quests.");
+
+            return;
+        }
+
+        if (!hasValue(player.room)) {
+            sayAt(player, "You're floating in the ether. There isn't anyone here to give you a quest!");
 
             return;
         }
@@ -212,13 +236,15 @@ const completeLoader: CommandDefinitionBuilder = (state: GameState): CommandDefi
             return;
         }
 
-        if (
-            quest.config.npc
-            && ![...player.room.npcs].find(npc => npc.entityReference === quest.config.npc)
-        ) {
+        if (hasValue(quest.config.npc) && !isPresent(quest.config.npc, player.room)) {
             const npc = state.mobFactory.getDefinition(quest.config.npc);
 
-            sayAt(player, `The questor [${npc.name}] is not in this room.`);
+            if (hasValue(npc)) {
+                sayAt(player, `The questor [${npc.name}] is not in this room.`);
+            }
+            else {
+                sayAt(player, `The questor is not in this room.`);
+            }
 
             return;
         }
@@ -231,7 +257,7 @@ const completeLoader: CommandDefinitionBuilder = (state: GameState): CommandDefi
 export const cmd: CommandDefinitionFactory = {
     name: 'quest',
     usage: 'quest <log/list/complete/start> [npc] [number]',
-    command: (state: GameState) => {
+    command: (state: GameStateData) => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('bundle-example-quests', 'list', listLoader(state), ''));
@@ -239,8 +265,8 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('bundle-example-quests', 'log', logLoader(state), ''));
         subcommands.add(new Command('bundle-example-quests', 'complete', completeLoader(state), ''));
 
-        return (args: string, player: Player) => {
-            if (!args.length) {
+        return (args: string, player: Player): void => {
+            if (args.length === 0) {
                 sayAt(player, "Missing command. See 'help quest'");
 
                 return;
@@ -250,7 +276,7 @@ export const cmd: CommandDefinitionFactory = {
 
             const subcommand = subcommands.find(command);
 
-            if (!subcommand) {
+            if (!hasValue(subcommand)) {
                 sayAt(player, "Invalid command. See 'help quest'");
 
                 return;
