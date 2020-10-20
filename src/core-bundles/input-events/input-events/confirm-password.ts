@@ -1,6 +1,5 @@
 import type {EventEmitter} from 'events';
 
-import EventUtil from '../../../lib/events/event-util';
 import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
 
 import type StreamEventListener from '../../../lib/events/stream-event-listener';
@@ -17,10 +16,7 @@ export const evt: StreamEventListenerFactory<ConfirmPasswordPayload> = {
         stream: TransportStream<EventEmitter>,
         args: ConfirmPasswordPayload
     ): void => {
-        const write = EventUtil.genWrite(stream);
-        const say = EventUtil.genSay(stream);
-
-        write('<cyan>Confirm your password:</cyan> ');
+        stream.write('{cyan Confirm your password:} ');
 
         stream.command('toggleEcho');
 
@@ -30,7 +26,7 @@ export const evt: StreamEventListenerFactory<ConfirmPasswordPayload> = {
             stream.command('toggleEcho');
 
             if (!args.account.checkPassword(pass)) {
-                say('<red>Passwords do not match.</red>');
+                stream.write('{red.bold Passwords do not match.}');
 
                 stream.dispatch(new ChangePasswordEvent(args));
 
@@ -38,7 +34,7 @@ export const evt: StreamEventListenerFactory<ConfirmPasswordPayload> = {
             }
 
             // echo was disabled, the user's Enter didn't make a newline
-            say('');
+            stream.write('');
 
             stream.dispatch(args.nextEvent);
         });

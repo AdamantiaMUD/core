@@ -2,6 +2,7 @@ import type WebSocket from 'ws';
 import type {AddressInfo} from 'net';
 
 import TransportStream from '../../../lib/communication/transport-stream';
+import {colorize} from '../../../lib/util/communication';
 
 /**
  * Essentially we want to look at the methods of WebSocket and match them to the
@@ -67,7 +68,7 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         // this.socket will be set when we do `ourWebsocketStream.attach(websocket)`
         this.socket.send(JSON.stringify({
             type: 'message',
-            message: message,
+            message: colorize(message),
         }));
 
         return true;

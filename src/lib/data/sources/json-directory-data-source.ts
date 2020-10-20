@@ -4,6 +4,7 @@ import path from 'path';
 
 import FileDataSource from './file-data-source';
 import JsonDataSource from './json-data-source';
+import {cast} from '../../util/functions';
 
 import type DataSourceConfig from './data-source-config';
 
@@ -51,17 +52,19 @@ export class JsonDirectoryDataSource extends FileDataSource {
         return data;
     }
 
-    // public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
-    //     const dirPath = this.resolvePath(config);
-    //
-    //     if (!fs.existsSync(dirPath)) {
-    //         throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
-    //     }
-    //
-    //     const source = new JsonDataSource(this.appConfig);
-    //
-    //     return source.fetchAll({path: path.join(dirPath, `${id}.json`)});
-    // }
+    public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
+        const dirPath = this.resolvePath(config);
+
+        if (!fs.existsSync(dirPath)) {
+            throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
+        }
+
+        const source = new JsonDataSource(this.appConfig);
+
+        const data = await source.fetchAll({path: path.join(dirPath, `${id}.json`)});
+
+        return cast<T>(data);
+    }
 
     public async replace<T = unknown>(
         /* eslint-disable @typescript-eslint/no-unused-vars */

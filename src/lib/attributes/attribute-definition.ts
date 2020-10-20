@@ -4,7 +4,7 @@ import type SimpleMap from '../util/simple-map';
 export interface AttributeDefinition {
     name: string;
     base: number;
-    formula?: AttributeFormulaDefinition;
+    formula?: AttributeFormulaDefinition | null;
     metadata?: SimpleMap;
 }
 

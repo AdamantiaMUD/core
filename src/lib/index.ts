@@ -161,7 +161,6 @@ export {SerializedInventory} from './equipment/serialized-inventory';
 export {SerializedItem} from './equipment/serialized-item';
 
 // events
-export {EventUtil} from './events/event-util';
 export {InputMenuOption} from './events/input-menu-option';
 export {MudEvent} from './events/mud-event';
 export {MudEventEmitter} from './events/mud-event-emitter';

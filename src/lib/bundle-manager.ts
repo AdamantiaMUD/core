@@ -10,6 +10,7 @@ import EntityFactory from './entities/entity-factory';
 import Helpfile from './help/helpfile';
 import Logger, {logAndRethrow} from './common/logger';
 import {cast, hasValue} from './util/functions';
+import {colorize} from './util/communication';
 
 import type AreaDefinition from './locations/area-definition';
 import type AreaManifest from './locations/area-manifest';
@@ -37,6 +38,12 @@ import type {
 } from './module-helpers';
 
 export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
+
+const getFiles = async (directory: string): Promise<string[]> => {
+    const files = await fs.readdir(directory);
+
+    return files.filter((filename: string) => !filename.endsWith('.d.ts'));
+};
 
 export class BundleManager {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -257,7 +264,7 @@ export class BundleManager {
             }
 
             Logger.verbose(`LOAD: ${bundle} - Behaviors -> ${type}`);
-            const files = fs.readdirSync(typeDir);
+            const files = await getFiles(typeDir);
 
             for (const behaviorFile of files) {
                 const behaviorPath = path.join(typeDir, behaviorFile);
@@ -291,7 +298,7 @@ export class BundleManager {
     }
 
     private async _loadBundle(bundle: string, bundlePath: string): Promise<void> {
-        Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- START`);
+        Logger.info(colorize(`LOAD: BUNDLE [{yellow ${bundle}}] -- START`));
 
         await this._loadQuestGoals(bundle, bundlePath);
         await this._loadQuestRewards(bundle, bundlePath);
@@ -312,11 +319,11 @@ export class BundleManager {
 
         await this._loadAreas(bundle, bundlePath);
 
-        Logger.info(`LOAD: BUNDLE [\x1B[1;33m${bundle}\x1B[0m] -- END`);
+        Logger.info(colorize(`LOAD: BUNDLE [{yellow ${bundle}}] -- END`));
     }
 
     private async _loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
-        const bundles = fs.readdirSync(bundlesPath);
+        const bundles = await getFiles(bundlesPath);
 
         for (const bundle of bundles) {
             const bundlePath = path.join(bundlesPath, bundle);
@@ -337,7 +344,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Commands -- START`);
 
-        const files = await fs.readdir(uri);
+        const files = await getFiles(uri);
 
         for (const commandFile of files) {
             const commandPath = path.join(uri, commandFile);
@@ -367,7 +374,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Effects -- START`);
 
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const effectFile of files) {
             const effectPath = path.join(uri, effectFile);
@@ -480,7 +487,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Help -- START`);
 
-        const files = await fs.readdir(uri);
+        const files = await getFiles(uri);
 
         for (const file of files) {
             const helpName = path.basename(file, path.extname(file));
@@ -522,7 +529,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Input Events -- START`);
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const eventFile of files) {
             const eventPath = path.join(uri, eventFile);
@@ -551,7 +558,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - NPC Classes -- START`);
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const classFile of files) {
             const classPath = path.join(uri, classFile);
@@ -582,7 +589,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Player Classes -- START`);
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const classFile of files) {
             const classPath = path.join(uri, classFile);
@@ -614,7 +621,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Player Events -- START`);
 
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const eventFile of files) {
             const eventPath = path.join(uri, eventFile);
@@ -644,7 +651,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Quest Goals -- START`);
 
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const goalFile of files) {
             const goalPath = path.join(uri, goalFile);
@@ -675,7 +682,7 @@ export class BundleManager {
         }
 
         Logger.info(`LOAD: ${bundle} - Quest Rewards -- START`);
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const rewardFile of files) {
             const rewardPath = path.join(uri, rewardFile);
@@ -735,7 +742,7 @@ export class BundleManager {
 
         Logger.info(`LOAD: ${bundle} - Server Events -- START`);
 
-        const files = fs.readdirSync(uri);
+        const files = await getFiles(uri);
 
         for (const eventFile of files) {
             const eventPath = path.join(uri, eventFile);

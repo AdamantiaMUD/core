@@ -4,6 +4,7 @@ import path from 'path';
 
 import FileDataSource from './file-data-source';
 import YamlDataSource from './yaml-data-source';
+import {cast} from '../../util/functions';
 
 import type DataSourceConfig from './data-source-config';
 
@@ -51,17 +52,19 @@ export class YamlDirectoryDataSource extends FileDataSource {
         return data;
     }
 
-    // public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
-    //     const dirPath = this.resolvePath(config);
-    //
-    //     if (!fs.existsSync(dirPath)) {
-    //         throw new Error(`Invalid path [${dirPath}] specified for YamlDirectoryDataSource`);
-    //     }
-    //
-    //     const source = new YamlDataSource(this.appConfig);
-    //
-    //     return source.fetchAll({path: path.join(dirPath, `${id}.yml`)});
-    // }
+    public async fetch<T = unknown>(id: string, config: DataSourceConfig = {}): Promise<T> {
+        const dirPath = this.resolvePath(config);
+
+        if (!fs.existsSync(dirPath)) {
+            throw new Error(`Invalid path [${dirPath}] specified for YamlDirectoryDataSource`);
+        }
+
+        const source = new YamlDataSource(this.appConfig);
+
+        const data = await source.fetchAll({path: path.join(dirPath, `${id}.yml`)});
+
+        return cast<T>(data);
+    }
 
     public async replace(): Promise<boolean> {
         return Promise.reject(new Error('You cannot replace an entire directory'));

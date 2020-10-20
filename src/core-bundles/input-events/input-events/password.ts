@@ -1,6 +1,5 @@
 import type {EventEmitter} from 'events';
 
-import EventUtil from '../../../lib/events/event-util';
 import {ChooseCharacterEvent, InputPasswordEvent} from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
@@ -21,8 +20,6 @@ export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
         stream: TransportStream<EventEmitter>,
         {account}: InputPasswordPayload
     ): void => {
-        const write = EventUtil.genWrite(stream);
-
         const name = account.username;
 
         if (!hasValue(passwordAttempts[name])) {
@@ -31,14 +28,14 @@ export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
 
         // Boot and log any failed password attempts
         if (passwordAttempts[name] > maxFailedAttempts) {
-            write('Password attempts exceeded.\r\n');
+            stream.write('Password attempts exceeded.\r\n');
             passwordAttempts[name] = 0;
             stream.end();
 
             return;
         }
 
-        write('Enter your password: ');
+        stream.write('Enter your password: ');
         stream.command('toggleEcho');
 
         stream.socket.once('data', (buf: Buffer) => {
@@ -50,7 +47,7 @@ export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
                 stream.dispatch(new ChooseCharacterEvent({account}));
             }
             else {
-                write('<red>Incorrect password.</red>\r\n');
+                stream.write('{red Incorrect password.}\r\n');
                 passwordAttempts[name] += 1;
 
                 stream.dispatch(new InputPasswordEvent({account}));

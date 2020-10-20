@@ -1,7 +1,6 @@
 import type {EventEmitter} from 'events';
 
 import Logger from '../../../lib/common/logger';
-import EventUtil from '../../../lib/events/event-util';
 import {ChooseCharacterEvent, DeleteCharacterEvent} from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
@@ -21,12 +20,9 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
         stream: TransportStream<EventEmitter>,
         {account}: DeleteCharacterPayload
     ): void => {
-        const say = EventUtil.genSay(stream);
-        const write = EventUtil.genWrite(stream);
-
-        say('\r\n------------------------------');
-        say('|      Delete a Character');
-        say('------------------------------');
+        stream.write('\r\n------------------------------');
+        stream.write('|      Delete a Character');
+        stream.write('------------------------------');
 
         const characters = account.characters.filter((char: CharacterBrief) => !char.isDeleted);
 
@@ -34,19 +30,19 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
 
         characters.forEach((char: CharacterBrief) => {
             options.push({
-                display: `Delete <b>${char.username}</b>`,
+                display: `Delete {bold ${char.username}}`,
                 onSelect: () => {
-                    write(`<b>Are you sure you want to delete <b>${char.username}</b>?</b> <cyan>[Y/n]</cyan> `);
+                    stream.write(`{bold Are you sure you want to delete {yellow ${char.username}}?} {cyan [Y/n]} `);
 
                     stream.socket.once('data', (buf: Buffer) => {
-                        say('');
+                        stream.write('');
 
                         const confirmation = buf.toString()
                             .trim()
                             .toLowerCase();
 
                         if (!(/[yn]/u).test(confirmation)) {
-                            say('<b>Invalid Option</b>');
+                            stream.write('{bold Invalid Option}');
 
                             stream.dispatch(new ChooseCharacterEvent({account}));
 
@@ -54,16 +50,16 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
                         }
 
                         if (confirmation === 'n') {
-                            say('No one was deleted...');
+                            stream.write('No one was deleted...');
 
                             stream.dispatch(new ChooseCharacterEvent({account}));
 
                             return;
                         }
 
-                        say(`Deleting ${char.username}`);
+                        stream.write(`Deleting ${char.username}`);
                         account.deleteCharacter(char.username);
-                        say('Character deleted.');
+                        stream.write('Character deleted.');
 
                         stream.dispatch(new ChooseCharacterEvent({account}));
                     });
@@ -85,10 +81,10 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
         options.forEach((opt: InputMenuOption) => {
             if (hasValue(opt.onSelect)) {
                 optionI += 1;
-                say(`| <cyan>[${optionI}]</cyan> ${opt.display}`);
+                stream.write(`| {cyan [${optionI}]} ${opt.display}`);
             }
             else {
-                say(`| <b>${opt.display}</b>`);
+                stream.write(`| {bold ${opt.display}}`);
             }
         });
 

@@ -1,7 +1,6 @@
 import type {EventEmitter} from 'events';
 
 import Broadcast from '../../../lib/communication/broadcast';
-import EventUtil from '../../../lib/events/event-util';
 import Logger from '../../../lib/common/logger';
 import {
     ChangePasswordEvent,
@@ -33,8 +32,6 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
         stream: TransportStream<EventEmitter>,
         {account}: ChooseCharacterPayload
     ): void => {
-        const say = EventUtil.genSay(stream);
-        const write = EventUtil.genWrite(stream);
         const mgr = state.playerManager;
 
         /*
@@ -42,9 +39,9 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
          * Can select existing player
          * Can create new (if less than 3 living chars)
          */
-        say('\r\n------------------------------');
-        say('|      Choose your fate');
-        say('------------------------------');
+        stream.write('\r\n------------------------------');
+        stream.write('|      Choose your fate');
+        stream.write('------------------------------');
 
         // This just gets their names.
         const characters = account.characters.filter((currChar: CharacterBrief) => !currChar.isDeleted);
@@ -125,18 +122,18 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
         options.push({
             display: 'Delete This Account',
             onSelect: () => {
-                say('<b>By deleting this account, all the characters will be also deleted.</b>');
-                write('<b>Are you sure you want to delete this account? </b> <cyan>[Y/n]</cyan> ');
+                stream.write('{bold By deleting this account, all the characters will be also deleted.}');
+                stream.write('{bold Are you sure you want to delete this account?} {cyan [Y/n]} ');
 
                 stream.socket.once('data', (buf: Buffer) => {
-                    say('');
+                    stream.write('');
 
                     const confirmation = buf.toString()
                         .trim()
                         .toLowerCase();
 
                     if (!(/[yn]/u).test(confirmation)) {
-                        say('<b>Invalid Option</b>');
+                        stream.write('{bold Invalid Option}');
 
                         stream.dispatch(new ChooseCharacterEvent({account}));
 
@@ -144,18 +141,18 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
                     }
 
                     if (confirmation === 'n') {
-                        say('No one was deleted...');
+                        stream.write('No one was deleted...');
 
                         stream.dispatch(new ChooseCharacterEvent({account}));
 
                         return;
                     }
 
-                    say(`Deleting account <b>${account.username}</b>`);
+                    stream.write(`Deleting account {bold ${account.username}}`);
 
                     account.deleteAccount();
 
-                    say('Account deleted, it was a pleasure doing business with you.');
+                    stream.write('Account deleted, it was a pleasure doing business with you.');
 
                     stream.end();
                 });
@@ -174,10 +171,10 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
         options.forEach((opt: {display: string; onSelect?: () => void}) => {
             if (hasValue(opt.onSelect)) {
                 optionI += 1;
-                say(`| <cyan>[${optionI}]</cyan> ${opt.display}`);
+                stream.write(`| {cyan [${optionI}]} ${opt.display}`);
             }
             else {
-                say(`| <b>${opt.display}</b>`);
+                stream.write(`| {bold ${opt.display}}`);
             }
         });
 

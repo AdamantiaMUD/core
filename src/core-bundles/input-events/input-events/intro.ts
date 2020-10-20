@@ -4,7 +4,6 @@ import path from 'path';
 
 import type {EventEmitter} from 'events';
 
-import EventUtil from '../../../lib/events/event-util';
 import {BeginLoginEvent, IntroEvent} from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
@@ -29,7 +28,7 @@ export const evt: StreamEventListenerFactory<void> = {
         const motd = fs.readFileSync(motdUri, 'utf8');
 
         if (hasValue(motd)) {
-            EventUtil.genSay(stream)(motd);
+            stream.write(motd);
         }
 
         stream.dispatch(new BeginLoginEvent());

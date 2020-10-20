@@ -1,7 +1,6 @@
 import type {EventEmitter} from 'events';
 
 import Account from '../../../lib/players/account';
-import EventUtil from '../../../lib/events/event-util';
 import {
     BeginLoginEvent,
     ChangePasswordEvent,
@@ -24,12 +23,9 @@ export const evt: StreamEventListenerFactory<CreateAccountPayload> = {
         stream: TransportStream<EventEmitter>,
         {name}: CreateAccountPayload
     ): void => {
-        const write = EventUtil.genWrite(stream);
-        const say = EventUtil.genSay(stream);
-
         let newAccount: Account | null = null;
 
-        write(`<b>Do you want your account's username to be ${name}?</b> <cyan>[y/n]</cyan> `);
+        stream.write(`{bold Do you want your account's username to be {yellow ${name}}?} {cyan [y/n]} `);
 
         stream.socket.once('data', (buf: Buffer) => {
             const data = buf.toString('utf8')
@@ -37,7 +33,7 @@ export const evt: StreamEventListenerFactory<CreateAccountPayload> = {
                 .toLowerCase();
 
             if (data === 'y' || data === 'yes') {
-                say('Creating account...');
+                stream.write('Creating account...');
 
                 newAccount = new Account();
                 newAccount.username = name;
@@ -51,7 +47,7 @@ export const evt: StreamEventListenerFactory<CreateAccountPayload> = {
             }
 
             if (hasValue(data) && (data === 'n' || data === 'no')) {
-                say("Let's try again!");
+                stream.write("Let's try again!");
 
                 stream.dispatch(new BeginLoginEvent());
 

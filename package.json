@@ -6,11 +6,9 @@
     "license": "MIT",
     "repository": "github:adamantiamud/adamantia-core",
     "bugs": "https://github.com/adamantiamud/adamantia-core/issues",
-    "type": "module",
     "main": "build/lib/index.js",
-    "types": "index.d.ts",
+    "types": "build/lib/index.d.ts",
     "files": [
-        "index.d.ts",
         "src/**/*",
         "build/**/*",
         "*.adoc"
@@ -24,11 +22,12 @@
         "clean": "rimraf build/*",
         "lint": "eslint ./src --ext .ts",
         "lint:quiet": "eslint ./src --ext .ts --quiet",
-        "postbuild": "node scripts/copy-assets.js && npx copyfiles -u 1 src/**/*.yml build",
+        "postbuild": "node scripts/copy-assets.cjs && npx copyfiles -u 1 src/**/*.yml build",
+        "postbuild:types": "npm run postbuild",
         "prebuild": "npm run clean",
-        "prebuild:types": "npm run clean",
+        "prebuild:types": "npm run prebuild",
         "prepublishOnly": "npm run build",
-        "test": "jest --config ./jest.config.js --coverage",
+        "test": "jest --config ./jest.config.cjs --coverage",
         "type-check": "tsc --noEmit",
         "type-check:watch": "npm run type-check -- --watch"
     },

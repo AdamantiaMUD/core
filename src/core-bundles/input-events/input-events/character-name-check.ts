@@ -1,6 +1,5 @@
 import type {EventEmitter} from 'events';
 
-import EventUtil from '../../../lib/events/event-util';
 import {CharacterNameCheckEvent, CreateCharacterEvent, FinishCharacterEvent} from '../lib/events';
 
 import type StreamEventListener from '../../../lib/events/stream-event-listener';
@@ -17,13 +16,10 @@ export const evt: StreamEventListenerFactory<CharacterNameCheckPayload> = {
         stream: TransportStream<EventEmitter>,
         args: CharacterNameCheckPayload
     ): void => {
-        const say = EventUtil.genSay(stream);
-        const write = EventUtil.genWrite(stream);
-
-        write(`<b>${args.name} doesn't exist, would you like to create it?</b> <cyan>[y/n]</cyan> `);
+        stream.write(`{bold ${args.name} doesn't exist, would you like to create it?} {cyan [y/n]} `);
 
         stream.socket.once('data', (buf: Buffer) => {
-            say('');
+            stream.write('');
 
             const confirmation = buf.toString()
                 .trim()
@@ -36,7 +32,7 @@ export const evt: StreamEventListenerFactory<CharacterNameCheckPayload> = {
             }
 
             if (confirmation === 'n') {
-                say("Let's try again...");
+                stream.write("Let's try again...");
 
                 stream.dispatch(new CreateCharacterEvent({account: args.account}));
 

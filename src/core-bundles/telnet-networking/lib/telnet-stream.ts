@@ -3,6 +3,7 @@ import type {ExecFileOptionsWithOtherEncoding} from 'child_process';
 
 import Sequences from './sequences';
 import TransportStream from '../../../lib/communication/transport-stream';
+import {colorize} from '../../../lib/util/communication';
 
 import type TelnetSocket from './telnet-socket';
 
@@ -60,7 +61,7 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
             return false;
         }
 
-        this.socket.write(message, encoding);
+        this.socket.write(colorize(message), encoding);
 
         return true;
     }

@@ -1,7 +1,18 @@
-import {hasValue} from './functions';
+import chalk from 'chalk';
+
+import {cast, hasValue} from './functions';
 
 import type Broadcastable from '../communication/broadcastable';
 import type MessageFormatter from '../communication/message-formatter';
+
+export const colorize = (msg: string): string => {
+    const tplStr = [];
+
+    // @ts-expect-error -- This is a workaround to make this behave like a tagged template literal
+    tplStr.raw = [msg];
+
+    return chalk(cast<TemplateStringsArray>(tplStr));
+};
 
 /**
  * Normalize LF unpaired with CR for windows output

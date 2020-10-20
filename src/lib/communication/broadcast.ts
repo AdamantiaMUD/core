@@ -1,9 +1,9 @@
-import chalk from 'chalk';
 import wrapAnsi from 'wrap-ansi';
 import {sprintf} from 'sprintf-js';
 
 import {cast} from '../util/functions';
 import {
+    colorize,
     fixNewlines,
     isBroadcastable,
     NOOP_FORMATTER,
@@ -49,7 +49,7 @@ export const at = (
 
                 targetMessage = wrapWidth > 0
                     ? wrapAnsi(targetMessage, Number(wrapWidth))
-                    : chalk`${targetMessage}`;
+                    : colorize(targetMessage);
 
                 playerTarget.socket.write(targetMessage);
             }
@@ -106,8 +106,8 @@ export const line = (width: number, fillChar: string = '-', color: string = ''):
         closeColor = '';
 
     if (color !== '') {
-        openColor = `<${color}>`;
-        closeColor = `</${color}>`;
+        openColor = `{${color} `;
+        closeColor = '}';
     }
 
     const arr = new Array(width + 1);
@@ -130,8 +130,8 @@ export const center = (
         closeColor = '';
 
     if (color !== '') {
-        openColor = `<${color}>`;
-        closeColor = `</${color}>`;
+        openColor = `{${color} `;
+        closeColor = '}';
     }
 
     return openColor
@@ -173,14 +173,14 @@ export const progress = (
     const fillChar = fillCharacter[0];
 
     const [leftDelim, rightDelim] = delimiters;
-    const openColor = `<${color}>`;
-    const closeColor = `</${color}>`;
-    let buf = `${openColor + leftDelim}<b>`;
+    const openColor = `{${color}.bold `;
+    const closeColor = '}';
+    let buf = `${openColor + leftDelim}`;
     const widthPercent = Math.round((pct / 100) * width);
 
     buf += line(widthPercent, barChar) + (pct === 100 ? '' : rightDelim);
     buf += line(width - widthPercent, fillChar);
-    buf += `</b>${rightDelim}${closeColor}`;
+    buf += `${rightDelim}${closeColor}`;
 
     return buf;
 };
@@ -328,7 +328,7 @@ export const sayAtFormatted = (
 export const wrap = (
     message: string,
     width: number = DEFAULT_LINE_LENGTH
-): string => fixNewlines(wrapAnsi(chalk`${message}`, width));
+): string => fixNewlines(wrapAnsi(colorize(message), width));
 
 const broadcast = {
     /* eslint-disable-next-line id-length */

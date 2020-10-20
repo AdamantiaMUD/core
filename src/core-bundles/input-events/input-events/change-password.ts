@@ -1,6 +1,5 @@
 import type {EventEmitter} from 'events';
 
-import EventUtil from '../../../lib/events/event-util';
 import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
@@ -19,25 +18,22 @@ export const evt: StreamEventListenerFactory<ChangePasswordPayload> = {
         stream: TransportStream<EventEmitter>,
         args: ChangePasswordPayload
     ): void => {
-        const say = EventUtil.genSay(stream);
-        const write = EventUtil.genWrite(stream);
-
         const {account} = args;
 
-        say('Your password must be at least 8 characters.');
-        write('<cyan>Enter your account password:</cyan> ');
+        stream.write('Your password must be at least 8 characters.');
+        stream.write('{cyan Enter your account password:} ');
 
         stream.command('toggleEcho');
 
         stream.socket.once('data', (buf: Buffer) => {
             stream.command('toggleEcho');
 
-            say('');
+            stream.write('');
 
             const pass = buf.toString().trim();
 
             if (!hasValue(pass) || pass.length === 0) {
-                say('You must use a password.');
+                stream.write('You must use a password.');
 
                 stream.dispatch(new ChangePasswordEvent(args));
 
@@ -45,7 +41,7 @@ export const evt: StreamEventListenerFactory<ChangePasswordPayload> = {
             }
 
             if (pass.length < 8) {
-                say('Your password is not long enough.');
+                stream.write('Your password is not long enough.');
 
                 stream.dispatch(new ChangePasswordEvent(args));
 

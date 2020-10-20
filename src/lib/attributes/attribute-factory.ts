@@ -42,10 +42,6 @@ export class AttributeFactory {
         formula: AttributeFormulaDefinition | null = null,
         metadata: SimpleMap = {}
     ): void {
-        if (!hasValue(formula)) {
-            throw new TypeError('Formula not instance of AttributeFormula');
-        }
-
         this._attributes.set(name, {
             name,
             base,
