@@ -50,8 +50,14 @@ export const findCarrier = (item: Item): CharacterInterface | Item | null => {
  */
 export const qualityColorize = (item: Item, string: string): string => {
     const colors = qualityColors[item.getMeta<ItemQuality>('quality') ?? ItemQuality.COMMON];
-    const open = `<${colors.join('><')}>`;
-    const close = `</${colors.reverse().join('></')}>`;
+
+    let open = '',
+        close = '';
+
+    for (const color of colors) {
+        open += `{${color!} `;
+        close += '}';
+    }
 
     return open + string + close;
 };
@@ -65,11 +71,11 @@ export const display = (item: Item): string => qualityColorize(item, `[${item.na
  * Render a pretty display of an item
  */
 export const renderItem = (state: GameStateData, item: Item, player: Player): string => {
-    let buf = `${qualityColorize(item, `.${line(38)}.`)}\r\n`;
+    let buf = `${qualityColorize(item, `.${line(38)}.`)}\n`;
 
-    buf += `| ${qualityColorize(item, sprintf('%-36s', item.name))} |\r\n`;
+    buf += `| ${qualityColorize(item, sprintf('%-36s', item.name))} |\n`;
 
-    buf += sprintf('| %-36s |\r\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
+    buf += sprintf('| %-36s |\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
 
     /* eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check */
     switch (item.type) {
@@ -79,14 +85,14 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
             const speed = item.getMeta<number>('speed') ?? 1;
 
             buf += sprintf(
-                '| %-18s%18s |\r\n',
+                '| %-18s%18s |\n',
                 `${min} - ${max} Damage`,
                 `Speed ${speed}`
             );
 
             const dps = ((min + max) / 2) / speed;
 
-            buf += sprintf('| %-36s |\r\n', `(avg. ${dps.toPrecision(2)} damage per second)`);
+            buf += sprintf('| %-36s |\n', `(avg. ${dps.toPrecision(2)} damage per second)`);
             break;
         }
 
@@ -94,14 +100,14 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
             const slot = item.getMeta<string>('slot') ?? 'Unknown slot';
 
             buf += sprintf(
-                '| %-36s |\r\n',
+                '| %-36s |\n',
                 `${slot[0].toUpperCase()}${slot.slice(1)}`
             );
             break;
         }
 
         case ItemType.CONTAINER:
-            buf += sprintf('| %-36s |\r\n', `Holds ${item.maxItems} items`);
+            buf += sprintf('| %-36s |\n', `Holds ${item.maxItems} items`);
             break;
 
         /* no default */
@@ -112,14 +118,14 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
 
     // always show armor first
     if (hasValue(stats.armor)) {
-        buf += sprintf('| %-36s |\r\n', `${stats.armor} Armor`);
+        buf += sprintf('| %-36s |\n', `${stats.armor} Armor`);
         delete stats.armor;
     }
 
     // non-armor stats
     for (const [stat, value] of Object.entries(stats)) {
         buf += sprintf(
-            '| %-36s |\r\n',
+            '| %-36s |\n',
             `${value > 0 ? '+' : ''}${value} ${stat[0].toUpperCase()}${stat.slice(1)}`
         );
     }
@@ -127,22 +133,22 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
     const specialEffects = item.getMeta<string[]>('specialEffects') ?? [];
 
     specialEffects.forEach((effectText: string) => {
-        const text = wrap(effectText, 36).split(/\r\n/gu);
+        const text = wrap(effectText, 36).split(/\n/gu);
 
         text.forEach((textLine: string) => {
-            buf += sprintf('| <b><green>%-36s</green></b> |\r\n', textLine);
+            buf += sprintf('| {green.bold %-36s} |\n', textLine);
         });
     });
 
     const level = item.getMeta<number>('level');
 
     if (hasValue(level)) {
-        const cantUse = level > player.level ? '<red>%-36s</red>' : '%-36s';
+        const cantUse = level > player.level ? '{red %-36s}' : '%-36s';
 
-        buf += sprintf(`| ${cantUse} |\r\n`, `Requires Level ${level}`);
+        buf += sprintf(`| ${cantUse} |\n`, `Requires Level ${level}`);
     }
 
-    buf += `${qualityColorize(item, `'${line(38)}'`)}\r\n`;
+    buf += `${qualityColorize(item, `'${line(38)}'`)}\n`;
 
     /*
      * On use
@@ -154,16 +160,16 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
      *
      *         if (useSpell) {
      *             useSpell.options = usable.options;
-     *             buf += `${wrap(`<b>On Use</b>: ${useSpell.info(useSpell, player)}`, 80)}\r\n`;
+     *             buf += `${wrap(`{bold On Use}: ${useSpell.info(useSpell, player)}`, 80)}\n`;
      *         }
      *     }
      *
      *     if (usable.effect && usable.config.description) {
-     *         buf += `${wrap(`<b>Effect</b>: ${usable.config.description}`, 80)}\r\n`;
+     *         buf += `${wrap(`{bold Effect}: ${usable.config.description}`, 80)}\n`;
      *     }
      *
      *     if (usable.charges) {
-     *         buf += `${wrap(`${usable.charges} Charges`, 80)}\r\n`;
+     *         buf += `${wrap(`${usable.charges} Charges`, 80)}\n`;
      *     }
      * }
      */

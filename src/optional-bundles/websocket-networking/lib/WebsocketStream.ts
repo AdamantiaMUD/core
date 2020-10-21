@@ -60,15 +60,17 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         return this;
     }
 
-    public write(message: string): boolean {
+    public write(message: string, encoding: string = 'ignored', includeNewline: boolean = true): boolean {
         if (!this.writable) {
             return false;
         }
 
+        const msg = includeNewline ? `${message}\n` : message;
+
         // this.socket will be set when we do `ourWebsocketStream.attach(websocket)`
         this.socket.send(JSON.stringify({
             type: 'message',
-            message: colorize(message),
+            message: colorize(msg),
         }));
 
         return true;

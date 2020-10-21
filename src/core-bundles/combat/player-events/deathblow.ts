@@ -40,7 +40,7 @@ export const evt: MudEventListenerDefinition<[Player, CharacterDeathblowPayload]
         }
 
         if (hasValue(target) && !isNpc(player)) {
-            sayAt(player, `<b><red>You killed ${target.name}!</red></b>`);
+            sayAt(player, `{red.bold You killed ${target.name}!}`);
         }
 
         player.dispatch(new PlayerExperienceEvent({amount: xp}));

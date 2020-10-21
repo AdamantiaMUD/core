@@ -91,7 +91,7 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 
             sayAt(
                 player,
-                `Cost: <b><white>[${currency}]</white></b> x ${vendorItem.cost}`
+                `Cost: {white.bold [${currency}]} x ${vendorItem.cost}`
             );
 
             return;
@@ -146,13 +146,13 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 
                     const currency = friendlyCurrencyName(vendorItem.currency);
                     const itemCost = sprintf(
-                        ' <yellow>|</yellow> <b>%-26s</b>',
+                        ' {yellow |} {bold %-26s}',
                         center(26, `${currency} x ${vendorItem.cost}`)
                     );
 
                     sayAt(
                         player,
-                        `<yellow>|</yellow> ${coloredName}${itemCost}<yellow>|</yellow> `
+                        `{yellow |} ${coloredName}${itemCost}{yellow |} `
                     );
                 }
 
@@ -217,7 +217,7 @@ const buyLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
         sayAt(
             player,
             sprintf(
-                '<green>You spend <b><white>% %</white></b> to purchase %.</green>',
+                '{green You spend {white.bold % %} to purchase %.}',
                 vendorItem.cost,
                 itemCurrency,
                 itemName
@@ -262,7 +262,7 @@ const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
         const itemQuality = item.getMeta<string>('quality') ?? 'common';
 
         if (!['poor', 'common'].includes(itemQuality) && confirm !== 'sure') {
-            sayAt(player, "To sell higher quality items use '<b>sell <item> sure</b>'.");
+            sayAt(player, "To sell higher quality items use '{bold sell <item> sure}'.");
 
             return;
         }
@@ -281,7 +281,7 @@ const sellLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
         sayAt(
             player,
             sprintf(
-                '<green>You sell % for <b><white>% %</white></b>.</green>',
+                '{green You sell % for {white.bold % %}.}',
                 itemName,
                 sellable.value,
                 currency
@@ -327,7 +327,7 @@ const valueLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDef
         const itemName = ItemUtils.display(targetItem);
 
         tell(sprintf(
-            'I could give you <b><white>% %</white></b> for %.</green>',
+            '{green I could give you {white.bold % %} for %.}',
             sellable.value,
             currency,
             itemName
@@ -378,7 +378,7 @@ export const cmd: CommandDefinitionFactory = {
             const subcommand = subcommands.find(command);
 
             if (!hasValue(subcommand)) {
-                sayAt(player, "Not a valid shop command. See '<b>help shops</b>'");
+                sayAt(player, "Not a valid shop command. See '{bold help shops}'");
 
                 return;
             }

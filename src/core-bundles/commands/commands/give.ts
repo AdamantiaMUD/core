@@ -76,13 +76,13 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         if (target === player) {
-            sayAt(player, `<green>You move ${ItemUtil.display(item)} from one hand to the other. That was productive.</green>`);
+            sayAt(player, `{green You move ${ItemUtil.display(item)} from one hand to the other. That was productive.}`);
 
             return;
         }
 
         if (target.inventory.isFull) {
-            sayAt(player, 'They can\'t carry any more.');
+            sayAt(player, "They can't carry any more.");
 
             return;
         }
@@ -90,10 +90,10 @@ export const cmd: CommandDefinitionFactory = {
         player.removeItem(item);
         target.addItem(item);
 
-        sayAt(player, `<green>You give <white>${target.name}</white>: ${ItemUtil.display(item)}.</green>`);
+        sayAt(player, `{green You give {white ${target.name}}: ${ItemUtil.display(item)}.}`);
 
         if (!isNpc(target)) {
-            sayAt(target as Player, `<green>${player.name} gives you: ${ItemUtil.display(item)}.</green>`);
+            sayAt(target as Player, `{green ${player.name} gives you: ${ItemUtil.display(item)}.}`);
         }
     },
 };

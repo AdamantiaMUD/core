@@ -97,7 +97,7 @@ export class Quest extends MudEventEmitter implements Serializable {
 
         return {
             percent: Math.round(overallPercent / this.goals.length),
-            display: overallDisplay.join('\r\n'),
+            display: overallDisplay.join('\n'),
         };
     }
 

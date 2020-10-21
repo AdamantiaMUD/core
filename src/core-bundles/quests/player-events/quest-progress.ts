@@ -12,7 +12,7 @@ export const evt: MudEventListenerDefinition<[Quest, QuestProgressPayload]> = {
         quest: Quest,
         {progress}: QuestProgressPayload
     ): void => {
-        sayAt(quest.player, `\r\n<b><yellow>${progress.display}</yellow></b>`);
+        sayAt(quest.player, `{yellow.bold ${progress.display}}`);
     },
 };
 

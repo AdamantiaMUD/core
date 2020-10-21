@@ -161,7 +161,7 @@ export class TelnetSocket extends EventEmitter {
          */
         connection.on('error', (err: unknown) => this.emit('error', err));
 
-        this.socket.write('\r\n');
+        this.socket.write('');
 
         connection.on('data', (dataBuf: Buffer) => {
             dataBuf.copy(inputBuf, inputLen);
@@ -181,12 +181,12 @@ export class TelnetSocket extends EventEmitter {
              * fresh makes sure that even if we haven't gotten a newline but the client
              * sent us some initial negotiations to still interpret them
              */
-            if (!hasValue((/[\r\n]/u).exec(dataBuf.toString())) && !connection.fresh) {
+            if (!hasValue((/[\n]/u).exec(dataBuf.toString())) && !connection.fresh) {
                 return;
             }
 
             /*
-             * If multiple commands were sent \r\n separated in the same packet process
+             * If multiple commands were sent \nseparated in the same packet process
              * them separately. Some client auto-connect features do this
              */
             let bucket: number[] = [];

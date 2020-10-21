@@ -7,16 +7,16 @@ import type Player from '../../../lib/players/player';
 
 const getRoleString = (role: number = 0): string => [
     '',
-    '<white>[Builder]</white>',
-    '<b><white>[Admin]</white></b>',
+    '{white [Builder]}',
+    '{white.bold [Admin]}',
 ][role] ?? '';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'who',
     usage: 'who',
     command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        sayAt(player, "<b><red>                  Who's Online</b></red>");
-        sayAt(player, '<b><red>===============================================</b></red>');
+        sayAt(player, "{red.bold                   Who's Online}");
+        sayAt(player, '{red.bold ===============================================}');
         sayAt(player, '');
 
         state.playerManager.players.forEach((otherPlayer: Player) => {

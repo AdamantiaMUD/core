@@ -12,7 +12,7 @@ export const cmd: CommandDefinitionFactory = {
     usage: 'flush',
     command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
         player.commandQueue.flush();
-        sayAt(player, '<b><yellow>Queue flushed.</yellow></b>');
+        sayAt(player, '{yellow.bold Queue flushed.}');
     },
 };
 

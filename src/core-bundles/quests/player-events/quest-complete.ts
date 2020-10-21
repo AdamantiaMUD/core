@@ -13,7 +13,7 @@ export const evt: PlayerEventListenerDefinition<PlayerQuestCompletedPayload> = {
         player: Player,
         {quest}: PlayerQuestCompletedPayload
     ): void => {
-        sayAt(player, `<b><yellow>Quest Complete: ${quest.config.title}!</yellow></b>`);
+        sayAt(player, `{yellow.bold Quest Complete: ${quest.config.title}!}`);
 
         if (hasValue(quest.config.completionMessage)) {
             sayAt(player, line(80));

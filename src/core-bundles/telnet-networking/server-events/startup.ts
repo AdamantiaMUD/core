@@ -44,7 +44,7 @@ export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
             // Register all of the input events (login, etc.)
             state.attachServerStream(stream);
 
-            stream.write('Connecting...\n');
+            stream.write('Connecting...');
 
             Logger.info('User connected...');
 

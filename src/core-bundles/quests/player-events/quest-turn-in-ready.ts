@@ -12,7 +12,7 @@ export const evt: PlayerEventListenerDefinition<PlayerQuestTurnInReadyPayload> =
         player: Player,
         {quest}: PlayerQuestTurnInReadyPayload
     ): void => {
-        sayAt(player, `<b><yellow>${quest.config.title} ready to turn in!</yellow></b>`);
+        sayAt(player, `{yellow.bold ${quest.config.title} ready to turn in!}`);
     },
 };
 

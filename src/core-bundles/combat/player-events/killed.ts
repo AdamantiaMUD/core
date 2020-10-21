@@ -35,8 +35,8 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
             }
 
             const othersDeathMessage = killer === null
-                ? `<b><red>${player.name} collapses to the ground, dead</b></red>`
-                : `<b><red>${player.name} collapses to the ground, dead at the hands of ${killer.name}.</b></red>`;
+                ? `{red.bold ${player.name} collapses to the ground, dead}`
+                : `{red.bold ${player.name} collapses to the ground, dead at the hands of ${killer.name}.}`;
 
             const excludeList: Player[] = [player];
 
@@ -47,7 +47,7 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
             sayAtExcept(player.room, othersDeathMessage, excludeList);
 
             if (hasValue(player.party)) {
-                sayAt(player.party, `<b><green>${player.name} was killed!</green></b>`);
+                sayAt(player.party, `{green.bold ${player.name} was killed!}`);
             }
 
             player.resetAttribute('hp');
@@ -63,7 +63,7 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
             player.moveTo(home!, () => {
                 state.commandManager.get('look')?.execute(null, player);
 
-                sayAt(player, '<b><red>Whoops, that sucked!</red></b>');
+                sayAt(player, '{red.bold Whoops, that sucked!}');
 
                 if (hasValue(killer) && killer !== player) {
                     sayAt(player, `You were killed by ${killer.name}.`);
@@ -74,7 +74,7 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
 
                 player.addExperience(lostExp);
                 player.save();
-                sayAt(player, `<red>You lose <b>${lostExp}</b> experience!</red>`);
+                sayAt(player, `{red You lose {bold ${lostExp}} experience!}`);
 
                 prompt(player);
             });

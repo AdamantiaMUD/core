@@ -36,7 +36,7 @@ const handleChannelError = (err: unknown, player: Player, channel: Channel): voi
         sayAt(player, 'Send the message to whom?');
     }
     else if (err instanceof NoMessageError) {
-        sayAt(player, `\r\nChannel: ${channel.name}`);
+        sayAt(player, `\nChannel: ${channel.name}`);
         sayAt(player, `Syntax: ${channel.getUsage()}`);
 
         if (hasValue(channel.description)) {

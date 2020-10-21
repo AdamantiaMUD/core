@@ -20,7 +20,7 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
         stream: TransportStream<EventEmitter>,
         {account}: DeleteCharacterPayload
     ): void => {
-        stream.write('\r\n------------------------------');
+        stream.write('------------------------------');
         stream.write('|      Delete a Character');
         stream.write('------------------------------');
 
@@ -88,7 +88,7 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
             }
         });
 
-        stream.write('|\r\n`-> ');
+        stream.write('|\n`-> ');
 
         stream.socket.once('data', (buf: Buffer) => {
             const choice = parseInt(buf.toString().trim(), 10) - 1;

@@ -29,6 +29,7 @@ export const evt: StreamEventListenerFactory<void> = {
 
         if (hasValue(motd)) {
             stream.write(motd);
+            stream.write('');
         }
 
         stream.dispatch(new BeginLoginEvent());

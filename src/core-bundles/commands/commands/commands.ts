@@ -10,8 +10,8 @@ export const cmd: CommandDefinitionFactory = {
     aliases: ['channels'],
     command: (state: GameStateData): CommandExecutable => (args: string, player: Player): void => {
         // print standard commands
-        sayAt(player, '<b><white>                  Commands</b></white>');
-        sayAt(player, '<b><white>===============================================</b></white>');
+        sayAt(player, '{white.bold                   Commands}');
+        sayAt(player, '{white.bold ===============================================}');
 
         const commands: string[] = [];
 
@@ -26,8 +26,8 @@ export const cmd: CommandDefinitionFactory = {
 
         // channels
         sayAt(player);
-        sayAt(player, '<b><white>                  Channels</b></white>');
-        sayAt(player, '<b><white>===============================================</b></white>');
+        sayAt(player, '{white.bold                   Channels}');
+        sayAt(player, '{white.bold ===============================================}');
 
         const channelCommands: string[] = [];
 

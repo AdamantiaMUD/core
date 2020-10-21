@@ -30,7 +30,7 @@ export class CurrencyReward implements QuestReward {
             .replace('_', ' ')
             .replace(/\b\w/gu, (str: string) => str.toUpperCase());
 
-        return `Currency: <b>${amount}</b> x <b><white>[${friendlyName}]</white></b>`;
+        return `Currency: {bold ${amount}} x {white.bold [${friendlyName}]}`;
     }
 
     public reward(

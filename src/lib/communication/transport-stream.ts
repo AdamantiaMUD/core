@@ -27,7 +27,7 @@ export abstract class TransportStream<T extends EventEmitter> {
 
     public abstract setEncoding(): this;
 
-    public abstract write(message: string, encoding?: string): boolean;
+    public abstract write(message: string, encoding?: string, includeNewline?: boolean): boolean;
 
     public get prompted(): boolean {
         return this._prompted;

@@ -24,13 +24,13 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHitPayload]> = {
             playerMessage = 'You ';
         }
         else {
-            playerMessage = `Your <b>${source.source.name}</b> `;
+            playerMessage = `Your {bold ${source.source.name}} `;
         }
 
-        playerMessage += `hit <b>${target.name}</b> for <b>${amount}</b> damage.`;
+        playerMessage += `hit {bold ${target.name}} for {bold ${amount}} damage.`;
 
         if (source.metadata.critical as boolean) {
-            playerMessage += ' <red><b>(Critical)</b></red>';
+            playerMessage += ' {red.bold (Critical)}';
         }
 
         sayAt(player, playerMessage);
@@ -52,10 +52,10 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHitPayload]> = {
             partyMessage = `${player.name} hit `;
         }
         else {
-            partyMessage = `${player.name}'s <b>${source.source.name}</b> hit `;
+            partyMessage = `${player.name}'s {bold ${source.source.name}} hit `;
         }
 
-        partyMessage += `<b>${target.name}</b> for <b>${amount}</b> damage.`;
+        partyMessage += `{bold ${target.name}} for {bold ${amount}} damage.`;
 
         for (const member of player.party) {
             if (!(member === player || member.room !== player.room)) {

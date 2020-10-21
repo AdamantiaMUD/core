@@ -56,12 +56,14 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
         return this.socket.writable;
     }
 
-    public write(message: string, encoding: BufferEncoding = 'utf8'): boolean {
+    public write(message: string, encoding: BufferEncoding = 'utf8', includeNewline: boolean = true): boolean {
         if (!this.writable) {
             return false;
         }
 
-        this.socket.write(colorize(message), encoding);
+        const msg = includeNewline ? `${message}\n` : message;
+
+        this.socket.write(colorize(msg), encoding);
 
         return true;
     }

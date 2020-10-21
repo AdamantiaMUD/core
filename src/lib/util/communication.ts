@@ -14,22 +14,6 @@ export const colorize = (msg: string): string => {
     return chalk(cast<TemplateStringsArray>(tplStr));
 };
 
-/**
- * Normalize LF unpaired with CR for windows output
- */
-export const fixNewlines = (message: string): string => {
-    // Correct \n not in a \r\n pair to prevent bad rendering on windows
-    const msg = message
-        .replace(/\r\n/gu, '<NEWLINE>')
-        .split('\n')
-        .join('\r\n')
-        .replace(/<NEWLINE>/gu, '\r\n');
-
-    // Correct sty's incredibly stupid default of always appending ^[[0m
-    /* eslint-disable-next-line no-control-regex */
-    return msg.replace(/\x1B\[0m$/u, '');
-};
-
 export const isBroadcastable = (source: unknown): source is Broadcastable => {
     if (!hasValue(source)) {
         return false;

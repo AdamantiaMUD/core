@@ -18,11 +18,11 @@ const render = (state: GameStateData, helpFile: Helpfile): string => {
     const name = helpFile.name;
 
     const width = 80;
-    const bar = `${line(width, '-', 'yellow')}\r\n`;
+    const bar = `${line(width, '-', 'yellow')}\n`;
 
-    let header = `${bar + center(width, name, 'white')}\r\n${bar}`;
+    let header = `${bar + center(width, name, 'white')}\n${bar}`;
 
-    const formatHeaderItem = (item: string, value: string): string => `${item}: ${value}\r\n\r\n`;
+    const formatHeaderItem = (item: string, value: string): string => `${item}: ${value}\n\n`;
 
     if (hasValue(helpFile.command)) {
         const actualCommand = state.commandManager.get(helpFile.command)!;
@@ -40,10 +40,10 @@ const render = (state: GameStateData, helpFile: Helpfile): string => {
     let footer = bar;
 
     if (helpFile.related.length > 0) {
-        footer = `${center(width, 'RELATED', 'yellow', '-')}\r\n`;
+        footer = `${center(width, 'RELATED', 'yellow', '-')}\n`;
         const related = helpFile.related.join(', ');
 
-        footer += `${center(width, related)}\r\n`;
+        footer += `${center(width, related)}\n`;
         footer += bar;
     }
 
@@ -78,12 +78,12 @@ const searchHelpFiles = (rawArgs: string, player: Player, state: GameStateData):
         return;
     }
 
-    sayAt(player, '<yellow>---------------------------------------------------------------------------------</yellow>');
-    sayAt(player, '<white>Search Results:</white>');
-    sayAt(player, '<yellow>---------------------------------------------------------------------------------</yellow>');
+    sayAt(player, '{yellow ---------------------------------------------------------------------------------}');
+    sayAt(player, '{white Search Results:}');
+    sayAt(player, '{yellow ---------------------------------------------------------------------------------}');
 
     for (const [name] of results) {
-        sayAt(player, `<cyan>${name}</cyan>`);
+        sayAt(player, `{cyan ${name}}`);
     }
 };
 

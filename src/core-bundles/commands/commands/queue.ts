@@ -14,7 +14,7 @@ export const cmd: CommandDefinitionFactory = {
     aliases: ['pending'],
     usage: 'queue',
     command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        sayAt(player, '<b><yellow>Command Queue:</yellow></b>');
+        sayAt(player, '{yellow.bold Command Queue:}');
 
         if (!player.commandQueue.hasPending) {
             sayAt(player, ' -) None.');
@@ -29,13 +29,13 @@ export const cmd: CommandDefinitionFactory = {
             const command = commands[i];
             const index = sprintf(indexToken, i + 1);
             const ttr = sprintf('%.1f', player.commandQueue.getTimeTilRun(i));
-            let buf = ` ${index}) <b><white>${command.label}</white></b>`;
+            let buf = ` ${index}) {white.bold ${command.label}}`;
 
-            buf += ` <yellow>(</yellow><b><white>${ttr}s</white></b><yellow>)</yellow>`;
+            buf += ` {yellow ({white.bold ${ttr}s})}`;
             sayAt(player, buf);
         }
 
-        sayAt(player, '<b><yellow>Use the &quot;flush&quot; command to flush the queue</yellow></b>');
+        sayAt(player, '{yellow.bold Use the &quot;flush&quot; command to flush the queue}');
     },
 };
 

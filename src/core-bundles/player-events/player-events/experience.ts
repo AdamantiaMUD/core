@@ -13,7 +13,7 @@ export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
         player: Player,
         {amount}: PlayerExperiencePayload
     ): void => {
-        sayAt(player, `<blue>You gained <b>${amount}</b> experience!</blue>`);
+        sayAt(player, `{blue You gained {bold ${amount}} experience!}`);
 
         const totalTnl = LevelUtil.expToLevel(player.level + 1);
 
@@ -24,7 +24,7 @@ export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
          * needed for multiple levels
          */
         if (player.experience + amt > totalTnl) {
-            sayAt(player, '                                   <b><blue>!Level Up!</blue></b>');
+            sayAt(player, '                                   {blue.bold !Level Up!}');
             sayAt(player, progress(80, 100, 'blue'));
 
             let nextTnl = totalTnl;
@@ -33,7 +33,7 @@ export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
                 amt = (player.experience + amt) - nextTnl;
                 player.levelUp();
                 nextTnl = LevelUtil.expToLevel(player.level + 1);
-                sayAt(player, `<blue>You are now level <b>${player.level}</b>!</blue>`);
+                sayAt(player, `{blue You are now level {bold ${player.level}}!}`);
                 player.dispatch(new PlayerLevelUpEvent());
             }
         }

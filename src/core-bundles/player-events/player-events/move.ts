@@ -69,7 +69,7 @@ export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
                 else {
                     sayAt(
                         follower as Player,
-                        `\r\nYou follow ${player.name} to ${nextRoom!.title}.`
+                        `You follow ${player.name} to ${nextRoom!.title}.`
                     );
                     follower.dispatch(new PlayerMoveEvent({roomExit}));
                 }

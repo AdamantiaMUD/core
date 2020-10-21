@@ -75,14 +75,14 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
             const quest = state.questFactory.get(ref);
 
             if (state.questFactory.canStart(player, ref)) {
-                sayAt(player, `[<b><yellow>!</yellow></b>] - ${displayIndex}. ${quest!.config.title}`);
+                sayAt(player, `[{yellow.bold !}] - ${displayIndex}. ${quest!.config.title}`);
             }
             else if (player.questTracker.isActive(ref)) {
                 const activeQuest = player.questTracker.get(ref);
 
                 const symbol = activeQuest!.getProgress().percent >= 100 ? '?' : '%';
 
-                sayAt(player, `[<b><yellow>${symbol}</yellow></b>] - ${displayIndex}. ${activeQuest!.config.title}`);
+                sayAt(player, `[{yellow.bold ${symbol}}] - ${displayIndex}. ${activeQuest!.config.title}`);
             }
 
             displayIndex += 1;
@@ -164,15 +164,15 @@ const logLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
         for (const [, quest] of active) {
             const questProgress = quest.getProgress();
 
-            at(player, `<b><yellow>${displayIndex}</yellow></b>: `);
+            at(player, `{yellow.bold ${displayIndex}}: `);
             sayAt(player, `${progress(60, questProgress.percent, 'yellow')} ${questProgress.percent}%`);
-            sayAt(player, indent(`<b><yellow>${quest.getProgress().display}</yellow></b>`, 2));
+            sayAt(player, indent(`{yellow.bold ${quest.getProgress().display}}`, 2));
 
             if (hasValue(quest.config.npc)) {
                 const npc = state.mobFactory.getDefinition(quest.config.npc);
 
                 if (hasValue(npc)) {
-                    sayAt(player, `  <b><yellow>Questor: ${npc.name}</yellow></b>`);
+                    sayAt(player, `  {yellow.bold Questor: ${npc.name}}`);
                 }
             }
 
@@ -180,15 +180,15 @@ const logLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
             sayAt(
                 player,
                 indent(
-                    wrap(`<b><yellow>${quest.config.description}</yellow></b>`, 78),
+                    wrap(`{yellow.bold ${quest.config.description}}`, 78),
                     2
                 )
             );
 
             if (quest.config.rewards.length > 0) {
                 sayAt(player);
-                sayAt(player, `<b><yellow>${center(80, 'Rewards')}</yellow></b>`);
-                sayAt(player, `<b><yellow>${center(80, '-------')}</yellow></b>`);
+                sayAt(player, `{yellow.bold ${center(80, 'Rewards')}}`);
+                sayAt(player, `{yellow.bold ${center(80, '-------')}}`);
 
                 for (const reward of quest.config.rewards) {
                     const rewardClass = state.questRewardManager.get(reward.type);

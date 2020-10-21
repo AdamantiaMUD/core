@@ -73,7 +73,7 @@ export const cmd: CommandDefinitionFactory = {
         player.removeItem(item);
         toContainer.addItem(item);
 
-        sayAt(player, `<green>You put </green>${ItemUtil.display(item)}<green> into </green>${ItemUtil.display(toContainer)}<green>.</green>`);
+        sayAt(player, `{green You put} ${ItemUtil.display(item)} {green into} ${ItemUtil.display(toContainer)}{green .}`);
 
         item.dispatch(new ItemPutAwayEvent({character: player, container: toContainer}));
         player.dispatch(new CharacterPutItemEvent({container: toContainer, item: item}));

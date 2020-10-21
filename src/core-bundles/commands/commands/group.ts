@@ -22,7 +22,7 @@ const createLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDe
 
         state.partyManager.create(player);
 
-        sayAt(player, "<b><green>You created a group, invite players with '<white>group invite <name></white>'</green></b>");
+        sayAt(player, "{green.bold You created a group, invite players with '{white group invite <name>}'}");
     },
 });
 
@@ -32,7 +32,7 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
         const args = rawArgs.trim();
 
         if (!hasValue(player.party)) {
-            sayAt(player, "You don't have a group, create one with '<b>group create</b>'.");
+            sayAt(player, "You don't have a group, create one with '{bold group create}'.");
 
             return;
         }
@@ -73,8 +73,8 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
             return;
         }
 
-        sayAt(target, `<b><green>${player.name} invited you to join their group. Join/decline with '<white>group join/decline ${player.name}</white>'</green></b>`);
-        sayAt(player, `<b><green>You invite ${target.name} to join your group.</green></b>`);
+        sayAt(target, `{green.bold ${player.name} invited you to join their group. Join/decline with '{white group join/decline ${player.name}}'}`);
+        sayAt(player, `{green.bold You invite ${target.name} to join your group.}`);
 
         player.party.invite(target);
 
@@ -100,12 +100,12 @@ const disbandLoader: CommandDefinitionBuilder = (state: GameStateData): CommandD
         }
 
         if (args.length === 0 || args !== 'sure') {
-            sayAt(player, "<b><green>You have to confirm disbanding your group with '<white>group disband sure</white>'</green></b>");
+            sayAt(player, "{green.bold You have to confirm disbanding your group with '{white group disband sure}'}");
 
             return;
         }
 
-        sayAt(player.party, '<b><green>Your group was disbanded!</green></b>');
+        sayAt(player.party, '{green.bold Your group was disbanded!}');
 
         state.partyManager.disband(player.party);
     },
@@ -148,8 +148,8 @@ const joinLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
             return;
         }
 
-        sayAt(player, `<b><green>You join ${target.name}'s group.</green></b>`);
-        sayAt(target.party, `<b><green>${player.name} joined the group.</green></b>`);
+        sayAt(player, `{green.bold You join ${target.name}'s group.}`);
+        sayAt(target.party, `{green.bold ${player.name} joined the group.}`);
 
         target.party.add(player);
 
@@ -188,8 +188,8 @@ const declineLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
             return;
         }
 
-        sayAt(player, `<b><green>You decline to join ${target.name}'s group.</green></b>`);
-        sayAt(target, `<b><green>${player.name} declined to join your group.</green></b>`);
+        sayAt(player, `{green.bold You decline to join ${target.name}'s group.}`);
+        sayAt(target, `{green.bold ${player.name} declined to join your group.}`);
 
         target.party.removeInvite(player);
     },
@@ -204,7 +204,7 @@ const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
             return;
         }
 
-        sayAt(player, `<b>${center(80, 'Group', 'green', '-')}</b>`);
+        sayAt(player, `{bold ${center(80, 'Group', 'green', '-')}}`);
 
         for (const member of player.party) {
             let tag = '   ';
@@ -213,7 +213,7 @@ const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
                 tag = '[L]';
             }
 
-            sayAt(player, `<b><green>${tag} ${member.name}</green></b>`);
+            sayAt(player, `{green.bold ${tag} ${member.name}}`);
         }
     },
 });
@@ -237,8 +237,8 @@ const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
         player.party.delete(player);
 
-        sayAt(party, `<b><green>${player.name} left the group.</green></b>`);
-        sayAt(player, '<b><green>You leave the group.</green></b>');
+        sayAt(party, `{green.bold ${player.name} left the group.}`);
+        sayAt(player, '{green.bold You leave the group.}');
     },
 });
 

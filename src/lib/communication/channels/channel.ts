@@ -76,17 +76,20 @@ export class Channel implements ChannelInterface {
 
         const colors = Array.isArray(this.color) ? this.color : [this.color];
 
-        const open = colors.map((color: string) => `<${color}>`).join('');
-        const close = colors.reverse()
-            .map((color: string) => `</${color}>`)
-            .join('');
+        let open = '',
+            close = '';
+
+        for (const color of colors) {
+            open += `{${color} `;
+            close += '}';
+        }
 
         return open + message + close;
     }
 
     public describeSelf(sender: CharacterInterface): void {
         if (sender instanceof Player) {
-            sayAt(sender, `\r\nChannel: ${this.name}`);
+            sayAt(sender, `Channel: ${this.name}`);
             sayAt(sender, `Syntax: ${this.getUsage()}`);
 
             if (hasValue(this.description)) {

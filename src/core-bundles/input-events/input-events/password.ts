@@ -28,7 +28,7 @@ export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
 
         // Boot and log any failed password attempts
         if (passwordAttempts[name] > maxFailedAttempts) {
-            stream.write('Password attempts exceeded.\r\n');
+            stream.write('Password attempts exceeded.');
             passwordAttempts[name] = 0;
             stream.end();
 
@@ -47,7 +47,7 @@ export const evt: StreamEventListenerFactory<InputPasswordPayload> = {
                 stream.dispatch(new ChooseCharacterEvent({account}));
             }
             else {
-                stream.write('{red Incorrect password.}\r\n');
+                stream.write('{red Incorrect password.}');
                 passwordAttempts[name] += 1;
 
                 stream.dispatch(new InputPasswordEvent({account}));

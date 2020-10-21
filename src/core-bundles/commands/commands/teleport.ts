@@ -82,7 +82,7 @@ export const cmd: CommandDefinitionFactory = {
         const oldRoom = player.room;
 
         player.moveTo(targetRoom, () => {
-            sayAt(player, '<b><green>You snap your finger and instantly appear in a new room.</green></b>\r\n');
+            sayAt(player, '{green.bold You snap your finger and instantly appear in a new room.}');
 
             state.commandManager.get('look')?.execute('', player);
         });

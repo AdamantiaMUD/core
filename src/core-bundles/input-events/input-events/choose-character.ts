@@ -39,7 +39,7 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
          * Can select existing player
          * Can create new (if less than 3 living chars)
          */
-        stream.write('\r\n------------------------------');
+        stream.write('------------------------------');
         stream.write('|      Choose your fate');
         stream.write('------------------------------');
 
@@ -178,7 +178,7 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
             }
         });
 
-        stream.write('|\r\n`-> ');
+        stream.write('|\n`-> ');
 
         stream.socket.once('data', (buf: Buffer) => {
             const choice = parseInt(buf.toString().trim(), 10) - 1;

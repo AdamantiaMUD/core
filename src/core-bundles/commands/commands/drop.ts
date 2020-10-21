@@ -45,7 +45,7 @@ export const cmd: CommandDefinitionFactory = {
             npc.dispatch(new NpcPlayerDropItemEvent({item, player}));
         }
 
-        sayAt(player, `<green>You dropped: </green>${ItemUtil.display(item)}<green>.</green>`);
+        sayAt(player, `{green You dropped:} ${ItemUtil.display(item)}{green .}`);
     },
 };
 

@@ -17,7 +17,7 @@ export const cmd: CommandDefinitionFactory = {
         const args = rawArgs.trim();
 
         if (args === 'now') {
-            sayAt(state.playerManager, '<b><yellow>Game is shutting down now!</yellow></b>');
+            sayAt(state.playerManager, '{yellow.bold Game is shutting down now!}');
             await state.playerManager.saveAll();
 
             process.exit();
@@ -31,10 +31,10 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        sayAt(state.playerManager, '<b><yellow>Game will shut down in 30 seconds.</yellow></b>');
+        sayAt(state.playerManager, '{yellow.bold Game will shut down in 30 seconds.}');
 
         setTimeout(() => {
-            sayAt(state.playerManager, '<b><yellow>Game is shutting down now!</yellow></b>');
+            sayAt(state.playerManager, '{yellow.bold Game is shutting down now!}');
 
             /* eslint-disable-next-line @typescript-eslint/no-floating-promises */
             state.playerManager.saveAll().then(() => process.exit());

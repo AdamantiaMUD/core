@@ -22,22 +22,22 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHealedPayload]> =
             sourceName = '';
 
         if (hasValue(source.attacker) && source.attacker !== player) {
-            attacker = `<b>${source.attacker.name}</b> `;
+            attacker = `{bold ${source.attacker.name}} `;
         }
 
         if (hasValue(source.source) && source.source !== source.attacker) {
             attacker = attacker.length > 0 ? `${attacker}'s ` : '';
-            sourceName = `<b>${source.source.name}</b>`;
+            sourceName = `{bold ${source.source.name}}`;
         }
         else if (!hasValue(source.attacker)) {
             sourceName = 'Something';
         }
 
         if (source.attribute === 'hp') {
-            playerMessage = `${attacker}${sourceName} heals you for <b><red>${amount}</red></b>.`;
+            playerMessage = `${attacker}${sourceName} heals you for {red.bold ${amount}}.`;
         }
         else {
-            playerMessage = `${attacker}${sourceName} restores <b>${amount}</b> ${source.attribute}.`;
+            playerMessage = `${attacker}${sourceName} restores {bold ${amount}} ${source.attribute}.`;
         }
 
         sayAt(player, playerMessage);
@@ -47,7 +47,7 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHealedPayload]> =
             return;
         }
 
-        const partyMessage = `${attacker}${sourceName} heals ${player.name} for <b><red>${amount}</red></b>.`;
+        const partyMessage = `${attacker}${sourceName} heals ${player.name} for {red.bold ${amount}}.`;
 
         for (const member of player.party) {
             if (member !== player && member.room === player.room) {

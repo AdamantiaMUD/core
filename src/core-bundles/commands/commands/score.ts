@@ -31,8 +31,8 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        sayAt(player, `<b>${center(60, `${player.name}, level ${player.level} ${pClass.name}`, 'green')}`);
-        sayAt(player, `<b>${line(60, '-', 'green')}`);
+        sayAt(player, `{bold ${center(60, `${player.name}, level ${player.level} ${pClass.name}`, 'green')}}`);
+        sayAt(player, `{bold ${line(60, '-', 'green')}}`);
 
         const stats: PlayerStats = [
             'ac',
@@ -54,10 +54,7 @@ export const cmd: CommandDefinitionFactory = {
         }), {});
 
         at(player, sprintf(' %-9s: %12s', 'Health', `${stats.hp.current}/${stats.hp.max}`));
-        sayAt(player, `<b><green>${sprintf(
-            '%36s',
-            'Weapon '
-        )}`);
+        sayAt(player, `{green.bold ${sprintf('%36s', 'Weapon ')}}`);
 
         at(player, line(24, ' '));
         sayAt(player, `${sprintf('%35s', `.${line(22)}`)}.`);
@@ -66,18 +63,18 @@ export const cmd: CommandDefinitionFactory = {
 
         const weaponDamage = getWeaponDamage(player);
 
-        sayAt(player, sprintf(' %6s:<b>%5s</b> - <b>%-5s</b> |', 'Damage', `${weaponDamage.min}-${weaponDamage.max}`));
+        sayAt(player, sprintf(' %6s:{bold %5s} - {bold %-5s} |', 'Damage', `${weaponDamage.min}-${weaponDamage.max}`));
         at(player, sprintf('%37s', '|'));
-        sayAt(player, sprintf(' %6s: <b>%12s</b> |', 'Speed', center(12, `${getWeaponSpeed(player)} sec`)));
+        sayAt(player, sprintf(' %6s: {bold %12s} |', 'Speed', center(12, `${getWeaponSpeed(player)} sec`)));
         sayAt(player, sprintf('%60s', `'${line(22)}'`));
-        sayAt(player, `<b><green>${sprintf('%-24s', ' Stats')}</green></b>`);
+        sayAt(player, `{green.bold ${sprintf('%-24s', ' Stats')}}`);
         sayAt(player, `.${line(22)}.`);
 
         const printStat = (stat: string, newline: boolean = true): void => {
             const val = stats[stat];
             const statColor = val.current > val.base ? 'green' : 'white';
             const str = sprintf(
-                `| %-9s : <b><${statColor}>%8s</${statColor}></b> |`,
+                `| %-9s : {${statColor}.bold %8s} |`,
                 stat[0].toUpperCase() + stat.slice(1),
                 val.current
             );
@@ -91,11 +88,11 @@ export const cmd: CommandDefinitionFactory = {
         };
 
         printStat('str', false);
-        sayAt(player, `<b><green>${sprintf('%36s', 'Gold ')}`);
+        sayAt(player, `{green.bold ${sprintf('%36s', 'Gold ')}}`);
         printStat('dex', false);
         sayAt(player, sprintf('%36s', `.${line(12)}.`));
         printStat('con', false);
-        sayAt(player, sprintf('%22s| <b>%10s</b> |', '', player.getMeta<number>('currencies.gold') ?? 0));
+        sayAt(player, sprintf('%22s| {bold %10s} |', '', player.getMeta<number>('currencies.gold') ?? 0));
         printStat('int', false);
         sayAt(player, sprintf('%36s', `'${line(12)}'`));
         sayAt(player, `:${line(22)}:`);

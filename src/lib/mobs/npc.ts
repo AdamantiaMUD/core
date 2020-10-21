@@ -37,7 +37,7 @@ export class Npc extends Character implements Serializable {
 
         this.area = area;
         this.script = data.script ?? null;
-        this.corpseDesc = data.corpseDesc ?? '';
+        this.corpseDesc = data.corpseDesc ?? null;
         this.defaultEquipment = data.defaultEquipment ?? {};
         this.defaultItems = data.items ?? [];
         this.entityReference = data.entityReference;

@@ -81,6 +81,7 @@ export class Ability {
         this.configureEffect = configureEffect ?? ident;
 
         this.cooldownGroup = null;
+
         if (typeof cooldown === 'number') {
             this.cooldownLength = cooldown;
         }
@@ -228,7 +229,7 @@ export class Ability {
             listeners: {
                 effectDeactivated: (effect: Effect): void => {
                     if (effect.target instanceof Player) {
-                        sayAt(effect.target, `You may now use <b>${effect.ability!.name}</b> again.`);
+                        sayAt(effect.target, `You may now use {bold ${effect.ability!.name}} again.`);
                     }
                 },
             },

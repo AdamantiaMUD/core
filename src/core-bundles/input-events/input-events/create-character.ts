@@ -19,7 +19,7 @@ export const evt: StreamEventListenerFactory<CreateCharacterPayload> = {
         stream: TransportStream<EventEmitter>,
         {account}: CreateCharacterPayload
     ): void => {
-        stream.write('<b>What would you like to name your character?</b> ');
+        stream.write('{bold What would you like to name your character?} ');
 
         stream.socket.once('data', (buf: Buffer) => {
             stream.write('');

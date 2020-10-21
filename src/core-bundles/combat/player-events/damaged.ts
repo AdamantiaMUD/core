@@ -15,7 +15,7 @@ const getSourceName = (source: Damage): string => {
     let buf = '';
 
     if (hasValue(source.attacker)) {
-        buf = `<b>${source.attacker.name}</b>`;
+        buf = `{bold ${source.attacker.name}}`;
 
         if (hasValue(source.source) && source.source !== source.attacker) {
             buf += "'s ";
@@ -23,7 +23,7 @@ const getSourceName = (source: Damage): string => {
     }
 
     if (hasValue(source.source)) {
-        buf += `<b>${source.source.name}</b>`;
+        buf += `{bold ${source.source.name}}`;
     }
     else if (!hasValue(source.attacker)) {
         buf += 'Something';
@@ -44,16 +44,16 @@ export const evt: MudEventListenerDefinition<[Player, CharacterDamagedPayload]> 
 
         const sourceName = getSourceName(source);
 
-        let playerMessage = `${sourceName} hit <b>you</b> for <b><red>${amount}</red></b> damage.`;
+        let playerMessage = `${sourceName} hit {bold you} for {red.bold ${amount}} damage.`;
 
         if (source.metadata.critical as boolean) {
-            playerMessage += ' <red><b>(Critical)</b></red>';
+            playerMessage += ' {red.bold (Critical)}';
         }
 
         sayAt(player, playerMessage);
 
         if (hasValue(player.party)) {
-            const partyMessage = `${sourceName} hit <b>${player.name}</b> for <b><red>${amount}</red></b> damage`;
+            const partyMessage = `${sourceName} hit {bold ${player.name}} for {red.bold ${amount}} damage`;
 
             // show damage to party members
             for (const member of player.party) {

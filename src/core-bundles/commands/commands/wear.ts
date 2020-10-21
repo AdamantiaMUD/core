@@ -62,7 +62,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        sayAt(player, `<green>You equip:</green> ${ItemUtil.display(item)}<green>.</green>`);
+        sayAt(player, `{green You equip:} ${ItemUtil.display(item)}{green .}`);
     },
 };
 

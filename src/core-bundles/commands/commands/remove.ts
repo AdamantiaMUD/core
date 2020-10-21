@@ -30,7 +30,7 @@ export const cmd: CommandDefinitionFactory = {
 
         const [slot, item] = result;
 
-        sayAt(player, `<green>You un-equip: </green>${ItemUtil.display(item)}<green>.</green>`);
+        sayAt(player, `{green You un-equip:} ${ItemUtil.display(item)}{green .}`);
         player.unequip(slot);
     },
 };

@@ -46,7 +46,7 @@ const getCombatantsDisplay = (entity: CharacterInterface): string => {
     const combatantsList = [...entity.combat.combatants.values()]
         .map((combatant: CharacterInterface) => combatant.name);
 
-    return `, <red>fighting </red>${combatantsList.join('<red>,</red> ')}`;
+    return `, {red fighting} ${combatantsList.join('{red ,} ')}`;
 };
 
 const lookRoom = (state: GameStateData, player: Player): void => {
@@ -58,13 +58,13 @@ const lookRoom = (state: GameStateData, player: Player): void => {
 
     const room = player.room;
 
-    sayAt(player, `<b>${room.title}</b>`);
+    sayAt(player, `{bold ${room.title}}`);
 
     if (!player.getMeta<boolean>('config.brief')) {
         sayAt(player, `    ${room.description}`, 80);
     }
 
-    at(player, '<green><b>Exits</green></b>: ');
+    at(player, '{green.bold Exits}: ');
 
     const exits = room.getExits();
     const foundExits: RoomExitDefinition[] = [];
@@ -101,10 +101,10 @@ const lookRoom = (state: GameStateData, player: Player): void => {
         const desc = item.roomDesc.length > 0 ? item.roomDesc : item.description;
 
         if (item.hasBehavior('resource')) {
-            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Resource')}] <magenta>${desc}</magenta>`);
+            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Resource')}] {magenta ${desc}}`);
         }
         else {
-            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Item')}] <magenta>${desc}</magenta>`);
+            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Item')}] {magenta ${desc}}`);
         }
     });
 
@@ -132,9 +132,9 @@ const lookRoom = (state: GameStateData, player: Player): void => {
             let questString = '';
 
             if (hasNewQuest || hasActiveQuest || hasReadyQuest) {
-                questString += hasNewQuest ? '[<b><yellow>!</yellow></b>]' : '';
-                questString += hasActiveQuest ? '[<b><yellow>%</yellow></b>]' : '';
-                questString += hasReadyQuest ? '[<b><yellow>?</yellow></b>]' : '';
+                questString += hasNewQuest ? '[{yellow.bold !}]' : '';
+                questString += hasActiveQuest ? '[{yellow.bold %}]' : '';
+                questString += hasReadyQuest ? '[{yellow.bold ?}]' : '';
 
                 at(player, `${questString} `);
             }
@@ -147,33 +147,31 @@ const lookRoom = (state: GameStateData, player: Player): void => {
         }
 
         // color NPC label by difficulty
-        let npcLabel: string;
+        let npcColor: string = 'green';
 
         switch (true) {
             case player.level - npc.level > 4:
-                npcLabel = '<cyan>NPC</cyan>';
+                npcColor = 'cyan';
                 break;
 
             case npc.level - player.level > 9:
-                npcLabel = '<b><black>NPC</black></b>';
+                npcColor = 'black.bold';
                 break;
 
             case npc.level - player.level > 5:
-                npcLabel = '<red>NPC</red>';
+                npcColor = 'red';
                 break;
 
             case npc.level - player.level > 3:
-                npcLabel = '<yellow>NPC</red>';
+                npcColor = 'yellow';
                 break;
 
-            default:
-                npcLabel = '<green>NPC</green>';
-                break;
+            /* no default */
         }
 
         const desc = npc.roomDesc.length > 0 ? npc.roomDesc : npc.description;
 
-        sayAt(player, `[${npcLabel}] ${desc}${combatantsDisplay}`);
+        sayAt(player, `[{${npcColor} NPC}] ${desc}${combatantsDisplay}`);
     });
 
     // show all players
@@ -211,7 +209,7 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
         return;
     }
 
-    sayAt(player, `You look at ${entity.name}\r\n`, 80);
+    sayAt(player, `You look at ${entity.name}`, 80);
     sayAt(player, entity.description, 80);
 
     const decayTime = entity.getMeta<number>('time-until-decay');

@@ -60,7 +60,7 @@ export class ExperienceReward implements QuestReward {
     ): string {
         const amount = ExperienceReward._getAmount(quest, config, player);
 
-        return `Experience: <b>${amount}</b>`;
+        return `Experience: {bold ${amount}}`;
     }
 
     public reward(

@@ -28,7 +28,7 @@ export const evt: MudEventListenerDefinition<[Player, PlayerCurrencyGainedPayloa
         player.setMeta(key, (player.getMeta<number>(key) ?? 0) + amount);
         player.save();
 
-        sayAt(player, `<green>You receive currency: <b><white>[${friendlyName}]</white></b> x${amount}.`);
+        sayAt(player, `{green You receive currency:} {white.bold [${friendlyName}]} x${amount}.`);
     },
 };
 

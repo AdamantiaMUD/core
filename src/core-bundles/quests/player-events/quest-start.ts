@@ -14,17 +14,17 @@ export const evt: PlayerEventListenerDefinition<PlayerQuestStartedPayload> = {
         player: Player,
         {quest}: PlayerQuestStartedPayload
     ): void => {
-        sayAt(player, `\r\n<b><yellow>Quest Started: ${quest.config.title}!</yellow></b>`);
+        sayAt(player, `{yellow.bold Quest Started: ${quest.config.title}!}`);
 
         if (hasValue(quest.config.description)) {
             sayAt(player, line(80));
-            sayAt(player, `<b><yellow>${quest.config.description}</yellow></b>`, 80);
+            sayAt(player, `{yellow.bold ${quest.config.description}}`, 80);
         }
 
         if (quest.config.rewards.length > 0) {
             sayAt(player);
-            sayAt(player, `<b><yellow>${center(80, 'Rewards')}</yellow></b>`);
-            sayAt(player, `<b><yellow>${center(80, '-------')}</yellow></b>`);
+            sayAt(player, `{yellow.bold ${center(80, 'Rewards')}}`);
+            sayAt(player, `{yellow.bold ${center(80, '-------')}}`);
 
             for (const reward of quest.config.rewards) {
                 const rwd = state.questRewardManager.get(reward.type);

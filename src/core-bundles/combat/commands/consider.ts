@@ -54,7 +54,7 @@ export const cmd: CommandDefinitionFactory = {
                 break;
 
             case target.level - player.level > 9:
-                description = "They are <b>much</b> stronger than you. They will kill you, and it will hurt the whole time you're dying.";
+                description = "They are {bold much} stronger than you. They will kill you, and it will hurt the whole time you're dying.";
                 break;
 
             case target.level - player.level > 5:

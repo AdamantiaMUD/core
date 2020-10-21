@@ -27,7 +27,7 @@ const pickup = (item: Item, container: Item | null, player: Player): void => {
 
     player.addItem(item);
 
-    sayAt(player, `<green>You receive loot: </green>${ItemUtil.display(item)}<green>.</green>`);
+    sayAt(player, `{green You receive loot:} ${ItemUtil.display(item)}{green .}`);
 
     item.dispatch(new ItemPickedUpEvent({character: player}));
     player.dispatch(new PlayerGetItemEvent({item}));

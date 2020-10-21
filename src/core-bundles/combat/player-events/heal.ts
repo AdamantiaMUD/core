@@ -26,10 +26,10 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHealPayload]> = {
                 playerMessage = 'You heal ';
             }
             else {
-                playerMessage = `Your <b>${source.source.name}</b> healed `;
+                playerMessage = `Your {bold ${source.source.name}} healed `;
             }
 
-            playerMessage += `<b>${target.name}</b> for <b><green>${amount}</green></b> ${source.attribute}.`;
+            playerMessage += `{bold ${target.name}} for {green.bold ${amount}} ${source.attribute}.`;
 
             sayAt(player, playerMessage);
         }
@@ -45,10 +45,10 @@ export const evt: MudEventListenerDefinition<[Player, CharacterHealPayload]> = {
             partyMessage = `${player.name} healed `;
         }
         else {
-            partyMessage = `${player.name}'s <b>${source.source.name}</b> healed `;
+            partyMessage = `${player.name}'s {bold ${source.source.name}} healed `;
         }
 
-        partyMessage += `<b>${target.name}</b> for <b><green>${amount}</green></b> ${source.attribute}.`;
+        partyMessage += `{bold ${target.name}} for {green.bold ${amount}} ${source.attribute}.`;
 
         for (const member of player.party) {
             if (!(member === player || member.room !== player.room)) {

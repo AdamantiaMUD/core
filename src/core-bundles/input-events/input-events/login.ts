@@ -29,7 +29,7 @@ export const evt: StreamEventListenerFactory<void> = {
                     validateAccountName(state.config, name);
                 }
                 catch (err: unknown) {
-                    stream.write(`${cast<Error>(err).message}\r\n`);
+                    stream.write(cast<Error>(err).message);
 
                     stream.dispatch(new BeginLoginEvent());
 
@@ -58,14 +58,14 @@ export const evt: StreamEventListenerFactory<void> = {
                 }
 
                 if (account.isBanned) {
-                    stream.write('This account has been banned.\r\n');
+                    stream.write('This account has been banned.');
                     stream.end();
 
                     return;
                 }
 
                 if (account.isDeleted) {
-                    stream.write('This account has been deleted.\r\n');
+                    stream.write('This account has been deleted.');
                     stream.end();
 
                     return;

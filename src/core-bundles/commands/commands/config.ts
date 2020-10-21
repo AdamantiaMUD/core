@@ -35,7 +35,7 @@ export const cmd: CommandDefinitionFactory = {
         ] = args.split(' ');
 
         if (!possibleCommands.includes(command)) {
-            sayAt(player, `<red>Invalid config command: ${command}</red>`);
+            sayAt(player, `{red Invalid config command: ${command}}`);
 
             state.commandManager.get('help')?.execute('config', player);
 
@@ -74,7 +74,7 @@ export const cmd: CommandDefinitionFactory = {
         ];
 
         if (!possibleSettings.includes(configToSet)) {
-            sayAt(player, `<red>Invalid setting: ${configToSet}. Possible settings: ${possibleSettings.join(', ')}`);
+            sayAt(player, `{red Invalid setting: ${configToSet}. Possible settings: ${possibleSettings.join(', ')}}`);
 
             state.commandManager.get('help')?.execute('config', player);
 
@@ -82,7 +82,7 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         if (!hasValue(valueToSet)) {
-            sayAt(player, `<red>What value do you want to set for ${configToSet}?</red>`);
+            sayAt(player, `{red What value do you want to set for ${configToSet}?}`);
 
             state.commandManager.get('help')?.execute('config', player);
 
@@ -93,7 +93,7 @@ export const cmd: CommandDefinitionFactory = {
         const possibleValues = {on: true, off: false};
 
         if (possibleValues[valueToSet] === undefined) {
-            sayAt(player, '<red>Value must be either: on / off</red>');
+            sayAt(player, '{red Value must be either: on / off}');
 
             return;
         }

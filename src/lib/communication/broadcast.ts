@@ -4,7 +4,6 @@ import {sprintf} from 'sprintf-js';
 import {cast} from '../util/functions';
 import {
     colorize,
-    fixNewlines,
     isBroadcastable,
     NOOP_FORMATTER,
 } from '../util/communication';
@@ -33,19 +32,17 @@ export const at = (
         ));
     }
 
-    const cleanMessage = fixNewlines(message);
-
     for (const target of source.getBroadcastTargets()) {
         if ('socket' in target) {
             const playerTarget = cast<Player>(target);
 
             if (playerTarget.socket?.writable) {
                 if (playerTarget.socket.prompted) {
-                    playerTarget.socket.write('\r\n');
+                    playerTarget.socket.write('');
                     playerTarget.socket.setPrompted(false);
                 }
 
-                let targetMessage = formatter(playerTarget, cleanMessage);
+                let targetMessage = formatter(playerTarget, message);
 
                 targetMessage = wrapWidth > 0
                     ? wrapAnsi(targetMessage, Number(wrapWidth))
@@ -144,11 +141,10 @@ export const center = (
 /**
  * Indent all lines of a given string by a given amount
  */
-export const indent = (msg: string, padSize: number): string => {
-    const message = fixNewlines(msg);
+export const indent = (message: string, padSize: number): string => {
     const padding = line(padSize, ' ');
 
-    return padding + message.replace(/\r\n/gu, `\r\n${padding}`);
+    return padding + message.replace(/\n/gu, `\n${padding}`);
 };
 
 /**
@@ -198,7 +194,7 @@ export const sayAt = (
     source,
     message,
     wrapWidth,
-    (target: Broadcastable, msg: string) => `${formatter(target, msg)}\r\n`
+    (target: Broadcastable, msg: string) => formatter(target, msg)
 );
 
 /**
@@ -213,7 +209,7 @@ export const prompt = (
 
     at(
         player,
-        `\r\n${player.interpolatePrompt(player.prompt, extra)} `,
+        `${player.interpolatePrompt(player.prompt, extra)} `,
         wrapWidth
     );
 
@@ -308,7 +304,7 @@ export const sayAtExcept = (
     message,
     excludes,
     wrapWidth,
-    (target: Broadcastable, mess: string) => `${formatter(target, mess)}\r\n`
+    (target: Broadcastable, mess: string) => formatter(target, mess)
 );
 
 /**
@@ -328,7 +324,7 @@ export const sayAtFormatted = (
 export const wrap = (
     message: string,
     width: number = DEFAULT_LINE_LENGTH
-): string => fixNewlines(wrapAnsi(colorize(message), width));
+): string => wrapAnsi(colorize(message), width);
 
 const broadcast = {
     /* eslint-disable-next-line id-length */
