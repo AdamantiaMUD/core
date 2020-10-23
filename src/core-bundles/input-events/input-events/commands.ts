@@ -76,7 +76,7 @@ export const evt: StreamEventListenerFactory<CommandLoopPayload> = {
             try {
                 const result = CommandParser.parse(state, data, player);
 
-                if (!hasValue(result) || !hasValue(result.command)) {
+                if (!hasValue(result)) {
                     throw new Error('Could not parse command');
                 }
 
@@ -87,6 +87,10 @@ export const evt: StreamEventListenerFactory<CommandLoopPayload> = {
                         break;
 
                     case CommandType.COMMAND: {
+                        if (!hasValue(result.command)) {
+                            throw new Error('Something weird happened. I dunno what');
+                        }
+
                         const {requiredRole = PlayerRole.PLAYER} = result.command;
 
                         if (requiredRole > player.role) {

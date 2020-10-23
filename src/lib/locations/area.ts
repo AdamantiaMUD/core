@@ -1,3 +1,4 @@
+import Logger from '../common/logger';
 import ScriptableEntity from '../entities/scriptable-entity';
 import {AreaRoomAddedEvent, RoomReadyEvent} from './events';
 import {UpdateTickEvent} from '../common/events';
@@ -75,7 +76,9 @@ export class Area extends ScriptableEntity implements Broadcastable {
     }
 
     public hydrate(state: GameStateData): void {
-        const areaDef = state.areaFactory.getDefinition(this.name);
+        Logger.info(`Hydrating area: '${this.name}'`);
+
+        const areaDef = state.areaFactory.getDefinition(this.entityReference);
 
         if (!hasValue(areaDef)) {
             // @TODO: throw

@@ -1,5 +1,5 @@
-import MudEventEmitter from '../events/mud-event-emitter';
 import Data from '../util/data';
+import MudEventEmitter from '../events/mud-event-emitter';
 import MudEventManager from '../events/mud-event-manager';
 import Player from './player';
 import {PlayerSavedEvent} from './events';
@@ -18,13 +18,18 @@ export class PlayerManager extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public events: MudEventManager = new MudEventManager();
     public loader: EntityLoader | null = null;
-    public players: Map<string, Player> = new Map<string, Player>();
+
+    private readonly _players: Map<string, Player> = new Map<string, Player>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor() {
         super();
 
         this.listen(UpdateTickEvent.getName(), this.tickAll.bind(this));
+    }
+
+    public get players(): Map<string, Player> {
+        return this._players;
     }
 
     public addListener(event: string | symbol, listener: MudEventListener): this {
@@ -34,7 +39,7 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public addPlayer(username: string, player: Player): void {
-        this.players.set(username, player);
+        this._players.set(username, player);
     }
 
     public exists(name: string): boolean {
@@ -50,11 +55,11 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public getPlayer(name: string): Player | null {
-        return this.players.get(name.toLowerCase()) ?? null;
+        return this._players.get(name.toLowerCase()) ?? null;
     }
 
     public getPlayersAsArray(): Player[] {
-        return Array.from(this.players.values());
+        return Array.from(this._players.values());
     }
 
     /**
@@ -65,7 +70,7 @@ export class PlayerManager extends MudEventEmitter {
         username: string,
         force: boolean = false
     ): Promise<Player> {
-        if (this.players.has(username) && !force) {
+        if (this._players.has(username) && !force) {
             return this.getPlayer(username)!;
         }
 
@@ -104,7 +109,7 @@ export class PlayerManager extends MudEventEmitter {
 
         player.setPruned();
 
-        this.players.delete(player.name.toLowerCase());
+        this._players.delete(player.name.toLowerCase());
     }
 
     public async save(player: Player): Promise<void> {
@@ -118,7 +123,7 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public async saveAll(): Promise<void> {
-        for (const [, player] of this.players.entries()) {
+        for (const [, player] of this._players.entries()) {
             /* eslint-disable-next-line no-await-in-loop */
             await this.save(player);
         }
@@ -129,7 +134,7 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public tickAll(): void {
-        for (const [, player] of this.players.entries()) {
+        for (const [, player] of this._players.entries()) {
             player.dispatch(new UpdateTickEvent());
         }
     }

@@ -53,7 +53,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
 
         super.deserialize({
             metadata: def.metadata ?? null,
-            entityReference: `${area.name}:${def.id}`,
+            entityReference: `${area.entityReference}:${def.id}`,
         });
     }
 

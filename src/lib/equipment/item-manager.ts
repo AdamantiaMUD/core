@@ -8,6 +8,10 @@ import type Item from './item';
 export class ItemManager {
     private readonly _items: Set<Item> = new Set();
 
+    public get items(): Set<Item> {
+        return this._items;
+    }
+
     public add(item: Item): void {
         this._items.add(item);
     }

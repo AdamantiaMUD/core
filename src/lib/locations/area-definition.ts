@@ -3,6 +3,7 @@ import type ScriptableEntityDefinition from '../entities/scriptable-entity-defin
 
 export interface AreaDefinition extends ScriptableEntityDefinition {
     bundle: string;
+    items: string[];
     manifest: AreaManifest;
     npcs: string[];
     quests: string[];

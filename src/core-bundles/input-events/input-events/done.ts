@@ -23,7 +23,7 @@ export const evt: StreamEventListenerFactory<LoginCompletePayload> = {
 
         state.commandManager
             .get('look')!
-            .execute(null, player);
+            .execute('', player);
 
         Broadcast.prompt(player);
 

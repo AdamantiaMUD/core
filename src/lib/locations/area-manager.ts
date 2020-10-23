@@ -14,8 +14,7 @@ export class AreaManager extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private _placeholder: Area;
     private readonly _state: GameStateData;
-
-    public areas: Map<string, Area> = new Map<string, Area>();
+    private readonly _areas: Map<string, Area> = new Map<string, Area>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(state: GameStateData) {
@@ -27,17 +26,21 @@ export class AreaManager extends MudEventEmitter {
     }
 
     private _tickAll(): void {
-        for (const [, area] of this.areas) {
+        for (const [, area] of this._areas) {
             area.dispatch(new UpdateTickEvent({state: this._state}));
         }
     }
 
+    public get areas(): Map<string, Area> {
+        return this._areas;
+    }
+
     public addArea(area: Area): void {
-        this.areas.set(area.name, area);
+        this._areas.set(area.name, area);
     }
 
     public getArea(name: string): Area | null {
-        return this.areas.get(name) ?? null;
+        return this._areas.get(name) ?? null;
     }
 
     public getAreaByReference(entityRef: string | null): Area | null {
@@ -77,7 +80,7 @@ export class AreaManager extends MudEventEmitter {
     }
 
     public removeArea(area: Area): boolean {
-        return this.areas.delete(area.name);
+        return this._areas.delete(area.name);
     }
 }
 

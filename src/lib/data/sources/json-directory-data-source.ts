@@ -81,9 +81,10 @@ export class JsonDirectoryDataSource extends FileDataSource {
         if (!fs.existsSync(dirPath)) {
             throw new Error(`Invalid path [${dirPath}] specified for JsonDirectoryDataSource`);
         }
+
         const source = new JsonDataSource(this.appConfig);
 
-        return source.replace({path: path.join(dirPath, `${id}.json`)}, data);
+        return source.replace(data, {path: path.join(dirPath, `${id}.json`)});
     }
 }
 

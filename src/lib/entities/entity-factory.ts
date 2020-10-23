@@ -11,8 +11,12 @@ export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntit
     protected _scripts: BehaviorManager = new BehaviorManager();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public static createRef(areaName: string, id: string): string {
-        return `${areaName}:${id}`;
+    public static createRef(areaRef: string, id: string): string {
+        return `${areaRef}:${id}`;
+    }
+
+    public get entities(): Map<string, TDef> {
+        return this._entities;
     }
 
     public addScriptListener(ref: string, event: string, listener: Behavior): void {

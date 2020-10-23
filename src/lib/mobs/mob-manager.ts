@@ -8,6 +8,10 @@ import type Npc from './npc';
 export class MobManager {
     private readonly _mobs: Map<string, Npc> = new Map<string, Npc>();
 
+    public get mobs(): Map<string, Npc> {
+        return this._mobs;
+    }
+
     public add(mob: Npc): void {
         this._mobs.set(mob.uuid, mob);
     }

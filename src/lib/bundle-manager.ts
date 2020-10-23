@@ -123,55 +123,54 @@ export class BundleManager {
     private async _loadArea(
         bundle: string,
         bundlePath: string,
-        areaName: string,
+        areaRef: string,
         manifest: AreaManifest
     ): Promise<void> {
-        Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- START`);
+        Logger.info(`LOAD: ${bundle} - Area \`${areaRef}\` -- START`);
 
         const definition: AreaDefinition = {
             bundle: bundle,
-            id: areaName,
+            id: areaRef,
+            items: [],
             manifest: manifest,
             npcs: [],
             quests: [],
             rooms: [],
         };
 
-        Logger.verbose(`LOAD: Area \`${areaName}\`: Quests...`);
-        definition.quests = await this._loadQuests(bundle, areaName);
+        Logger.verbose(`LOAD: Area \`${areaRef}\`: Quests...`);
+        definition.quests = await this._loadQuests(bundle, areaRef);
 
-        /*
-         * Logger.verbose(`LOAD: Area \`${areaName}\`: Items...`);
-         * definition.items = await this._loadEntities(
-         *     bundle,
-         *     bundlePath,
-         *     areaName,
-         *     'items',
-         *     this._state.itemFactory
-         * );
-         */
+        Logger.verbose(`LOAD: Area \`${areaRef}\`: Items...`);
+        definition.items = await this._loadEntities(
+            bundle,
+            bundlePath,
+            areaRef,
+            'items',
+            this._state.itemFactory
+        );
 
-        Logger.verbose(`LOAD: Area \`${areaName}\`: NPCs...`);
+        Logger.verbose(`LOAD: Area \`${areaRef}\`: NPCs...`);
         definition.npcs = await this._loadEntities(
             bundle,
             bundlePath,
-            areaName,
+            areaRef,
             'npcs',
             this._state.mobFactory
         );
 
-        Logger.verbose(`LOAD: Area \`${areaName}\`: Rooms...`);
+        Logger.verbose(`LOAD: Area \`${areaRef}\`: Rooms...`);
         definition.rooms = await this._loadEntities(
             bundle,
             bundlePath,
-            areaName,
+            areaRef,
             'rooms',
             this._state.roomFactory
         );
 
-        this._state.areaFactory.setDefinition(areaName, definition);
+        this._state.areaFactory.setDefinition(areaRef, definition);
 
-        Logger.info(`LOAD: ${bundle} - Area \`${areaName}\` -- END`);
+        Logger.info(`LOAD: ${bundle} - Area \`${areaRef}\` -- END`);
     }
 
     private async _loadAreas(bundle: string, bundlePath: string): Promise<void> {
@@ -192,10 +191,10 @@ export class BundleManager {
 
         const areas = await loader.fetchAll<AreaManifest>();
 
-        for (const [name, manifest] of Object.entries(areas)) {
-            this._areas.push(name);
+        for (const [ref, manifest] of Object.entries(areas)) {
+            this._areas.push(ref);
 
-            await this._loadArea(bundle, bundlePath, name, manifest);
+            await this._loadArea(bundle, bundlePath, ref, manifest);
         }
 
         Logger.info(`LOAD: ${bundle} - Areas -- END`);
@@ -406,7 +405,7 @@ export class BundleManager {
     >(
         bundle: string,
         bundlePath: string,
-        areaName: string,
+        areaRef: string,
         type: string,
         factory: T
     ): Promise<string[]> {
@@ -419,17 +418,17 @@ export class BundleManager {
         }
 
         loader.setBundle(bundle);
-        loader.setArea(areaName);
+        loader.setArea(areaRef);
 
         if (!await loader.hasData()) {
             return [];
         }
 
         const entities = await loader.fetchAll<EDef>();
-        const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaName);
+        const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaRef);
 
         return Promise.all(Object.values(entities).map(async (entity: EDef) => {
-            const ref = EntityFactory.createRef(areaName, entity.id);
+            const ref = EntityFactory.createRef(areaRef, entity.id);
 
             factory.setDefinition(ref, entity);
 
