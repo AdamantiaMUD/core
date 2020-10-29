@@ -16,7 +16,6 @@ import CharacterClassManager from './classes/character-class-manager';
 import CommandManager from './commands/command-manager';
 import Data from './util/data';
 import EffectFactory from './effects/effect-factory';
-import EntityLoaderRegistry from './data/entity-loader-registry';
 import GameServer from './game-server';
 import HelpManager from './help/help-manager';
 import ItemFactory from './equipment/item-factory';
@@ -35,7 +34,6 @@ import {UpdateTickEvent} from './common/events';
 
 import type CombatEngine from './combat/combat-engine';
 import type Config from './util/config';
-import type EntityLoaderDefinitions from './data/entity-loader-definitions';
 import type GameStateData from './game-state-data';
 import type Timeout from './util/timeout';
 import type TransportStream from './communication/transport-stream';
@@ -47,7 +45,7 @@ export class GameState implements GameStateData {
     [key: string]: unknown;
 
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _accountManager: AccountManager = new AccountManager();
+    private readonly _accountManager: AccountManager;
     private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
@@ -56,7 +54,6 @@ export class GameState implements GameStateData {
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
     private readonly _effectFactory: EffectFactory = new EffectFactory();
-    private readonly _entityLoaderRegistry: EntityLoaderRegistry;
     private readonly _helpManager: HelpManager = new HelpManager();
     private readonly _itemBehaviorManager: BehaviorManager = new BehaviorManager();
     private readonly _itemManager: ItemManager = new ItemManager();
@@ -67,7 +64,7 @@ export class GameState implements GameStateData {
     private readonly _npcClassManager: CharacterClassManager = new CharacterClassManager();
     private readonly _partyManager: PartyManager = new PartyManager();
     private readonly _playerClassManager: CharacterClassManager = new CharacterClassManager();
-    private readonly _playerManager: PlayerManager = new PlayerManager();
+    private readonly _playerManager: PlayerManager;
     private readonly _questFactory: QuestFactory = new QuestFactory();
     private readonly _questGoalManager: QuestGoalManager = new QuestGoalManager();
     private readonly _questRewardManager: QuestRewardManager = new QuestRewardManager();
@@ -86,17 +83,15 @@ export class GameState implements GameStateData {
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(config: Config) {
-        Data.setDataPath(config.get<string>('dataPath'));
+        Data.setDataPath(config.getPath('data'));
 
-        config.set('core.bundlesPath', path.join(__dirname, '..', 'core-bundles'));
-        config.set('core.rootPath', path.join(__dirname, '..'));
+        config.set('paths.bundles', path.join(__dirname, '..', 'core-bundles'));
+        config.set('paths.root', path.join(__dirname, '..'));
 
+        this._accountManager = new AccountManager(this);
         this._areaManager = new AreaManager(this);
         this._config = config;
-        this._entityLoaderRegistry = new EntityLoaderRegistry(config.get<EntityLoaderDefinitions>('entityLoaders'), config);
-
-        this._accountManager.setLoader(this._entityLoaderRegistry.get('accounts'));
-        this._playerManager.setLoader(this._entityLoaderRegistry.get('players'));
+        this._playerManager = new PlayerManager(this);
     }
 
     private _attachServer(): void {
@@ -110,7 +105,7 @@ export class GameState implements GameStateData {
 
         this._entityTickInterval = setInterval(
             () => this.tickEntities(),
-            this._config.get('entityTickFrequency', DEFAULT_TICK_FREQUENCY)
+            this._config.get<number>('entityTickFrequency', DEFAULT_TICK_FREQUENCY)!
         );
     }
 
@@ -121,7 +116,7 @@ export class GameState implements GameStateData {
 
         this._playerTickInterval = setInterval(
             () => this.tickPlayers(),
-            this._config.get<number>('playerTickFrequency', DEFAULT_TICK_FREQUENCY)
+            this._config.get<number>('playerTickFrequency', DEFAULT_TICK_FREQUENCY)!
         );
     }
 
@@ -163,10 +158,6 @@ export class GameState implements GameStateData {
 
     public get effectFactory(): EffectFactory {
         return this._effectFactory;
-    }
-
-    public get entityLoaderRegistry(): EntityLoaderRegistry {
-        return this._entityLoaderRegistry;
     }
 
     public get helpManager(): HelpManager {

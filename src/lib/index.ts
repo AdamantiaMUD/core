@@ -97,24 +97,10 @@ export {MessageFormatter} from './communication/message-formatter';
 export {PromptDefinition} from './communication/prompt-definition';
 export {TransportStream} from './communication/transport-stream';
 
-// data - sources
-export {DataSource} from './data/sources/data-source';
-export {DataSourceConfig} from './data/sources/data-source-config';
-export {DataSourceFactory} from './data/sources/data-source-factory';
-export {FileDataSource} from './data/sources/file-data-source';
-export {JsonAreaDataSource} from './data/sources/json-area-data-source';
-export {JsonDataSource} from './data/sources/json-data-source';
-export {JsonDirectoryDataSource} from './data/sources/json-directory-data-source';
-export {YamlAreaDataSource} from './data/sources/yaml-area-data-source';
-export {YamlDataSource} from './data/sources/yaml-data-source';
-export {YamlDirectoryDataSource} from './data/sources/yaml-directory-data-source';
-
 // data - core
 export * as DataEvents from './data/events';
-export {EntityLoader} from './data/entity-loader';
-export {EntityLoaderDefinition} from './data/entity-loader-definition';
-export {EntityLoaderDefinitions} from './data/entity-loader-definitions';
-export {EntityLoaderRegistry} from './data/entity-loader-registry';
+export {AreaEntitiesLoader} from './data/area-entities-loader';
+export {BundleAreasLoader} from './data/bundle-areas-loader';
 export {Metadatable} from './data/metadatable';
 export {Serializable} from './data/serializable';
 

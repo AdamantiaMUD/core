@@ -1,0 +1,15 @@
+{
+    "id": "r0281",
+    "title": "Room 281",
+    "description": "",
+    "exits": [
+        {
+            "roomId": "dragonshade:r0280",
+            "direction": "north"
+        },
+        {
+            "roomId": "dragonshade:r0282",
+            "direction": "east"
+        }
+    ]
+}

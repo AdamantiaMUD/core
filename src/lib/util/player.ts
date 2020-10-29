@@ -6,18 +6,18 @@ const DEFAULT_MAX_LENGTH = 16;
 const DEFAULT_MIN_LENGTH = 4;
 
 const checkEasyStuff = (config: Config, name: string): void => {
-    const maxLength = config.get<number>('maxAccountNameLength', DEFAULT_MAX_LENGTH);
-    const minLength = config.get<number>('minAccountNameLength', DEFAULT_MIN_LENGTH);
+    const maxLength = config.get<number>('players.accountName.maxLength', DEFAULT_MAX_LENGTH);
+    const minLength = config.get<number>('players.accountName.minLength', DEFAULT_MIN_LENGTH);
 
     if (!hasValue(name)) {
         throw new Error('Please enter a name.');
     }
 
-    if (name.length > maxLength) {
+    if (name.length > maxLength!) {
         throw new Error('Too long, try a shorter name.');
     }
 
-    if (name.length < minLength) {
+    if (name.length < minLength!) {
         throw new Error('Too short, try a longer name.');
     }
 };

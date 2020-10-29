@@ -1,5 +1,4 @@
 import Broadcast from '../../../lib/communication/broadcast';
-import Logger from '../../../lib/common/logger';
 import {PlayerKilledEvent} from '../../../lib/players/events';
 import {cast, hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
@@ -15,11 +14,7 @@ const {prompt, sayAt, sayAtExcept} = Broadcast;
 export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
     name: PlayerKilledEvent.getName(),
     listener: (state: GameStateData): MudEventListener<[Player, PlayerKilledPayload]> => {
-        const startingRoomRef = state.config.get<string>('startingRoom');
-
-        if (!hasValue(startingRoomRef)) {
-            Logger.error('No startingRoom defined in ranvier.json');
-        }
+        const startingRoomRef = state.config.getStartingRoom();
 
         /**
          * @listens Player#killed

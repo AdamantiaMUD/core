@@ -4,7 +4,11 @@ import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
 
+import type {Dirent} from 'fs';
+
 import Command from './commands/command';
+import AreaEntitiesLoader from './data/area-entities-loader';
+import BundleAreasLoader from './data/bundle-areas-loader';
 import Data from './util/data';
 import EntityFactory from './entities/entity-factory';
 import Helpfile from './help/helpfile';
@@ -40,9 +44,10 @@ import type {
 export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
 
 const getFiles = async (directory: string): Promise<string[]> => {
-    const files = await fs.readdir(directory);
+    const files: Dirent[] = await fs.readdir(directory, {withFileTypes: true});
 
-    return files.filter((filename: string) => !filename.endsWith('.d.ts'));
+    return files.filter((file: Dirent): boolean => !file.isDirectory() && !file.name.endsWith('.d.ts'))
+        .map((file: Dirent): string => file.name);
 };
 
 export class BundleManager {
@@ -52,9 +57,9 @@ export class BundleManager {
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(state: GameStateData) {
-        const bundlePath: string | null = state.config.get('bundlesPath', null);
-        const dataPath: string | null = state.config.get('dataPath', null);
-        const rootPath: string | null = state.config.get('rootPath', null);
+        const bundlePath: string = state.config.getPath('bundles');
+        const dataPath: string = state.config.getPath('data');
+        const rootPath: string = state.config.getPath('root');
 
         if (!hasValue<string>(bundlePath) || !fs.existsSync(bundlePath)) {
             Logger.error(`Bundle path "${String(bundlePath)}" is not valid`);
@@ -112,7 +117,7 @@ export class BundleManager {
         }
 
         return this._state.config
-            .get<string[]>('bundles', [])
+            .bundles
             .includes(`${prefix}${bundle}`);
     }
 
@@ -176,20 +181,9 @@ export class BundleManager {
     private async _loadAreas(bundle: string, bundlePath: string): Promise<void> {
         Logger.info(`LOAD: ${bundle} - Areas -- START`);
 
-        const loader = this._state.entityLoaderRegistry.get('areas');
+        const loader = new BundleAreasLoader(bundle);
 
-        if (!hasValue(loader)) {
-            Logger.error('No entity loader set for areas.');
-            return;
-        }
-
-        loader.setBundle(bundle);
-
-        if (!await loader.hasData()) {
-            return;
-        }
-
-        const areas = await loader.fetchAll<AreaManifest>();
+        const areas: {[key: string]: AreaManifest} = await loader.loadManifests(this._state.config);
 
         for (const [ref, manifest] of Object.entries(areas)) {
             this._areas.push(ref);
@@ -301,6 +295,7 @@ export class BundleManager {
 
         await this._loadQuestGoals(bundle, bundlePath);
         await this._loadQuestRewards(bundle, bundlePath);
+        await this._loadQuests(bundle, bundlePath);
         await this._loadAttributes(bundle, bundlePath);
         await this._loadBehaviors(bundle, bundlePath);
 
@@ -406,48 +401,35 @@ export class BundleManager {
         bundle: string,
         bundlePath: string,
         areaRef: string,
-        type: string,
+        type: 'items' | 'npcs'| 'rooms',
         factory: T
     ): Promise<string[]> {
-        const loader = this._state.entityLoaderRegistry.get(type);
+        const loader = new AreaEntitiesLoader(bundle, areaRef, type);
 
-        if (!hasValue(loader)) {
-            Logger.warn(`Could not find entity loader for type '${type}'`);
-
-            return Promise.resolve([]);
-        }
-
-        loader.setBundle(bundle);
-        loader.setArea(areaRef);
-
-        if (!await loader.hasData()) {
-            return [];
-        }
-
-        const entities = await loader.fetchAll<EDef>();
+        const entities = await loader.loadEntities<EDef>(this._state.config);
         const scriptPath = BundleManager._getAreaScriptPath(bundlePath, areaRef);
 
         return Promise.all(Object.values(entities).map(async (entity: EDef) => {
-            const ref = EntityFactory.createRef(areaRef, entity.id);
+            const entityRef = EntityFactory.createRef(areaRef, entity.id);
 
-            factory.setDefinition(ref, entity);
+            factory.setDefinition(entityRef, entity);
 
             if ('script' in entity && hasValue(cast<ScriptableEntityDefinition>(entity).script)) {
                 const script = cast<ScriptableEntityDefinition>(entity).script!;
 
                 const scriptUri = path.join(scriptPath, type, script);
 
-                Logger.verbose(`Loading entity script - [${ref}] -> ${script}`);
+                Logger.verbose(`Loading entity script - [${entityRef}] -> ${script}`);
 
                 try {
-                    await this._loadEntityScript(factory, ref, scriptUri);
+                    await this._loadEntityScript(factory, entityRef, scriptUri);
                 }
                 catch {
-                    Logger.warn(`Missing entity script - [${ref}] -> ${script}`);
+                    Logger.warn(`Missing entity script - [${entityRef}] -> ${script}`);
                 }
             }
 
-            return Promise.resolve(ref);
+            return Promise.resolve(entityRef);
         }));
     }
 
@@ -704,29 +686,17 @@ export class BundleManager {
         return Promise.resolve();
     }
 
-    private async _loadQuests(bundle: string, areaName: string): Promise<string[]> {
-        const loader = this._state.entityLoaderRegistry.get('quests');
+    private async _loadQuests(bundle: string, areaRef: string): Promise<string[]> {
+        const loader = new AreaEntitiesLoader(bundle, areaRef, 'quests');
 
-        let quests: {[key: string]: QuestDefinition} = {};
-
-        if (hasValue(loader)) {
-            loader.setBundle(bundle);
-            loader.setArea(areaName);
-
-            try {
-                quests = await loader.fetchAll<QuestDefinition>();
-            }
-            catch {
-                // no-op
-            }
-        }
+        const quests: {[key: string]: QuestDefinition} = await loader.loadEntities<QuestDefinition>(this._state.config);
 
         return Object.values(quests).map((quest: QuestDefinition) => {
-            const ref = `${areaName}:${quest.id}`;
+            const ref = `${areaRef}:${quest.id}`;
 
-            Logger.verbose(`LOAD: ${bundle} - Areas -> ${areaName} -> Quests -> ${ref}`);
+            Logger.verbose(`LOAD: ${bundle} - Areas -> ${areaRef} -> Quests -> ${ref}`);
 
-            this._state.questFactory.add(ref, areaName, quest.id, quest);
+            this._state.questFactory.add(ref, areaRef, quest.id, quest);
 
             return ref;
         });
@@ -767,7 +737,7 @@ export class BundleManager {
 
         const coreBundlesDir = path.join(__dirname, '..', 'core-bundles');
         const optionalBundlesDir = path.join(__dirname, '..', 'optional-bundles');
-        const bundlePath: string = this._state.config.get('bundlesPath');
+        const bundlePath: string = this._state.config.getPath('bundles');
 
         await this._loadBundlesFromFolder(coreBundlesDir, 'core.');
         await this._loadBundlesFromFolder(optionalBundlesDir, 'adamantia.');

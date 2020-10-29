@@ -17,10 +17,10 @@ const DEFAULT_WEBSOCKET_PORT = 4001;
 export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
     name: GameServerStartupEvent.getName(),
     listener: (state: GameStateData): MudEventListener<[GameServerStartupPayload]> => (): void => {
-        const port = state.config.get('port.websocket', DEFAULT_WEBSOCKET_PORT);
+        const port = state.config.getPort('websocket', DEFAULT_WEBSOCKET_PORT);
 
         // create a new websocket server using the port command line argument
-        const wss = new WebSocket.Server({port});
+        const wss = new WebSocket.Server({port: port!});
 
         // This creates a super basic "echo" websocket server
         /* eslint-disable-next-line id-length */

@@ -130,7 +130,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
             this._room = state.roomManager.getRoom(data.room);
         }
         else {
-            const startingRoom = state.config.get<string>('startingRoom');
+            const startingRoom = state.config.getStartingRoom();
 
             this._room = state.roomManager.getRoom(startingRoom);
         }

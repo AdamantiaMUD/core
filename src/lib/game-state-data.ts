@@ -10,7 +10,6 @@ import type CharacterClassManager from './classes/character-class-manager';
 import type CombatEngine from './combat/combat-engine';
 import type CommandManager from './commands/command-manager';
 import type Config from './util/config';
-import type EntityLoaderRegistry from './data/entity-loader-registry';
 import type EffectFactory from './effects/effect-factory';
 import type HelpManager from './help/help-manager';
 import type ItemFactory from './equipment/item-factory';
@@ -39,7 +38,6 @@ export interface GameStateData extends SimpleMap {
     commandManager: CommandManager;
     config: Config;
     effectFactory: EffectFactory;
-    entityLoaderRegistry: EntityLoaderRegistry;
     helpManager: HelpManager;
     itemBehaviorManager: BehaviorManager;
     itemManager: ItemManager;

@@ -4,11 +4,11 @@ import Logger from '../../../lib/common/logger';
 import {ChooseCharacterEvent, DeleteCharacterEvent} from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
+import type CharacterBrief from '../../../lib/players/character-brief';
 import type InputMenuOption from '../../../lib/events/input-menu-option';
 import type StreamEventListener from '../../../lib/events/stream-event-listener';
 import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
 import type TransportStream from '../../../lib/communication/transport-stream';
-import type {CharacterBrief} from '../../../lib/players/account';
 import type {DeleteCharacterPayload} from '../lib/events';
 
 /**

@@ -12,12 +12,12 @@ import {
 } from '../lib/events';
 import {hasValue} from '../../../lib/util/functions';
 
+import type CharacterBrief from '../../../lib/players/character-brief';
 import type GameStateData from '../../../lib/game-state-data';
 import type InputMenuOption from '../../../lib/events/input-menu-option';
 import type StreamEventListener from '../../../lib/events/stream-event-listener';
 import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
 import type TransportStream from '../../../lib/communication/transport-stream';
-import type {CharacterBrief} from '../../../lib/players/account';
 import type {ChooseCharacterPayload} from '../lib/events';
 
 /* eslint-disable-next-line id-length */
@@ -45,7 +45,7 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
 
         // This just gets their names.
         const characters = account.characters.filter((currChar: CharacterBrief) => !currChar.isDeleted);
-        const maxCharacters = state.config.get('maxCharacters', 10);
+        const maxCharacters = state.config.get('maxCharacters', 10)!;
         const canAddCharacter = characters.length < maxCharacters;
 
         const options: InputMenuOption[] = [];
@@ -95,10 +95,7 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
                             return;
                         }
 
-                        player = await state.playerManager.loadPlayer(
-                            state,
-                            char.username.toLowerCase()
-                        );
+                        player = await state.playerManager.loadPlayer(char.username.toLowerCase());
 
                         player.socket = stream;
 

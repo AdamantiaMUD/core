@@ -1,26 +1,104 @@
+import get from 'lodash.get';
+import merge from 'deepmerge';
+import set from 'lodash.set';
+
+import {hasValue} from './functions';
+
+export interface MudConfig {
+    abilities?: {
+        skillLag?: number;
+    };
+    bundles: string[];
+    logfile: string;
+    paths: {
+        bundles: string;
+        data: string;
+        root: string;
+    };
+    players: {
+        accountName?: {
+            maxLength?: number;
+            minLength?: number;
+        };
+        inventory?: {
+            maxSize?: number;
+        };
+        startingRoom: string;
+    };
+    ports: {[key: string]: number};
+}
+
+const DEFAULT_CONFIG: MudConfig = {
+    abilities: {
+        skillLag: 0,
+    },
+    bundles: [],
+    logfile: '',
+    paths: {
+        bundles: '',
+        data: '',
+        root: '',
+    },
+    players: {
+        accountName: {
+            maxLength: 0,
+            minLength: 0,
+        },
+        inventory: {maxSize: 0},
+        startingRoom: 'dragonshade:r0001',
+    },
+    ports: {},
+};
+
 /**
  * Access class for the `adamantia.json` config
  */
 export class Config {
-    private _cache: {[key: string]: unknown} = {};
+    private _config: MudConfig = DEFAULT_CONFIG;
 
-    public get<T>(key: string, fallback: T | null = null): T {
-        if (key in this._cache) {
-            return this._cache[key] as T;
+    public get bundles(): string[] {
+        return this._config.bundles;
+    }
+
+    public get logfile(): string {
+        return this._config.logfile;
+    }
+
+    public get<T = unknown>(key: string, defaultValue?: T): T | null {
+        const value = get(this._config, key) as T;
+
+        if (!hasValue(value)) {
+            return defaultValue ?? null;
         }
 
-        return fallback as T;
+        return value;
+    }
+
+    public set(key: string, value: unknown): void {
+        set(this._config, key, value);
+    }
+
+    public getStartingRoom(): string {
+        return this._config.players.startingRoom;
+    }
+
+    public getPath(which: keyof MudConfig['paths']): string {
+        return this._config.paths[which];
+    }
+
+    public getPort(which: string, defaultValue: number): number {
+        if (hasValue(this._config.ports[which])) {
+            return this._config.ports[which];
+        }
+
+        return defaultValue;
     }
 
     /**
      * Load `adamantia.json` from disk
      */
-    public load(data: {[key: string]: unknown}): void {
-        this._cache = data;
-    }
-
-    public set<T>(key: string, value: T): void {
-        this._cache[key] = value;
+    public load(data: MudConfig): void {
+        this._config = merge(this._config, data);
     }
 }
 

@@ -19,7 +19,7 @@ export const evt: PlayerEventListenerDefinition<UpdateTickPayload> = {
 
         const lastCommandTime: number = player.getMeta<number>('lastCommandTime') ?? Infinity;
         const timeSinceLastCommand = Date.now() - lastCommandTime;
-        const maxIdleTime = Math.abs(state.config.get<number>('maxIdleTime', Infinity)) * 60000;
+        const maxIdleTime = Math.abs(state.config.get<number>('maxIdleTime', Infinity)!) * 60000;
 
         if (timeSinceLastCommand > maxIdleTime) {
             player.save(() => {

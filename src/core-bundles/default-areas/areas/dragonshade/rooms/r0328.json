@@ -1,0 +1,11 @@
+{
+    "id": "r0328",
+    "title": "Room 328",
+    "description": "",
+    "exits": [
+        {
+            "roomId": "dragonshade:r0327",
+            "direction": "west"
+        }
+    ]
+}

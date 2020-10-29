@@ -3,22 +3,10 @@ import bcrypt from 'bcryptjs';
 import Data from '../util/data';
 import {hasValue} from '../util/functions';
 
+import type CharacterBrief from './character-brief';
 import type Serializable from '../data/serializable';
+import type SerializedAccount from './serialized-account';
 import type SimpleMap from '../util/simple-map';
-
-export interface CharacterBrief {
-    username: string;
-    isDeleted: boolean;
-}
-
-export interface SerializedAccount extends SimpleMap {
-    username: string;
-    characters: CharacterBrief[];
-    password: string;
-    metadata: SimpleMap;
-    isDeleted: boolean;
-    isBanned: boolean;
-}
 
 const hashPassword = (pass: string): string => {
     const salt = bcrypt.genSaltSync(10);

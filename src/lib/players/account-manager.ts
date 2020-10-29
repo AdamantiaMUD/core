@@ -1,8 +1,9 @@
+import AccountLoader from '../data/account-loader';
 import Account from './account';
 import {hasValue} from '../util/functions';
 
-import type EntityLoader from '../data/entity-loader';
-import type {SerializedAccount} from './account';
+import type GameStateData from '../game-state-data';
+import type SerializedAccount from './serialized-account';
 
 /**
  * Creates/loads accounts
@@ -10,8 +11,13 @@ import type {SerializedAccount} from './account';
 export class AccountManager {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _accounts: Map<string, Account> = new Map<string, Account>();
-    private _loader: EntityLoader | null = null;
+    private readonly _loader: AccountLoader = new AccountLoader();
+    private readonly _state: GameStateData;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
+
+    public constructor(state: GameStateData) {
+        this._state = state;
+    }
 
     public setAccount(username: string, acc: Account): void {
         this._accounts.set(username, acc);
@@ -26,22 +32,19 @@ export class AccountManager {
             return Promise.resolve(this.getAccount(username) ?? null);
         }
 
-        if (!hasValue(this._loader)) {
-            throw new Error('No entity loader configured for accounts');
+        const data: SerializedAccount | null = await this._loader.loadAccount(username, this._state.config);
+
+        if (!hasValue(data)) {
+            throw new Error('That player name does not exist... how did we get here?');
         }
 
         const account = new Account();
-        const data: SerializedAccount = await this._loader.fetch(username);
 
         account.restore(data);
 
         this.setAccount(username, account);
 
         return account;
-    }
-
-    public setLoader(loader: EntityLoader | null): void {
-        this._loader = loader;
     }
 }
 

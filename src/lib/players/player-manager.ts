@@ -1,3 +1,4 @@
+import PlayerLoader from '../data/player-loader';
 import Data from '../util/data';
 import MudEventEmitter from '../events/mud-event-emitter';
 import MudEventManager from '../events/mud-event-manager';
@@ -6,7 +7,6 @@ import {PlayerSavedEvent} from './events';
 import {UpdateTickEvent} from '../common/events';
 import {hasValue} from '../util/functions';
 
-import type EntityLoader from '../data/entity-loader';
 import type GameStateData from '../game-state-data';
 import type MudEventListener from '../events/mud-event-listener';
 import type SerializedPlayer from './serialized-player';
@@ -17,13 +17,16 @@ import type SerializedPlayer from './serialized-player';
 export class PlayerManager extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public events: MudEventManager = new MudEventManager();
-    public loader: EntityLoader | null = null;
 
+    private readonly _loader: PlayerLoader = new PlayerLoader();
     private readonly _players: Map<string, Player> = new Map<string, Player>();
+    private readonly _state: GameStateData;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor() {
+    public constructor(state: GameStateData) {
         super();
+
+        this._state = state;
 
         this.listen(UpdateTickEvent.getName(), this.tickAll.bind(this));
     }
@@ -65,24 +68,20 @@ export class PlayerManager extends MudEventEmitter {
     /**
      * Load a player for an account
      */
-    public async loadPlayer(
-        state: GameStateData,
-        username: string,
-        force: boolean = false
-    ): Promise<Player> {
+    public async loadPlayer(username: string, force: boolean = false): Promise<Player> {
         if (this._players.has(username) && !force) {
             return this.getPlayer(username)!;
         }
 
-        if (!hasValue(this.loader)) {
-            throw new Error('No entity loader configured for players');
-        }
+        const data: SerializedPlayer | null = await this._loader.loadPlayer(username, this._state.config);
 
-        const data: SerializedPlayer = await this.loader.fetch(username);
+        if (!hasValue(data)) {
+            throw new Error('That player name does not exist... how did we get here?');
+        }
 
         const player = new Player();
 
-        player.deserialize(data, state);
+        player.deserialize(data, this._state);
 
         this.events.attach(player);
         this.addPlayer(username, player);
@@ -113,11 +112,7 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public async save(player: Player): Promise<void> {
-        if (!hasValue(this.loader)) {
-            throw new Error('No entity loader configured for players');
-        }
-
-        await this.loader.update(player.name, player.serialize());
+        await this._loader.savePlayer(player.name, player.serialize(), this._state.config);
 
         player.dispatch(new PlayerSavedEvent());
     }
@@ -127,10 +122,6 @@ export class PlayerManager extends MudEventEmitter {
             /* eslint-disable-next-line no-await-in-loop */
             await this.save(player);
         }
-    }
-
-    public setLoader(loader: EntityLoader | null): void {
-        this.loader = loader;
     }
 
     public tickAll(): void {

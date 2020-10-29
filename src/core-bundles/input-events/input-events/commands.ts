@@ -133,7 +133,7 @@ export const evt: StreamEventListenerFactory<CommandLoopPayload> = {
 
                         const lag = skill.lag >= 0
                             ? skill.lag
-                            : state.config.get<number>('skillLag', 1000);
+                            : state.config.get<number>('skillLag', 1000)!;
 
                         /*
                          * See bundles/ranvier-player-events/player-events.js

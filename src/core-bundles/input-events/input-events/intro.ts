@@ -23,7 +23,7 @@ export const evt: StreamEventListenerFactory<void> = {
          * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
          */
         const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');
-        const motdUri: string = state.config.get('motdUri', defaultMotdUri);
+        const motdUri: string = state.config.get('motdUri', defaultMotdUri)!;
 
         const motd = fs.readFileSync(motdUri, 'utf8');
 
