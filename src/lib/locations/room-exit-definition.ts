@@ -1,6 +1,7 @@
+import type Direction from './direction';
+
 export interface RoomExitDefinition {
-    // @TODO: make directions an enum
-    direction: string;
+    direction: Direction;
     leaveMessage?: string;
     roomId: string;
 }

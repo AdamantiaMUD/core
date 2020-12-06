@@ -181,6 +181,7 @@ export {AreaDefinition} from './locations/area-definition';
 export {AreaFactory} from './locations/area-factory';
 export {AreaManager} from './locations/area-manager';
 export {AreaManifest} from './locations/area-manifest';
+export {Direction} from './locations/direction';
 export {Door} from './locations/door';
 export {Room} from './locations/room';
 export {RoomDefinition} from './locations/room-definition';
