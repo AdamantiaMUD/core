@@ -2,6 +2,7 @@ import get from 'lodash.get';
 import merge from 'deepmerge';
 import set from 'lodash.set';
 
+import Logger from '../common/logger';
 import {hasValue} from './functions';
 
 export interface MudConfig {
@@ -41,10 +42,10 @@ const DEFAULT_CONFIG: MudConfig = {
     },
     players: {
         accountName: {
-            maxLength: 0,
-            minLength: 0,
+            maxLength: 16,
+            minLength: 4,
         },
-        inventory: {maxSize: 0},
+        inventory: {maxSize: 30},
         startingRoom: 'dragonshade:r0001',
     },
     ports: {},
@@ -56,11 +57,15 @@ const DEFAULT_CONFIG: MudConfig = {
 export class Config {
     private _config: MudConfig = DEFAULT_CONFIG;
 
-    public get bundles(): string[] {
+    public dump(): void {
+        Logger.verbose(JSON.stringify(this._config, null, 4));
+    }
+
+    public getBundles(): string[] {
         return this._config.bundles;
     }
 
-    public get logfile(): string {
+    public getLogfile(): string {
         return this._config.logfile;
     }
 

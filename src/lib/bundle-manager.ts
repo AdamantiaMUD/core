@@ -43,6 +43,13 @@ import type {
 
 export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
 
+const getDirectories = async (directory: string): Promise<string[]> => {
+    const files: Dirent[] = await fs.readdir(directory, {withFileTypes: true});
+
+    return files.filter((file: Dirent): boolean => file.isDirectory())
+        .map((file: Dirent): string => file.name);
+};
+
 const getFiles = async (directory: string): Promise<string[]> => {
     const files: Dirent[] = await fs.readdir(directory, {withFileTypes: true});
 
@@ -117,7 +124,7 @@ export class BundleManager {
         }
 
         return this._state.config
-            .bundles
+            .getBundles()
             .includes(`${prefix}${bundle}`);
     }
 
@@ -317,7 +324,9 @@ export class BundleManager {
     }
 
     private async _loadBundlesFromFolder(bundlesPath: string, prefix: string = ''): Promise<void> {
-        const bundles = await getFiles(bundlesPath);
+        Logger.verbose(`Loading bundles from: '${bundlesPath}'`);
+
+        const bundles = await getDirectories(bundlesPath);
 
         for (const bundle of bundles) {
             const bundlePath = path.join(bundlesPath, bundle);

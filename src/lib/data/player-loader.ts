@@ -21,7 +21,7 @@ export class PlayerLoader {
     public async savePlayer(username: string, data: SerializedPlayer, config: Config): Promise<void> {
         const uri = path.join(config.getPath('data'), 'player', `${username}.json`);
 
-        await fs.writeFile(uri, data);
+        await fs.writeFile(uri, JSON.stringify(data, null, 4));
     }
 }
 

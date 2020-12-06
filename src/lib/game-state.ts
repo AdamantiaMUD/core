@@ -1,6 +1,4 @@
 /* eslint-disable import/max-dependencies */
-import path from 'path';
-
 import type {CommanderStatic} from 'commander';
 import type {EventEmitter} from 'events';
 
@@ -84,9 +82,6 @@ export class GameState implements GameStateData {
 
     public constructor(config: Config) {
         Data.setDataPath(config.getPath('data'));
-
-        config.set('paths.bundles', path.join(__dirname, '..', 'core-bundles'));
-        config.set('paths.root', path.join(__dirname, '..'));
 
         this._accountManager = new AccountManager(this);
         this._areaManager = new AreaManager(this);

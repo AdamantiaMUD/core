@@ -10,7 +10,7 @@ Adamantia began its life as a TypeScript fork of the https://github.com/RanvierM
 
 == Contributing
 
-Anyone willing to contribute is welcome to https://github.com/AdamantiaMUD/adamantia-core/issues/new[open an issue]. Code contributions are always welcome! For ideas, check out the https://github.com/AdamantiaMUD/adamantia-core/issues[issue tracker] and/or project road map (coming soon).
+Anyone willing to contribute is welcome to https://github.com/AdamantiaMUD/core/issues/new[open an issue]. Code contributions are always welcome! For ideas, check out the https://github.com/AdamantiaMUD/core/issues[issue tracker] and/or project road map (coming soon).
 
 This project welcomes any and all who wish to contribute. To aid in this, we have adopted the https://www.contributor-covenant.org/[Contributor Covenant]. You can read link:./CONDUCT.adoc[the full text] of the code here.
 
