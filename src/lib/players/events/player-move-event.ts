@@ -9,7 +9,7 @@ export interface PlayerMovePayload {
 export class PlayerMoveEvent extends MudEvent<PlayerMovePayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'move';
-    public roomExit: RoomExitDefinition;
+    public roomExit!: RoomExitDefinition;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -14,7 +14,7 @@ export interface AbilityDefinition {
     cooldown?: number | {group: string; length: number} | null;
     effect?: string | null;
     flags?: AbilityFlag[] | null;
-    info?: ((skill?: Ability, player?: Player) => string) | null;
+    info?: ((ability: Ability, player: Player) => string) | null;
     initiatesCombat: boolean;
     name: string;
     options: SimpleMap;

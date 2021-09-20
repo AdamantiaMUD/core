@@ -17,7 +17,7 @@ interface AggroConfig {
     attackMessage: string;
     towards: {
         players: boolean;
-        npcs: boolean | string[];
+        npcs: string[] | boolean;
     };
 }
 

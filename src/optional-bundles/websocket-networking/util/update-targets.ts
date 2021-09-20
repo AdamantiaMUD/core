@@ -1,11 +1,11 @@
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type Player from '../../../lib/players/player';
 
 export const updateTargets = (player: Player): void => {
     player.socket?.command(
         'sendData',
         'targets',
-        [...player.combat.combatants].map((target: CharacterInterface) => ({
+        [...player.combat.combatants].map((target: Character) => ({
             name: target.name,
             /* eslint-disable-next-line id-length */
             hp: {

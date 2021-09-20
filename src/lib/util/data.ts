@@ -77,7 +77,8 @@ export const Data = {
         }
 
         const contents = fs.readFileSync(fs.realpathSync(filepath)).toString('utf8');
-        const parsers: {[key: string]: (...args: unknown[]) => unknown} = {
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        const parsers: Record<string, (...args: any[]) => unknown> = {
             '.yml': yaml.load,
             '.yaml': yaml.load,
             '.json': JSON.parse,
@@ -113,9 +114,10 @@ export const Data = {
             throw new Error(`File [${filepath}] does not exist!`);
         }
 
-        const serializers: {[key: string]: (...args: unknown[]) => string} = {
-            '.yml': yaml.safeDump,
-            '.yaml': yaml.safeDump,
+        /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+        const serializers: Record<string, (...args: any[]) => string> = {
+            '.yml': yaml.dump,
+            '.yaml': yaml.dump,
             '.json': (json: unknown) => Data.stringify(json),
         };
 

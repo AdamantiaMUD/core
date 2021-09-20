@@ -13,8 +13,8 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'put',
     usage: 'put <item> <container>',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Put what where?');

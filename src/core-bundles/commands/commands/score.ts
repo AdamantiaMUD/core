@@ -13,18 +13,16 @@ import type CommandDefinitionFactory from '../../../lib/commands/command-definit
 import type Player from '../../../lib/players/player';
 import type PlayerClass from '../../../lib/classes/player-class';
 
-interface PlayerStats {
-    [key: string]: {
-        base: number;
-        current: number;
-        max: number;
-    };
-}
+type PlayerStats = Record<string, {
+    base: number;
+    current: number;
+    max: number;
+}>;
 
 export const cmd: CommandDefinitionFactory = {
     name: 'score',
     aliases: ['stats'],
-    command: () => (rawArgs: string, player: Player): void => {
+    command: () => (rawArgs: string | null, player: Player): void => {
         const pClass = player.getMeta<PlayerClass>('class');
 
         if (!hasValue(pClass)) {

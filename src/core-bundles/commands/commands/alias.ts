@@ -4,10 +4,10 @@ import {hasValue} from '../../../lib/util/functions';
 import {sayAt} from '../../../lib/communication/broadcast';
 
 import type CommandDefinition from '../../../lib/commands/command-definition';
-import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type Player from '../../../lib/players/player';
 import type SimpleMap from '../../../lib/util/simple-map';
+import type {StatelessCommandBuilder} from '../../../lib/commands/command-definition-builder';
 
 const getAliases = (player: Player): SimpleMap<string> => {
     let aliases = player.getMeta<SimpleMap<string>>('aliases');
@@ -22,11 +22,11 @@ const getAliases = (player: Player): SimpleMap<string> => {
     return aliases;
 };
 
-const addLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
+const addLoader: StatelessCommandBuilder = (): CommandDefinition => ({
     name: 'add',
-    command: (args: string, player: Player): void => {
+    command: (args: string | null, player: Player): void => {
         const aliases = getAliases(player);
-        const [key, value] = args.split(' ');
+        const [key, value] = (args ?? '').split(' ');
 
         aliases[key] = value;
 
@@ -36,10 +36,17 @@ const addLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     },
 });
 
-const checkLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
+const checkLoader: StatelessCommandBuilder = (): CommandDefinition => ({
     name: 'check',
-    command: (key: string, player: Player): void => {
+    command: (key: string | null, player: Player): void => {
         const aliases = getAliases(player);
+
+        if (!hasValue(key)) {
+            sayAt(player, 'You must specify an alias to check.');
+
+            return;
+        }
+
         const value = aliases[key];
 
         if (hasValue(value)) {
@@ -51,9 +58,9 @@ const checkLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     },
 });
 
-const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
+const listLoader: StatelessCommandBuilder = (): CommandDefinition => ({
     name: 'list',
-    command: (args: string, player: Player): void => {
+    command: (args: string | null, player: Player): void => {
         const aliases = getAliases(player);
 
         // if a player has any aliases, iterate over them, echoing every single one
@@ -68,10 +75,16 @@ const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     },
 });
 
-const removeLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
+const removeLoader: StatelessCommandBuilder = (): CommandDefinition => ({
     name: 'remove',
-    command: (key: string, player: Player): void => {
+    command: (key: string | null, player: Player): void => {
         const aliases = getAliases(player);
+
+        if (!hasValue(key)) {
+            sayAt(player, 'You must specify an alias to check.');
+
+            return;
+        }
 
         if (hasValue(aliases[key])) {
             const value = aliases[key];
@@ -97,8 +110,8 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('command-aliases', 'list', listLoader(), ''));
         subcommands.add(new Command('command-aliases', 'remove', removeLoader(), ''));
 
-        return (args: string, player: Player): void => {
-            const [command, ...commandArgs] = args.split(' ');
+        return (args: string | null, player: Player): void => {
+            const [command, ...commandArgs] = (args ?? '').split(' ');
 
             let subcommand = subcommands.get('list');
 

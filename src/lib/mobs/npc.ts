@@ -25,7 +25,7 @@ export class Npc extends Character implements Serializable {
     public roomDesc: string;
     public script: string | null;
     public shortName: string;
-    public sourceRoom: Room;
+    public sourceRoom: Room | null = null;
     public uuid: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 

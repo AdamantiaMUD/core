@@ -1,11 +1,12 @@
 import {InventoryFullError} from './errors';
 import {hasValue} from '../util/functions';
 
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type GameStateData from '../game-state-data';
 import type Serializable from '../data/serializable';
 import type Item from './item';
 import type SerializedInventory from './serialized-inventory';
+import type SerializedItem from './serialized-item';
 
 /**
  * Representation of a `Character` or container `Item` inventory
@@ -15,7 +16,7 @@ export class Inventory implements Serializable {
 
     public maxSize: number = Infinity;
 
-    public deserialize(data: SerializedInventory, carriedBy: CharacterInterface | Item, state: GameStateData): void {
+    public deserialize(data: SerializedInventory, carriedBy: Character | Item, state: GameStateData): void {
         for (const [uuid, itemData] of Object.entries(data)) {
             const area = state.areaManager.getAreaByReference(itemData.entityReference);
 
@@ -70,7 +71,7 @@ export class Inventory implements Serializable {
     }
 
     public serialize(): SerializedInventory {
-        const data = {};
+        const data: Record<string, SerializedItem> = {};
 
         for (const [uuid, item] of this._items) {
             data[uuid] = item.serialize();

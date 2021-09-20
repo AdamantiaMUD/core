@@ -33,7 +33,6 @@ export {BehaviorManager} from './behaviors/behavior-manager';
 // characters
 export * as CharacterEvents from './characters/events';
 export {Character} from './characters/character';
-export {CharacterInterface} from './characters/character-interface';
 
 // classes
 export {CharacterClass} from './classes/character-class';
@@ -83,7 +82,6 @@ export * as ChannelErrors from './communication/channels/errors';
 export * as ChannelEvents from './communication/channels/events';
 export {Channel} from './communication/channels/channel';
 export {ChannelDefinition} from './communication/channels/channel-definition';
-export {ChannelInterface} from './communication/channels/channel-interface';
 export {ChannelManager} from './communication/channels/channel-manager';
 export {ChannelMessageFormatter} from './communication/channels/channel-message-formatter';
 
@@ -113,7 +111,6 @@ export {EffectDefinition} from './effects/effect-definition';
 export {EffectFactory} from './effects/effect-factory';
 export {EffectFlag} from './effects/effect-flag';
 export {EffectInfo} from './effects/effect-info';
-export {EffectInterface} from './effects/effect-interface';
 export {EffectList} from './effects/effect-list';
 export {EffectListenersDefinition} from './effects/effect-listeners-definition';
 export {EffectListenersDefinitionFactory} from './effects/effect-listeners-definition-factory';
@@ -124,11 +121,9 @@ export {SerializedEffect} from './effects/serialized-effect';
 export {EntityFactory} from './entities/entity-factory';
 export {GameEntity} from './entities/game-entity';
 export {GameEntityDefinition} from './entities/game-entity-definition';
-export {GameEntityInterface} from './entities/game-entity-interface';
 export {Scriptable} from './entities/scriptable';
 export {ScriptableEntity} from './entities/scriptable-entity';
 export {ScriptableEntityDefinition} from './entities/scriptable-entity-definition';
-export {ScriptableEntityInterface} from './entities/scriptable-entity-interface';
 export {SerializedGameEntity} from './entities/serialized-game-entity';
 export {SerializedScriptableEntity} from './entities/serialized-scriptable-entity';
 
@@ -150,7 +145,6 @@ export {SerializedItem} from './equipment/serialized-item';
 export {InputMenuOption} from './events/input-menu-option';
 export {MudEvent} from './events/mud-event';
 export {MudEventEmitter} from './events/mud-event-emitter';
-export {MudEventEmitterInterface} from './events/mud-event-emitter-interface';
 export {MudEventListener} from './events/mud-event-listener';
 export {MudEventListenerDefinition} from './events/mud-event-listener-definition';
 export {MudEventListenerFactory} from './events/mud-event-listener-factory';

@@ -9,7 +9,7 @@ export interface QuestRewardPayload {
 export class QuestRewardEvent extends MudEvent<QuestRewardPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'quest-reward';
-    public reward: QuestRewardDefinition;
+    public reward!: QuestRewardDefinition;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

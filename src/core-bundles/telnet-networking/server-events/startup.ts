@@ -12,12 +12,13 @@ import type GameState from '../../../lib/game-state';
 import type MudEventListener from '../../../lib/events/mud-event-listener';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
 import type {GameServerStartupPayload} from '../../../lib/game-server/events';
+import type {StatefulListenerFactory} from '../../../lib/events/mud-event-listener-factory';
 
 const DEFAULT_TELNET_PORT = 4000;
 
 export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
     name: GameServerStartupEvent.getName(),
-    listener: (state: GameState): MudEventListener<[GameServerStartupPayload]> => (): void => {
+    listener: ((state: GameState): MudEventListener<[GameServerStartupPayload]> => (): void => {
         const port = state.config.get('port.telnet', DEFAULT_TELNET_PORT);
 
         /**
@@ -71,7 +72,7 @@ export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
             });
 
         Logger.info(`Telnet server started on port: ${port}...`);
-    },
+    }) as StatefulListenerFactory<[GameServerStartupPayload]>,
 };
 
 export default evt;

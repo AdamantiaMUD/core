@@ -10,8 +10,8 @@ export interface CharacterNameCheckPayload {
 export class CharacterNameCheckEvent extends StreamEvent<CharacterNameCheckPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'character-name-check';
-    public account: Account;
-    public name: string;
+    public account!: Account;
+    public name!: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

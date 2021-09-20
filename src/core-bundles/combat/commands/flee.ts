@@ -13,8 +13,8 @@ import type RoomExitDefinition from '../../../lib/locations/room-exit-definition
 export const cmd: CommandDefinitionFactory = {
     name: 'flee',
     usage: 'flee [direction]',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const direction = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const direction = rawArgs?.trim() ?? '';
 
         if (!player.combat.isFighting()) {
             sayAt(player, 'You jump at the sight of your own shadow.');
@@ -29,7 +29,7 @@ export const cmd: CommandDefinitionFactory = {
 
         let roomExit: RoomExitDefinition | null;
 
-        if (hasValue(direction)) {
+        if (hasValue(direction) && direction !== '') {
             roomExit = CommandParser.canGo(player, direction);
         }
         else {

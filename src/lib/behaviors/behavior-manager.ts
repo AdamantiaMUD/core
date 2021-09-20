@@ -14,6 +14,9 @@ export class BehaviorManager {
             this._behaviors.set(behaviorName, new MudEventManager());
         }
 
+        // @TODO: figure this sh!t out
+        /* eslint-disable-next-line */
+        /* @ts-ignore */
         this._behaviors.get(behaviorName)!.add(event, listener);
     }
 

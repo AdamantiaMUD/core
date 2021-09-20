@@ -1,6 +1,8 @@
 import {createServer} from 'net';
 
-import type {Server} from 'net';
+import type {Server, Socket} from 'net';
+
+import {cast} from '../../../lib/util/functions';
 
 import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 
@@ -15,10 +17,12 @@ class TelnetServer {
         listener: (socket: AdamantiaSocket) => void,
         options: {allowHalfOpen?: boolean; pauseOnConnect?: boolean} = {}
     ) {
-        this.netServer = createServer(options, (socket: AdamantiaSocket) => {
+        this.netServer = createServer(options, (socket: Socket) => {
+            const mySocket = cast<AdamantiaSocket>(socket);
+
             /* eslint-disable-next-line no-param-reassign */
-            socket.fresh = true;
-            listener(socket);
+            mySocket.fresh = true;
+            listener(mySocket);
         });
     }
 }

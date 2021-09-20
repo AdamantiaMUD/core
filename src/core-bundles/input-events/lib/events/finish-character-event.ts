@@ -10,8 +10,8 @@ export interface FinishCharacterPayload {
 export class FinishCharacterEvent extends StreamEvent<FinishCharacterPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'stream-finish-character';
-    public account: Account;
-    public name: string;
+    public account!: Account;
+    public name!: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

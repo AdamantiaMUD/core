@@ -23,7 +23,7 @@ import type AbstractQuest from './abstract-quest';
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
 import type QuestDefinition from './quest-definition';
-import type SimpleMap from '../util/simple-map';
+import type SerializedQuestGoal from './serialized-quest-goal';
 import type {QuestProgressPayload} from './events';
 
 export class QuestFactory {
@@ -70,7 +70,7 @@ export class QuestFactory {
         state: GameStateData,
         qid: string,
         player: Player,
-        questState: SimpleMap[] = []
+        questState: SerializedQuestGoal[] = []
     ): Quest {
         const questData = this._quests.get(qid);
 
@@ -93,7 +93,7 @@ export class QuestFactory {
             }
         }
 
-        quest.listen<QuestProgressPayload>(
+        quest.listen<Quest, QuestProgressPayload>(
             QuestProgressEvent.getName(),
             (qst: Quest, {progress}: QuestProgressPayload) => {
                 player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));

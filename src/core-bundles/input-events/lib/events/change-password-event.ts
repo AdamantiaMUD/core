@@ -10,8 +10,8 @@ export interface ChangePasswordPayload {
 export class ChangePasswordEvent extends StreamEvent<ChangePasswordPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'stream-change-password';
-    public account: Account;
-    public nextEvent: StreamEvent<{account: Account}>;
+    public account!: Account;
+    public nextEvent!: StreamEvent<{account: Account}>;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

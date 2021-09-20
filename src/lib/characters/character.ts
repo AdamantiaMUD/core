@@ -20,7 +20,6 @@ import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equip
 import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events';
 
 import type Broadcastable from '../communication/broadcastable';
-import type CharacterInterface from './character-interface';
 import type Effect from '../effects/effect';
 import type GameStateData from '../game-state-data';
 import type Item from '../equipment/item';
@@ -37,16 +36,16 @@ export interface SerializedCharacter extends SerializedScriptableEntity {
     room: string;
 }
 
-export abstract class Character extends ScriptableEntity implements Serializable, CharacterInterface {
+export abstract class Character extends ScriptableEntity implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
     protected readonly _commandQueue: CommandQueue = new CommandQueue();
     protected readonly _effects: EffectList;
     protected readonly _equipment: Map<string, Item> = new Map<string, Item>();
-    protected readonly _followers: Set<CharacterInterface> = new Set<CharacterInterface>();
+    protected readonly _followers: Set<Character> = new Set<Character>();
 
-    protected _following: CharacterInterface | null = null;
+    protected _following: Character | null = null;
     protected _inventory: Inventory | null = null;
     protected _level: number = 1;
     protected _room: Room | null = null;
@@ -78,11 +77,11 @@ export abstract class Character extends ScriptableEntity implements Serializable
         return this._effects;
     }
 
-    public get followers(): Set<CharacterInterface> {
+    public get followers(): Set<Character> {
         return this._followers;
     }
 
-    public get following(): CharacterInterface | null {
+    public get following(): Character | null {
         return this._following;
     }
 
@@ -104,7 +103,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
         return this._effects.add(effect);
     }
 
-    public addFollower(follower: CharacterInterface): void {
+    public addFollower(follower: Character): void {
         this._followers.add(follower);
 
         follower.setFollowing(this);
@@ -141,7 +140,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
             throw new SlotTakenError();
         }
 
-        if (hasValue(item.getMeta<CharacterInterface>('equippedBy'))) {
+        if (hasValue(item.getMeta<Character>('equippedBy'))) {
             throw new AlreadyEquippedError();
         }
 
@@ -157,7 +156,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
         this.dispatch(new CharacterEquipItemEvent({item, slot}));
     }
 
-    public follow(target: CharacterInterface): void {
+    public follow(target: Character): void {
         if (target === this) {
             this.unfollow();
 
@@ -234,7 +233,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
         return this._effects.hasEffectType(type);
     }
 
-    public hasFollower(target: CharacterInterface): boolean {
+    public hasFollower(target: Character): boolean {
         return this._followers.has(target);
     }
 
@@ -256,7 +255,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
         this._effects.remove(effect);
     }
 
-    public removeFollower(follower: CharacterInterface): void {
+    public removeFollower(follower: Character): void {
         this._followers.delete(follower);
 
         follower.setFollowing(null);
@@ -306,7 +305,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
         };
     }
 
-    public setFollowing(target: CharacterInterface | null): void {
+    public setFollowing(target: Character | null): void {
         this._following = target;
     }
 

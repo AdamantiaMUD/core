@@ -10,8 +10,8 @@ export interface ConfirmPasswordPayload {
 export class ConfirmPasswordEvent extends StreamEvent<ConfirmPasswordPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'stream-confirm-password';
-    public account: Account;
-    public nextEvent: StreamEvent<{account: Account}>;
+    public account!: Account;
+    public nextEvent!: StreamEvent<{account: Account}>;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

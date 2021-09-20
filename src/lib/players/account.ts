@@ -23,9 +23,9 @@ export class Account implements Serializable {
     public characters: CharacterBrief[] = [];
     public isDeleted: boolean = false;
     public metadata: SimpleMap = {};
-    public username: string;
+    public username: string = '';
 
-    private _password: string;
+    private _password: string = '';
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public addCharacter(username: string): void {

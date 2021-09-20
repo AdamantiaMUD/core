@@ -3,7 +3,7 @@ import {hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
 import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type GameStateData from '../../../lib/game-state-data';
@@ -15,8 +15,8 @@ export const cmd: CommandDefinitionFactory = {
     aliases: ['tp'],
     usage: 'teleport <player/room>',
     requiredRole: PlayerRole.ADMIN,
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Must specify a destination using an online player or room entity reference.');
@@ -67,7 +67,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        player.followers.forEach((follower: CharacterInterface) => {
+        player.followers.forEach((follower: Character) => {
             follower.unfollow();
 
             if (!isNpc(follower)) {

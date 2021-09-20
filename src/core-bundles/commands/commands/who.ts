@@ -14,7 +14,7 @@ const getRoleString = (role: number = 0): string => [
 export const cmd: CommandDefinitionFactory = {
     name: 'who',
     usage: 'who',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         sayAt(player, "{red.bold                   Who's Online}");
         sayAt(player, '{red.bold ===============================================}');
         sayAt(player, '');

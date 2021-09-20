@@ -9,7 +9,7 @@ export interface ChooseCharacterPayload {
 export class ChooseCharacterEvent extends StreamEvent<ChooseCharacterPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'choose-character';
-    public account: Account;
+    public account!: Account;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

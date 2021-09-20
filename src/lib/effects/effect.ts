@@ -9,22 +9,21 @@ import {clone} from '../util/objects';
 import {hasValue, isPositiveNumber} from '../util/functions';
 
 import type Ability from '../abilities/ability';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type Damage from '../combat/damage';
 import type EffectConfig from './effect-config';
 import type EffectDefinition from './effect-definition';
 import type EffectFlag from './effect-flag';
-import type EffectInterface from './effect-interface';
 import type EffectState from './effect-state';
 import type GameStateData from '../game-state-data';
 import type SerializedEffect from './serialized-effect';
 import type {EffectModifiers} from './modifiers';
 
-export class Effect extends MudEventEmitter implements EffectInterface {
+export class Effect extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public ability: Ability | null = null;
-    public active: boolean;
-    public attacker: CharacterInterface | null = null;
+    public active: boolean = false;
+    public attacker: Character | null = null;
     public config: EffectConfig;
     public flags: EffectFlag[] = [];
     public id: string;
@@ -33,7 +32,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
     public startedAt: number | null = null;
     public state: EffectState;
 
-    private _target: CharacterInterface | null;
+    private _target: Character | null = null;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     // @TODO: not done
@@ -119,7 +118,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
         return this.duration - this.elapsed;
     }
 
-    public get target(): CharacterInterface | null {
+    public get target(): Character | null {
         return this._target;
     }
 
@@ -267,7 +266,7 @@ export class Effect extends MudEventEmitter implements EffectInterface {
         };
     }
 
-    public setTarget(target: CharacterInterface | null): void {
+    public setTarget(target: Character | null): void {
         this._target = target;
     }
 }

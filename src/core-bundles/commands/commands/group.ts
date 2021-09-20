@@ -13,7 +13,7 @@ import type Player from '../../../lib/players/player';
 
 const createLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'create',
-    command: (rawArgs: string, player: Player): void => {
+    command: (rawArgs: string | null, player: Player): void => {
         if (hasValue(player.party)) {
             sayAt(player, "You're already in a group.");
 
@@ -28,8 +28,8 @@ const createLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDe
 
 const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'invite',
-    command: (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (!hasValue(player.party)) {
             sayAt(player, "You don't have a group, create one with '{bold group create}'.");
@@ -84,8 +84,8 @@ const inviteLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
 const disbandLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'disband',
-    command: (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (!hasValue(player.party)) {
             sayAt(player, "You aren't in a group.");
@@ -113,8 +113,8 @@ const disbandLoader: CommandDefinitionBuilder = (state: GameStateData): CommandD
 
 const joinLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'join',
-    command: (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Join whose group?');
@@ -159,8 +159,8 @@ const joinLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
 const declineLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'decline',
-    command: (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Decline whose invite?');
@@ -197,7 +197,7 @@ const declineLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
 const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'list',
-    command: (rawArgs: string, player: Player): void => {
+    command: (rawArgs: string | null, player: Player): void => {
         if (!hasValue(player.party)) {
             sayAt(player, "You're not in a group.");
 
@@ -220,7 +220,7 @@ const listLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
 
 const leaveLoader: CommandDefinitionBuilder = (): CommandDefinition => ({
     name: 'leave',
-    command: (rawArgs: string, player: Player): void => {
+    command: (rawArgs: string | null, player: Player): void => {
         if (!hasValue(player.party)) {
             sayAt(player, "You're not in a group.");
 
@@ -256,8 +256,8 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('player-groups', 'list', listLoader(state), ''));
         subcommands.add(new Command('player-groups', 'leave', leaveLoader(state), ''));
 
-        return (rawArgs: string, player: Player): void => {
-            const args = rawArgs.trim();
+        return (rawArgs: string | null, player: Player): void => {
+            const args = rawArgs?.trim() ?? '';
 
             const [command, ...commandArgs] = args.split(' ');
 

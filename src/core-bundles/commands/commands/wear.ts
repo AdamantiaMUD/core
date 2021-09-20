@@ -14,8 +14,8 @@ export const cmd: CommandDefinitionFactory = {
     name: 'wear',
     aliases: ['wield'],
     usage: 'wear <item>',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Wear what?');

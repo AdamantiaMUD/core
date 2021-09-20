@@ -10,7 +10,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'where',
     requiredRole: PlayerRole.BUILDER,
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         if (!hasValue(player.room)) {
             Logger.error(`${player.name} is in limbo.`);
 

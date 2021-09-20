@@ -1,15 +1,15 @@
 import MudEvent from '../../events/mud-event';
 
-import type CharacterInterface from '../../characters/character-interface';
+import type Character from '../../characters/character';
 
 export interface CombatantAddedPayload {
-    target: CharacterInterface;
+    target: Character;
 }
 
 export class CombatantAddedEvent extends MudEvent<CombatantAddedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'combatant-added';
-    public target: CharacterInterface;
+    public target!: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -9,7 +9,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'equipment',
     aliases: ['worn'],
     usage: 'equipment',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         if (player.equipment.size === 0) {
             sayAt(player, 'You are completely naked!');
 

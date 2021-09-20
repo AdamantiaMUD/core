@@ -90,8 +90,8 @@ const searchHelpFiles = (rawArgs: string, player: Player, state: GameStateData):
 export const cmd: CommandDefinitionFactory = {
     name: 'help',
     usage: 'help [search] [topic keyword]',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             // look at `help help` if they haven't specified a file

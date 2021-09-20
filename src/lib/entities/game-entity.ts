@@ -7,14 +7,13 @@ import {clone} from '../util/objects';
 import {hasValue} from '../util/functions';
 
 import type GameEntityDefinition from './game-entity-definition';
-import type GameEntityInterface from './game-entity-interface';
 import type GameStateData from '../game-state-data';
 import type Metadatable from '../data/metadatable';
 import type Serializable from '../data/serializable';
 import type SerializedGameEntity from './serialized-game-entity';
 import type SimpleMap from '../util/simple-map';
 
-export abstract class GameEntity extends MudEventEmitter implements Metadatable, Serializable, GameEntityInterface {
+export abstract class GameEntity extends MudEventEmitter implements Metadatable, Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __hydrated: boolean = false;
@@ -24,7 +23,7 @@ export abstract class GameEntity extends MudEventEmitter implements Metadatable,
 
     protected _description: string = '';
     protected _name: string = '';
-    protected _state: GameStateData | null;
+    protected _state: GameStateData | null = null;
 
     private _metadata: SimpleMap = {};
     /* eslint-enable @typescript-eslint/lines-between-class-members */

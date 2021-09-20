@@ -37,8 +37,8 @@ export const cmd: CommandDefinitionFactory = {
     name: 'get',
     usage: 'get <item> [container]',
     aliases: ['take', 'loot'],
-    command: (): CommandExecutable => (rawArgs: string, player: Player, alias: string): void => {
-        let args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player, alias: string): void => {
+        let args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Get what?');

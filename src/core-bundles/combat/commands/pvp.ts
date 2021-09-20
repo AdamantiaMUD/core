@@ -6,7 +6,7 @@ import type Player from '../../../lib/players/player';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'pvp',
-    command: (): CommandExecutable => (args: string, player: Player): void => {
+    command: (): CommandExecutable => (args: string | null, player: Player): void => {
         const wasPvp = player.getMeta<boolean>('pvp') ?? false;
         const isPvp = !wasPvp;
 

@@ -9,7 +9,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'tnl',
     aliases: ['level', 'experience'],
     usage: 'tnl',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         const totalTnl = LevelUtil.expToLevel(player.level + 1);
         const currentPercent = Math.floor((player.experience / totalTnl) * 100);
 

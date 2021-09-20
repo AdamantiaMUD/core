@@ -9,7 +9,7 @@ export interface PlayerQuestTurnInReadyPayload {
 export class PlayerQuestTurnInReadyEvent extends MudEvent<PlayerQuestTurnInReadyPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'quest-turn-in-ready';
-    public quest: Quest;
+    public quest!: Quest;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

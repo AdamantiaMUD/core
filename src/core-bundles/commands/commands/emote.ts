@@ -2,12 +2,12 @@ import ArgParser from '../../../lib/commands/arg-parser';
 import {hasValue} from '../../../lib/util/functions';
 import {sayAt} from '../../../lib/communication/broadcast';
 
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type Item from '../../../lib/equipment/item';
 import type Player from '../../../lib/players/player';
 
-const findTarget = (player: Player, thingName: string): Item | CharacterInterface | null => {
+const findTarget = (player: Player, thingName: string): Character | Item | null => {
     const findableThings = new Set([
         ...player.room?.players ?? new Set(),
         ...player.equipment.values(),
@@ -15,15 +15,15 @@ const findTarget = (player: Player, thingName: string): Item | CharacterInterfac
         ...player.room?.items ?? new Set(),
     ]);
 
-    return ArgParser.parseDot<Item | CharacterInterface>(thingName, Array.from(findableThings));
+    return ArgParser.parseDot<Character | Item>(thingName, Array.from(findableThings));
 };
 
 export const cmd: CommandDefinitionFactory = {
     name: 'emote',
     usage: 'emote <message>',
     aliases: [':', '/me'],
-    command: () => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: () => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Yes, but what do you want to emote?');
@@ -35,7 +35,7 @@ export const cmd: CommandDefinitionFactory = {
         const REPLACE_TARGETS_REGEXP = /~(?:\d+\.)?[^\s.,!?"']+/u;
 
         // Build an array of items matching the emote targets (specified by ~<target> in the emote.
-        const matchedTargets: Array<Item | CharacterInterface> = [];
+        const matchedTargets: Array<Character | Item> = [];
         let execResult: ReturnType<RegExp['exec']> = FIND_TARGETS_REGEXP.exec(args);
 
         while (execResult !== null) {
@@ -56,7 +56,7 @@ export const cmd: CommandDefinitionFactory = {
         // Replace the initial emote message with the found targets and broadcast to the room.
         const emoteMessage = matchedTargets
             .reduce(
-                (acc: string, target: Item | CharacterInterface) => acc.replace(REPLACE_TARGETS_REGEXP, target.name),
+                (acc: string, target: Character | Item) => acc.replace(REPLACE_TARGETS_REGEXP, target.name),
                 `${player.name} ${args}`
             )
 

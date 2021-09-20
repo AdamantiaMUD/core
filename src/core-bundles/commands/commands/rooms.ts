@@ -9,7 +9,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'rooms',
     requiredRole: PlayerRole.ADMIN,
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         sayAt(player, '{red.bold                   Room List}');
         sayAt(player, '{red.bold ===============================================}');
         sayAt(player, '');

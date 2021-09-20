@@ -8,7 +8,7 @@ import {
 import {hasValue} from '../util/functions';
 
 import type Attribute from '../attributes/attribute';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type Damage from '../combat/damage';
 import type GameStateData from '../game-state-data';
 import type Effect from './effect';
@@ -21,10 +21,10 @@ import type SerializedEffect from './serialized-effect';
 export class EffectList implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _effects: Set<Effect> = new Set();
-    private readonly _target: CharacterInterface;
+    private readonly _target: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(target: CharacterInterface) {
+    public constructor(target: Character) {
         this._target = target;
     }
 

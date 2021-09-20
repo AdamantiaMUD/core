@@ -8,8 +8,8 @@ import type CommandDefinitionFactory from '../../../lib/commands/command-definit
 
 const ditch: CommandDefinitionFactory = {
     name: 'ditch',
-    command: () => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: () => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Ditch whom?');

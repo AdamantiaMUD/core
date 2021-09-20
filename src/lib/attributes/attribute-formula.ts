@@ -1,5 +1,5 @@
 import type AttributeFormulaDefinition from './attribute-formula-definition';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type SimpleMap from '../util/simple-map';
 
 export class AttributeFormula {
@@ -15,7 +15,7 @@ export class AttributeFormula {
         this._metadata = metadata;
     }
 
-    public evaluate(character: CharacterInterface, current: number, ...args: number[]): number {
+    public evaluate(character: Character, current: number, ...args: number[]): number {
         return this._formula(character, current, ...args);
     }
 }

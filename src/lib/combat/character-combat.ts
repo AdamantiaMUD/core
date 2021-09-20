@@ -6,20 +6,20 @@ import {
     CombatStartEvent,
 } from './events';
 
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type Damage from './damage';
 
 export class CharacterCombat {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _character: CharacterInterface;
-    private readonly _combatants: Set<CharacterInterface> = new Set();
+    private readonly _character: Character;
+    private readonly _combatants: Set<Character> = new Set();
     private _killed: boolean = false;
-    private _killedBy: CharacterInterface | null = null;
+    private _killedBy: Character | null = null;
     private _lag: number = 0;
     private _roundStarted: number = 0;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(char: CharacterInterface) {
+    public constructor(char: Character) {
         this._character = char;
     }
 
@@ -31,11 +31,11 @@ export class CharacterCombat {
         this._roundStarted = 0;
     }
 
-    public get combatants(): Set<CharacterInterface> {
+    public get combatants(): Set<Character> {
         return this._combatants;
     }
 
-    public addCombatant(target: CharacterInterface): void {
+    public addCombatant(target: Character): void {
         if (this.isFighting(target)) {
             return;
         }
@@ -73,7 +73,7 @@ export class CharacterCombat {
         return this._character.effects.evaluateOutgoingDamage(damage, currentAmount);
     }
 
-    public initiate(target: CharacterInterface | null, lag: number = 0): void {
+    public initiate(target: Character | null, lag: number = 0): void {
         if (!this.isFighting()) {
             this._lag = lag;
             this._roundStarted = Date.now();
@@ -102,7 +102,7 @@ export class CharacterCombat {
         target.combat.addCombatant(this._character);
     }
 
-    public isFighting(target: CharacterInterface | null = null): boolean {
+    public isFighting(target: Character | null = null): boolean {
         return hasValue(target)
             ? this._combatants.has(target)
             : this._combatants.size > 0;
@@ -112,7 +112,7 @@ export class CharacterCombat {
      * @fires Character#combatantRemoved
      * @fires Character#combatEnd
      */
-    public removeCombatant(target: CharacterInterface): void {
+    public removeCombatant(target: Character): void {
         if (!this._combatants.has(target)) {
             return;
         }

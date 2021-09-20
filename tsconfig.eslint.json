@@ -15,8 +15,7 @@
             "./types",
             "./node_modules/@types"
         ],
-        "strictNullChecks": true,
-        "strictBindCallApply": true
+        "strict": true
     },
     "exclude": ["node_modules"],
     "include": [

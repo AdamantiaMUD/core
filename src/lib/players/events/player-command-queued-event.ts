@@ -7,7 +7,7 @@ export interface PlayerCommandQueuedPayload {
 export class PlayerCommandQueuedEvent extends MudEvent<PlayerCommandQueuedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'command-queued';
-    public idx: number;
+    public idx!: number;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

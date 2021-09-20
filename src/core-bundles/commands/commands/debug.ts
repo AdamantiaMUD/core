@@ -10,7 +10,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'debug',
     aliases: ['status', 'mudstatus'],
     requiredRole: PlayerRole.ADMIN,
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         sayAt(player, '{red.bold Mud Status}');
         sayAt(player, '{red.bold ====================}');
         sayAt(player, '');

@@ -93,8 +93,8 @@ const handleEffect = (
 export const cmd: CommandDefinitionFactory = {
     name: 'use',
     aliases: ['quaff', 'recite'],
-    command: (state: GameStateData) => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData) => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Use what?');

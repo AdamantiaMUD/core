@@ -1,9 +1,10 @@
 import type {AddressInfo} from 'net';
 import type {EventEmitter} from 'events';
 
+import {cast, hasValue} from '../util/functions';
+
 import type StreamEvent from '../events/stream-event';
 import type StreamEventListener from '../events/stream-event-listener';
-import {hasValue} from '../util/functions';
 
 /**
  * Base class for anything that should be sending or receiving data from the player
@@ -12,7 +13,7 @@ export abstract class TransportStream<T extends EventEmitter> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private _prompted: boolean = false;
 
-    public socket: T;
+    public socket!: T;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public abstract address(): AddressInfo | string | null;
@@ -61,9 +62,9 @@ export abstract class TransportStream<T extends EventEmitter> {
 
         const cmd = `execute${command[0].toUpperCase()}${command.substr(1)}`;
 
-        if (typeof this[cmd] === 'function') {
-            /* eslint-disable-next-line @typescript-eslint/no-unsafe-call */
-            return this[cmd](...args);
+        if (typeof this[cmd as keyof this] === 'function') {
+            /* eslint-disable-next-line @typescript-eslint/ban-types */
+            return cast<Function>(this[cmd as keyof this])(...args);
         }
 
         return null;

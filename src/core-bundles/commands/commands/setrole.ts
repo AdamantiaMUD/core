@@ -10,8 +10,8 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'setrole',
     requiredRole: PlayerRole.ADMIN,
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'setrole <player> <role>');
@@ -30,10 +30,10 @@ export const cmd: CommandDefinitionFactory = {
         let role: PlayerRole;
 
         if (typeof parts[1] === 'string') {
-            role = PlayerRole[parts[1].toUpperCase()] as PlayerRole;
+            role = PlayerRole[parts[1].toUpperCase() as keyof typeof PlayerRole];
         }
         else {
-            role = PlayerRole[PlayerRole[parts[1]]] as PlayerRole;
+            role = PlayerRole[PlayerRole[Number(parts[1])] as keyof typeof PlayerRole];
         }
 
         if (!hasValue(role)) {

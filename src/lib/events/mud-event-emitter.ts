@@ -1,23 +1,24 @@
 import {EventEmitter} from 'events';
 
+import {cast} from '../util/functions';
+
 import type MudEvent from './mud-event';
-import type MudEventEmitterInterface from './mud-event-emitter-interface';
 import type MudEventListener from './mud-event-listener';
 import type SimpleMap from '../util/simple-map';
 
-export class MudEventEmitter implements MudEventEmitterInterface {
+export abstract class MudEventEmitter {
     protected _emitter: EventEmitter = new EventEmitter();
 
     public dispatch<T = unknown>(event: MudEvent<T>): void {
         this._emitter.emit(event.NAME, event);
     }
 
-    public listen<T = unknown>(
+    public listen<Entity extends MudEventEmitter, T = unknown>(
         eventKey: string,
-        listener: MudEventListener<[MudEventEmitterInterface, T, SimpleMap | null | undefined]>,
+        listener: MudEventListener<[Entity, T, SimpleMap | null | undefined]>,
         config?: SimpleMap | null
     ): void {
-        this._emitter.on(eventKey, (data: T) => listener(this, data, config));
+        this._emitter.on(eventKey, (data: T) => listener(cast<Entity>(this), data, config));
     }
 
     public stopListening(eventKey?: string): void {

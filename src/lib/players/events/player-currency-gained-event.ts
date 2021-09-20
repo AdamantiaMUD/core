@@ -8,8 +8,8 @@ export interface PlayerCurrencyGainedPayload {
 export class PlayerCurrencyGainedEvent extends MudEvent<PlayerCurrencyGainedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'currency-gained';
-    public amount: number;
-    public denomination: string;
+    public amount!: number;
+    public denomination!: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

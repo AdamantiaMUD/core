@@ -9,7 +9,7 @@ export interface EffectRefreshedPayload {
 export class EffectRefreshedEvent extends MudEvent<EffectRefreshedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'effect-refreshed';
-    public effect: Effect;
+    public effect!: Effect;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -1,14 +1,14 @@
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
 
 export interface CombatEngine {
     buildPrompt: (player: Player) => string;
-    chooseCombatant: (attacker: CharacterInterface) => CharacterInterface;
-    findCombatant: (attacker: Player, search: string) => CharacterInterface;
-    handleDeath: (state: GameStateData, victim: CharacterInterface, killer?: CharacterInterface | null) => void;
-    startRegeneration: (state: GameStateData, combatant: CharacterInterface) => void;
-    updateRound: (state: GameStateData, attacker: CharacterInterface) => boolean;
+    chooseCombatant: (attacker: Character) => Character;
+    findCombatant: (attacker: Player, search: string) => Character;
+    handleDeath: (state: GameStateData, victim: Character, killer?: Character | null) => void;
+    startRegeneration: (state: GameStateData, combatant: Character) => void;
+    updateRound: (state: GameStateData, attacker: Character) => boolean;
 }
 
 export default CombatEngine;

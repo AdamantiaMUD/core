@@ -4,7 +4,7 @@ import {cast, hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
 import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
 
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type GameStateData from '../../../lib/game-state-data';
@@ -13,8 +13,8 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'kill',
     aliases: ['attack', 'slay'],
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Kill whom?');
@@ -27,7 +27,7 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        let target: CharacterInterface | null = null;
+        let target: Character | null = null;
 
         try {
             target = state.combat?.findCombatant(player, args) ?? null;

@@ -48,7 +48,8 @@ export class LootTable {
     private readonly _currencyRanges: {[key: string]: CurrencyDefinition} | null;
     private readonly _options: {maxItems: number; [key: string]: number | string};
     private readonly _poolData: PoolReference[];
-    private _pools: PoolDefinition[];
+
+    private _pools: PoolDefinition[] = [];
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     /**

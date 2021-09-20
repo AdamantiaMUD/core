@@ -9,7 +9,7 @@ export interface CreateCharacterPayload {
 export class CreateCharacterEvent extends StreamEvent<CreateCharacterPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'create-character';
-    public account: Account;
+    public account!: Account;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -8,7 +8,7 @@ import type StreamEventListenerFactory from '../../../lib/events/stream-event-li
 import type TransportStream from '../../../lib/communication/transport-stream';
 import type {InputPasswordPayload} from '../lib/events';
 
-const passwordAttempts = {};
+const passwordAttempts: Record<string, number> = {};
 const maxFailedAttempts = 2;
 
 /**

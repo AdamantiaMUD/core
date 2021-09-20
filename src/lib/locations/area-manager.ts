@@ -12,7 +12,7 @@ import type GameStateData from '../game-state-data';
  */
 export class AreaManager extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private _placeholder: Area;
+    private _placeholder: Area | null = null;
     private readonly _state: GameStateData;
     private readonly _areas: Map<string, Area> = new Map<string, Area>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */

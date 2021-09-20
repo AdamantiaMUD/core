@@ -16,6 +16,7 @@ import {hasValue} from '../../../lib/util/functions';
 import type CommandDefinition from '../../../lib/commands/command-definition';
 import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type CommandExecutable from '../../../lib/commands/command-executable';
 import type GameStateData from '../../../lib/game-state-data';
 import type Npc from '../../../lib/mobs/npc';
 import type Player from '../../../lib/players/player';
@@ -31,8 +32,8 @@ const getAvailableQuests = (state: GameStateData, player: Player, npc: Npc): str
 
 const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'list',
-    command: (args: string, player: Player): void => {
-        const options = args.split(' ');
+    command: (args: string | null, player: Player): void => {
+        const options = (args ?? '').split(' ');
 
         if (options.length === 0) {
             sayAt(player, 'List quests from whom? quest list <npc>');
@@ -93,8 +94,8 @@ const listLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefi
 const startLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'start',
     aliases: ['accept'],
-    command: (args: string, player: Player): void => {
-        const options = args.split(' ');
+    command: (args: string | null, player: Player): void => {
+        const options = (args ?? '').split(' ');
 
         if (options.length < 2) {
             sayAt(player, "Start which quest from whom? 'quest start <npc> <number>'");
@@ -150,7 +151,7 @@ const startLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDef
 
 const logLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'log',
-    command: (args: string, player: Player): void => {
+    command: (args: string | null, player: Player): void => {
         const active = [...player.questTracker.active];
 
         if (active.length === 0) {
@@ -208,8 +209,8 @@ const logLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefin
 
 const completeLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'complete',
-    command: (args: string, player: Player): void => {
-        const options = args.split(' ');
+    command: (args: string | null, player: Player): void => {
+        const options = (args ?? '').split(' ');
         const active = [...player.questTracker.active];
         let targetQuest = parseInt(options[0], 10);
 
@@ -257,7 +258,7 @@ const completeLoader: CommandDefinitionBuilder = (state: GameStateData): Command
 export const cmd: CommandDefinitionFactory = {
     name: 'quest',
     usage: 'quest <log/list/complete/start> [npc] [number]',
-    command: (state: GameStateData) => {
+    command: (state: GameStateData): CommandExecutable => {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('bundle-example-quests', 'list', listLoader(state), ''));
@@ -265,8 +266,8 @@ export const cmd: CommandDefinitionFactory = {
         subcommands.add(new Command('bundle-example-quests', 'log', logLoader(state), ''));
         subcommands.add(new Command('bundle-example-quests', 'complete', completeLoader(state), ''));
 
-        return (args: string, player: Player): void => {
-            if (args.length === 0) {
+        return (args: string | null, player: Player): void => {
+            if (args === null || args.length === 0) {
                 sayAt(player, "Missing command. See 'help quest'");
 
                 return;

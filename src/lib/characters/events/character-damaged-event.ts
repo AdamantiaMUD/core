@@ -10,8 +10,8 @@ export interface CharacterDamagedPayload {
 export class CharacterDamagedEvent extends MudEvent<CharacterDamagedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'damaged';
-    public amount: number;
-    public source: Damage;
+    public amount!: number;
+    public source!: Damage;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

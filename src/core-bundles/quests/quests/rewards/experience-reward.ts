@@ -37,7 +37,7 @@ const DEFAULT_CONFIG: ExperienceRewardConfig = {
  *   Gives a static 500 xp
  *     amount: 500
  */
-export class ExperienceReward implements QuestReward {
+export class ExperienceReward implements QuestReward<ExperienceRewardConfig> {
     private static _getAmount(quest: Quest, config: ExperienceRewardConfig, player: Player): number {
         let amount = config.amount;
 

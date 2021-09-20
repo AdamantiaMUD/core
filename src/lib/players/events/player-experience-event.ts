@@ -7,7 +7,7 @@ export interface PlayerExperiencePayload {
 export class PlayerExperienceEvent extends MudEvent<PlayerExperiencePayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'experience';
-    public amount: number;
+    public amount!: number;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

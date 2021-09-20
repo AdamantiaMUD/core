@@ -9,7 +9,7 @@ export interface InputPasswordPayload {
 export class InputPasswordEvent extends StreamEvent<InputPasswordPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'stream-account-password';
-    public account: Account;
+    public account!: Account;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

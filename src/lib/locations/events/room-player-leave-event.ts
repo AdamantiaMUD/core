@@ -11,8 +11,8 @@ export interface RoomPlayerLeavePayload {
 export class RoomPlayerLeaveEvent extends MudEvent<RoomPlayerLeavePayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'player-leave';
-    public player: Player;
-    public nextRoom: Room;
+    public player!: Player;
+    public nextRoom!: Room;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

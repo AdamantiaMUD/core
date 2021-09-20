@@ -20,7 +20,9 @@ export class PrivateAudience extends ChannelAudience {
 
     public getBroadcastTargets(): Player[] {
         const targetPlayerName = this.message.split(' ')[0];
-        const targetPlayer = this.state.playerManager.getPlayer(targetPlayerName);
+        const targetPlayer = this.state
+            ?.playerManager
+            .getPlayer(targetPlayerName);
 
         if (hasValue(targetPlayer)) {
             return [targetPlayer];

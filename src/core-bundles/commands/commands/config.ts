@@ -9,14 +9,14 @@ import type SimpleMap from '../../../lib/util/simple-map';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'config',
-    usage: 'config <set/list> [setting] [value]',
+    usage: 'config <set [setting] [value] | list>',
     aliases: [
         'toggle',
         'options',
         'set',
     ],
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Configure what?');
@@ -89,20 +89,19 @@ export const cmd: CommandDefinitionFactory = {
             return;
         }
 
-        /* eslint-disable-next-line id-length */
-        const possibleValues = {on: true, off: false};
-
-        if (possibleValues[valueToSet] === undefined) {
+        if (valueToSet.toLowerCase() !== 'on' && valueToSet.toLowerCase() !== 'off') {
             sayAt(player, '{red Value must be either: on / off}');
 
             return;
         }
 
+        const isActive = valueToSet.toLowerCase() === 'on';
+
         if (!hasValue(player.getMeta<SimpleMap<boolean>>('config'))) {
             player.setMeta<SimpleMap<boolean>>('config', {});
         }
 
-        player.setMeta<SimpleMap<boolean>>(`config.${configToSet}`, possibleValues[valueToSet]);
+        player.setMeta<boolean>(`config.${configToSet}`, isActive);
 
         sayAt(player, 'Configuration value saved');
     },

@@ -9,7 +9,6 @@ import {clone} from '../util/objects';
 import type GameStateData from '../game-state-data';
 import type Player from '../players/player';
 import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
 import type QuestDefinition from './quest-definition';
 import type QuestGoal from './quest-goal';
 import type QuestProgress from './quest-progress';
@@ -27,7 +26,7 @@ export class Quest extends MudEventEmitter implements Serializable {
     public goals: QuestGoal[] = [];
     public player: Player;
     public started: string = '';
-    public state: SimpleMap[] = [];
+    public state: SerializedQuestGoal[] = [];
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(
@@ -53,7 +52,7 @@ export class Quest extends MudEventEmitter implements Serializable {
 
     public addGoal(goal: QuestGoal): void {
         this.goals.push(goal);
-        goal.listen<QuestProgressPayload>(QuestProgressEvent.getName(), this.onProgressUpdated.bind(this));
+        goal.listen<Quest, QuestProgressPayload>(QuestProgressEvent.getName(), this.onProgressUpdated.bind(this));
     }
 
     public complete(): void {

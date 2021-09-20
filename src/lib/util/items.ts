@@ -10,7 +10,7 @@ import ItemType from '../equipment/item-type';
 import {clone} from './objects';
 import {hasValue} from './functions';
 
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type GameStateData from '../game-state-data';
 import type ItemStats from '../equipment/item-stats';
 import type Player from '../players/player';
@@ -27,7 +27,7 @@ const qualityColors: {[key in ItemQuality]: [string, string?]} = {
     [ItemQuality.ARTIFACT]: ['yellow'],
 };
 
-export const findCarrier = (item: Item): CharacterInterface | Item | null => {
+export const findCarrier = (item: Item): Character | Item | null => {
     let owner = item.carriedBy;
 
     while (hasValue(owner)) {

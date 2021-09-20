@@ -19,7 +19,7 @@ const {
     timestamp,
 } = format;
 
-const logTransports: {[key: string]: Transport | null} = {
+const logTransports: Record<string, Transport | null> = {
     console: new transports.Console({
         format: combine(
             format((data: TransformableInfo) => ({
@@ -30,8 +30,8 @@ const logTransports: {[key: string]: Transport | null} = {
             timestamp(),
             padLevels(),
             simple(),
-            printf((data: LogMessage) => {
-                const {level, message, timestamp: lineTs} = data;
+            printf((data: TransformableInfo) => {
+                const {level, message, timestamp: lineTs} = data as LogMessage;
 
                 return `[${lineTs}] [${level}] ${message}`;
             })
@@ -42,7 +42,7 @@ const logTransports: {[key: string]: Transport | null} = {
 
 const logger: WinstonLogger = createLogger({
     level: 'debug',
-    transports: [logTransports.console as Transport],
+    transports: [logTransports.console!],
 });
 
 /**

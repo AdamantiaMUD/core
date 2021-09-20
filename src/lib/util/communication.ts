@@ -6,7 +6,7 @@ import type Broadcastable from '../communication/broadcastable';
 import type MessageFormatter from '../communication/message-formatter';
 
 export const colorize = (msg: string): string => {
-    const tplStr = [];
+    const tplStr: string[] = [];
 
     // @ts-expect-error -- This is a workaround to make this behave like a tagged template literal
     tplStr.raw = [msg];

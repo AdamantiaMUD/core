@@ -6,7 +6,7 @@ import type SimpleMap from '../util/simple-map';
 
 export interface CommandDefinitionFactory {
     aliases?: string[];
-    command: (state?: GameStateData) => CommandExecutable;
+    command: (() => CommandExecutable) | ((state: GameStateData) => CommandExecutable);
     metadata?: SimpleMap;
     name: string;
     requiredRole?: PlayerRole;

@@ -9,7 +9,7 @@ export interface NpcEnterRoomPayload {
 export class NpcEnterRoomEvent extends MudEvent<NpcEnterRoomPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'enter-room';
-    public nextRoom: Room;
+    public nextRoom!: Room;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -9,7 +9,7 @@ export interface PlayerGetItemPayload {
 export class PlayerGetItemEvent extends MudEvent<PlayerGetItemPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'get';
-    public item: Item;
+    public item!: Item;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -251,12 +251,12 @@ export const cmd: CommandDefinitionFactory = {
     ],
     usage: '[open/close/lock/unlock] <item> / [open/close/lock/unlock] <door direction>/ [open/close/lock/unlock] <door direction>',
     command: (state: GameStateData): CommandExecutable => (
-        rawArgs: string,
+        rawArgs: string | null,
         player: Player,
         arg0: string
     ): void => {
         const action = arg0.toString().toLowerCase();
-        const args = rawArgs.trim();
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, `What do you want to ${action}?`);

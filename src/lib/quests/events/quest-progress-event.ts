@@ -9,7 +9,7 @@ export interface QuestProgressPayload {
 export class QuestProgressEvent extends MudEvent<QuestProgressPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'progress';
-    public progress: QuestProgress;
+    public progress!: QuestProgress;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

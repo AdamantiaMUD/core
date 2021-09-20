@@ -1,7 +1,7 @@
 import Logger from '../common/logger';
 import {CharacterAttributeUpdateEvent} from '../characters/events';
 
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type GameStateData from '../game-state-data';
 import type Serializable from '../data/serializable';
 import type SimpleMap from '../util/simple-map';
@@ -17,11 +17,11 @@ export interface SerializedCharacterAttributes extends SimpleMap {
 export class CharacterAttributes implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _attributes: Map<string, Attribute> = new Map<string, Attribute>();
-    private readonly _target: CharacterInterface;
+    private readonly _target: Character;
     private readonly _unknownAttributes: Map<string, SerializedAttribute> = new Map<string, SerializedAttribute>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(target: CharacterInterface) {
+    public constructor(target: Character) {
         this._target = target;
     }
 
@@ -81,7 +81,7 @@ export class CharacterAttributes implements Serializable {
     }
 
     public serialize(): SerializedCharacterAttributes {
-        const data = {};
+        const data: Record<string, SerializedAttribute> = {};
 
         [...this._attributes].forEach(([name, attribute]: [string, Attribute]) => {
             data[name] = attribute.serialize();

@@ -7,7 +7,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'save',
     usage: 'save',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         player.save(() => {
             sayAt(player, 'Saved.');
         });

@@ -11,8 +11,8 @@ export interface NpcPlayerDropItemPayload {
 export class NpcPlayerDropItemEvent extends MudEvent<NpcPlayerDropItemPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'player-drop-item';
-    public item: Item;
-    public player: Player;
+    public item!: Item;
+    public player!: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

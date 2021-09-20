@@ -13,8 +13,8 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'shutdown',
     requiredRole: PlayerRole.ADMIN,
-    command: (state: GameStateData): CommandExecutable => async (rawArgs: string, player: Player): Promise<void> => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => async (rawArgs: string | null, player: Player): Promise<void> => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args === 'now') {
             sayAt(state.playerManager, '{yellow.bold Game is shutting down now!}');

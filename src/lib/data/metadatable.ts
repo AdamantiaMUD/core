@@ -1,5 +1,5 @@
 export interface Metadatable<
-    T extends {[key: string]: unknown} = {[key: string]: unknown},
+    T extends Record<string, unknown> = Record<string, unknown>,
     K extends keyof T = keyof T
 > {
     getMeta: (key: K) => T[K];

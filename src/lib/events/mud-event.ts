@@ -8,7 +8,7 @@ export class MudEvent<T> {
 
         /* eslint-disable-next-line no-constructor-return */
         return new Proxy(this, {
-            get: (obj: MudEvent<T>, prop: 'NAME' | 'payload' | keyof T): string | T | unknown => {
+            get: (obj: MudEvent<T>, prop: string): T | string | unknown => {
                 switch (prop) {
                     case 'NAME':
                         return obj.NAME;
@@ -17,7 +17,7 @@ export class MudEvent<T> {
                         return obj.payload;
 
                     default:
-                        return obj.payload?.[prop];
+                        return obj.payload?.[prop as keyof T];
                 }
             },
         });

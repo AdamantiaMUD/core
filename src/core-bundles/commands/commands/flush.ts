@@ -10,7 +10,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'flush',
     usage: 'flush',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         player.commandQueue.flush();
         sayAt(player, '{yellow.bold Queue flushed.}');
     },

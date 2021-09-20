@@ -9,7 +9,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'quit',
     usage: 'quit',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         if (player.combat.isFighting()) {
             sayAt(player, "You're too busy fighting for your life!");
 

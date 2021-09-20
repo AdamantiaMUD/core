@@ -12,7 +12,7 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'scan',
     usage: 'scan',
-    command: (state: GameStateData): CommandExecutable => (args: string, player: Player): void => {
+    command: (state: GameStateData): CommandExecutable => (args: string | null, player: Player): void => {
         if (!hasValue(player.room)) {
             // @TODO: throw
             return;

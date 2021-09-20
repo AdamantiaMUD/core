@@ -6,6 +6,7 @@ import type Quest from './quest';
 import type Serializable from '../data/serializable';
 import type SerializedQuest from './serialized-quest';
 import type SerializedQuestTracker from './serialized-quest-tracker';
+import type SimpleMap from '../util/simple-map';
 
 /**
  * Keeps track of player quest progress
@@ -80,21 +81,21 @@ export class QuestTracker implements Serializable {
 
     public serialize(): SerializedQuestTracker {
         return {
-            completed: [...this._completedQuests]
-                .map(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
-                .reduce(
+            active: [...this._activeQuests]
+                .map<[string, SerializedQuest]>(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce<SimpleMap<SerializedQuest>>(
                     (
-                        acc: {[key: string]: SerializedQuest},
+                        acc: SimpleMap<SerializedQuest>,
                         [qid, quest]: [string, SerializedQuest]
                     ) => ({...acc, [`${qid}`]: quest}),
                     {}
                 ),
 
-            active: [...this._activeQuests]
-                .map(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
-                .reduce(
+            completed: [...this._completedQuests]
+                .map<[string, SerializedQuest]>(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce<SimpleMap<SerializedQuest>>(
                     (
-                        acc: {[key: string]: SerializedQuest},
+                        acc: SimpleMap<SerializedQuest>,
                         [qid, quest]: [string, SerializedQuest]
                     ) => ({...acc, [`${qid}`]: quest}),
                     {}

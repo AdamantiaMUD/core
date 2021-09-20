@@ -12,8 +12,8 @@ import type Player from '../../../lib/players/player';
 export const cmd: CommandDefinitionFactory = {
     name: 'drop',
     usage: 'drop <item>',
-    command: () => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: () => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Drop what?');

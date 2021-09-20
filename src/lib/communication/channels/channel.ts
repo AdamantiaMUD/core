@@ -7,11 +7,11 @@ import {ChannelReceiveEvent} from './events';
 import {NoMessageError, NoPartyError, NoRecipientError} from './errors';
 import {cast, hasValue} from '../../util/functions';
 
+import type Broadcastable from '../broadcastable';
 import type ChannelAudience from '../audiences/channel-audience';
 import type ChannelDefinition from './channel-definition';
-import type ChannelInterface from './channel-interface';
 import type ChannelMessageFormatter from './channel-message-formatter';
-import type CharacterInterface from '../../characters/character-interface';
+import type Character from '../../characters/character';
 import type GameStateData from '../../game-state-data';
 import type PlayerRole from '../../players/player-role';
 import type {Colorizer} from '../colorizer';
@@ -27,12 +27,12 @@ const {sayAt, sayAtFormatted} = Broadcast;
  *                                        role or greater can use the channel
  * @property {{sender: function, target: function}} [formatter]
  */
-export class Channel implements ChannelInterface {
+export class Channel {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public aliases: string[];
     public audience: ChannelAudience;
     public bundle: string | null;
-    public color: string | string[] | null;
+    public color: string[] | string | null;
     public description: string | null;
     public formatter: {sender: ChannelMessageFormatter; target: ChannelMessageFormatter};
     public minRequiredRole: PlayerRole | null;
@@ -87,7 +87,7 @@ export class Channel implements ChannelInterface {
         return open + message + close;
     }
 
-    public describeSelf(sender: CharacterInterface): void {
+    public describeSelf(sender: Character): void {
         if (sender instanceof Player) {
             sayAt(sender, `Channel: ${this.name}`);
             sayAt(sender, `Syntax: ${this.getUsage()}`);
@@ -108,8 +108,8 @@ export class Channel implements ChannelInterface {
      * @returns {string}
      */
     public formatToRecipient(
-        sender: CharacterInterface,
-        target: CharacterInterface | null,
+        sender: Character,
+        target: Broadcastable | null,
         message: string,
         colorify: Colorizer
     ): string {
@@ -121,8 +121,8 @@ export class Channel implements ChannelInterface {
      * E.g., you may want "chat" to say "You chat, 'message here'"
      */
     public formatToSender(
-        sender: CharacterInterface,
-        target: CharacterInterface | null,
+        sender: Character,
+        target: Broadcastable | null,
         message: string,
         colorify: Colorizer
     ): string {
@@ -143,7 +143,7 @@ export class Channel implements ChannelInterface {
      * @param {string}    msg
      * @fires ScriptableEntity#channelReceive
      */
-    public send(state: GameStateData, sender: CharacterInterface, msg: string): void {
+    public send(state: GameStateData, sender: Character, msg: string): void {
         // If they don't include a message, explain how to use the channel.
         if (msg.length === 0) {
             throw new NoMessageError();
@@ -188,7 +188,7 @@ export class Channel implements ChannelInterface {
         sayAtFormatted(
             this.audience,
             message,
-            (target: CharacterInterface, mess: string) => this.formatter.target(
+            (target: Broadcastable, mess: string) => this.formatter.target(
                 sender,
                 target,
                 mess,
@@ -204,7 +204,7 @@ export class Channel implements ChannelInterface {
              * Docs limit this to be for ScriptableEntity (Area/Room/Item), but
              * also applies to NPC and Player
              */
-            cast<CharacterInterface>(target).dispatch(new ChannelReceiveEvent({
+            cast<Character>(target).dispatch(new ChannelReceiveEvent({
                 channel: this,
                 message: rawMessage,
                 sender: sender,

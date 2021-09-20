@@ -9,7 +9,7 @@ export interface PlayerQuestCompletedPayload {
 export class PlayerQuestCompletedEvent extends MudEvent<PlayerQuestCompletedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'quest-complete';
-    public quest: Quest;
+    public quest!: Quest;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

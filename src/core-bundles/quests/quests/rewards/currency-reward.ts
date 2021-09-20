@@ -18,7 +18,7 @@ interface CurrencyRewardConfig extends SimpleMap {
  *   currency: string, required, currency to award
  *   amount: number, required
  */
-export class CurrencyReward implements QuestReward {
+export class CurrencyReward implements QuestReward<CurrencyRewardConfig> {
     public display(
         state: GameStateData,
         quest: Quest,

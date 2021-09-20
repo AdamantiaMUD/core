@@ -6,7 +6,7 @@ export interface ChannelDefinition {
     aliases?: string[];
     audience?: ChannelAudience;
     bundle?: string;
-    color?: string | string[];
+    color?: string[] | string;
     description?: string;
     formatter?: {
         sender: ChannelMessageFormatter;

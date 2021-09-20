@@ -15,7 +15,7 @@ export const isIterable = (obj: unknown): boolean => {
     }
 
     if (typeof obj === 'object') {
-        return typeof obj![Symbol.iterator] === 'function';
+        return Symbol.iterator in obj!;
     }
 
     return false;

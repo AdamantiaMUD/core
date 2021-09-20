@@ -9,7 +9,7 @@ import {hasValue, ident, noop} from '../util/functions';
 import type AbilityDefinition from './ability-definition';
 import type AbilityResource from './ability-resource';
 import type AbilityRunner from './ability-runner';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type Effect from '../effects/effect';
 import type EffectDefinition from '../effects/effect-definition';
 import type GameStateData from '../game-state-data';
@@ -23,7 +23,7 @@ export const ABILITY_DEFAULTS: AbilityDefinition = {
     cooldown: 0,
     effect: null,
     flags: [],
-    info: (skill: Ability, player: CharacterInterface | undefined) => player?.name ?? skill.name,
+    info: null,
     initiatesCombat: false,
     name: '',
     requiresTarget: true,
@@ -42,7 +42,7 @@ export class Ability {
     public effect: string | null;
     public flags: AbilityFlag[];
     public id: string;
-    public info: (skill?: Ability, player?: CharacterInterface) => string;
+    public info: (skill?: Ability, player?: Character) => string;
     public initiatesCombat: boolean;
     public lag: number = -1;
     public name: string;
@@ -108,7 +108,7 @@ export class Ability {
         this.type = type;
     }
 
-    public activate(character: CharacterInterface): void {
+    public activate(character: Character): void {
         if (!this.flags.includes(AbilityFlag.PASSIVE)) {
             return;
         }
@@ -139,7 +139,7 @@ export class Ability {
     /**
      * Put this skill on cooldown
      */
-    public cooldown(character: CharacterInterface): void {
+    public cooldown(character: Character): void {
         if (!hasValue(this.cooldownLength) || this.cooldownLength === 0) {
             return;
         }
@@ -176,7 +176,7 @@ export class Ability {
     /**
      * perform an active skill
      */
-    public execute(args: string, actor: CharacterInterface, target: CharacterInterface | null = null): void {
+    public execute(args: string, actor: Character, target: Character | null = null): void {
         if (this.flags.includes(AbilityFlag.PASSIVE)) {
             throw new PassiveError();
         }
@@ -236,7 +236,7 @@ export class Ability {
         };
     }
 
-    public hasEnoughResource(character: CharacterInterface, resource: AbilityResource): boolean {
+    public hasEnoughResource(character: Character, resource: AbilityResource): boolean {
         return resource.cost === 0
             || (
                 character.attributes.has(resource.attribute)
@@ -244,7 +244,7 @@ export class Ability {
             );
     }
 
-    public hasEnoughResources(character: CharacterInterface): boolean {
+    public hasEnoughResources(character: Character): boolean {
         if (!hasValue(this.resource)) {
             return true;
         }
@@ -257,7 +257,7 @@ export class Ability {
         return this.hasEnoughResource(character, this.resource);
     }
 
-    public onCooldown(character: CharacterInterface): Effect | undefined {
+    public onCooldown(character: Character): Effect | undefined {
         for (const effect of character.effects.entries()) {
             if (effect.id === 'cooldown' && effect.state.cooldownId === this.getCooldownId()) {
                 return effect;
@@ -268,7 +268,7 @@ export class Ability {
     }
 
     // Helper to pay a single resource cost.
-    public payResourceCost(character: CharacterInterface, resource: AbilityResource): boolean {
+    public payResourceCost(character: Character, resource: AbilityResource): boolean {
         /*
          * Resource cost is calculated as the character damaging themselves, so
          * effects could potentially reduce resource costs
@@ -286,7 +286,7 @@ export class Ability {
         return true;
     }
 
-    public payResourceCosts(character: CharacterInterface): boolean {
+    public payResourceCosts(character: Character): boolean {
         if (!hasValue(this.resource)) {
             return true;
         }

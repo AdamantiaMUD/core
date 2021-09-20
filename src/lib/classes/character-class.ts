@@ -1,5 +1,5 @@
 import type GameStateData from '../game-state-data';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 
 export interface CharacterClass {
     name: string;
@@ -9,7 +9,7 @@ export interface CharacterClass {
             [key: string]: unknown;
         };
     };
-    setup: (state: GameStateData, character: CharacterInterface) => void;
+    setup: (state: GameStateData, character: Character) => void;
 }
 
 export default CharacterClass;

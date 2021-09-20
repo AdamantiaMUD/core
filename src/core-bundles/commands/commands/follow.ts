@@ -11,8 +11,8 @@ const {sayAt} = Broadcast;
 
 const follow: CommandDefinitionFactory = {
     name: 'follow',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Follow whom?');

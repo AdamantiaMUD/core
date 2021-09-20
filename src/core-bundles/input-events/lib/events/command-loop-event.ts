@@ -9,7 +9,7 @@ export interface CommandLoopPayload {
 export class CommandLoopEvent extends StreamEvent<CommandLoopPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'commands';
-    public player: Player;
+    public player!: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

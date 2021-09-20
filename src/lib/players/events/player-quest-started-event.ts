@@ -9,7 +9,7 @@ export interface PlayerQuestStartedPayload {
 export class PlayerQuestStartedEvent extends MudEvent<PlayerQuestStartedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'quest-start';
-    public quest: Quest;
+    public quest!: Quest;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -1,20 +1,20 @@
 import MudEvent from '../../events/mud-event';
 
-import type CharacterInterface from '../character-interface';
+import type Character from '../character';
 import type Damage from '../../combat/damage';
 
 export interface CharacterHitPayload {
     amount: number;
     source: Damage;
-    target: CharacterInterface;
+    target: Character;
 }
 
 export class CharacterHitEvent extends MudEvent<CharacterHitPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'hit';
-    public amount: number;
-    public source: Damage;
-    public target: CharacterInterface;
+    public amount!: number;
+    public source!: Damage;
+    public target!: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

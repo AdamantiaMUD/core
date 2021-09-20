@@ -1,15 +1,15 @@
 import MudEvent from '../../events/mud-event';
 
-import type CharacterInterface from '../character-interface';
+import type Character from '../character';
 
 export interface CharacterGainedFollowerPayload {
-    follower: CharacterInterface;
+    follower: Character;
 }
 
 export class CharacterGainedFollowerEvent extends MudEvent<CharacterGainedFollowerPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'gained-follower';
-    public follower: CharacterInterface;
+    public follower!: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

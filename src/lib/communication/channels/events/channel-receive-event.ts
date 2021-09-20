@@ -1,20 +1,20 @@
 import MudEvent from '../../../events/mud-event';
 
-import type ChannelInterface from '../channel-interface';
-import type CharacterInterface from '../../../characters/character-interface';
+import type Channel from '../channel';
+import type Character from '../../../characters/character';
 
 export interface ChannelReceivePayload {
-    channel: ChannelInterface;
+    channel: Channel;
     message: string;
-    sender: CharacterInterface;
+    sender: Character;
 }
 
 export class ChannelReceiveEvent extends MudEvent<ChannelReceivePayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'channel-receive';
-    public channel: ChannelInterface;
-    public message: string;
-    public sender: CharacterInterface;
+    public channel!: Channel;
+    public message!: string;
+    public sender!: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

@@ -8,10 +8,10 @@ import {at, sayAt} from '../../../lib/communication/broadcast';
 import {hasValue} from '../../../lib/util/functions';
 import {humanize} from '../../../lib/util/time';
 
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameEntityInterface from '../../../lib/entities/game-entity-interface';
+import type GameEntity from '../../../lib/entities/game-entity';
 import type GameStateData from '../../../lib/game-state-data';
 import type Npc from '../../../lib/mobs/npc';
 import type RoomExitDefinition from '../../../lib/locations/room-exit-definition';
@@ -30,21 +30,21 @@ exitMap.set('southeast', 'SE');
 exitMap.set('northwest', 'NW');
 exitMap.set('northeast', 'NE');
 
-const getEntity = (search: string, player: Player): GameEntityInterface | null => {
+const getEntity = (search: string, player: Player): GameEntity | null => {
     const room = player.room!;
 
-    let entity: GameEntityInterface = ArgParser.parseDot(search, Array.from(room.items)) as GameEntityInterface;
+    let entity: GameEntity = ArgParser.parseDot(search, Array.from(room.items)) as GameEntity;
 
-    entity ??= ArgParser.parseDot(search, Array.from(room.players)) as GameEntityInterface;
-    entity ??= ArgParser.parseDot(search, Array.from(room.npcs)) as GameEntityInterface;
-    entity ??= ArgParser.parseDot(search, Array.from(player.inventory.items)) as GameEntityInterface;
+    entity ??= ArgParser.parseDot(search, Array.from(room.players)) as GameEntity;
+    entity ??= ArgParser.parseDot(search, Array.from(room.npcs)) as GameEntity;
+    entity ??= ArgParser.parseDot(search, Array.from(player.inventory.items)) as GameEntity;
 
     return entity;
 };
 
-const getCombatantsDisplay = (entity: CharacterInterface): string => {
+const getCombatantsDisplay = (entity: Character): string => {
     const combatantsList = [...entity.combat.combatants.values()]
-        .map((combatant: CharacterInterface) => combatant.name);
+        .map((combatant: Character) => combatant.name);
 
     return `, {red fighting} ${combatantsList.join('{red ,} ')}`;
 };
@@ -194,7 +194,7 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
     const args = rawArgs.split(' ')
         .filter((arg: string) => arg !== 'in');
 
-    const entity: GameEntityInterface | null = getEntity(args[0], player);
+    const entity: GameEntity | null = getEntity(args[0], player);
 
     if (!hasValue(entity)) {
         sayAt(player, "You don't see anything like that here.");
@@ -282,8 +282,8 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
 export const cmd: CommandDefinitionFactory = {
     name: 'look',
     usage: 'look [thing]',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (!hasValue(player.room)) {
             Logger.error(`${player.name} is in limbo.`);

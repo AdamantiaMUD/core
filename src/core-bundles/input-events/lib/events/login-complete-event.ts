@@ -9,7 +9,7 @@ export interface LoginCompletePayload {
 export class LoginCompleteEvent extends StreamEvent<LoginCompletePayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'done';
-    public player: Player;
+    public player!: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

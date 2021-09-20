@@ -1,4 +1,5 @@
 import MudEventEmitter from '../events/mud-event-emitter';
+import {cast} from '../util/functions';
 import {clone} from '../util/objects';
 
 import type Player from '../players/player';
@@ -21,7 +22,7 @@ export class QuestGoal<
     public config: QuestConfig;
     public player: Player;
     public quest: Quest;
-    public state: QuestState;
+    public state: QuestState = cast<QuestState>({});
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(quest: Quest, config: QuestConfig, player: Player) {

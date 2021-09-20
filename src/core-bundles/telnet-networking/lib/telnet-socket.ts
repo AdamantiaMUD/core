@@ -36,7 +36,7 @@ export class TelnetSocket extends EventEmitter {
         return this.socket?.writable ?? false;
     }
 
-    public address(): AddressInfo | string | null {
+    public address(): AddressInfo | Record<string, unknown> | string | null {
         return this.socket?.address() ?? null;
     }
 

@@ -2,19 +2,19 @@ import {CharacterDamagedEvent, CharacterHitEvent} from '../characters/events';
 import {hasValue} from '../util/functions';
 
 import type Ability from '../abilities/ability';
-import type CharacterInterface from '../characters/character-interface';
+import type Character from '../characters/character';
 import type Effect from '../effects/effect';
 import type Item from '../equipment/item';
 import type Room from '../locations/room';
 import type SimpleMap from '../util/simple-map';
 
 // @TODO: make this an interface rather than a hard-coded list
-export type DamageSource = CharacterInterface | Effect | Item | Room | Ability;
+export type DamageSource = Character | Effect | Item | Room | Ability;
 
 export class Damage {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public amount: number;
-    public attacker: CharacterInterface | null;
+    public attacker: Character | null;
     public attribute: string;
     public metadata: SimpleMap;
     public source: DamageSource | null;
@@ -23,7 +23,7 @@ export class Damage {
     public constructor(
         attribute: string,
         amount: number,
-        attacker: CharacterInterface | null = null,
+        attacker: Character | null = null,
         source: DamageSource | null = null,
         metadata: SimpleMap = {}
     ) {
@@ -43,7 +43,7 @@ export class Damage {
      * @fires Character#hit
      * @fires Character#damaged
      */
-    public commit(target: CharacterInterface): void {
+    public commit(target: Character): void {
         const finalAmount = this.evaluate(target);
 
         target.attributes.modify(this.attribute, -1 * finalAmount);
@@ -58,7 +58,7 @@ export class Damage {
     /**
      * Evaluate actual damage taking attacker/target's effects into account
      */
-    public evaluate(target: CharacterInterface): number {
+    public evaluate(target: Character): number {
         let amount = this.amount;
 
         if (hasValue(this.attacker)) {

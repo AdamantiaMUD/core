@@ -8,7 +8,7 @@ export class StreamEvent<T> {
 
         /* eslint-disable-next-line no-constructor-return */
         return new Proxy(this, {
-            get: (obj: StreamEvent<T>, prop: 'NAME' | 'payload' | keyof T): string | T | unknown => {
+            get: (obj: StreamEvent<T>, prop: string): T | string | unknown => {
                 switch (prop) {
                     case 'NAME':
                         return obj.NAME;
@@ -17,7 +17,7 @@ export class StreamEvent<T> {
                         return obj.payload;
 
                     default:
-                        return obj.payload?.[prop];
+                        return obj.payload?.[prop as keyof T];
                 }
             },
         });

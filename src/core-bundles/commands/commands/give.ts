@@ -4,7 +4,7 @@ import {hasValue} from '../../../lib/util/functions';
 import {isNpc} from '../../../lib/util/characters';
 import {sayAt} from '../../../lib/communication/broadcast';
 
-import type CharacterInterface from '../../../lib/characters/character-interface';
+import type Character from '../../../lib/characters/character';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
 import type CommandExecutable from '../../../lib/commands/command-executable';
 import type Player from '../../../lib/players/player';
@@ -17,8 +17,8 @@ interface AcceptBehaviorConfig extends SimpleMap {
 export const cmd: CommandDefinitionFactory = {
     name: 'give',
     usage: 'give <item> <target>',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
-        const args = rawArgs.trim();
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
+        const args = rawArgs?.trim() ?? '';
 
         if (args.length === 0) {
             sayAt(player, 'Give what to whom?');
@@ -50,13 +50,13 @@ export const cmd: CommandDefinitionFactory = {
         }
 
         // prioritize players before npcs
-        let target: CharacterInterface = ArgParser.parseDot(
+        let target: Character = ArgParser.parseDot(
             recipientName,
             Array.from(player.room.players)
-        ) as CharacterInterface;
+        ) as Character;
 
         if (!hasValue(target)) {
-            target = ArgParser.parseDot(recipientName, Array.from(player.room.npcs)) as CharacterInterface;
+            target = ArgParser.parseDot(recipientName, Array.from(player.room.npcs)) as Character;
         }
 
         if (!hasValue(target)) {

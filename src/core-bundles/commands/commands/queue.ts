@@ -13,7 +13,7 @@ export const cmd: CommandDefinitionFactory = {
     name: 'queue',
     aliases: ['pending'],
     usage: 'queue',
-    command: (): CommandExecutable => (rawArgs: string, player: Player): void => {
+    command: (): CommandExecutable => (rawArgs: string | null, player: Player): void => {
         sayAt(player, '{yellow.bold Command Queue:}');
 
         if (!player.commandQueue.hasPending) {

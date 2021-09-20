@@ -9,7 +9,7 @@ export interface ItemDroppedPayload {
 export class ItemDroppedEvent extends MudEvent<ItemDroppedPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'item-dropped';
-    public character: Character;
+    public character!: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

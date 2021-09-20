@@ -8,11 +8,11 @@ import type Broadcastable from '../broadcastable';
  */
 export class AreaAudience extends ChannelAudience {
     public getBroadcastTargets(): Broadcastable[] {
-        if (!hasValue(this.sender.room)) {
+        if (!hasValue(this.sender?.room)) {
             return [];
         }
 
-        const {area} = this.sender.room;
+        const {area} = this.sender!.room;
 
         return area.getBroadcastTargets().filter((target: Broadcastable) => target !== this.sender);
     }

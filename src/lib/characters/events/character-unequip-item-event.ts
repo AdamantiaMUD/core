@@ -10,8 +10,8 @@ export interface CharacterUnequipItemPayload {
 export class CharacterUnequipItemEvent extends MudEvent<CharacterUnequipItemPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'unequip';
-    public item: Item;
-    public slot: string;
+    public item!: Item;
+    public slot!: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

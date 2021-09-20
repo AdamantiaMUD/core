@@ -8,11 +8,10 @@ import {hasValue} from '../util/functions';
 import type BehaviorManager from '../behaviors/behavior-manager';
 import type GameStateData from '../game-state-data';
 import type ScriptableEntityDefinition from './scriptable-entity-definition';
-import type ScriptableEntityInterface from './scriptable-entity-interface';
 import type SerializedScriptableEntity from './serialized-scriptable-entity';
 import type SimpleMap from '../util/simple-map';
 
-export class ScriptableEntity extends GameEntity implements ScriptableEntityInterface {
+export class ScriptableEntity extends GameEntity {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected _behaviors: Map<string, SimpleMap | true | null>;
     protected _script: string | null;

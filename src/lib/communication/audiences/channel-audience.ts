@@ -1,5 +1,5 @@
 import type Broadcastable from '../broadcastable';
-import type CharacterInterface from '../../characters/character-interface';
+import type Character from '../../characters/character';
 import type GameStateData from '../../game-state-data';
 
 /**
@@ -7,9 +7,9 @@ import type GameStateData from '../../game-state-data';
  */
 export class ChannelAudience implements Broadcastable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public message: string;
-    public sender: CharacterInterface;
-    public state: GameStateData;
+    public message: string = '';
+    public sender: Character | null = null;
+    public state: GameStateData | null = null;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public alterMessage(message: string): string {
@@ -19,13 +19,18 @@ export class ChannelAudience implements Broadcastable {
     /**
      * Configure the current state for the audience. Called by {@link Channel#send}
      */
-    public configure(options: {state: GameStateData; sender: CharacterInterface; message: string}): void {
+    public configure(options: {state: GameStateData; sender: Character; message: string}): void {
         this.state = options.state;
         this.sender = options.sender;
         this.message = options.message;
     }
 
     public getBroadcastTargets(): Broadcastable[] {
+        if (this.state === null) {
+            // @TODO: throw?
+            return [];
+        }
+
         return this.state.playerManager.getPlayersAsArray();
     }
 }
