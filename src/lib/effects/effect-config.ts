@@ -1,4 +1,5 @@
 export interface EffectConfig {
+    /*  eslint-disable-next-line lines-around-comment -- see https://github.com/typescript-eslint/typescript-eslint/issues/1150 */
     /**
      * If this effect immediately activates itself when added to the target
      */

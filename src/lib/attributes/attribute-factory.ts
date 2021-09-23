@@ -12,7 +12,7 @@ export class AttributeFactory {
 
     private _hasCircularDependency(
         attr: string,
-        references: {[key: string]: string[]},
+        references: Record<string, string[]>,
         stack: string[] = []
     ): string[] | false {
         if (stack.includes(attr)) {
@@ -79,9 +79,9 @@ export class AttributeFactory {
      * Make sure there are no circular dependencies between attributes
      */
     public validateAttributes(): void {
-        const references = [...this._attributes].reduce<{[key: string]: string[]}>(
+        const references = [...this._attributes].reduce<Record<string, string[]>>(
             (
-                acc: {[key: string]: string[]},
+                acc: Record<string, string[]>,
                 [attrName, {formula}]: [string, AttributeDefinition]
             ) => {
                 if (!hasValue(formula)) {

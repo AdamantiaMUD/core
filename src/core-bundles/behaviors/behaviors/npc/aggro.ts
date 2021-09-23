@@ -31,7 +31,7 @@ const defaultAggroConfig = {
     },
 };
 
-const getConfig = (config: true | {[key: string]: unknown}): AggroConfig => {
+const getConfig = (config: Record<string, unknown> | true): AggroConfig => {
     if (config === true) {
         return defaultAggroConfig;
     }

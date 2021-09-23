@@ -20,6 +20,7 @@
         "build": "tsc -d",
         "clean": "rimraf build/*",
         "lint": "eslint ./src --ext .ts",
+        "lint:fix": "eslint ./src --ext .ts --fix",
         "lint:quiet": "eslint ./src --ext .ts --quiet",
         "postbuild": "node scripts/copy-assets.cjs && npx copyfiles -u 1 src/**/*.yml build",
         "prebuild": "npm run clean",

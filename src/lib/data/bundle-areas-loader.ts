@@ -26,7 +26,7 @@ export class BundleAreasLoader {
         return fs.existsSync(folder);
     }
 
-    public async loadManifests(config: Config): Promise<{[key: string]: AreaManifest}> {
+    public async loadManifests(config: Config): Promise<Record<string, AreaManifest>> {
         if (!this.hasAreas(config)) {
             return {};
         }
@@ -36,7 +36,7 @@ export class BundleAreasLoader {
 
         const files: Dirent[] = await fs.readdir(areasFolder, {withFileTypes: true});
 
-        const areas: {[key: string]: AreaManifest} = {};
+        const areas: Record<string, AreaManifest> = {};
 
         for (const file of files) {
             const manifestPath = path.join(areasFolder, file.name, 'manifest.json');

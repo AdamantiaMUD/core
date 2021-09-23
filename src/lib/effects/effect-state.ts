@@ -1,4 +1,4 @@
-export type EffectState = {[key: string]: unknown} & {
+export type EffectState = Record<string, unknown> & {
     lastTick?: number;
     stacks?: number;
     tickInterval?: number;

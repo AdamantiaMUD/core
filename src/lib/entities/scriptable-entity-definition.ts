@@ -2,7 +2,7 @@ import type SimpleMap from '../util/simple-map';
 import type GameEntityDefinition from './game-entity-definition';
 
 export interface ScriptableEntityDefinition extends GameEntityDefinition {
-    behaviors?: {[key: string]: SimpleMap | true | null};
+    behaviors?: Record<string, SimpleMap | true | null>;
     script?: string;
 }
 

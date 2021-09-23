@@ -1,6 +1,5 @@
 import {Chance} from 'chance';
 
-import Logger from '../common/logger';
 import {hasValue} from '../util/functions';
 
 import type GameStateData from '../game-state-data';
@@ -13,10 +12,10 @@ export interface CurrencyDefinition {
 
 export type PoolDefinition = Map<string, number>;
 
-export type PoolReference = string | {[key: string]: number};
+export type PoolReference = Record<string, number> | string;
 
 export interface LootTableConfig {
-    currencies?: {[key: string]: CurrencyDefinition} | null;
+    currencies?: Record<string, CurrencyDefinition> | null;
     options?: {
         maxItems?: number;
         [key: string]: number | string | undefined;
@@ -45,7 +44,7 @@ export class LootTable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _chance: Chance.Chance = new Chance();
     private readonly _loading: Promise<void>;
-    private readonly _currencyRanges: {[key: string]: CurrencyDefinition} | null;
+    private readonly _currencyRanges: Record<string, CurrencyDefinition> | null;
     private readonly _options: {maxItems: number; [key: string]: number | string};
     private readonly _poolData: PoolReference[];
 

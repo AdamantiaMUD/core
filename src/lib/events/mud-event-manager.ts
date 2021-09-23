@@ -47,7 +47,7 @@ export class MudEventManager {
      * Warning: This will remove _all_ listeners for a given event list, this includes
      * listeners not in this manager but attached to the same event
      */
-    public detach(emitter: MudEventEmitter, eventNames: string | string[] | null = null): void {
+    public detach(emitter: MudEventEmitter, eventNames: string[] | string | null = null): void {
         let events: string[] = [];
 
         if (typeof eventNames === 'string') {

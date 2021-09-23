@@ -6,6 +6,6 @@ export type AbilityRunner = (
     args: string | null,
     source: Character,
     target: Character | null
-) => undefined | false;
+) => false | undefined;
 
 export default AbilityRunner;

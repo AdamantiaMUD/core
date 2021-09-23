@@ -1,6 +1,6 @@
 import type Effect from './effect';
 
-export type EffectListenersDefinition = {[key: string]: ((effect: Effect, ...args: unknown[]) => void)} & {
+export type EffectListenersDefinition = Record<string, ((effect: Effect, ...args: unknown[]) => void)> & {
     effectActivated?: (effect: Effect) => void;
     effectAdded?: (effect: Effect) => void;
     effectDeactivated?: (effect: Effect) => void;

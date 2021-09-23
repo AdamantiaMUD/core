@@ -57,7 +57,7 @@ export class Room extends ScriptableEntity implements Broadcastable {
         });
     }
 
-    private _setDoorsFromDef(doors: {[key: string]: Door}): void {
+    private _setDoorsFromDef(doors: Record<string, Door>): void {
         Object.entries(doors)
             .forEach(([dest, door]: [string, Door]) => {
                 this._doors.set(dest, door);

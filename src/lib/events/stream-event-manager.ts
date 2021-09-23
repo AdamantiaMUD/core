@@ -51,7 +51,7 @@ export class StreamEventManager {
      */
     public detach(
         emitter: TransportStream<EventEmitter>,
-        eventNames: string | string[] | null = null
+        eventNames: string[] | string | null = null
     ): void {
         let events: string[] = [];
 

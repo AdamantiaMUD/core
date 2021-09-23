@@ -38,7 +38,7 @@ export class AreaEntitiesLoader {
         return fs.existsSync(folder);
     }
 
-    public async loadEntities<T>(config: Config): Promise<{[key: string]: T}> {
+    public async loadEntities<T>(config: Config): Promise<Record<string, T>> {
         if (!this.hasEntities(config)) {
             return Promise.resolve({});
         }
@@ -50,7 +50,7 @@ export class AreaEntitiesLoader {
             this._entityType
         );
 
-        const entities: {[key: string]: T} = {};
+        const entities: Record<string, T> = {};
 
         const files: Dirent[] = await fs.readdir(folder, {withFileTypes: true});
 

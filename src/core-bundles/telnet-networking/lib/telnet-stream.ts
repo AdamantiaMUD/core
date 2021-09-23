@@ -20,7 +20,7 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
     public attach(socket: TelnetSocket): void {
         super.attach(socket);
 
-        this.socket.on('DO', (opt: number | number[]) => {
+        this.socket.on('DO', (opt: number[] | number) => {
             this.socket.telnetCommand(Sequences.WONT, opt);
         });
     }

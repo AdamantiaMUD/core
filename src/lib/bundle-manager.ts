@@ -190,7 +190,7 @@ export class BundleManager {
 
         const loader = new BundleAreasLoader(bundle);
 
-        const areas: {[key: string]: AreaManifest} = await loader.loadManifests(this._state.config);
+        const areas: Record<string, AreaManifest> = await loader.loadManifests(this._state.config);
 
         for (const [ref, manifest] of Object.entries(areas)) {
             this._areas.push(ref);
@@ -410,7 +410,7 @@ export class BundleManager {
         bundle: string,
         bundlePath: string,
         areaRef: string,
-        type: 'items' | 'npcs'| 'rooms',
+        type: 'items' | 'npcs' | 'rooms',
         factory: T
     ): Promise<string[]> {
         const loader = new AreaEntitiesLoader(bundle, areaRef, type);
@@ -698,7 +698,7 @@ export class BundleManager {
     private async _loadQuests(bundle: string, areaRef: string): Promise<string[]> {
         const loader = new AreaEntitiesLoader(bundle, areaRef, 'quests');
 
-        const quests: {[key: string]: QuestDefinition} = await loader.loadEntities<QuestDefinition>(this._state.config);
+        const quests: Record<string, QuestDefinition> = await loader.loadEntities<QuestDefinition>(this._state.config);
 
         return Object.values(quests).map((quest: QuestDefinition) => {
             const ref = `${areaRef}:${quest.id}`;

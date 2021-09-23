@@ -4,11 +4,7 @@ import type Character from '../characters/character';
 export interface CharacterClass {
     name: string;
     description: string;
-    abilityTable: {
-        [key: number]: {
-            [key: string]: unknown;
-        };
-    };
+    abilityTable: Record<number, Record<string, unknown>>;
     setup: (state: GameStateData, character: Character) => void;
 }
 

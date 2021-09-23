@@ -56,11 +56,11 @@ export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
         server.listen(port)
             .on('error', (err: {code: string; message: string}) => {
                 if (err.code === 'EADDRINUSE') {
-                    Logger.error(`Cannot start server on port ${port}, address is already in use.`);
+                    Logger.error(`Cannot start server on port ${port!}, address is already in use.`);
                     Logger.error('Do you have a MUD server already running?');
                 }
                 else if (err.code === 'EACCES') {
-                    Logger.error(`Cannot start server on port ${port}: permission denied.`);
+                    Logger.error(`Cannot start server on port ${port!}: permission denied.`);
                     Logger.error('Are you trying to start it on a privileged port without being root?');
                 }
                 else {
@@ -71,7 +71,7 @@ export const evt: MudEventListenerDefinition<[GameServerStartupPayload]> = {
                 process.exit(1);
             });
 
-        Logger.info(`Telnet server started on port: ${port}...`);
+        Logger.info(`Telnet server started on port: ${port!}...`);
     }) as StatefulListenerFactory<[GameServerStartupPayload]>,
 };
 

@@ -9,6 +9,7 @@ import type SimpleMap from '../util/simple-map';
  * create new reward type for quests
  */
 export interface QuestReward<T extends SimpleMap> {
+    /*  eslint-disable-next-line lines-around-comment -- see https://github.com/typescript-eslint/typescript-eslint/issues/1150 */
     /**
      * Render the reward
      */

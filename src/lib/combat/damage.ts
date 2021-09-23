@@ -9,7 +9,7 @@ import type Room from '../locations/room';
 import type SimpleMap from '../util/simple-map';
 
 // @TODO: make this an interface rather than a hard-coded list
-export type DamageSource = Character | Effect | Item | Room | Ability;
+export type DamageSource = Ability | Character | Effect | Item | Room;
 
 export class Damage {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

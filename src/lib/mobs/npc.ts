@@ -17,7 +17,7 @@ export class Npc extends Character implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public area: Area;
     public corpseDesc: string | null;
-    public defaultEquipment: {[key: string]: string};
+    public defaultEquipment: Record<string, string>;
     public defaultItems: string[];
     public id: string;
     public keywords: string[];

@@ -18,12 +18,10 @@ import type Npc from '../../../lib/mobs/npc';
 import type Player from '../../../lib/players/player';
 
 interface VendorConfig {
-    items: {
-        [key: string]: {
-            cost: number;
-            currency: string;
-        };
-    };
+    items: Record<string, {
+        cost: number;
+        currency: string;
+    }>;
 }
 
 interface ItemSellableConfig {

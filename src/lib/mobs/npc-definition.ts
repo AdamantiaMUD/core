@@ -2,9 +2,9 @@ import type SimpleMap from '../util/simple-map';
 
 export interface NpcDefinition {
     attributes?: SimpleMap;
-    behaviors?: {[key: string]: SimpleMap};
+    behaviors?: Record<string, SimpleMap>;
     corpseDesc?: string;
-    defaultEquipment?: {[key: string]: string};
+    defaultEquipment?: Record<string, string>;
     description: string;
     entityReference: string;
     id: string;

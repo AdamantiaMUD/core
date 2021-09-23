@@ -24,7 +24,7 @@ const defaultWanderConfig = {
     restrictTo: [],
 };
 
-const getConfig = (config: true | {[key: string]: unknown}): WanderConfig => {
+const getConfig = (config: Record<string, unknown> | true): WanderConfig => {
     if (config === true) {
         return defaultWanderConfig;
     }

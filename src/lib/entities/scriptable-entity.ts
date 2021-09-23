@@ -70,7 +70,7 @@ export class ScriptableEntity extends GameEntity {
     }
 
     public serialize(): SerializedScriptableEntity {
-        const behaviors: {[key: string]: SimpleMap | true | null} = {};
+        const behaviors: Record<string, SimpleMap | true | null> = {};
 
         for (const [key, val] of this._behaviors) {
             behaviors[key] = val;

@@ -202,7 +202,7 @@ export const sayAt = (
  */
 export const prompt = (
     player: Player,
-    extra: {[key: string]: unknown} = {},
+    extra: Record<string, unknown> = {},
     wrapWidth: number = 0
 ): void => {
     player.socket!.setPrompted(false);

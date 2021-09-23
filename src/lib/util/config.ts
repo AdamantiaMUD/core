@@ -26,7 +26,7 @@ export interface MudConfig {
         };
         startingRoom: string;
     };
-    ports: {[key: string]: number};
+    ports: Record<string, number>;
 }
 
 const DEFAULT_CONFIG: MudConfig = {

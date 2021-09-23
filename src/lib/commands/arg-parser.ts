@@ -4,12 +4,12 @@ function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>
     search: string,
     list: Array<T | [string, T]>,
     returnKey: true
-): null | [string, T];
+): [string, T] | null;
 function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(
     search: string,
     list: Array<T | [string, T]>,
     returnKey?: false
-): null | T;
+): T | null;
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
 function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(

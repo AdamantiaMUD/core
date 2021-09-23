@@ -22,7 +22,7 @@ export const decay: BehaviorDefinition = {
             item: Item,
             payload: UpdateTickPayload
         ): void => {
-            const config = (payload.config ?? {}) as {[key: string]: unknown};
+            const config = (payload.config ?? {}) as Record<string, unknown>;
 
             const now = Date.now();
 

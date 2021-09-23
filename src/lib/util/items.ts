@@ -77,7 +77,6 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
 
     buf += sprintf('| %-36s |\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
 
-    /* eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check */
     switch (item.type) {
         case ItemType.WEAPON: {
             const max = item.getMeta<number>('maxDamage') ?? Infinity;

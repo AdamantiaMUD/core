@@ -30,7 +30,7 @@ export const progressiveRespawn: BehaviorDefinition = {
             let lastRespawnTick = Date.now();
 
             return (area: Area, payload: UpdateTickPayload): void => {
-                const config = (payload.config ?? {}) as {[key: string]: unknown};
+                const config = (payload.config ?? {}) as Record<string, unknown>;
 
                 // setup respawnTick to only happen every [interval] seconds
                 const respawnInterval: number = cast<number>(config.interval) > 0

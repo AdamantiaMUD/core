@@ -60,6 +60,7 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         return this;
     }
 
+    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     public write(message: string, encoding: string = 'ignored', includeNewline: boolean = true): boolean {
         if (!this.writable) {
             return false;

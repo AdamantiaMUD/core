@@ -9,7 +9,7 @@ import {hasValue} from '../../../lib/util/functions';
 
 import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
 
-export type Willingness = Sequences.WILL | Sequences.WONT | Sequences.DO | Sequences.DONT;
+export type Willingness = Sequences.DO | Sequences.DONT | Sequences.WILL | Sequences.WONT;
 
 type BufferEncoding = ExecFileOptionsWithOtherEncoding['encoding'];
 
@@ -106,7 +106,7 @@ export class TelnetSocket extends EventEmitter {
     /**
      * Execute a telnet command
      */
-    public telnetCommand(willingness: Willingness, command: number | number[]): void {
+    public telnetCommand(willingness: Willingness, command: number[] | number): void {
         const seq = [Sequences.IAC, willingness];
 
         if (Array.isArray(command)) {

@@ -139,7 +139,7 @@ export class GameState implements GameStateData {
         return this._channelManager;
     }
 
-    public get combat(): CombatEngine | null{
+    public get combat(): CombatEngine | null {
         return this._combat;
     }
 

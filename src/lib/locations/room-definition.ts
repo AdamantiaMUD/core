@@ -5,7 +5,7 @@ import type ScriptableEntityDefinition from '../entities/scriptable-entity-defin
 
 export interface RoomDefinition extends ScriptableEntityDefinition {
     description: string;
-    doors?: {[key: string]: Door};
+    doors?: Record<string, Door>;
     exits?: RoomExitDefinition[];
     id: string;
     items?: RoomEntityDefinition[];
