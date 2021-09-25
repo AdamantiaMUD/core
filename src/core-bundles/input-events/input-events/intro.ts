@@ -1,6 +1,7 @@
 /* eslint-disable-next-line id-length */
 import fs from 'fs';
 import path from 'path';
+import {fileURLToPath} from 'url';
 
 import type {EventEmitter} from 'events';
 
@@ -11,6 +12,9 @@ import type GameStateData from '../../../lib/game-state-data';
 import type StreamEventListener from '../../../lib/events/stream-event-listener';
 import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
 import type TransportStream from '../../../lib/communication/transport-stream';
+
+/* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * MOTD event

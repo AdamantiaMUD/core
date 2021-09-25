@@ -8,13 +8,14 @@
     "bugs": "https://github.com/adamantiamud/core/issues",
     "main": "build/lib/index.js",
     "typings": "build/lib/index.d.ts",
+    "type": "module",
     "files": [
         "src/**/*",
         "build/**/*",
         "*.adoc"
     ],
     "engines": {
-        "node": ">=14"
+        "node": ">=16"
     },
     "scripts": {
         "build": "tsc -d",

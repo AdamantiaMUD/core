@@ -3,6 +3,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
+import {fileURLToPath} from 'url';
 
 import type {Dirent} from 'fs';
 
@@ -40,6 +41,9 @@ import type {
     QuestRewardModule,
     ServerEventModule,
 } from './module-helpers';
+
+/* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export const ADAMANTIA_INTERNAL_BUNDLE = '_adamantia-internal-bundle';
 
