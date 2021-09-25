@@ -1,0 +1,10 @@
+{
+    "id": "o0001",
+    "name": "Oddly-shaped Key",
+    "keywords": ["key", "odd"],
+    "roomDesc": "A strange looking key",
+    "description": "This key seems overly complex with numerous grooves.",
+    "metadata": {
+        "quality": "common"
+    }
+}

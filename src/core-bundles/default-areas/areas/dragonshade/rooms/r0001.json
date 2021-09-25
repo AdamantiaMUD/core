@@ -1,0 +1,43 @@
+{
+    "id": "r0001",
+    "title": "Room 1",
+    "description": "",
+    "script": "r0001",
+    "metadata": {
+        "commands": [
+            "begin"
+        ]
+    },
+    "exits": [
+        {
+            "roomId": "dragonshade:r0003",
+            "direction": "north"
+        },
+        {
+            "roomId": "dragonshade:r0008",
+            "direction": "south"
+        },
+        {
+            "roomId": "dragonshade:r0006",
+            "direction": "east"
+        },
+        {
+            "roomId": "dragonshade:r0005",
+            "direction": "west"
+        }
+    ],
+    "npcs": [
+        {
+            "id": "dragonshade:m0001",
+            "respawnChance": 100,
+            "maxLoad": 1
+        }
+    ],
+    "items": [
+        {
+            "id": "dragonshade:o0001",
+            "respawnChance": 100,
+            "maxLoad": 1
+        }
+    ]
+}

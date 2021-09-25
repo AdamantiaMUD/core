@@ -1,0 +1,17 @@
+---
+command: get
+body: |
+  Get an item from the room or a container.
+
+  You can do '{bold get all <container>}' to retrieve all items from the container.
+  To save even more time you can do '{bold loot <container>}' which is the same thing.
+related:
+  - drop
+  - give
+  - inventory
+  - put
+  - wear
+  - wield
+keywords:
+  - items
+  - inventory
