@@ -1,7 +1,7 @@
 {
     "id": "r0125",
     "title": "Room 125",
-    "description": "",
+    "description": "This is the description for Room 125",
     "exits": [
         {
             "roomId": "dragonshade:r0126",

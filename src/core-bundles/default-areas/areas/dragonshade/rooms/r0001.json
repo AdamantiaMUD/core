@@ -1,7 +1,7 @@
 {
     "id": "r0001",
     "title": "Room 1",
-    "description": "",
+    "description": "This is the description for Room 1",
     "script": "r0001",
     "metadata": {
         "commands": [
