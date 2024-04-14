@@ -6,12 +6,11 @@ import type {Dirent} from 'fs';
 
 import type AreaManifest from '../locations/area-manifest';
 import type Config from '../util/config';
+import BundleObjectLoader from './bundle-object-loader';
 
-export class BundleAreasLoader {
-    private readonly _bundle: string;
-
+export class BundleAreasLoader extends BundleObjectLoader {
     public constructor(bundle: string) {
-        this._bundle = bundle;
+        super(bundle);
     }
 
     private static async _loadManifest(manifestPath: string): Promise<AreaManifest> {
@@ -21,7 +20,7 @@ export class BundleAreasLoader {
     }
 
     public hasAreas(config: Config): boolean {
-        const folder = path.join(config.getPath('bundles'), this._bundle, 'areas');
+        const folder = path.join(this._getBundleFolder(config), 'areas');
 
         return fs.existsSync(folder);
     }
@@ -31,7 +30,7 @@ export class BundleAreasLoader {
             return {};
         }
 
-        const bundleFolder = path.join(config.getPath('bundles'), this._bundle);
+        const bundleFolder = this._getBundleFolder(config);
         const areasFolder = path.join(bundleFolder, 'areas');
 
         const files: Dirent[] = await fs.readdir(areasFolder, {withFileTypes: true});

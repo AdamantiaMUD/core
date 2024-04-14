@@ -5,19 +5,20 @@ import path from 'path';
 import type {Dirent} from 'fs';
 
 import type Config from '../util/config';
+import BundleObjectLoader from './bundle-object-loader';
 
 type AreaEntityType = 'items' | 'npcs' | 'quests' | 'rooms';
 
-export class AreaEntitiesLoader {
+export class AreaEntitiesLoader extends BundleObjectLoader {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _area: string;
-    private readonly _bundle: string;
     private readonly _entityType: AreaEntityType;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(bundle: string, area: string, entityType: AreaEntityType) {
+        super(bundle);
+
         this._area = area;
-        this._bundle = bundle;
         this._entityType = entityType;
     }
 
@@ -29,8 +30,8 @@ export class AreaEntitiesLoader {
 
     public hasEntities(config: Config): boolean {
         const folder = path.join(
-            config.getPath('bundles'),
-            this._bundle,
+            this._getBundleFolder(config),
+            'areas',
             this._area,
             this._entityType
         );
@@ -44,8 +45,8 @@ export class AreaEntitiesLoader {
         }
 
         const folder = path.join(
-            config.getPath('bundles'),
-            this._bundle,
+            this._getBundleFolder(config),
+            'areas',
             this._area,
             this._entityType
         );
