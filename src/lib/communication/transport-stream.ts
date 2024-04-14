@@ -64,7 +64,8 @@ export abstract class TransportStream<T extends EventEmitter> {
 
         if (typeof this[cmd as keyof this] === 'function') {
             /* eslint-disable-next-line @typescript-eslint/ban-types */
-            return cast<Function>(this[cmd as keyof this])(...args);
+            const func = cast<Function>(this[cmd as keyof this]).bind(this) as Function;
+            return func(...args);
         }
 
         return null;
