@@ -3,7 +3,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 import yaml from 'js-yaml';
-import {fileURLToPath} from 'url';
+import {fileURLToPath, pathToFileURL} from 'url';
 
 import type {Dirent} from 'fs';
 
@@ -92,7 +92,7 @@ export class BundleManager {
 
     private async _createCommand(uri: string, name: string, bundle: string): Promise<Command> {
         /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-        const commandImport: CommandModule = await import(uri);
+        const commandImport: CommandModule = await import(pathToFileURL(uri).toString());
         const loader = commandImport.default;
 
         const commandDef: CommandDefinition = {
@@ -215,7 +215,7 @@ export class BundleManager {
         Logger.info(`LOAD: ${bundle} - Attributes -- START`);
 
         /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-        const attributeImport: AttributeModule = await import(uri);
+        const attributeImport: AttributeModule = await import(pathToFileURL(uri).toString());
         const attributes = attributeImport.default;
 
         const error = `Attributes file [${uri}] from bundle [${bundle}]`;
@@ -279,7 +279,7 @@ export class BundleManager {
                     Logger.verbose(`LOAD: ${bundle} - Behaviors -> ${type} -> ${behaviorName}`);
 
                     /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                    const behaviorImport: BehaviorModule = await import(behaviorPath);
+                    const behaviorImport: BehaviorModule = await import(pathToFileURL(behaviorPath).toString());
                     const loader = behaviorImport.default;
 
                     const {listeners} = loader;
@@ -390,7 +390,7 @@ export class BundleManager {
                 const effectName = path.basename(effectFile, path.extname(effectFile));
 
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const effectImport: EffectModule = await import(effectPath);
+                const effectImport: EffectModule = await import(pathToFileURL(effectPath).toString());
                 const loader = effectImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Effects -> ${effectName}`);
@@ -456,7 +456,7 @@ export class BundleManager {
         scriptPath: string
     ): Promise<void> {
         /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-        const scriptImport: EntityScriptModule = await import(scriptPath);
+        const scriptImport: EntityScriptModule = await import(pathToFileURL(scriptPath).toString());
         const loader = scriptImport.default;
 
         const {listeners} = loader;
@@ -530,7 +530,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const eventImport: InputEventModule = await import(eventPath);
+                const eventImport: InputEventModule = await import(pathToFileURL(eventPath).toString());
                 const inputEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Input Events -> ${inputEvent.name}`);
@@ -561,7 +561,7 @@ export class BundleManager {
                 const className = path.basename(classFile, path.extname(classFile));
 
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const classImport: CharacterClassModule = await import(classPath);
+                const classImport: CharacterClassModule = await import(pathToFileURL(classPath).toString());
                 const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - NPC Classes -> ${className}`);
@@ -592,7 +592,7 @@ export class BundleManager {
                 const className = path.basename(classFile, path.extname(classFile));
 
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const classImport: CharacterClassModule = await import(classPath);
+                const classImport: CharacterClassModule = await import(pathToFileURL(classPath).toString());
                 const classDef = classImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Classes -> ${className}`);
@@ -622,7 +622,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const eventImport: PlayerEventModule = await import(eventPath);
+                const eventImport: PlayerEventModule = await import(pathToFileURL(eventPath).toString());
                 const playerEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Player Events -> ${playerEvent.name}`);
@@ -654,7 +654,7 @@ export class BundleManager {
                 const goalName = path.basename(goalFile, path.extname(goalFile));
 
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const goalImport: QuestGoalModule = await import(goalPath);
+                const goalImport: QuestGoalModule = await import(pathToFileURL(goalPath).toString());
                 const loader = goalImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Goals -> ${goalName}`);
@@ -685,7 +685,7 @@ export class BundleManager {
                 const rewardName = path.basename(rewardFile, path.extname(rewardFile));
 
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const rewardImport: QuestRewardModule = await import(rewardPath);
+                const rewardImport: QuestRewardModule = await import(pathToFileURL(rewardPath).toString());
                 const loader = rewardImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Quest Rewards -> ${rewardName}`);
@@ -731,7 +731,7 @@ export class BundleManager {
 
             if (Data.isScriptFile(eventPath, eventFile)) {
                 /* eslint-disable-next-line @typescript-eslint/no-unsafe-assignment */
-                const eventImport: ServerEventModule = await import(eventPath);
+                const eventImport: ServerEventModule = await import(pathToFileURL(eventPath).toString());
                 const serverEvent = eventImport.default;
 
                 Logger.verbose(`LOAD: ${bundle} - Server Events -> ${serverEvent.name}`);
