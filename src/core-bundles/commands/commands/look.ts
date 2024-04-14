@@ -58,13 +58,11 @@ const lookRoom = (state: GameStateData, player: Player): void => {
 
     const room = player.room;
 
-    sayAt(player, `{bold ${room.title}}`);
+    sayAt(player, `\n{bold ${room.title}}\n`);
 
     if (!player.getMeta<boolean>('config.brief')) {
-        sayAt(player, `    ${room.description}`, 80);
+        sayAt(player, `    ${room.description}\n`, 80);
     }
-
-    at(player, '{green.bold Exits}: ');
 
     const exits = room.getExits();
     const foundExits: RoomExitDefinition[] = [];
@@ -84,14 +82,14 @@ const lookRoom = (state: GameStateData, player: Player): void => {
             return `#${exitMap.get(exit.direction)!}`;
         }
 
-        return `-${exitMap.get(exit.direction)!}`;
+        return exitMap.get(exit.direction)!;
     }).join(' ');
 
     if (foundExits.length > 0) {
-        at(player, exitList);
+        at(player, `{green.bold Exits}: ${exitList}`);
     }
     else {
-        at(player, 'none');
+        at(player, '{green.bold Exits}: none');
     }
 
     sayAt(player, '');

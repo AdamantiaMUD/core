@@ -175,7 +175,7 @@ export const evt: StreamEventListenerFactory<ChooseCharacterPayload> = {
             }
         });
 
-        stream.write('|\n`-> ');
+        stream.write('|\n-> ');
 
         stream.socket.once('data', (buf: Buffer) => {
             const choice = parseInt(buf.toString().trim(), 10) - 1;
