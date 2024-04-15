@@ -1,30 +1,28 @@
-import produce from 'immer';
-
-import type {Draft} from 'immer';
+import { type Draft, produce } from 'immer';
 
 import Logger from '../common/logger.js';
-import Quest from './quest.js';
+import type GameStateData from '../game-state-data.js';
 import {
     PlayerQuestCompletedEvent,
     PlayerQuestProgressEvent,
     PlayerQuestStartedEvent,
     PlayerQuestTurnInReadyEvent,
 } from '../players/events/index.js';
+import type Player from '../players/player.js';
+import { hasValue } from '../util/functions.js';
+
+import type AbstractQuest from './abstract-quest.js';
 import {
+    type QuestProgressPayload,
     QuestCompletedEvent,
     QuestProgressEvent,
     QuestRewardEvent,
     QuestStartedEvent,
     QuestTurnInReadyEvent,
 } from './events/index.js';
-import {hasValue} from '../util/functions.js';
-
-import type AbstractQuest from './abstract-quest.js';
-import type GameStateData from '../game-state-data.js';
-import type Player from '../players/player.js';
 import type QuestDefinition from './quest-definition.js';
+import Quest from './quest.js';
 import type SerializedQuestGoal from './serialized-quest-goal.js';
-import type {QuestProgressPayload} from './events/index.js';
 
 export class QuestFactory {
     private readonly _quests: Map<string, AbstractQuest> = new Map<string, AbstractQuest>();
@@ -34,7 +32,7 @@ export class QuestFactory {
             draft.entityReference = ref;
         });
 
-        this._quests.set(ref, {id: id, area: areaName, config: cfg});
+        this._quests.set(ref, { id: id, area: areaName, config: cfg });
     }
 
     /**
@@ -70,7 +68,7 @@ export class QuestFactory {
         state: GameStateData,
         qid: string,
         player: Player,
-        questState: SerializedQuestGoal[] = []
+        questState: SerializedQuestGoal[] = [],
     ): Quest {
         const questData = this._quests.get(qid);
 
@@ -87,31 +85,30 @@ export class QuestFactory {
 
             if (hasValue(GoalType)) {
                 quest.addGoal(new GoalType(quest, goal.config, player));
-            }
-            else {
+            } else {
                 // @TODO: error
             }
         }
 
         quest.listen<Quest, QuestProgressPayload>(
             QuestProgressEvent.getName(),
-            (qst: Quest, {progress}: QuestProgressPayload) => {
-                player.dispatch(new PlayerQuestProgressEvent({progress: progress, quest: qst}));
+            (qst: Quest, { progress }: QuestProgressPayload) => {
+                player.dispatch(new PlayerQuestProgressEvent({ progress: progress, quest: qst }));
                 player.save();
-            }
+            },
         );
 
         quest.listen(QuestStartedEvent.getName(), (qst: Quest) => {
-            player.dispatch(new PlayerQuestStartedEvent({quest: qst}));
-            qst.dispatch(new QuestProgressEvent({progress: qst.getProgress()}));
+            player.dispatch(new PlayerQuestStartedEvent({ quest: qst }));
+            qst.dispatch(new QuestProgressEvent({ progress: qst.getProgress() }));
         });
 
         quest.listen(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
-            player.dispatch(new PlayerQuestTurnInReadyEvent({quest: qst}));
+            player.dispatch(new PlayerQuestTurnInReadyEvent({ quest: qst }));
         });
 
         quest.listen(QuestCompletedEvent.getName(), (qst: Quest) => {
-            player.dispatch(new PlayerQuestCompletedEvent({quest: qst}));
+            player.dispatch(new PlayerQuestCompletedEvent({ quest: qst }));
             player.questTracker.complete(qst.entityReference);
 
             if (!hasValue(questData.config.rewards) || questData.config.rewards.length === 0) {
@@ -125,9 +122,8 @@ export class QuestFactory {
 
                 if (hasValue(rewardClass)) {
                     rewardClass.reward(state, qst, player, reward.config);
-                    player.dispatch(new QuestRewardEvent({reward}));
-                }
-                else {
+                    player.dispatch(new QuestRewardEvent({ reward }));
+                } else {
                     Logger.error(`Quest [${qid}] has invalid reward type ${reward.type}`);
                 }
             }
