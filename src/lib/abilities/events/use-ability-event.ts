@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Ability from '../ability';
+import type Ability from '../ability.js';
 
 export interface UseAbilityPayload {
     args: string;

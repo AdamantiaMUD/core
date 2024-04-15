@@ -1,13 +1,13 @@
-import {hasValue} from '../util/functions';
+import {hasValue} from '../util/functions.js';
 import {
     CombatantAddedEvent,
     CombatantRemovedEvent,
     CombatEndEvent,
     CombatStartEvent,
-} from './events';
+} from './events/index.js';
 
-import type Character from '../characters/character';
-import type Damage from './damage';
+import type Character from '../characters/character.js';
+import type Damage from './damage.js';
 
 export class CharacterCombat {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

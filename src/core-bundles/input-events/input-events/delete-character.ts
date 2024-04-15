@@ -1,15 +1,15 @@
 import type {EventEmitter} from 'events';
 
-import Logger from '../../../lib/common/logger';
-import {ChooseCharacterEvent, DeleteCharacterEvent} from '../lib/events';
-import {hasValue} from '../../../lib/util/functions';
+import Logger from '../../../lib/common/logger.js';
+import {ChooseCharacterEvent, DeleteCharacterEvent} from '../lib/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type CharacterBrief from '../../../lib/players/character-brief';
-import type InputMenuOption from '../../../lib/events/input-menu-option';
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {DeleteCharacterPayload} from '../lib/events';
+import type CharacterBrief from '../../../lib/players/character-brief.js';
+import type InputMenuOption from '../../../lib/events/input-menu-option.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {DeleteCharacterPayload} from '../lib/events/index.js';
 
 /**
  * Delete character event

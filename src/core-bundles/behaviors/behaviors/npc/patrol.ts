@@ -1,4 +1,4 @@
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
 
 /**
  * A behavior that causes an NPC to patrol an area when not in combat. This

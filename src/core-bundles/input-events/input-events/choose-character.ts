@@ -1,7 +1,7 @@
 import type {EventEmitter} from 'events';
 
-import Broadcast from '../../../lib/communication/broadcast';
-import Logger from '../../../lib/common/logger';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import Logger from '../../../lib/common/logger.js';
 import {
     ChangePasswordEvent,
     ChooseCharacterEvent,
@@ -9,16 +9,16 @@ import {
     CreateCharacterEvent,
     DeleteCharacterEvent,
     LoginCompleteEvent,
-} from '../lib/events';
-import {hasValue} from '../../../lib/util/functions';
+} from '../lib/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type CharacterBrief from '../../../lib/players/character-brief';
-import type GameStateData from '../../../lib/game-state-data';
-import type InputMenuOption from '../../../lib/events/input-menu-option';
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {ChooseCharacterPayload} from '../lib/events';
+import type CharacterBrief from '../../../lib/players/character-brief.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type InputMenuOption from '../../../lib/events/input-menu-option.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {ChooseCharacterPayload} from '../lib/events/index.js';
 
 /* eslint-disable-next-line id-length */
 const {at, prompt} = Broadcast;

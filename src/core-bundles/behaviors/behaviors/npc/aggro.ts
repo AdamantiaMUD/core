@@ -1,15 +1,15 @@
-import Logger from '../../../../lib/common/logger';
-import {UpdateTickEvent} from '../../../../lib/common/events';
-import {sayAt} from '../../../../lib/communication/broadcast';
-import {hasValue} from '../../../../lib/util/functions';
-import {isNpc} from '../../../../lib/util/characters';
+import Logger from '../../../../lib/common/logger.js';
+import {UpdateTickEvent} from '../../../../lib/common/events/index.js';
+import {sayAt} from '../../../../lib/communication/broadcast.js';
+import {hasValue} from '../../../../lib/util/functions.js';
+import {isNpc} from '../../../../lib/util/characters.js';
 
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
-import type Character from '../../../../lib/characters/character';
-import type MudEventListener from '../../../../lib/events/mud-event-listener';
-import type Npc from '../../../../lib/mobs/npc';
-import type Player from '../../../../lib/players/player';
-import type {UpdateTickPayload} from '../../../../lib/common/events';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
+import type Character from '../../../../lib/characters/character.js';
+import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type Npc from '../../../../lib/mobs/npc.js';
+import type Player from '../../../../lib/players/player.js';
+import type {UpdateTickPayload} from '../../../../lib/common/events/index.js';
 
 interface AggroConfig {
     delay: number;

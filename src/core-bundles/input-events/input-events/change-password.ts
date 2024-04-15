@@ -1,13 +1,13 @@
 import type {EventEmitter} from 'events';
 
-import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
-import {hasValue} from '../../../lib/util/functions';
+import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type GameStateData from '../../../lib/game-state-data';
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {ChangePasswordPayload} from '../lib/events';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {ChangePasswordPayload} from '../lib/events/index.js';
 
 /**
  * Change password event

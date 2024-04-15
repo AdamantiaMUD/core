@@ -1,4 +1,4 @@
-import type Effect from '../effect';
+import type Effect from '../effect.js';
 
 export type EffectAttributeModifierFunction = (
     effect: Effect,

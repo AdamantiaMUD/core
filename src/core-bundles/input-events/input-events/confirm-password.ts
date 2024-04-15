@@ -1,11 +1,11 @@
 import type {EventEmitter} from 'events';
 
-import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events';
+import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events/index.js';
 
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {ConfirmPasswordPayload} from '../lib/events';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {ConfirmPasswordPayload} from '../lib/events/index.js';
 
 /**
  * Account password confirmation station

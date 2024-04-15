@@ -1,9 +1,9 @@
-import AccountLoader from '../data/account-loader';
-import Account from './account';
-import {hasValue} from '../util/functions';
+import AccountLoader from '../data/account-loader.js';
+import Account from './account.js';
+import {hasValue} from '../util/functions.js';
 
-import type GameStateData from '../game-state-data';
-import type SerializedAccount from './serialized-account';
+import type GameStateData from '../game-state-data.js';
+import type SerializedAccount from './serialized-account.js';
 
 /**
  * Creates/loads accounts

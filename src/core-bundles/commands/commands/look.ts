@@ -1,21 +1,21 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import ItemUtil from '../../../lib/util/items';
-import Item from '../../../lib/equipment/item';
-import ItemType from '../../../lib/equipment/item-type';
-import Logger from '../../../lib/common/logger';
-import Player from '../../../lib/players/player';
-import {at, sayAt} from '../../../lib/communication/broadcast';
-import {hasValue} from '../../../lib/util/functions';
-import {humanize} from '../../../lib/util/time';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import ItemUtil from '../../../lib/util/items.js';
+import Item from '../../../lib/equipment/item.js';
+import ItemType from '../../../lib/equipment/item-type.js';
+import Logger from '../../../lib/common/logger.js';
+import Player from '../../../lib/players/player.js';
+import {at, sayAt} from '../../../lib/communication/broadcast.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {humanize} from '../../../lib/util/time.js';
 
-import type Character from '../../../lib/characters/character';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameEntity from '../../../lib/entities/game-entity';
-import type GameStateData from '../../../lib/game-state-data';
-import type Npc from '../../../lib/mobs/npc';
-import type RoomExitDefinition from '../../../lib/locations/room-exit-definition';
-import type {UsableConfig} from '../../behaviors/behaviors/item/usable';
+import type Character from '../../../lib/characters/character.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type GameEntity from '../../../lib/entities/game-entity.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Npc from '../../../lib/mobs/npc.js';
+import type RoomExitDefinition from '../../../lib/locations/room-exit-definition.js';
+import type {UsableConfig} from '../../behaviors/behaviors/item/usable.js';
 
 const exitMap = new Map<string, string>();
 

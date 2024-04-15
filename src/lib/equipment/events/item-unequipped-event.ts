@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Character from '../../characters/character';
+import type Character from '../../characters/character.js';
 
 export interface ItemUnequippedPayload {
     wearer: Character;

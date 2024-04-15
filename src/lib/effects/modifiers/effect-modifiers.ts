@@ -1,8 +1,8 @@
-import type Damage from '../../combat/damage';
-import type Effect from '../effect';
-import type EffectAttributeModifier from './effect-attribute-modifier';
-import type EffectAttributeModifierFunction from './effect-attribute-modifier-function';
-import type EffectModifier from './effect-modifier';
+import type Damage from '../../combat/damage.js';
+import type Effect from '../effect.js';
+import type EffectAttributeModifier from './effect-attribute-modifier.js';
+import type EffectAttributeModifierFunction from './effect-attribute-modifier-function.js';
+import type EffectModifier from './effect-modifier.js';
 
 export type EffectModifiers = Record<string, EffectModifier | Record<string, EffectModifier>> & {
     /*  eslint-disable-next-line lines-around-comment -- see https://github.com/typescript-eslint/typescript-eslint/issues/1150 */

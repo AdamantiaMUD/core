@@ -1,12 +1,12 @@
 import type {EventEmitter} from 'events';
 
-import CharacterAttributes from '../attributes/character-attributes';
-import CharacterCombat from '../combat/character-combat';
-import CommandQueue from '../commands/command-queue';
-import EffectList from '../effects/effect-list';
-import Inventory from '../equipment/inventory';
-import ScriptableEntity from '../entities/scriptable-entity';
-import {hasValue} from '../util/functions';
+import CharacterAttributes from '../attributes/character-attributes.js';
+import CharacterCombat from '../combat/character-combat.js';
+import CommandQueue from '../commands/command-queue.js';
+import EffectList from '../effects/effect-list.js';
+import Inventory from '../equipment/inventory.js';
+import ScriptableEntity from '../entities/scriptable-entity.js';
+import {hasValue} from '../util/functions.js';
 import {
     CharacterAttributeUpdateEvent,
     CharacterEquipItemEvent,
@@ -15,19 +15,19 @@ import {
     CharacterLostFollowerEvent,
     CharacterUnequipItemEvent,
     CharacterUnfollowedTargetEvent,
-} from './events';
-import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equipment/errors';
-import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events';
+} from './events/index.js';
+import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equipment/errors/index.js';
+import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events/index.js';
 
-import type Broadcastable from '../communication/broadcastable';
-import type Effect from '../effects/effect';
-import type GameStateData from '../game-state-data';
-import type Item from '../equipment/item';
-import type Room from '../locations/room';
-import type Serializable from '../data/serializable';
-import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity';
-import type TransportStream from '../communication/transport-stream';
-import type {SerializedCharacterAttributes} from '../attributes/character-attributes';
+import type Broadcastable from '../communication/broadcastable.js';
+import type Effect from '../effects/effect.js';
+import type GameStateData from '../game-state-data.js';
+import type Item from '../equipment/item.js';
+import type Room from '../locations/room.js';
+import type Serializable from '../data/serializable.js';
+import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity.js';
+import type TransportStream from '../communication/transport-stream.js';
+import type {SerializedCharacterAttributes} from '../attributes/character-attributes.js';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;

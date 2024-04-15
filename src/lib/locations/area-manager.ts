@@ -1,11 +1,11 @@
-import Area from './area';
-import MudEventEmitter from '../events/mud-event-emitter';
-import Room from './room';
-import {ADAMANTIA_INTERNAL_BUNDLE} from '../bundle-manager';
-import {UpdateTickEvent} from '../common/events';
-import {hasValue} from '../util/functions';
+import Area from './area.js';
+import MudEventEmitter from '../events/mud-event-emitter.js';
+import Room from './room.js';
+import {ADAMANTIA_INTERNAL_BUNDLE} from '../bundle-manager.js';
+import {UpdateTickEvent} from '../common/events/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type GameStateData from '../game-state-data';
+import type GameStateData from '../game-state-data.js';
 
 /**
  * Stores references to, and handles distribution of, active areas

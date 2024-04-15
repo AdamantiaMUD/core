@@ -1,14 +1,14 @@
 import type {EventEmitter} from 'events';
 
-import {CharacterNameCheckEvent, CreateCharacterEvent} from '../lib/events';
-import {cast} from '../../../lib/util/functions';
-import {validateCharacterName} from '../../../lib/util/player';
+import {CharacterNameCheckEvent, CreateCharacterEvent} from '../lib/events/index.js';
+import {cast} from '../../../lib/util/functions.js';
+import {validateCharacterName} from '../../../lib/util/player.js';
 
-import type GameStateData from '../../../lib/game-state-data';
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {CreateCharacterPayload} from '../lib/events';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {CreateCharacterPayload} from '../lib/events/index.js';
 
 /**
  * Player creation event

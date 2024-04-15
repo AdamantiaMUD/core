@@ -1,9 +1,9 @@
-import {hasValue} from '../util/functions';
-import {isIterable} from '../util/objects';
+import {hasValue} from '../util/functions.js';
+import {isIterable} from '../util/objects.js';
 
-import type MudEventEmitter from './mud-event-emitter';
-import type MudEventListener from './mud-event-listener';
-import type SimpleMap from '../util/simple-map';
+import type MudEventEmitter from './mud-event-emitter.js';
+import type MudEventListener from './mud-event-listener.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export class MudEventManager {
     /**

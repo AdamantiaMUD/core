@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type QuestProgress from '../quest-progress';
+import type QuestProgress from '../quest-progress.js';
 
 export interface QuestProgressPayload {
     progress: QuestProgress;

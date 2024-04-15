@@ -1,11 +1,11 @@
-import {CharacterHealedEvent} from '../../../lib/characters/events';
-import {hasValue} from '../../../lib/util/functions';
-import {sayAt} from '../../../lib/communication/broadcast';
+import {CharacterHealedEvent} from '../../../lib/characters/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type MudEventListener from '../../../lib/events/mud-event-listener';
-import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
-import type Player from '../../../lib/players/player';
-import type {CharacterHealedPayload} from '../../../lib/characters/events';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type Player from '../../../lib/players/player.js';
+import type {CharacterHealedPayload} from '../../../lib/characters/events/index.js';
 
 export const evt: MudEventListenerDefinition<[Player, CharacterHealedPayload]> = {
     name: CharacterHealedEvent.getName(),

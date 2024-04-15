@@ -1,11 +1,11 @@
-import {PlayerQuestCompletedEvent} from '../../../lib/players/events';
-import {hasValue} from '../../../lib/util/functions';
-import {line, sayAt} from '../../../lib/communication/broadcast';
+import {PlayerQuestCompletedEvent} from '../../../lib/players/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {line, sayAt} from '../../../lib/communication/broadcast.js';
 
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {PlayerQuestCompletedPayload} from '../../../lib/players/events';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {PlayerQuestCompletedPayload} from '../../../lib/players/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<PlayerQuestCompletedPayload> = {
     name: PlayerQuestCompletedEvent.getName(),

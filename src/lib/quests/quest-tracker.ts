@@ -1,12 +1,12 @@
-import QuestStartedEvent from './events/quest-started-event';
+import QuestStartedEvent from './events/quest-started-event.js';
 
-import type GameStateData from '../game-state-data';
-import type Player from '../players/player';
-import type Quest from './quest';
-import type Serializable from '../data/serializable';
-import type SerializedQuest from './serialized-quest';
-import type SerializedQuestTracker from './serialized-quest-tracker';
-import type SimpleMap from '../util/simple-map';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
+import type Quest from './quest.js';
+import type Serializable from '../data/serializable.js';
+import type SerializedQuest from './serialized-quest.js';
+import type SerializedQuestTracker from './serialized-quest-tracker.js';
+import type SimpleMap from '../util/simple-map.js';
 
 /**
  * Keeps track of player quest progress

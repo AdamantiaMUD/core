@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-import {hasValue, noop} from './functions';
+import {hasValue, noop} from './functions.js';
 
 let dataPath: string | null = null;
 

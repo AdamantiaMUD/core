@@ -1,5 +1,5 @@
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
-import type SimpleMap from '../../../../lib/util/simple-map';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
+import type SimpleMap from '../../../../lib/util/simple-map.js';
 
 export interface UsableConfig extends SimpleMap {
     effect?: string;

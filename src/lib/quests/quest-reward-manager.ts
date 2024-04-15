@@ -1,5 +1,5 @@
-import type QuestReward from './quest-reward';
-import type SimpleMap from '../util/simple-map';
+import type QuestReward from './quest-reward.js';
+import type SimpleMap from '../util/simple-map.js';
 
 /**
  * Simple map of quest reward name => class instance

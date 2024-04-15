@@ -1,5 +1,5 @@
-import type SimpleMap from '../util/simple-map';
-import type SerializedItem from './serialized-item';
+import type SimpleMap from '../util/simple-map.js';
+import type SerializedItem from './serialized-item.js';
 
 export interface SerializedInventory extends SimpleMap {
     [key: string]: SerializedItem;

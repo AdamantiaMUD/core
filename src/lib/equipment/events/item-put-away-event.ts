@@ -1,7 +1,7 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Character from '../../characters/character';
-import type Item from '../item';
+import type Character from '../../characters/character.js';
+import type Item from '../item.js';
 
 export interface ItemPutAwayPayload {
     character: Character;

@@ -1,14 +1,14 @@
-import PlayerRole from '../../../lib/players/player-role';
-import {hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
-import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
+import PlayerRole from '../../../lib/players/player-role.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
+import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast.js';
 
-import type Character from '../../../lib/characters/character';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
-import type Room from '../../../lib/locations/room';
+import type Character from '../../../lib/characters/character.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
+import type Room from '../../../lib/locations/room.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'teleport',

@@ -1,16 +1,16 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import ItemUtil from '../../../lib/util/items';
-import Logger from '../../../lib/common/logger';
-import {CooldownError, NotEnoughResourcesError, PassiveError} from '../../../lib/abilities/errors';
-import {cast, hasValue} from '../../../lib/util/functions';
-import {humanize} from '../../../lib/util/time';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import ItemUtil from '../../../lib/util/items.js';
+import Logger from '../../../lib/common/logger.js';
+import {CooldownError, NotEnoughResourcesError, PassiveError} from '../../../lib/abilities/errors/index.js';
+import {cast, hasValue} from '../../../lib/util/functions.js';
+import {humanize} from '../../../lib/util/time.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type GameStateData from '../../../lib/game-state-data';
-import type Item from '../../../lib/equipment/item';
-import type Player from '../../../lib/players/player';
-import type {UsableConfig} from '../../behaviors/behaviors/item/usable';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Item from '../../../lib/equipment/item.js';
+import type Player from '../../../lib/players/player.js';
+import type {UsableConfig} from '../../behaviors/behaviors/item/usable.js';
 
 const handleSpell = (
     state: GameStateData,

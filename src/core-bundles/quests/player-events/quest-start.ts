@@ -1,12 +1,12 @@
-import {PlayerQuestStartedEvent} from '../../../lib/players/events';
-import {center, line, sayAt} from '../../../lib/communication/broadcast';
-import {hasValue} from '../../../lib/util/functions';
+import {PlayerQuestStartedEvent} from '../../../lib/players/events/index.js';
+import {center, line, sayAt} from '../../../lib/communication/broadcast.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {PlayerQuestStartedPayload} from '../../../lib/players/events';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {PlayerQuestStartedPayload} from '../../../lib/players/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<PlayerQuestStartedPayload> = {
     name: PlayerQuestStartedEvent.getName(),

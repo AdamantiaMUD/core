@@ -1,14 +1,14 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import LevelUtil from '../../../lib/util/level-util';
-import {CharacterDeathblowEvent} from '../../../lib/characters/events';
-import {PlayerExperienceEvent} from '../../../lib/players/events';
-import {hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import LevelUtil from '../../../lib/util/level-util.js';
+import {CharacterDeathblowEvent} from '../../../lib/characters/events/index.js';
+import {PlayerExperienceEvent} from '../../../lib/players/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
 
-import type MudEventListener from '../../../lib/events/mud-event-listener';
-import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
-import type Player from '../../../lib/players/player';
-import type {CharacterDeathblowPayload} from '../../../lib/characters/events';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type Player from '../../../lib/players/player.js';
+import type {CharacterDeathblowPayload} from '../../../lib/characters/events/index.js';
 
 const {sayAt} = Broadcast;
 

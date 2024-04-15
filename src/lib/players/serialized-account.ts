@@ -1,5 +1,5 @@
-import type CharacterBrief from './character-brief';
-import type SimpleMap from '../util/simple-map';
+import type CharacterBrief from './character-brief.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface SerializedAccount extends SimpleMap {
     username: string;

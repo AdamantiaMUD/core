@@ -1,1 +1,1 @@
-export * from './channel-receive-event';
+export * from './channel-receive-event.js';

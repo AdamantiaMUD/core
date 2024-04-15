@@ -27,6 +27,12 @@ module.exports = {
                 '.d.ts',
             ],
         },
+        'import/resolver': {
+            typescript: {
+                alwaysTryTypes: true,
+                project: './tsconfig.eslint.json',
+            },
+        },
     },
     'rules': {
         'max-params': ['warn', 8],

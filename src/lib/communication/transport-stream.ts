@@ -1,10 +1,10 @@
 import type {AddressInfo} from 'net';
 import type {EventEmitter} from 'events';
 
-import {cast, hasValue} from '../util/functions';
+import {cast, hasValue} from '../util/functions.js';
 
-import type StreamEvent from '../events/stream-event';
-import type StreamEventListener from '../events/stream-event-listener';
+import type StreamEvent from '../events/stream-event.js';
+import type StreamEventListener from '../events/stream-event-listener.js';
 
 /**
  * Base class for anything that should be sending or receiving data from the player

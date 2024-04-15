@@ -1,13 +1,13 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import {CharacterDamagedEvent} from '../../../lib/characters/events';
-import {hasValue} from '../../../lib/util/functions';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import {CharacterDamagedEvent} from '../../../lib/characters/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type Damage from '../../../lib/combat/damage';
-import type GameStateData from '../../../lib/game-state-data';
-import type MudEventListener from '../../../lib/events/mud-event-listener';
-import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
-import type Player from '../../../lib/players/player';
-import type {CharacterDamagedPayload} from '../../../lib/characters/events';
+import type Damage from '../../../lib/combat/damage.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type Player from '../../../lib/players/player.js';
+import type {CharacterDamagedPayload} from '../../../lib/characters/events/index.js';
 
 const {sayAt} = Broadcast;
 

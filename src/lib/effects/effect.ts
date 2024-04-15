@@ -1,23 +1,23 @@
-import MudEventEmitter from '../events/mud-event-emitter';
+import MudEventEmitter from '../events/mud-event-emitter.js';
 import {
     EffectActivatedEvent,
     EffectAddedEvent,
     EffectDeactivatedEvent,
     EffectRemovedEvent,
-} from './events';
-import {clone} from '../util/objects';
-import {hasValue, isPositiveNumber} from '../util/functions';
+} from './events/index.js';
+import {clone} from '../util/objects.js';
+import {hasValue, isPositiveNumber} from '../util/functions.js';
 
-import type Ability from '../abilities/ability';
-import type Character from '../characters/character';
-import type Damage from '../combat/damage';
-import type EffectConfig from './effect-config';
-import type EffectDefinition from './effect-definition';
-import type EffectFlag from './effect-flag';
-import type EffectState from './effect-state';
-import type GameStateData from '../game-state-data';
-import type SerializedEffect from './serialized-effect';
-import type {EffectModifiers} from './modifiers';
+import type Ability from '../abilities/ability.js';
+import type Character from '../characters/character.js';
+import type Damage from '../combat/damage.js';
+import type EffectConfig from './effect-config.js';
+import type EffectDefinition from './effect-definition.js';
+import type EffectFlag from './effect-flag.js';
+import type EffectState from './effect-state.js';
+import type GameStateData from '../game-state-data.js';
+import type SerializedEffect from './serialized-effect.js';
+import type {EffectModifiers} from './modifiers/index.js';
 
 export class Effect extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

@@ -1,6 +1,6 @@
 import each from 'jest-each';
 
-import {humanize} from '../../../src/lib/util/time';
+import {humanize} from '../../../src/lib/util/time.js';
 
 describe('time.ts', () => {
     describe('humanize()', () => {

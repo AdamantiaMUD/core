@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Item from '../../equipment/item';
+import type Item from '../../equipment/item.js';
 
 export interface PlayerGetItemPayload {
     item: Item;

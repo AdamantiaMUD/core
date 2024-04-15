@@ -1,9 +1,9 @@
-import {QuestRewardEvent} from '../../../lib/quests/events';
+import {QuestRewardEvent} from '../../../lib/quests/events/index.js';
 
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {QuestRewardPayload} from '../../../lib/quests/events';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {QuestRewardPayload} from '../../../lib/quests/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<QuestRewardPayload> = {
     name: QuestRewardEvent.getName(),

@@ -1,3 +1,3 @@
-export * from './socket-close-event';
-export * from './socket-data-event';
-export * from './socket-error-event';
+export * from './socket-close-event.js';
+export * from './socket-data-event.js';
+export * from './socket-error-event.js';

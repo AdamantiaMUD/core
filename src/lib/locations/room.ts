@@ -1,21 +1,21 @@
-import {hasValue} from '../util/functions';
-import Logger from '../common/logger';
-import ScriptableEntity from '../entities/scriptable-entity';
-import {ItemSpawnEvent} from '../equipment/events';
-import {NpcSpawnEvent} from '../mobs/events';
-import {RoomSpawnEvent} from './events';
-import {clone} from '../util/objects';
+import {hasValue} from '../util/functions.js';
+import Logger from '../common/logger.js';
+import ScriptableEntity from '../entities/scriptable-entity.js';
+import {ItemSpawnEvent} from '../equipment/events/index.js';
+import {NpcSpawnEvent} from '../mobs/events/index.js';
+import {RoomSpawnEvent} from './events/index.js';
+import {clone} from '../util/objects.js';
 
-import type Area from './area';
-import type Broadcastable from '../communication/broadcastable';
-import type Door from './door';
-import type GameStateData from '../game-state-data';
-import type Item from '../equipment/item';
-import type Npc from '../mobs/npc';
-import type Player from '../players/player';
-import type RoomDefinition from './room-definition';
-import type RoomEntityDefinition from './room-entity-definition';
-import type RoomExitDefinition from './room-exit-definition';
+import type Area from './area.js';
+import type Broadcastable from '../communication/broadcastable.js';
+import type Door from './door.js';
+import type GameStateData from '../game-state-data.js';
+import type Item from '../equipment/item.js';
+import type Npc from '../mobs/npc.js';
+import type Player from '../players/player.js';
+import type RoomDefinition from './room-definition.js';
+import type RoomEntityDefinition from './room-entity-definition.js';
+import type RoomExitDefinition from './room-exit-definition.js';
 
 export class Room extends ScriptableEntity implements Broadcastable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

@@ -1,6 +1,6 @@
-import type Character from '../characters/character';
-import type GameStateData from '../game-state-data';
-import type Player from '../players/player';
+import type Character from '../characters/character.js';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
 
 export interface CombatEngine {
     buildPrompt: (player: Player) => string;

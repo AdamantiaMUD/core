@@ -1,6 +1,6 @@
-import type GameEntityDefinition from '../entities/game-entity-definition';
-import type QuestGoalDefinition from './quest-goal-definition';
-import type QuestRewardDefinition from './quest-reward-definition';
+import type GameEntityDefinition from '../entities/game-entity-definition.js';
+import type QuestGoalDefinition from './quest-goal-definition.js';
+import type QuestRewardDefinition from './quest-reward-definition.js';
 
 export interface QuestDefinition extends GameEntityDefinition {
     autoComplete: boolean;

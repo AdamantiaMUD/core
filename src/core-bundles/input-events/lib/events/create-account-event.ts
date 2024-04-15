@@ -1,4 +1,4 @@
-import StreamEvent from '../../../../lib/events/stream-event';
+import StreamEvent from '../../../../lib/events/stream-event.js';
 
 export interface CreateAccountPayload {
     name: string;

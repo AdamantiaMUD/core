@@ -1,19 +1,19 @@
-import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/events';
+import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/events/index.js';
 import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
     EffectRemovedEvent,
     EffectAddedEvent,
-} from './events';
-import {hasValue} from '../util/functions';
+} from './events/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type Attribute from '../attributes/attribute';
-import type Character from '../characters/character';
-import type Damage from '../combat/damage';
-import type GameStateData from '../game-state-data';
-import type Effect from './effect';
-import type Serializable from '../data/serializable';
-import type SerializedEffect from './serialized-effect';
+import type Attribute from '../attributes/attribute.js';
+import type Character from '../characters/character.js';
+import type Damage from '../combat/damage.js';
+import type GameStateData from '../game-state-data.js';
+import type Effect from './effect.js';
+import type Serializable from '../data/serializable.js';
+import type SerializedEffect from './serialized-effect.js';
 
 /**
  * Self-managing list of effects for a target

@@ -1,14 +1,14 @@
 import type {EventEmitter} from 'events';
 
-import Broadcast from '../../../lib/communication/broadcast';
-import {PlayerLoginEvent} from '../../../lib/players/events';
-import {CommandLoopEvent, LoginCompleteEvent} from '../lib/events';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import {PlayerLoginEvent} from '../../../lib/players/events/index.js';
+import {CommandLoopEvent, LoginCompleteEvent} from '../lib/events/index.js';
 
-import type GameStateData from '../../../lib/game-state-data';
-import type StreamEventListener from '../../../lib/events/stream-event-listener';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory';
-import type TransportStream from '../../../lib/communication/transport-stream';
-import type {LoginCompletePayload} from '../lib/events';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type {LoginCompletePayload} from '../lib/events/index.js';
 
 /**
  * Login is done, allow the player to actually execute commands

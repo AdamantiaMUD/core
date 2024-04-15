@@ -3,17 +3,17 @@
  */
 import {sprintf} from 'sprintf-js';
 
-import Broadcast from '../communication/broadcast';
-import Item from '../equipment/item';
-import ItemQuality from '../equipment/item-quality';
-import ItemType from '../equipment/item-type';
-import {clone} from './objects';
-import {hasValue} from './functions';
+import Broadcast from '../communication/broadcast.js';
+import Item from '../equipment/item.js';
+import ItemQuality from '../equipment/item-quality.js';
+import ItemType from '../equipment/item-type.js';
+import {clone} from './objects.js';
+import {hasValue} from './functions.js';
 
-import type Character from '../characters/character';
-import type GameStateData from '../game-state-data';
-import type ItemStats from '../equipment/item-stats';
-import type Player from '../players/player';
+import type Character from '../characters/character.js';
+import type GameStateData from '../game-state-data.js';
+import type ItemStats from '../equipment/item-stats.js';
+import type Player from '../players/player.js';
 
 const {line, wrap} = Broadcast;
 

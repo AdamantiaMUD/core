@@ -5,13 +5,13 @@ import {
     center,
     line,
     sayAt,
-} from '../../../lib/communication/broadcast';
-import {getWeaponDamage, getWeaponSpeed} from '../../../lib/util/combat';
-import {hasValue} from '../../../lib/util/functions';
+} from '../../../lib/communication/broadcast.js';
+import {getWeaponDamage, getWeaponSpeed} from '../../../lib/util/combat.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type Player from '../../../lib/players/player';
-import type PlayerClass from '../../../lib/classes/player-class';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type Player from '../../../lib/players/player.js';
+import type PlayerClass from '../../../lib/classes/player-class.js';
 
 type PlayerStats = Record<string, {
     base: number;

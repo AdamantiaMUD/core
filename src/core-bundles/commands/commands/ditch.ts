@@ -1,10 +1,10 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import {cast, hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import {cast, hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type Player from '../../../lib/players/player';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
+import type Player from '../../../lib/players/player.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 
 const ditch: CommandDefinitionFactory = {
     name: 'ditch',

@@ -1,11 +1,11 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import Broadcast from '../../../lib/communication/broadcast';
-import {hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type Player from '../../../lib/players/player.js';
 
 const {sayAt} = Broadcast;
 

@@ -7,27 +7,27 @@ import {fileURLToPath, pathToFileURL} from 'url';
 
 import type {Dirent} from 'fs';
 
-import Command from './commands/command';
-import AreaEntitiesLoader from './data/area-entities-loader';
-import BundleAreasLoader from './data/bundle-areas-loader';
-import Data from './util/data';
-import EntityFactory from './entities/entity-factory';
-import Helpfile from './help/helpfile';
-import Logger, {logAndRethrow} from './common/logger';
-import {cast, hasValue} from './util/functions';
-import {colorize} from './util/communication';
+import Command from './commands/command.js';
+import AreaEntitiesLoader from './data/area-entities-loader.js';
+import BundleAreasLoader from './data/bundle-areas-loader.js';
+import Data from './util/data.js';
+import EntityFactory from './entities/entity-factory.js';
+import Helpfile from './help/helpfile.js';
+import Logger, {logAndRethrow} from './common/logger.js';
+import {cast, hasValue} from './util/functions.js';
+import {colorize} from './util/communication.js';
 
-import type AreaDefinition from './locations/area-definition';
-import type AreaManifest from './locations/area-manifest';
-import type BehaviorManager from './behaviors/behavior-manager';
-import type CommandDefinition from './commands/command-definition';
-import type GameEntity from './entities/game-entity';
-import type GameEntityDefinition from './entities/game-entity-definition';
-import type GameStateData from './game-state-data';
-import type HelpfileOptions from './help/helpfile-options';
-import type QuestDefinition from './quests/quest-definition';
-import type ScriptableEntity from './entities/scriptable-entity';
-import type ScriptableEntityDefinition from './entities/scriptable-entity-definition';
+import type AreaDefinition from './locations/area-definition.js';
+import type AreaManifest from './locations/area-manifest.js';
+import type BehaviorManager from './behaviors/behavior-manager.js';
+import type CommandDefinition from './commands/command-definition.js';
+import type GameEntity from './entities/game-entity.js';
+import type GameEntityDefinition from './entities/game-entity-definition.js';
+import type GameStateData from './game-state-data.js';
+import type HelpfileOptions from './help/helpfile-options.js';
+import type QuestDefinition from './quests/quest-definition.js';
+import type ScriptableEntity from './entities/scriptable-entity.js';
+import type ScriptableEntityDefinition from './entities/scriptable-entity-definition.js';
 import type {
     AttributeModule,
     BehaviorModule,
@@ -40,7 +40,7 @@ import type {
     QuestGoalModule,
     QuestRewardModule,
     ServerEventModule,
-} from './module-helpers';
+} from './module-helpers/index.js';
 
 /* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience';
-import {hasValue} from '../../util/functions';
+import ChannelAudience from './channel-audience.js';
+import {hasValue} from '../../util/functions.js';
 
-import type Player from '../../players/player';
+import type Player from '../../players/player.js';
 
 /**
  * Audience class representing other players in the same room as the sender

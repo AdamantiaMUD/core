@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Attribute from '../../attributes/attribute';
+import type Attribute from '../../attributes/attribute.js';
 
 export interface CharacterAttributeUpdatePayload {
     attr: string;

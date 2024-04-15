@@ -1,14 +1,14 @@
-import Logger from '../../../lib/common/logger';
-import {CombatError} from '../../../lib/combat/errors';
-import {cast, hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
-import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
+import Logger from '../../../lib/common/logger.js';
+import {CombatError} from '../../../lib/combat/errors/index.js';
+import {cast, hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
+import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast.js';
 
-import type Character from '../../../lib/characters/character';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
+import type Character from '../../../lib/characters/character.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'kill',

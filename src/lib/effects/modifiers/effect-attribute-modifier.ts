@@ -1,4 +1,4 @@
-import type Effect from '../effect';
+import type Effect from '../effect.js';
 
 export type EffectAttributeModifier = (effect: Effect, current: number) => number;
 

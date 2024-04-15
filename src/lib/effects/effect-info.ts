@@ -1,5 +1,5 @@
-import type EffectDefinition from './effect-definition';
-import type MudEventManager from '../events/mud-event-manager';
+import type EffectDefinition from './effect-definition.js';
+import type MudEventManager from '../events/mud-event-manager.js';
 
 export interface EffectInfo {
     definition: EffectDefinition;

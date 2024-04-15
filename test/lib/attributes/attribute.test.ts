@@ -1,4 +1,4 @@
-import Attribute from '../../../src/lib/attributes/attribute';
+import Attribute from '../../../src/lib/attributes/attribute.js';
 
 describe('Attribute', () => {
     describe('modify()', () => {

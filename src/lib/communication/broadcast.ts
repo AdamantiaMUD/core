@@ -1,16 +1,16 @@
 import wrapAnsi from 'wrap-ansi';
 import {sprintf} from 'sprintf-js';
 
-import {cast} from '../util/functions';
+import {cast} from '../util/functions.js';
 import {
     colorize,
     isBroadcastable,
     NOOP_FORMATTER,
-} from '../util/communication';
+} from '../util/communication.js';
 
-import type Player from '../players/player';
-import type Broadcastable from './broadcastable';
-import type MessageFormatter from './message-formatter';
+import type Player from '../players/player.js';
+import type Broadcastable from './broadcastable.js';
+import type MessageFormatter from './message-formatter.js';
 
 /**
  * Functions used for sending text to the player. All output to the player

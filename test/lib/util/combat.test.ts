@@ -1,11 +1,11 @@
 import each from 'jest-each';
 
-import * as Combat from '../../../src/lib/util/combat';
-import Area from '../../../src/lib/locations/area';
-import ItemType from '../../../src/lib/equipment/item-type';
-import Npc from '../../../src/lib/mobs/npc';
+import {makeCorpse} from '../../../src/lib/util/combat.js';
+import Area from '../../../src/lib/locations/area.js';
+import ItemType from '../../../src/lib/equipment/item-type.js';
+import Npc from '../../../src/lib/mobs/npc.js';
 
-import type ItemDefinition from '../../../src/lib/equipment/item-definition';
+import type ItemDefinition from '../../../src/lib/equipment/item-definition.js';
 
 const makeArea = (name: string): Area => new Area(
     'test-bundle',
@@ -53,7 +53,7 @@ describe('combat.ts', () => {
                 expect.assertions(1);
 
                 /* eslint-disable-next-line jest/no-standalone-expect */
-                expect(Combat.makeCorpse(npc)).toStrictEqual(output);
+                expect(makeCorpse(npc)).toStrictEqual(output);
             });
     });
 });

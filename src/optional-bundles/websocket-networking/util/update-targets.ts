@@ -1,5 +1,5 @@
-import type Character from '../../../lib/characters/character';
-import type Player from '../../../lib/players/player';
+import type Character from '../../../lib/characters/character.js';
+import type Player from '../../../lib/players/player.js';
 
 export const updateTargets = (player: Player): void => {
     player.socket?.command(

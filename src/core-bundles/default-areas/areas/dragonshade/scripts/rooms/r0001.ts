@@ -1,9 +1,9 @@
-import {sayAt} from '../../../../../../lib/communication/broadcast';
+import {sayAt} from '../../../../../../lib/communication/broadcast.js';
 
-import type BehaviorDefinition from '../../../../../../lib/behaviors/behavior-definition';
-import type MudEventListener from '../../../../../../lib/events/mud-event-listener';
-import type Room from '../../../../../../lib/locations/room';
-import type {RoomCommandPayload} from '../../../../../../lib/locations/events';
+import type BehaviorDefinition from '../../../../../../lib/behaviors/behavior-definition.js';
+import type MudEventListener from '../../../../../../lib/events/mud-event-listener.js';
+import type Room from '../../../../../../lib/locations/room.js';
+import type {RoomCommandPayload} from '../../../../../../lib/locations/events/index.js';
 
 const r0001: BehaviorDefinition = {
     listeners: {

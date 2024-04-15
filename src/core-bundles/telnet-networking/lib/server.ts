@@ -2,9 +2,9 @@ import {createServer} from 'net';
 
 import type {Server, Socket} from 'net';
 
-import {cast} from '../../../lib/util/functions';
+import {cast} from '../../../lib/util/functions.js';
 
-import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
 
 class TelnetServer {
     public netServer: Server;

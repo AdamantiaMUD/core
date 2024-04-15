@@ -1,5 +1,5 @@
-import type GameStateData from '../game-state-data';
-import type Character from '../characters/character';
+import type GameStateData from '../game-state-data.js';
+import type Character from '../characters/character.js';
 
 export interface CharacterClass {
     name: string;

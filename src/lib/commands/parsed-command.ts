@@ -1,7 +1,7 @@
-import type Command from './command';
-import type CommandType from './command-type';
-import type PlayerRole from '../players/player-role';
-import type SimpleMap from '../util/simple-map';
+import type Command from './command.js';
+import type CommandType from './command-type.js';
+import type PlayerRole from '../players/player-role.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface ParsedCommand {
     args: string;

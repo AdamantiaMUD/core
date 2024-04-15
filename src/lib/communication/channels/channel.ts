@@ -1,20 +1,20 @@
-import Broadcast from '../broadcast';
-import PartyAudience from '../audiences/party-audience';
-import Player from '../../players/player';
-import PrivateAudience from '../audiences/private-audience';
-import WorldAudience from '../audiences/world-audience';
-import {ChannelReceiveEvent} from './events';
-import {NoMessageError, NoPartyError, NoRecipientError} from './errors';
-import {cast, hasValue} from '../../util/functions';
+import Broadcast from '../broadcast.js';
+import PartyAudience from '../audiences/party-audience.js';
+import Player from '../../players/player.js';
+import PrivateAudience from '../audiences/private-audience.js';
+import WorldAudience from '../audiences/world-audience.js';
+import {ChannelReceiveEvent} from './events/index.js';
+import {NoMessageError, NoPartyError, NoRecipientError} from './errors/index.js';
+import {cast, hasValue} from '../../util/functions.js';
 
-import type Broadcastable from '../broadcastable';
-import type ChannelAudience from '../audiences/channel-audience';
-import type ChannelDefinition from './channel-definition';
-import type ChannelMessageFormatter from './channel-message-formatter';
-import type Character from '../../characters/character';
-import type GameStateData from '../../game-state-data';
-import type PlayerRole from '../../players/player-role';
-import type {Colorizer} from '../colorizer';
+import type Broadcastable from '../broadcastable.js';
+import type ChannelAudience from '../audiences/channel-audience.js';
+import type ChannelDefinition from './channel-definition.js';
+import type ChannelMessageFormatter from './channel-message-formatter.js';
+import type Character from '../../characters/character.js';
+import type GameStateData from '../../game-state-data.js';
+import type PlayerRole from '../../players/player-role.js';
+import type {Colorizer} from '../colorizer.js';
 
 const {sayAt, sayAtFormatted} = Broadcast;
 

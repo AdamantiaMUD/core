@@ -1,5 +1,5 @@
-import type CommandDefinition from './command-definition';
-import type GameStateData from '../game-state-data';
+import type CommandDefinition from './command-definition.js';
+import type GameStateData from '../game-state-data.js';
 
 export type StatefulCommandBuilder = (state: GameStateData) => CommandDefinition;
 export type StatelessCommandBuilder = () => CommandDefinition;

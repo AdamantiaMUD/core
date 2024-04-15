@@ -1,11 +1,11 @@
 import {sprintf} from 'sprintf-js';
 
-import Attribute from './attribute';
-import {hasValue} from '../util/functions';
+import Attribute from './attribute.js';
+import {hasValue} from '../util/functions.js';
 
-import type AttributeDefinition from './attribute-definition';
-import type AttributeFormulaDefinition from './attribute-formula-definition';
-import type SimpleMap from '../util/simple-map';
+import type AttributeDefinition from './attribute-definition.js';
+import type AttributeFormulaDefinition from './attribute-formula-definition.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export class AttributeFactory {
     private readonly _attributes: Map<string, AttributeDefinition> = new Map<string, AttributeDefinition>();

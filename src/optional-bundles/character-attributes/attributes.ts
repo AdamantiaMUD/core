@@ -1,4 +1,4 @@
-import type AttributeDefinition from '../../lib/attributes/attribute-definition';
+import type AttributeDefinition from '../../lib/attributes/attribute-definition.js';
 
 const atts: AttributeDefinition[] = [
     // Core stats

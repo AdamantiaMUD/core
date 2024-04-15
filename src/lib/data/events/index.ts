@@ -1,1 +1,1 @@
-export * from './metadata-updated-event';
+export * from './metadata-updated-event.js';

@@ -1,5 +1,5 @@
-import type Ability from './ability';
-import type Character from '../characters/character';
+import type Ability from './ability.js';
+import type Character from '../characters/character.js';
 
 export type AbilityRunner = (
     skill: Ability,

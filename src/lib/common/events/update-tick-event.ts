@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type GameStateData from '../../game-state-data';
+import type GameStateData from '../../game-state-data.js';
 
 export interface UpdateTickPayload {
     config?: Record<string, unknown> | true;

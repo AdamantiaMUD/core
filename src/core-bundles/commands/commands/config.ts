@@ -1,11 +1,11 @@
-import {hasValue} from '../../../lib/util/functions';
-import {sayAt} from '../../../lib/communication/broadcast';
+import {hasValue} from '../../../lib/util/functions.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
-import type SimpleMap from '../../../lib/util/simple-map';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
+import type SimpleMap from '../../../lib/util/simple-map.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'config',

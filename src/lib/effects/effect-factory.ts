@@ -1,13 +1,13 @@
-import Effect from './effect';
-import MudEventManager from '../events/mud-event-manager';
-import {clone} from '../util/objects';
-import {hasValue} from '../util/functions';
+import Effect from './effect.js';
+import MudEventManager from '../events/mud-event-manager.js';
+import {clone} from '../util/objects.js';
+import {hasValue} from '../util/functions.js';
 
-import type EffectConfig from './effect-config';
-import type EffectDefinition from './effect-definition';
-import type EffectInfo from './effect-info';
-import type GameStateData from '../game-state-data';
-import type SimpleMap from '../util/simple-map';
+import type EffectConfig from './effect-config.js';
+import type EffectDefinition from './effect-definition.js';
+import type EffectInfo from './effect-info.js';
+import type GameStateData from '../game-state-data.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export class EffectFactory {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

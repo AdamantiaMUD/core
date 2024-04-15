@@ -1,9 +1,9 @@
-import type GameEntity from './game-entity';
-import type GameStateData from '../game-state-data';
-import type Scriptable from './scriptable';
-import type Serializable from '../data/serializable';
-import type SerializedScriptableEntity from './serialized-scriptable-entity';
-import type SimpleMap from '../util/simple-map';
+import type GameEntity from './game-entity.js';
+import type GameStateData from '../game-state-data.js';
+import type Scriptable from './scriptable.js';
+import type Serializable from '../data/serializable.js';
+import type SerializedScriptableEntity from './serialized-scriptable-entity.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface ScriptableEntityInterface extends GameEntity, Scriptable, Serializable {
     readonly behaviors: Map<string, SimpleMap | true | null>;

@@ -1,3 +1,3 @@
-export type CommandModule = typeof import('./mocks/mock-command');
+export type CommandModule = typeof import('./mocks/mock-command.js');
 
 export default CommandModule;

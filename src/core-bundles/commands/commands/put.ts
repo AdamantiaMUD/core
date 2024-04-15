@@ -1,14 +1,14 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import ItemType from '../../../lib/equipment/item-type';
-import ItemUtil from '../../../lib/util/items';
-import {CharacterPutItemEvent} from '../../../lib/characters/events';
-import {ItemPutAwayEvent} from '../../../lib/equipment/events';
-import {hasValue} from '../../../lib/util/functions';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import ItemType from '../../../lib/equipment/item-type.js';
+import ItemUtil from '../../../lib/util/items.js';
+import {CharacterPutItemEvent} from '../../../lib/characters/events/index.js';
+import {ItemPutAwayEvent} from '../../../lib/equipment/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type Player from '../../../lib/players/player.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'put',

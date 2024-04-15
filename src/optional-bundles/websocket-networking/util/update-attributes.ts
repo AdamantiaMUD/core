@@ -1,4 +1,4 @@
-import type Player from '../../../lib/players/player';
+import type Player from '../../../lib/players/player.js';
 
 export const updateAttributes = (player: Player): void => {
     /*

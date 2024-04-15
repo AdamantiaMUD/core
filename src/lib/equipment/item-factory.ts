@@ -1,9 +1,9 @@
-import EntityFactory from '../entities/entity-factory';
-import Item from './item';
-import {hasValue} from '../util/functions';
+import EntityFactory from '../entities/entity-factory.js';
+import Item from './item.js';
+import {hasValue} from '../util/functions.js';
 
-import type Area from '../locations/area';
-import type ItemDefinition from './item-definition';
+import type Area from '../locations/area.js';
+import type ItemDefinition from './item-definition.js';
 
 /**
  * Stores definitions of items to allow for easy creation/cloning of objects

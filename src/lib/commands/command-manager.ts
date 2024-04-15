@@ -1,4 +1,4 @@
-import type Command from './command';
+import type Command from './command.js';
 
 export class CommandManager {
     public commands: Map<string, Command> = new Map<string, Command>();

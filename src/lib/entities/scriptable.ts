@@ -1,4 +1,4 @@
-import type SimpleMap from '../util/simple-map';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface Scriptable {
     behaviors: Map<string, SimpleMap | true | null>;

@@ -1,9 +1,9 @@
 import {Chance} from 'chance';
 
-import {hasValue} from '../util/functions';
+import {hasValue} from '../util/functions.js';
 
-import type GameStateData from '../game-state-data';
-import type SimpleMap from '../util/simple-map';
+import type GameStateData from '../game-state-data.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface CurrencyDefinition {
     max: number;

@@ -1,4 +1,4 @@
-import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity';
+import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity.js';
 
 export interface SerializedItem extends SerializedScriptableEntity {
     uuid: string;

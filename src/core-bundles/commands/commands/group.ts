@@ -1,15 +1,15 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import Command from '../../../lib/commands/command';
-import CommandManager from '../../../lib/commands/command-manager';
-import {center, prompt, sayAt} from '../../../lib/communication/broadcast';
-import {hasValue} from '../../../lib/util/functions';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import Command from '../../../lib/commands/command.js';
+import CommandManager from '../../../lib/commands/command-manager.js';
+import {center, prompt, sayAt} from '../../../lib/communication/broadcast.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type CommandDefinition from '../../../lib/commands/command-definition';
-import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
+import type CommandDefinition from '../../../lib/commands/command-definition.js';
+import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
 
 const createLoader: CommandDefinitionBuilder = (state: GameStateData): CommandDefinition => ({
     name: 'create',

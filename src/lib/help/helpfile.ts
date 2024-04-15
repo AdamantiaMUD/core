@@ -1,6 +1,6 @@
-import {hasValue} from '../util/functions';
+import {hasValue} from '../util/functions.js';
 
-import type HelpfileOptions from './helpfile-options';
+import type HelpfileOptions from './helpfile-options.js';
 
 export class Helpfile {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

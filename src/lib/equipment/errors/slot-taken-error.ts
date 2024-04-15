@@ -1,4 +1,4 @@
-import EquipmentError from './equipment-error';
+import EquipmentError from './equipment-error.js';
 
 export class SlotTakenError extends EquipmentError {}
 

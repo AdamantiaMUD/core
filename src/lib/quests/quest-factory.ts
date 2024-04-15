@@ -2,29 +2,29 @@ import produce from 'immer';
 
 import type {Draft} from 'immer';
 
-import Logger from '../common/logger';
-import Quest from './quest';
+import Logger from '../common/logger.js';
+import Quest from './quest.js';
 import {
     PlayerQuestCompletedEvent,
     PlayerQuestProgressEvent,
     PlayerQuestStartedEvent,
     PlayerQuestTurnInReadyEvent,
-} from '../players/events';
+} from '../players/events/index.js';
 import {
     QuestCompletedEvent,
     QuestProgressEvent,
     QuestRewardEvent,
     QuestStartedEvent,
     QuestTurnInReadyEvent,
-} from './events';
-import {hasValue} from '../util/functions';
+} from './events/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type AbstractQuest from './abstract-quest';
-import type GameStateData from '../game-state-data';
-import type Player from '../players/player';
-import type QuestDefinition from './quest-definition';
-import type SerializedQuestGoal from './serialized-quest-goal';
-import type {QuestProgressPayload} from './events';
+import type AbstractQuest from './abstract-quest.js';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
+import type QuestDefinition from './quest-definition.js';
+import type SerializedQuestGoal from './serialized-quest-goal.js';
+import type {QuestProgressPayload} from './events/index.js';
 
 export class QuestFactory {
     private readonly _quests: Map<string, AbstractQuest> = new Map<string, AbstractQuest>();

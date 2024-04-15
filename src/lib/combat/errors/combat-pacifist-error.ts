@@ -1,6 +1,6 @@
-import CombatError from './combat-error';
+import CombatError from './combat-error.js';
 
-import type Character from '../../characters/character';
+import type Character from '../../characters/character.js';
 
 /**
  * Error used when trying to attack a pacifist flagged NPC

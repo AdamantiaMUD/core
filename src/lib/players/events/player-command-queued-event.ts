@@ -1,4 +1,4 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
 export interface PlayerCommandQueuedPayload {
     idx: number;

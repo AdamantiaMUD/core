@@ -1,19 +1,19 @@
-import Logger from '../../../../lib/common/logger';
-import {AreaRoomAddedEvent, RoomRespawnTickEvent} from '../../../../lib/locations/events';
-import {UpdateTickEvent} from '../../../../lib/common/events';
-import {cast, hasValue} from '../../../../lib/util/functions';
-import {probability} from '../../../../lib/util/random';
+import Logger from '../../../../lib/common/logger.js';
+import {AreaRoomAddedEvent, RoomRespawnTickEvent} from '../../../../lib/locations/events/index.js';
+import {UpdateTickEvent} from '../../../../lib/common/events/index.js';
+import {cast, hasValue} from '../../../../lib/util/functions.js';
+import {probability} from '../../../../lib/util/random.js';
 
-import type Area from '../../../../lib/locations/area';
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
-import type GameStateData from '../../../../lib/game-state-data';
-import type Item from '../../../../lib/equipment/item';
-import type MudEventListener from '../../../../lib/events/mud-event-listener';
-import type Npc from '../../../../lib/mobs/npc';
-import type Room from '../../../../lib/locations/room';
-import type RoomEntityDefinition from '../../../../lib/locations/room-entity-definition';
-import type {AreaRoomAddedPayload, RoomRespawnTickPayload} from '../../../../lib/locations/events';
-import type {UpdateTickPayload} from '../../../../lib/common/events';
+import type Area from '../../../../lib/locations/area.js';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import type Item from '../../../../lib/equipment/item.js';
+import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type Npc from '../../../../lib/mobs/npc.js';
+import type Room from '../../../../lib/locations/room.js';
+import type RoomEntityDefinition from '../../../../lib/locations/room-entity-definition.js';
+import type {AreaRoomAddedPayload, RoomRespawnTickPayload} from '../../../../lib/locations/events/index.js';
+import type {UpdateTickPayload} from '../../../../lib/common/events/index.js';
 
 /**
  * Behavior for having a constant respawn tick happening every [interval]

@@ -1,4 +1,4 @@
-import CommandError from './command-error';
+import CommandError from './command-error.js';
 
 export class RestrictedCommandError extends CommandError {}
 

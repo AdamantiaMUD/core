@@ -1,7 +1,7 @@
-import type GameStateData from '../game-state-data';
-import type Player from '../players/player';
-import type Quest from './quest';
-import type SimpleMap from '../util/simple-map';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
+import type Quest from './quest.js';
+import type SimpleMap from '../util/simple-map.js';
 
 /**
  * Representation of a quest reward

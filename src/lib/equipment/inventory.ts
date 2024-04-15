@@ -1,12 +1,12 @@
-import {InventoryFullError} from './errors';
-import {hasValue} from '../util/functions';
+import {InventoryFullError} from './errors/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type Character from '../characters/character';
-import type GameStateData from '../game-state-data';
-import type Serializable from '../data/serializable';
-import type Item from './item';
-import type SerializedInventory from './serialized-inventory';
-import type SerializedItem from './serialized-item';
+import type Character from '../characters/character.js';
+import type GameStateData from '../game-state-data.js';
+import type Serializable from '../data/serializable.js';
+import type Item from './item.js';
+import type SerializedInventory from './serialized-inventory.js';
+import type SerializedItem from './serialized-item.js';
 
 /**
  * Representation of a `Character` or container `Item` inventory

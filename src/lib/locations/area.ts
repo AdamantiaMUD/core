@@ -1,14 +1,14 @@
-import Logger from '../common/logger';
-import ScriptableEntity from '../entities/scriptable-entity';
-import {AreaRoomAddedEvent, RoomReadyEvent} from './events';
-import {UpdateTickEvent} from '../common/events';
-import {hasValue} from '../util/functions';
+import Logger from '../common/logger.js';
+import ScriptableEntity from '../entities/scriptable-entity.js';
+import {AreaRoomAddedEvent, RoomReadyEvent} from './events/index.js';
+import {UpdateTickEvent} from '../common/events/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type AreaManifest from './area-manifest';
-import type Broadcastable from '../communication/broadcastable';
-import type GameStateData from '../game-state-data';
-import type Npc from '../mobs/npc';
-import type Room from './room';
+import type AreaManifest from './area-manifest.js';
+import type Broadcastable from '../communication/broadcastable.js';
+import type GameStateData from '../game-state-data.js';
+import type Npc from '../mobs/npc.js';
+import type Room from './room.js';
 
 export class Area extends ScriptableEntity implements Broadcastable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

@@ -3,11 +3,11 @@ import type {ExecFileOptionsWithOtherEncoding} from 'child_process';
 
 import type {AddressInfo} from 'net';
 
-import Options from './options';
-import Sequences from './sequences';
-import {hasValue} from '../../../lib/util/functions';
+import Options from './options.js';
+import Sequences from './sequences.js';
+import {hasValue} from '../../../lib/util/functions.js';
 
-import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
 
 export type Willingness = Sequences.DO | Sequences.DONT | Sequences.WILL | Sequences.WONT;
 

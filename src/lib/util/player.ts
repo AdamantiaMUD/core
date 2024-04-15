@@ -1,6 +1,6 @@
-import {hasValue} from './functions';
+import {hasValue} from './functions.js';
 
-import type Config from './config';
+import type Config from './config.js';
 
 const DEFAULT_MAX_LENGTH = 16;
 const DEFAULT_MIN_LENGTH = 4;

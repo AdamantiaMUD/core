@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Damage from '../../combat/damage';
+import type Damage from '../../combat/damage.js';
 
 export interface CharacterDamagedPayload {
     amount: number;

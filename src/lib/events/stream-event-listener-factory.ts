@@ -1,5 +1,5 @@
-import type GameStateData from '../game-state-data';
-import type StreamEventListener from './stream-event-listener';
+import type GameStateData from '../game-state-data.js';
+import type StreamEventListener from './stream-event-listener.js';
 
 export interface StreamEventListenerFactory<T> {
     name: string;

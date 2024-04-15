@@ -1,9 +1,9 @@
-import EntityFactory from '../entities/entity-factory';
-import Room from './room';
-import {hasValue} from '../util/functions';
+import EntityFactory from '../entities/entity-factory.js';
+import Room from './room.js';
+import {hasValue} from '../util/functions.js';
 
-import type Area from './area';
-import type RoomDefinition from './room-definition';
+import type Area from './area.js';
+import type RoomDefinition from './room-definition.js';
 
 /**
  * Stores definitions of npcs to allow for easy creation/cloning

@@ -1,4 +1,4 @@
-import type Direction from './direction';
+import type Direction from './direction.js';
 
 export interface RoomExitDefinition {
     direction: Direction;

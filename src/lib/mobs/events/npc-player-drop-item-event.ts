@@ -1,7 +1,7 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Item from '../../equipment/item';
-import type Player from '../../players/player';
+import type Item from '../../equipment/item.js';
+import type Player from '../../players/player.js';
 
 export interface NpcPlayerDropItemPayload {
     item: Item;

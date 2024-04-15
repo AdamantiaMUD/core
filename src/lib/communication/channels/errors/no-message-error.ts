@@ -1,4 +1,4 @@
-import ChannelError from './channel-error';
+import ChannelError from './channel-error.js';
 
 export class NoMessageError extends ChannelError {}
 

@@ -1,6 +1,6 @@
-import ChannelAudience from './channel-audience';
+import ChannelAudience from './channel-audience.js';
 
-import type Player from '../../players/player';
+import type Player from '../../players/player.js';
 
 /**
  * Audience class representing everyone in the game, except sender.

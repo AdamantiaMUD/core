@@ -5,9 +5,9 @@ import type * as Transport from 'winston-transport';
 import type {Logger as WinstonLogger} from 'winston';
 import type {TransformableInfo} from 'logform';
 
-import {cast, hasValue} from '../util/functions';
+import {cast, hasValue} from '../util/functions.js';
 
-import type LogMessage from './log-message';
+import type LogMessage from './log-message.js';
 
 const {createLogger, format, transports} = winston;
 const {

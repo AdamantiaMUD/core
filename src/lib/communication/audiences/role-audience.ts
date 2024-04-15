@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience';
+import ChannelAudience from './channel-audience.js';
 
-import type Player from '../../players/player';
-import type PlayerRole from '../../players/player-role';
+import type Player from '../../players/player.js';
+import type PlayerRole from '../../players/player-role.js';
 
 export class RoleAudience extends ChannelAudience {
     public minRole: PlayerRole;

@@ -1,6 +1,6 @@
-import AbilityError from './ability-error';
+import AbilityError from './ability-error.js';
 
-import type Effect from '../../effects/effect';
+import type Effect from '../../effects/effect.js';
 
 /**
  * Error used when trying to execute a skill on cooldown

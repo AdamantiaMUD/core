@@ -1,4 +1,4 @@
-import type MudEventListenerFactory from '../../events/mud-event-listener-factory';
+import type MudEventListenerFactory from '../../events/mud-event-listener-factory.js';
 
 const mockScript: {
     listeners: Record<string, MudEventListenerFactory<unknown[]>>;

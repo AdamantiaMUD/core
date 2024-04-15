@@ -1,6 +1,6 @@
-import {noop} from '../../util/functions';
+import {noop} from '../../util/functions.js';
 
-import type CharacterClass from '../../classes/character-class';
+import type CharacterClass from '../../classes/character-class.js';
 
 const mockCharacterClass: CharacterClass = {
     name: 'mock class',

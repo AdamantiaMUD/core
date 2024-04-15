@@ -4,9 +4,9 @@ import path from 'path';
 
 import type {Dirent} from 'fs';
 
-import type AreaManifest from '../locations/area-manifest';
-import type Config from '../util/config';
-import BundleObjectLoader from './bundle-object-loader';
+import type AreaManifest from '../locations/area-manifest.js';
+import type Config from '../util/config.js';
+import BundleObjectLoader from './bundle-object-loader.js';
 
 export class BundleAreasLoader extends BundleObjectLoader {
     public constructor(bundle: string) {

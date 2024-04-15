@@ -1,7 +1,7 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Npc from '../../mobs/npc';
-import type Room from '../room';
+import type Npc from '../../mobs/npc.js';
+import type Room from '../room.js';
 
 export interface RoomNpcEnterPayload {
     npc: Npc;

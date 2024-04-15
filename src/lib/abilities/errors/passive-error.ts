@@ -1,4 +1,4 @@
-import AbilityError from './ability-error';
+import AbilityError from './ability-error.js';
 
 /**
  * Error used when trying to execute a passive skill

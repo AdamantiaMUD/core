@@ -1,19 +1,19 @@
-import Item from '../../../../lib/equipment/item';
-import Logger from '../../../../lib/common/logger';
-import LootTable from '../../../../lib/combat/loot-table';
-import Player from '../../../../lib/players/player';
-import {NpcKilledEvent} from '../../../../lib/mobs/events';
-import {PlayerCurrencyGainedEvent} from '../../../../lib/players/events';
-import {hasValue} from '../../../../lib/util/functions';
-import {makeCorpse} from '../../../../lib/util/combat';
+import Item from '../../../../lib/equipment/item.js';
+import Logger from '../../../../lib/common/logger.js';
+import LootTable from '../../../../lib/combat/loot-table.js';
+import Player from '../../../../lib/players/player.js';
+import {NpcKilledEvent} from '../../../../lib/mobs/events/index.js';
+import {PlayerCurrencyGainedEvent} from '../../../../lib/players/events/index.js';
+import {hasValue} from '../../../../lib/util/functions.js';
+import {makeCorpse} from '../../../../lib/util/combat.js';
 
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition';
-import type GameStateData from '../../../../lib/game-state-data';
-import type ItemDefinition from '../../../../lib/equipment/item-definition';
-import type MudEventListener from '../../../../lib/events/mud-event-listener';
-import type Npc from '../../../../lib/mobs/npc';
-import type SimpleMap from '../../../../lib/util/simple-map';
-import type {NpcKilledPayload} from '../../../../lib/mobs/events';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import type ItemDefinition from '../../../../lib/equipment/item-definition.js';
+import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type Npc from '../../../../lib/mobs/npc.js';
+import type SimpleMap from '../../../../lib/util/simple-map.js';
+import type {NpcKilledPayload} from '../../../../lib/mobs/events/index.js';
 
 export const lootable: BehaviorDefinition = {
     listeners: {

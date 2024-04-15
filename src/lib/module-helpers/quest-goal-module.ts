@@ -1,4 +1,4 @@
-import type QuestGoal from '../quests/quest-goal';
+import type QuestGoal from '../quests/quest-goal.js';
 
 export interface QuestGoalModule {
     default: typeof QuestGoal;

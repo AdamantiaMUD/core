@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience';
-import {hasValue} from '../../util/functions';
+import ChannelAudience from './channel-audience.js';
+import {hasValue} from '../../util/functions.js';
 
-import type Broadcastable from '../broadcastable';
+import type Broadcastable from '../broadcastable.js';
 
 /**
  * Audience class representing characters in the same area as the sender

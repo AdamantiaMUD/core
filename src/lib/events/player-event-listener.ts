@@ -1,5 +1,5 @@
-import type MudEventListener from './mud-event-listener';
-import type Player from '../players/player';
+import type MudEventListener from './mud-event-listener.js';
+import type Player from '../players/player.js';
 
 export type PlayerEventListener<T> = MudEventListener<[Player, T]>;
 

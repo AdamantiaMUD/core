@@ -1,4 +1,4 @@
-import CombatError from './combat-error';
+import CombatError from './combat-error.js';
 
 /**
  * Error used when a target tries to attack themselves

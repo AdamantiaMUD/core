@@ -2,8 +2,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import type Config from '../util/config';
-import type SerializedAccount from '../players/serialized-account';
+import type Config from '../util/config.js';
+import type SerializedAccount from '../players/serialized-account.js';
 
 export class AccountLoader {
     public async loadAccount(accountName: string, config: Config): Promise<SerializedAccount | null> {

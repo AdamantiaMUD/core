@@ -1,4 +1,4 @@
-import {hasValue} from '../util/functions';
+import {hasValue} from '../util/functions.js';
 
 function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(
     search: string,

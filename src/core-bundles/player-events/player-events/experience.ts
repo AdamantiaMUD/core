@@ -1,11 +1,11 @@
-import LevelUtil from '../../../lib/util/level-util';
-import {PlayerExperienceEvent, PlayerLevelUpEvent} from '../../../lib/players/events';
-import {progress, sayAt} from '../../../lib/communication/broadcast';
+import LevelUtil from '../../../lib/util/level-util.js';
+import {PlayerExperienceEvent, PlayerLevelUpEvent} from '../../../lib/players/events/index.js';
+import {progress, sayAt} from '../../../lib/communication/broadcast.js';
 
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {PlayerExperiencePayload} from '../../../lib/players/events';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {PlayerExperiencePayload} from '../../../lib/players/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<PlayerExperiencePayload> = {
     name: PlayerExperienceEvent.getName(),

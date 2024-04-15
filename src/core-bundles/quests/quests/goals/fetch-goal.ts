@@ -1,13 +1,13 @@
-import QuestGoal from '../../../../lib/quests/quest-goal';
-import {PlayerGetItemEvent, PlayerDropItemEvent, PlayerQuestStartedEvent} from '../../../../lib/players/events/index';
-import {QuestProgressEvent} from '../../../../lib/quests/events/index';
-import {ItemDecayEvent} from '../../../behaviors/behaviors/item/decay';
+import QuestGoal from '../../../../lib/quests/quest-goal.js';
+import {PlayerGetItemEvent, PlayerDropItemEvent, PlayerQuestStartedEvent} from '../../../../lib/players/events/index.js';
+import {QuestProgressEvent} from '../../../../lib/quests/events/index.js';
+import {ItemDecayEvent} from '../../../behaviors/behaviors/item/decay.js';
 
-import type Item from '../../../../lib/equipment/item';
-import type Player from '../../../../lib/players/player';
-import type Quest from '../../../../lib/quests/quest';
-import type QuestProgress from '../../../../lib/quests/quest-progress';
-import type SimpleMap from '../../../../lib/util/simple-map';
+import type Item from '../../../../lib/equipment/item.js';
+import type Player from '../../../../lib/players/player.js';
+import type Quest from '../../../../lib/quests/quest.js';
+import type QuestProgress from '../../../../lib/quests/quest-progress.js';
+import type SimpleMap from '../../../../lib/util/simple-map.js';
 
 interface FetchGoalConfig extends SimpleMap {
     title: string;

@@ -1,6 +1,6 @@
-import AbilityFlag from './ability-flag';
+import AbilityFlag from './ability-flag.js';
 
-import type Ability from './ability';
+import type Ability from './ability.js';
 
 /**
  * Keeps track of registered abilities

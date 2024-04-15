@@ -1,11 +1,11 @@
-import CommandType from './command-type';
-import {InvalidCommandError} from './errors';
-import {hasValue} from '../util/functions';
+import CommandType from './command-type.js';
+import {InvalidCommandError} from './errors/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type GameStateData from '../game-state-data';
-import type ParsedCommand from './parsed-command';
-import type Player from '../players/player';
-import type RoomExitDefinition from '../locations/room-exit-definition';
+import type GameStateData from '../game-state-data.js';
+import type ParsedCommand from './parsed-command.js';
+import type Player from '../players/player.js';
+import type RoomExitDefinition from '../locations/room-exit-definition.js';
 
 /**
  * Interpreter.. you guessed it, interprets command input

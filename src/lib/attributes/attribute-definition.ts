@@ -1,5 +1,5 @@
-import type AttributeFormulaDefinition from './attribute-formula-definition';
-import type SimpleMap from '../util/simple-map';
+import type AttributeFormulaDefinition from './attribute-formula-definition.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface AttributeDefinition {
     name: string;

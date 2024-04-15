@@ -1,13 +1,13 @@
-import Broadcast from '../../../lib/communication/broadcast';
-import Logger from '../../../lib/common/logger';
-import {CombatError} from '../../../lib/combat/errors';
-import {cast, hasValue} from '../../../lib/util/functions';
+import Broadcast from '../../../lib/communication/broadcast.js';
+import Logger from '../../../lib/common/logger.js';
+import {CombatError} from '../../../lib/combat/errors/index.js';
+import {cast, hasValue} from '../../../lib/util/functions.js';
 
-import type Character from '../../../lib/characters/character';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
+import type Character from '../../../lib/characters/character.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
 
 const {sayAt} = Broadcast;
 

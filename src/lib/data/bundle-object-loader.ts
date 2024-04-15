@@ -1,7 +1,7 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
 
-import type Config from '../util/config';
+import type Config from '../util/config.js';
 
 /* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

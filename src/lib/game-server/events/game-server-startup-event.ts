@@ -1,6 +1,6 @@
 import type {CommanderStatic} from 'commander';
 
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
 export interface GameServerStartupPayload {
     commander: CommanderStatic;

@@ -1,235 +1,235 @@
 // root
-export {BundleManager} from './bundle-manager';
-export {GameServer} from './game-server';
-export {GameState} from './game-state';
-export {GameStateData} from './game-state-data';
+export {BundleManager} from './bundle-manager.js';
+export {GameServer} from './game-server.js';
+export {GameState} from './game-state.js';
+export {GameStateData} from './game-state-data.js';
 
 // abilities
-export * as AbilityErrors from './abilities/errors';
-export * as AbilityEvents from './abilities/events';
-export {Ability} from './abilities/ability';
-export {AbilityDefinition} from './abilities/ability-definition';
-export {AbilityFlag} from './abilities/ability-flag';
-export {AbilityManager} from './abilities/ability-manager';
-export {AbilityResource} from './abilities/ability-resource';
-export {AbilityRunner} from './abilities/ability-runner';
-export {AbilityType} from './abilities/ability-type';
+export * as AbilityErrors from './abilities/errors/index.js';
+export * as AbilityEvents from './abilities/events/index.js';
+export {Ability} from './abilities/ability.js';
+export {AbilityDefinition} from './abilities/ability-definition.js';
+export {AbilityFlag} from './abilities/ability-flag.js';
+export {AbilityManager} from './abilities/ability-manager.js';
+export {AbilityResource} from './abilities/ability-resource.js';
+export {AbilityRunner} from './abilities/ability-runner.js';
+export {AbilityType} from './abilities/ability-type.js';
 
 // attributes
-export {Attribute} from './attributes/attribute';
-export {AttributeDefinition} from './attributes/attribute-definition';
-export {AttributeFactory} from './attributes/attribute-factory';
-export {AttributeFormula} from './attributes/attribute-formula';
-export {AttributeFormulaDefinition} from './attributes/attribute-formula-definition';
-export {CharacterAttributes} from './attributes/character-attributes';
+export {Attribute} from './attributes/attribute.js';
+export {AttributeDefinition} from './attributes/attribute-definition.js';
+export {AttributeFactory} from './attributes/attribute-factory.js';
+export {AttributeFormula} from './attributes/attribute-formula.js';
+export {AttributeFormulaDefinition} from './attributes/attribute-formula-definition.js';
+export {CharacterAttributes} from './attributes/character-attributes.js';
 
 // behaviors
-export {Behavior} from './behaviors/behavior';
-export {BehaviorDefinition} from './behaviors/behavior-definition';
-export {BehaviorEventListenerDefinition} from './behaviors/behavior-event-listener-definition';
-export {BehaviorEventListenerFactory} from './behaviors/behavior-event-listener-factory';
-export {BehaviorManager} from './behaviors/behavior-manager';
+export {Behavior} from './behaviors/behavior.js';
+export {BehaviorDefinition} from './behaviors/behavior-definition.js';
+export {BehaviorEventListenerDefinition} from './behaviors/behavior-event-listener-definition.js';
+export {BehaviorEventListenerFactory} from './behaviors/behavior-event-listener-factory.js';
+export {BehaviorManager} from './behaviors/behavior-manager.js';
 
 // characters
-export * as CharacterEvents from './characters/events';
-export {Character} from './characters/character';
+export * as CharacterEvents from './characters/events/index.js';
+export {Character} from './characters/character.js';
 
 // classes
-export {CharacterClass} from './classes/character-class';
-export {CharacterClassManager} from './classes/character-class-manager';
-export {NpcClass} from './classes/npc-class';
-export {PlayerClass} from './classes/player-class';
+export {CharacterClass} from './classes/character-class.js';
+export {CharacterClassManager} from './classes/character-class-manager.js';
+export {NpcClass} from './classes/npc-class.js';
+export {PlayerClass} from './classes/player-class.js';
 
 // combat
-export * as CombatErrors from './combat/errors';
-export * as CombatEvents from './combat/events';
-export {CharacterCombat} from './combat/character-combat';
-export {CombatEngine} from './combat/combat-engine';
-export {Damage} from './combat/damage';
-export {Heal} from './combat/heal';
-export {LootTable} from './combat/loot-table';
+export * as CombatErrors from './combat/errors/index.js';
+export * as CombatEvents from './combat/events/index.js';
+export {CharacterCombat} from './combat/character-combat.js';
+export {CombatEngine} from './combat/combat-engine.js';
+export {Damage} from './combat/damage.js';
+export {Heal} from './combat/heal.js';
+export {LootTable} from './combat/loot-table.js';
 
 // commands
-export * as CommandErrors from './commands/errors';
-export {ArgParser} from './commands/arg-parser';
-export {Command} from './commands/command';
-export {CommandDefinition} from './commands/command-definition';
-export {CommandDefinitionBuilder} from './commands/command-definition-builder';
-export {CommandDefinitionFactory} from './commands/command-definition-factory';
-export {CommandExecutable} from './commands/command-executable';
-export {CommandManager} from './commands/command-manager';
-export {CommandParser} from './commands/command-parser';
-export {CommandQueue} from './commands/command-queue';
-export {CommandType} from './commands/command-type';
-export {ParsedCommand} from './commands/parsed-command';
+export * as CommandErrors from './commands/errors/index.js';
+export {ArgParser} from './commands/arg-parser.js';
+export {Command} from './commands/command.js';
+export {CommandDefinition} from './commands/command-definition.js';
+export {CommandDefinitionBuilder} from './commands/command-definition-builder.js';
+export {CommandDefinitionFactory} from './commands/command-definition-factory.js';
+export {CommandExecutable} from './commands/command-executable.js';
+export {CommandManager} from './commands/command-manager.js';
+export {CommandParser} from './commands/command-parser.js';
+export {CommandQueue} from './commands/command-queue.js';
+export {CommandType} from './commands/command-type.js';
+export {ParsedCommand} from './commands/parsed-command.js';
 
 // common
-export * as CommonEvents from './common/events';
-export {LogMessage} from './common/log-message';
-export {Logger} from './common/logger';
+export * as CommonEvents from './common/events/index.js';
+export {LogMessage} from './common/log-message.js';
+export {Logger} from './common/logger.js';
 
 // communication - audiences
-export {AreaAudience} from './communication/audiences/area-audience';
-export {ChannelAudience} from './communication/audiences/channel-audience';
-export {PartyAudience} from './communication/audiences/party-audience';
-export {PrivateAudience} from './communication/audiences/private-audience';
-export {RoleAudience} from './communication/audiences/role-audience';
-export {RoomAudience} from './communication/audiences/room-audience';
-export {WorldAudience} from './communication/audiences/world-audience';
+export {AreaAudience} from './communication/audiences/area-audience.js';
+export {ChannelAudience} from './communication/audiences/channel-audience.js';
+export {PartyAudience} from './communication/audiences/party-audience.js';
+export {PrivateAudience} from './communication/audiences/private-audience.js';
+export {RoleAudience} from './communication/audiences/role-audience.js';
+export {RoomAudience} from './communication/audiences/room-audience.js';
+export {WorldAudience} from './communication/audiences/world-audience.js';
 
 // communication - channels
-export * as ChannelErrors from './communication/channels/errors';
-export * as ChannelEvents from './communication/channels/events';
-export {Channel} from './communication/channels/channel';
-export {ChannelDefinition} from './communication/channels/channel-definition';
-export {ChannelManager} from './communication/channels/channel-manager';
-export {ChannelMessageFormatter} from './communication/channels/channel-message-formatter';
+export * as ChannelErrors from './communication/channels/errors/index.js';
+export * as ChannelEvents from './communication/channels/events/index.js';
+export {Channel} from './communication/channels/channel.js';
+export {ChannelDefinition} from './communication/channels/channel-definition.js';
+export {ChannelManager} from './communication/channels/channel-manager.js';
+export {ChannelMessageFormatter} from './communication/channels/channel-message-formatter.js';
 
 // communication - core
-export * as Broadcast from './communication/broadcast';
-export * as CommunicationEvents from './communication/events';
-export {AdamantiaSocket} from './communication/adamantia-socket';
-export {Broadcastable} from './communication/broadcastable';
-export {Colorizer} from './communication/colorizer';
-export {MessageFormatter} from './communication/message-formatter';
-export {PromptDefinition} from './communication/prompt-definition';
-export {TransportStream} from './communication/transport-stream';
+export * as Broadcast from './communication/broadcast.js';
+export * as CommunicationEvents from './communication/events/index.js';
+export {AdamantiaSocket} from './communication/adamantia-socket.js';
+export {Broadcastable} from './communication/broadcastable.js';
+export {Colorizer} from './communication/colorizer.js';
+export {MessageFormatter} from './communication/message-formatter.js';
+export {PromptDefinition} from './communication/prompt-definition.js';
+export {TransportStream} from './communication/transport-stream.js';
 
 // data - core
-export * as DataEvents from './data/events';
-export {AreaEntitiesLoader} from './data/area-entities-loader';
-export {BundleAreasLoader} from './data/bundle-areas-loader';
-export {Metadatable} from './data/metadatable';
-export {Serializable} from './data/serializable';
+export * as DataEvents from './data/events/index.js';
+export {AreaEntitiesLoader} from './data/area-entities-loader.js';
+export {BundleAreasLoader} from './data/bundle-areas-loader.js';
+export {Metadatable} from './data/metadatable.js';
+export {Serializable} from './data/serializable.js';
 
 // effects
-export * as EffectEvents from './effects/events';
-export * as EffectModifiers from './effects/modifiers';
-export {Effect} from './effects/effect';
-export {EffectConfig} from './effects/effect-config';
-export {EffectDefinition} from './effects/effect-definition';
-export {EffectFactory} from './effects/effect-factory';
-export {EffectFlag} from './effects/effect-flag';
-export {EffectInfo} from './effects/effect-info';
-export {EffectList} from './effects/effect-list';
-export {EffectListenersDefinition} from './effects/effect-listeners-definition';
-export {EffectListenersDefinitionFactory} from './effects/effect-listeners-definition-factory';
-export {EffectState} from './effects/effect-state';
-export {SerializedEffect} from './effects/serialized-effect';
+export * as EffectEvents from './effects/events/index.js';
+export * as EffectModifiers from './effects/modifiers/index.js';
+export {Effect} from './effects/effect.js';
+export {EffectConfig} from './effects/effect-config.js';
+export {EffectDefinition} from './effects/effect-definition.js';
+export {EffectFactory} from './effects/effect-factory.js';
+export {EffectFlag} from './effects/effect-flag.js';
+export {EffectInfo} from './effects/effect-info.js';
+export {EffectList} from './effects/effect-list.js';
+export {EffectListenersDefinition} from './effects/effect-listeners-definition.js';
+export {EffectListenersDefinitionFactory} from './effects/effect-listeners-definition-factory.js';
+export {EffectState} from './effects/effect-state.js';
+export {SerializedEffect} from './effects/serialized-effect.js';
 
 // entities
-export {EntityFactory} from './entities/entity-factory';
-export {GameEntity} from './entities/game-entity';
-export {GameEntityDefinition} from './entities/game-entity-definition';
-export {Scriptable} from './entities/scriptable';
-export {ScriptableEntity} from './entities/scriptable-entity';
-export {ScriptableEntityDefinition} from './entities/scriptable-entity-definition';
-export {SerializedGameEntity} from './entities/serialized-game-entity';
-export {SerializedScriptableEntity} from './entities/serialized-scriptable-entity';
+export {EntityFactory} from './entities/entity-factory.js';
+export {GameEntity} from './entities/game-entity.js';
+export {GameEntityDefinition} from './entities/game-entity-definition.js';
+export {Scriptable} from './entities/scriptable.js';
+export {ScriptableEntity} from './entities/scriptable-entity.js';
+export {ScriptableEntityDefinition} from './entities/scriptable-entity-definition.js';
+export {SerializedGameEntity} from './entities/serialized-game-entity.js';
+export {SerializedScriptableEntity} from './entities/serialized-scriptable-entity.js';
 
 // equipment
-export * as EquipmentErrors from './equipment/errors';
-export * as EquipmentEvents from './equipment/events';
-export {Inventory} from './equipment/inventory';
-export {Item} from './equipment/item';
-export {ItemDefinition} from './equipment/item-definition';
-export {ItemFactory} from './equipment/item-factory';
-export {ItemManager} from './equipment/item-manager';
-export {ItemQuality} from './equipment/item-quality';
-export {ItemStats} from './equipment/item-stats';
-export {ItemType} from './equipment/item-type';
-export {SerializedInventory} from './equipment/serialized-inventory';
-export {SerializedItem} from './equipment/serialized-item';
+export * as EquipmentErrors from './equipment/errors/index.js';
+export * as EquipmentEvents from './equipment/events/index.js';
+export {Inventory} from './equipment/inventory.js';
+export {Item} from './equipment/item.js';
+export {ItemDefinition} from './equipment/item-definition.js';
+export {ItemFactory} from './equipment/item-factory.js';
+export {ItemManager} from './equipment/item-manager.js';
+export {ItemQuality} from './equipment/item-quality.js';
+export {ItemStats} from './equipment/item-stats.js';
+export {ItemType} from './equipment/item-type.js';
+export {SerializedInventory} from './equipment/serialized-inventory.js';
+export {SerializedItem} from './equipment/serialized-item.js';
 
 // events
-export {InputMenuOption} from './events/input-menu-option';
-export {MudEvent} from './events/mud-event';
-export {MudEventEmitter} from './events/mud-event-emitter';
-export {MudEventListener} from './events/mud-event-listener';
-export {MudEventListenerDefinition} from './events/mud-event-listener-definition';
-export {MudEventListenerFactory} from './events/mud-event-listener-factory';
-export {MudEventManager} from './events/mud-event-manager';
-export {PlayerEventListener} from './events/player-event-listener';
-export {PlayerEventListenerDefinition} from './events/player-event-listener-definition';
-export {StreamEvent} from './events/stream-event';
-export {StreamEventListener} from './events/stream-event-listener';
-export {StreamEventListenerFactory} from './events/stream-event-listener-factory';
-export {StreamEventManager} from './events/stream-event-manager';
+export {InputMenuOption} from './events/input-menu-option.js';
+export {MudEvent} from './events/mud-event.js';
+export {MudEventEmitter} from './events/mud-event-emitter.js';
+export {MudEventListener} from './events/mud-event-listener.js';
+export {MudEventListenerDefinition} from './events/mud-event-listener-definition.js';
+export {MudEventListenerFactory} from './events/mud-event-listener-factory.js';
+export {MudEventManager} from './events/mud-event-manager.js';
+export {PlayerEventListener} from './events/player-event-listener.js';
+export {PlayerEventListenerDefinition} from './events/player-event-listener-definition.js';
+export {StreamEvent} from './events/stream-event.js';
+export {StreamEventListener} from './events/stream-event-listener.js';
+export {StreamEventListenerFactory} from './events/stream-event-listener-factory.js';
+export {StreamEventManager} from './events/stream-event-manager.js';
 
 // game-server
-export * as GameServerEvents from './game-server/events';
+export * as GameServerEvents from './game-server/events/index.js';
 
 // groups
-export {Party} from './groups/party';
-export {PartyManager} from './groups/party-manager';
+export {Party} from './groups/party.js';
+export {PartyManager} from './groups/party-manager.js';
 
 // help
-export {HelpManager} from './help/help-manager';
-export {Helpfile} from './help/helpfile';
-export {HelpfileOptions} from './help/helpfile-options';
+export {HelpManager} from './help/help-manager.js';
+export {Helpfile} from './help/helpfile.js';
+export {HelpfileOptions} from './help/helpfile-options.js';
 
 // locations
-export * as LocationEvents from './locations/events';
-export {Area} from './locations/area';
-export {AreaDefinition} from './locations/area-definition';
-export {AreaFactory} from './locations/area-factory';
-export {AreaManager} from './locations/area-manager';
-export {AreaManifest} from './locations/area-manifest';
-export {Direction} from './locations/direction';
-export {Door} from './locations/door';
-export {Room} from './locations/room';
-export {RoomDefinition} from './locations/room-definition';
-export {RoomEntityDefinition} from './locations/room-entity-definition';
-export {RoomExitDefinition} from './locations/room-exit-definition';
-export {RoomFactory} from './locations/room-factory';
-export {RoomManager} from './locations/room-manager';
+export * as LocationEvents from './locations/events/index.js';
+export {Area} from './locations/area.js';
+export {AreaDefinition} from './locations/area-definition.js';
+export {AreaFactory} from './locations/area-factory.js';
+export {AreaManager} from './locations/area-manager.js';
+export {AreaManifest} from './locations/area-manifest.js';
+export {Direction} from './locations/direction.js';
+export {Door} from './locations/door.js';
+export {Room} from './locations/room.js';
+export {RoomDefinition} from './locations/room-definition.js';
+export {RoomEntityDefinition} from './locations/room-entity-definition.js';
+export {RoomExitDefinition} from './locations/room-exit-definition.js';
+export {RoomFactory} from './locations/room-factory.js';
+export {RoomManager} from './locations/room-manager.js';
 
 // mobs
-export * as MobEvents from './mobs/events';
-export {MobFactory} from './mobs/mob-factory';
-export {MobManager} from './mobs/mob-manager';
-export {Npc} from './mobs/npc';
-export {NpcDefinition} from './mobs/npc-definition';
+export * as MobEvents from './mobs/events/index.js';
+export {MobFactory} from './mobs/mob-factory.js';
+export {MobManager} from './mobs/mob-manager.js';
+export {Npc} from './mobs/npc.js';
+export {NpcDefinition} from './mobs/npc-definition.js';
 
 // players
-export * as PlayerEvents from './players/events';
-export {Account} from './players/account';
-export {AccountManager} from './players/account-manager';
-export {Player} from './players/player';
-export {PlayerManager} from './players/player-manager';
-export {PlayerRole} from './players/player-role';
-export {SerializedPlayer} from './players/serialized-player';
+export * as PlayerEvents from './players/events/index.js';
+export {Account} from './players/account.js';
+export {AccountManager} from './players/account-manager.js';
+export {Player} from './players/player.js';
+export {PlayerManager} from './players/player-manager.js';
+export {PlayerRole} from './players/player-role.js';
+export {SerializedPlayer} from './players/serialized-player.js';
 
 // quests
-export * as QuestEvents from './quests/events';
-export {AbstractQuest} from './quests/abstract-quest';
-export {Quest} from './quests/quest';
-export {QuestDefinition} from './quests/quest-definition';
-export {QuestFactory} from './quests/quest-factory';
-export {QuestGoal} from './quests/quest-goal';
-export {QuestGoalDefinition} from './quests/quest-goal-definition';
-export {QuestGoalManager} from './quests/quest-goal-manager';
-export {QuestProgress} from './quests/quest-progress';
-export {QuestReward} from './quests/quest-reward';
-export {QuestRewardDefinition} from './quests/quest-reward-definition';
-export {QuestRewardManager} from './quests/quest-reward-manager';
-export {QuestTracker} from './quests/quest-tracker';
-export {SerializedQuest} from './quests/serialized-quest';
-export {SerializedQuestGoal} from './quests/serialized-quest-goal';
-export {SerializedQuestTracker} from './quests/serialized-quest-tracker';
+export * as QuestEvents from './quests/events/index.js';
+export {AbstractQuest} from './quests/abstract-quest.js';
+export {Quest} from './quests/quest.js';
+export {QuestDefinition} from './quests/quest-definition.js';
+export {QuestFactory} from './quests/quest-factory.js';
+export {QuestGoal} from './quests/quest-goal.js';
+export {QuestGoalDefinition} from './quests/quest-goal-definition.js';
+export {QuestGoalManager} from './quests/quest-goal-manager.js';
+export {QuestProgress} from './quests/quest-progress.js';
+export {QuestReward} from './quests/quest-reward.js';
+export {QuestRewardDefinition} from './quests/quest-reward-definition.js';
+export {QuestRewardManager} from './quests/quest-reward-manager.js';
+export {QuestTracker} from './quests/quest-tracker.js';
+export {SerializedQuest} from './quests/serialized-quest.js';
+export {SerializedQuestGoal} from './quests/serialized-quest-goal.js';
+export {SerializedQuestTracker} from './quests/serialized-quest-tracker.js';
 
 // util
-export * as CharacterUtils from './util/characters';
-export * as CombatUtils from './util/combat';
-export * as CommunicationUtils from './util/communication';
-export * as DataUtils from './util/data';
-export * as FnUtils from './util/functions';
-export * as ItemUtils from './util/items';
-export * as LevelUtils from './util/level-util';
-export * as ObjectUtils from './util/objects';
-export * as PlayerUtils from './util/player';
-export * as RandomUtils from './util/random';
-export * as TimeUtils from './util/time';
+export * as CharacterUtils from './util/characters.js';
+export * as CombatUtils from './util/combat.js';
+export * as CommunicationUtils from './util/communication.js';
+export * as DataUtils from './util/data.js';
+export * as FnUtils from './util/functions.js';
+export * as ItemUtils from './util/items.js';
+export * as LevelUtils from './util/level-util.js';
+export * as ObjectUtils from './util/objects.js';
+export * as PlayerUtils from './util/player.js';
+export * as RandomUtils from './util/random.js';
+export * as TimeUtils from './util/time.js';
 
-export {Config} from './util/config';
-export {SimpleMap} from './util/simple-map';
+export {Config} from './util/config.js';
+export {SimpleMap} from './util/simple-map.js';

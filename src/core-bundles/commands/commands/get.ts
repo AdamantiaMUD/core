@@ -1,15 +1,15 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import {sayAt} from '../../../lib/communication/broadcast';
-import ItemType from '../../../lib/equipment/item-type';
-import {hasValue} from '../../../lib/util/functions';
-import ItemUtil from '../../../lib/util/items';
-import {ItemPickedUpEvent} from '../../../lib/equipment/events';
-import {PlayerGetItemEvent} from '../../../lib/players/events';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
+import ItemType from '../../../lib/equipment/item-type.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import ItemUtil from '../../../lib/util/items.js';
+import {ItemPickedUpEvent} from '../../../lib/equipment/events/index.js';
+import {PlayerGetItemEvent} from '../../../lib/players/events/index.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type Item from '../../../lib/equipment/item';
-import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type Item from '../../../lib/equipment/item.js';
+import type Player from '../../../lib/players/player.js';
 
 const pickup = (item: Item, container: Item | null, player: Player): void => {
     if (item.getMeta<boolean>('noPickup')) {

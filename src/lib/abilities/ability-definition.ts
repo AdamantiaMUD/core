@@ -1,12 +1,12 @@
-import type Ability from './ability';
-import type AbilityResource from './ability-resource';
-import type AbilityRunner from './ability-runner';
-import type AbilityType from './ability-type';
-import type GameState from '../game-state';
-import type Player from '../players/player';
-import type AbilityFlag from './ability-flag';
-import type Effect from '../effects/effect';
-import type SimpleMap from '../util/simple-map';
+import type Ability from './ability.js';
+import type AbilityResource from './ability-resource.js';
+import type AbilityRunner from './ability-runner.js';
+import type AbilityType from './ability-type.js';
+import type GameState from '../game-state.js';
+import type Player from '../players/player.js';
+import type AbilityFlag from './ability-flag.js';
+import type Effect from '../effects/effect.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface AbilityDefinition {
     canTargetSelf: boolean;

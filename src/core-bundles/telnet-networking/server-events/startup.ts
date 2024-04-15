@@ -1,18 +1,18 @@
-import Logger from '../../../lib/common/logger';
-import Options from '../lib/options';
-import Sequences from '../lib/sequences';
-import TelnetServer from '../lib/server';
-import TelnetSocket from '../lib/telnet-socket';
-import TelnetStream from '../lib/telnet-stream';
-import {GameServerStartupEvent} from '../../../lib/game-server/events';
-import {IntroEvent} from '../../input-events/lib/events';
+import Logger from '../../../lib/common/logger.js';
+import Options from '../lib/options.js';
+import Sequences from '../lib/sequences.js';
+import TelnetServer from '../lib/server.js';
+import TelnetSocket from '../lib/telnet-socket.js';
+import TelnetStream from '../lib/telnet-stream.js';
+import {GameServerStartupEvent} from '../../../lib/game-server/events/index.js';
+import {IntroEvent} from '../../input-events/lib/events/index.js';
 
-import type AdamantiaSocket from '../../../lib/communication/adamantia-socket';
-import type GameState from '../../../lib/game-state';
-import type MudEventListener from '../../../lib/events/mud-event-listener';
-import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition';
-import type {GameServerStartupPayload} from '../../../lib/game-server/events';
-import type {StatefulListenerFactory} from '../../../lib/events/mud-event-listener-factory';
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
+import type GameState from '../../../lib/game-state.js';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type {GameServerStartupPayload} from '../../../lib/game-server/events/index.js';
+import type {StatefulListenerFactory} from '../../../lib/events/mud-event-listener-factory.js';
 
 const DEFAULT_TELNET_PORT = 4000;
 

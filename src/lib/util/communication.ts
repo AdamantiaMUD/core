@@ -1,9 +1,9 @@
 import chalk from 'chalk';
 
-import {cast, hasValue} from './functions';
+import {cast, hasValue} from './functions.js';
 
-import type Broadcastable from '../communication/broadcastable';
-import type MessageFormatter from '../communication/message-formatter';
+import type Broadcastable from '../communication/broadcastable.js';
+import type MessageFormatter from '../communication/message-formatter.js';
 
 export const colorize = (msg: string): string => {
     const tplStr: string[] = [];

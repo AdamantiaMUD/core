@@ -1,4 +1,4 @@
-import type Helpfile from './helpfile';
+import type Helpfile from './helpfile.js';
 
 export class HelpManager {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

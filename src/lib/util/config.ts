@@ -2,8 +2,8 @@ import get from 'lodash.get';
 import merge from 'deepmerge';
 import set from 'lodash.set';
 
-import Logger from '../common/logger';
-import {hasValue} from './functions';
+import Logger from '../common/logger.js';
+import {hasValue} from './functions.js';
 
 export interface MudConfig {
     abilities?: {

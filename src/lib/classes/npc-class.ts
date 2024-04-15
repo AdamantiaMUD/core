@@ -1,4 +1,4 @@
-import type CharacterClass from './character-class';
+import type CharacterClass from './character-class.js';
 
 export interface NpcClass extends CharacterClass {}
 

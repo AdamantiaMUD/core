@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Quest from '../../quests/quest';
+import type Quest from '../../quests/quest.js';
 
 export interface PlayerQuestTurnInReadyPayload {
     quest: Quest;

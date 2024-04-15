@@ -1,11 +1,11 @@
-import updateTargets from '../util/update-targets';
-import {UpdateTickEvent} from '../../../lib/common/events';
+import updateTargets from '../util/update-targets.js';
+import {UpdateTickEvent} from '../../../lib/common/events/index.js';
 
-import type Effect from '../../../lib/effects/effect';
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {UpdateTickPayload} from '../../../lib/common/events';
+import type Effect from '../../../lib/effects/effect.js';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {UpdateTickPayload} from '../../../lib/common/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<UpdateTickPayload> = {
     name: UpdateTickEvent.getName(),

@@ -1,10 +1,10 @@
-import updateAttributes from '../util/update-attributes';
-import {PlayerLoginEvent} from '../../../lib/players/events';
+import updateAttributes from '../util/update-attributes.js';
+import {PlayerLoginEvent} from '../../../lib/players/events/index.js';
 
-import type Effect from '../../../lib/effects/effect';
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
+import type Effect from '../../../lib/effects/effect.js';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
 
 export const evt: PlayerEventListenerDefinition<void> = {
     name: PlayerLoginEvent.getName(),

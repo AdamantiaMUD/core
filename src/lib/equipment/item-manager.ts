@@ -1,6 +1,6 @@
-import {UpdateTickEvent} from '../common/events';
+import {UpdateTickEvent} from '../common/events/index.js';
 
-import type Item from './item';
+import type Item from './item.js';
 
 /**
  * Keep track of all items in game

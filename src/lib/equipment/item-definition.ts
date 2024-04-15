@@ -1,5 +1,5 @@
-import type ItemType from './item-type';
-import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition';
+import type ItemType from './item-type.js';
+import type ScriptableEntityDefinition from '../entities/scriptable-entity-definition.js';
 
 export interface ItemDefinition extends ScriptableEntityDefinition {
     description?: string;

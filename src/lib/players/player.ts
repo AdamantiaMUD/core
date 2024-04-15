@@ -1,23 +1,23 @@
 import get from 'lodash.get';
 
-import Broadcast from '../communication/broadcast';
-import Character from '../characters/character';
-import Inventory from '../equipment/inventory';
-import {isNpc} from '../util/characters';
-import PlayerRole from './player-role';
-import QuestTracker from '../quests/quest-tracker';
-import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './events';
-import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/events';
-import {hasValue, noop} from '../util/functions';
+import Broadcast from '../communication/broadcast.js';
+import Character from '../characters/character.js';
+import Inventory from '../equipment/inventory.js';
+import {isNpc} from '../util/characters.js';
+import PlayerRole from './player-role.js';
+import QuestTracker from '../quests/quest-tracker.js';
+import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './events/index.js';
+import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/events/index.js';
+import {hasValue, noop} from '../util/functions.js';
 
-import type Broadcastable from '../communication/broadcastable';
-import type GameStateData from '../game-state-data';
-import type Party from '../groups/party';
-import type PromptDefinition from '../communication/prompt-definition';
-import type Room from '../locations/room';
-import type SerializedPlayer from './serialized-player';
-import type SimpleMap from '../util/simple-map';
-import type {ExecutableCommand} from '../commands/command-queue';
+import type Broadcastable from '../communication/broadcastable.js';
+import type GameStateData from '../game-state-data.js';
+import type Party from '../groups/party.js';
+import type PromptDefinition from '../communication/prompt-definition.js';
+import type Room from '../locations/room.js';
+import type SerializedPlayer from './serialized-player.js';
+import type SimpleMap from '../util/simple-map.js';
+import type {ExecutableCommand} from '../commands/command-queue.js';
 
 const DEFAULT_MAX_INVENTORY = 20;
 

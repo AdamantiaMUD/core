@@ -1,1 +1,1 @@
-export * from './use-ability-event';
+export * from './use-ability-event.js';

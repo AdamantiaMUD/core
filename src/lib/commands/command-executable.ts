@@ -1,4 +1,4 @@
-import type Player from '../players/player';
+import type Player from '../players/player.js';
 
 export type CommandExecutable =
     ((

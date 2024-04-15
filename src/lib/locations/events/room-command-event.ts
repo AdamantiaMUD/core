@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Player from '../../players/player';
+import type Player from '../../players/player.js';
 
 export interface RoomCommandPayload {
     args?: string;

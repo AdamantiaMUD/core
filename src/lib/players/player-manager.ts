@@ -1,15 +1,15 @@
-import PlayerLoader from '../data/player-loader';
-import Data from '../util/data';
-import MudEventEmitter from '../events/mud-event-emitter';
-import MudEventManager from '../events/mud-event-manager';
-import Player from './player';
-import {PlayerSavedEvent} from './events';
-import {UpdateTickEvent} from '../common/events';
-import {hasValue} from '../util/functions';
+import PlayerLoader from '../data/player-loader.js';
+import Data from '../util/data.js';
+import MudEventEmitter from '../events/mud-event-emitter.js';
+import MudEventManager from '../events/mud-event-manager.js';
+import Player from './player.js';
+import {PlayerSavedEvent} from './events/index.js';
+import {UpdateTickEvent} from '../common/events/index.js';
+import {hasValue} from '../util/functions.js';
 
-import type GameStateData from '../game-state-data';
-import type MudEventListener from '../events/mud-event-listener';
-import type SerializedPlayer from './serialized-player';
+import type GameStateData from '../game-state-data.js';
+import type MudEventListener from '../events/mud-event-listener.js';
+import type SerializedPlayer from './serialized-player.js';
 
 /**
  * Keeps track of all active players in game

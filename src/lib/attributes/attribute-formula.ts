@@ -1,6 +1,6 @@
-import type AttributeFormulaDefinition from './attribute-formula-definition';
-import type Character from '../characters/character';
-import type SimpleMap from '../util/simple-map';
+import type AttributeFormulaDefinition from './attribute-formula-definition.js';
+import type Character from '../characters/character.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export class AttributeFormula {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

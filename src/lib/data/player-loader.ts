@@ -2,8 +2,8 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import type Config from '../util/config';
-import type SerializedPlayer from '../players/serialized-player';
+import type Config from '../util/config.js';
+import type SerializedPlayer from '../players/serialized-player.js';
 
 export class PlayerLoader {
     public async loadPlayer(username: string, config: Config): Promise<SerializedPlayer | null> {

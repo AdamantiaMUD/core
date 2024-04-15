@@ -1,6 +1,6 @@
-import MudEvent from '../../events/mud-event';
+import MudEvent from '../../events/mud-event.js';
 
-import type Room from '../../locations/room';
+import type Room from '../../locations/room.js';
 
 export interface PlayerEnterRoomPayload {
     room: Room;

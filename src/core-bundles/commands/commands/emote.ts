@@ -1,11 +1,11 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import {hasValue} from '../../../lib/util/functions';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type Character from '../../../lib/characters/character';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type Item from '../../../lib/equipment/item';
-import type Player from '../../../lib/players/player';
+import type Character from '../../../lib/characters/character.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type Item from '../../../lib/equipment/item.js';
+import type Player from '../../../lib/players/player.js';
 
 const findTarget = (player: Player, thingName: string): Character | Item | null => {
     const findableThings = new Set([

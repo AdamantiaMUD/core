@@ -4,8 +4,8 @@ import path from 'path';
 
 import type {Dirent} from 'fs';
 
-import type Config from '../util/config';
-import BundleObjectLoader from './bundle-object-loader';
+import type Config from '../util/config.js';
+import BundleObjectLoader from './bundle-object-loader.js';
 
 type AreaEntityType = 'items' | 'npcs' | 'quests' | 'rooms';
 

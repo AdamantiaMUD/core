@@ -1,11 +1,11 @@
-import Logger from '../common/logger';
-import {CharacterAttributeUpdateEvent} from '../characters/events';
+import Logger from '../common/logger.js';
+import {CharacterAttributeUpdateEvent} from '../characters/events/index.js';
 
-import type Character from '../characters/character';
-import type GameStateData from '../game-state-data';
-import type Serializable from '../data/serializable';
-import type SimpleMap from '../util/simple-map';
-import type {Attribute, SerializedAttribute} from './attribute';
+import type Character from '../characters/character.js';
+import type GameStateData from '../game-state-data.js';
+import type Serializable from '../data/serializable.js';
+import type SimpleMap from '../util/simple-map.js';
+import type {Attribute, SerializedAttribute} from './attribute.js';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;

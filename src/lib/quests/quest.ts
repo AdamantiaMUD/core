@@ -1,20 +1,20 @@
-import MudEventEmitter from '../events/mud-event-emitter';
+import MudEventEmitter from '../events/mud-event-emitter.js';
 import {
     QuestCompletedEvent,
     QuestProgressEvent,
     QuestTurnInReadyEvent,
-} from './events';
-import {clone} from '../util/objects';
+} from './events/index.js';
+import {clone} from '../util/objects.js';
 
-import type GameStateData from '../game-state-data';
-import type Player from '../players/player';
-import type Serializable from '../data/serializable';
-import type QuestDefinition from './quest-definition';
-import type QuestGoal from './quest-goal';
-import type QuestProgress from './quest-progress';
-import type SerializedQuest from './serialized-quest';
-import type SerializedQuestGoal from './serialized-quest-goal';
-import type {QuestProgressPayload} from './events';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
+import type Serializable from '../data/serializable.js';
+import type QuestDefinition from './quest-definition.js';
+import type QuestGoal from './quest-goal.js';
+import type QuestProgress from './quest-progress.js';
+import type SerializedQuest from './serialized-quest.js';
+import type SerializedQuestGoal from './serialized-quest-goal.js';
+import type {QuestProgressPayload} from './events/index.js';
 
 export class Quest extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

@@ -1,5 +1,5 @@
-import type Character from '../characters/character';
-import type SimpleMap from '../util/simple-map';
+import type Character from '../characters/character.js';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface AttributeFormulaDefinition {
     requires: string[];

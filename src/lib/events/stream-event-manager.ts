@@ -1,10 +1,10 @@
 import type {EventEmitter} from 'events';
 
-import {hasValue} from '../util/functions';
-import {isIterable} from '../util/objects';
+import {hasValue} from '../util/functions.js';
+import {isIterable} from '../util/objects.js';
 
-import type TransportStream from '../communication/transport-stream';
-import type StreamEventListener from './stream-event-listener';
+import type TransportStream from '../communication/transport-stream.js';
+import type StreamEventListener from './stream-event-listener.js';
 
 export class StreamEventManager {
     /**

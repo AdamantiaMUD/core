@@ -1,9 +1,9 @@
-import {CharacterEffectRemovedEvent} from '../../../lib/characters/events';
+import {CharacterEffectRemovedEvent} from '../../../lib/characters/events/index.js';
 
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {CharacterEffectRemovedPayload} from '../../../lib/characters/events';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {CharacterEffectRemovedPayload} from '../../../lib/characters/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<CharacterEffectRemovedPayload> = {
     name: CharacterEffectRemovedEvent.getName(),

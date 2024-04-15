@@ -1,14 +1,14 @@
-import {PlayerMoveEvent} from '../../../lib/players/events';
-import {hasValue} from '../../../lib/util/functions';
-import {isNpc} from '../../../lib/util/characters';
-import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast';
+import {PlayerMoveEvent} from '../../../lib/players/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {isNpc} from '../../../lib/util/characters.js';
+import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast.js';
 
-import type Door from '../../../lib/locations/door';
-import type GameStateData from '../../../lib/game-state-data';
-import type Player from '../../../lib/players/player';
-import type PlayerEventListener from '../../../lib/events/player-event-listener';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition';
-import type {PlayerMovePayload} from '../../../lib/players/events';
+import type Door from '../../../lib/locations/door.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Player from '../../../lib/players/player.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type {PlayerMovePayload} from '../../../lib/players/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<PlayerMovePayload> = {
     name: PlayerMoveEvent.getName(),

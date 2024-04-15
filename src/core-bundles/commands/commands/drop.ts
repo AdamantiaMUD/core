@@ -1,13 +1,13 @@
-import ArgParser from '../../../lib/commands/arg-parser';
-import ItemUtil from '../../../lib/util/items';
-import {ItemDroppedEvent} from '../../../lib/equipment/events';
-import {NpcPlayerDropItemEvent} from '../../../lib/mobs/events';
-import {PlayerDropItemEvent} from '../../../lib/players/events';
-import {hasValue} from '../../../lib/util/functions';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ArgParser from '../../../lib/commands/arg-parser.js';
+import ItemUtil from '../../../lib/util/items.js';
+import {ItemDroppedEvent} from '../../../lib/equipment/events/index.js';
+import {NpcPlayerDropItemEvent} from '../../../lib/mobs/events/index.js';
+import {PlayerDropItemEvent} from '../../../lib/players/events/index.js';
+import {hasValue} from '../../../lib/util/functions.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type Player from '../../../lib/players/player.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'drop',

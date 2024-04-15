@@ -1,6 +1,6 @@
-import {hasValue} from '../util/functions';
+import {hasValue} from '../util/functions.js';
 
-import type Npc from './npc';
+import type Npc from './npc.js';
 
 /**
  * Keeps track of all the individual mobs in the game

@@ -1,9 +1,9 @@
 import path from 'path';
 import {fileURLToPath} from 'url';
 
-import {Config} from '../lib/util/config';
+import {Config} from '../lib/util/config.js';
 
-import type {MudConfig} from '../lib/util/config';
+import type {MudConfig} from '../lib/util/config.js';
 
 /* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

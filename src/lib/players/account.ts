@@ -1,12 +1,12 @@
 import bcrypt from 'bcryptjs';
 
-import Data from '../util/data';
-import {hasValue} from '../util/functions';
+import Data from '../util/data.js';
+import {hasValue} from '../util/functions.js';
 
-import type CharacterBrief from './character-brief';
-import type Serializable from '../data/serializable';
-import type SerializedAccount from './serialized-account';
-import type SimpleMap from '../util/simple-map';
+import type CharacterBrief from './character-brief.js';
+import type Serializable from '../data/serializable.js';
+import type SerializedAccount from './serialized-account.js';
+import type SimpleMap from '../util/simple-map.js';
 
 const hashPassword = (pass: string): string => {
     const salt = bcrypt.genSaltSync(10);

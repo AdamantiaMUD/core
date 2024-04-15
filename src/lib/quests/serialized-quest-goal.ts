@@ -1,4 +1,4 @@
-import type SimpleMap from '../util/simple-map';
+import type SimpleMap from '../util/simple-map.js';
 
 export interface SerializedQuestGoal<
     QuestConfig extends SimpleMap = SimpleMap,

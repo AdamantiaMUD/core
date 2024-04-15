@@ -1,8 +1,8 @@
-import BehaviorManager from '../behaviors/behavior-manager';
+import BehaviorManager from '../behaviors/behavior-manager.js';
 
-import type GameEntity from './game-entity';
-import type GameEntityDefinition from './game-entity-definition';
-import type Behavior from '../behaviors/behavior';
+import type GameEntity from './game-entity.js';
+import type GameEntityDefinition from './game-entity-definition.js';
+import type Behavior from '../behaviors/behavior.js';
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
 export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntityDefinition> {

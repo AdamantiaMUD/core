@@ -1,9 +1,9 @@
-import ItemUtil from '../../../lib/util/items';
-import {sayAt} from '../../../lib/communication/broadcast';
+import ItemUtil from '../../../lib/util/items.js';
+import {sayAt} from '../../../lib/communication/broadcast.js';
 
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory';
-import type CommandExecutable from '../../../lib/commands/command-executable';
-import type Player from '../../../lib/players/player';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import type Player from '../../../lib/players/player.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'equipment',
