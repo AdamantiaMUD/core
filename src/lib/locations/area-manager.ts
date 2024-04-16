@@ -1,9 +1,9 @@
 import Area from './area.js';
 import MudEventEmitter from '../events/mud-event-emitter.js';
 import Room from './room.js';
-import {ADAMANTIA_INTERNAL_BUNDLE} from '../bundle-manager.js';
-import {UpdateTickEvent} from '../common/events/index.js';
-import {hasValue} from '../util/functions.js';
+import { ADAMANTIA_INTERNAL_BUNDLE } from '../bundle-manager.js';
+import { UpdateTickEvent } from '../common/events/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type GameStateData from '../game-state-data.js';
 
@@ -27,7 +27,7 @@ export class AreaManager extends MudEventEmitter {
 
     private _tickAll(): void {
         for (const [, area] of this._areas) {
-            area.dispatch(new UpdateTickEvent({state: this._state}));
+            area.dispatch(new UpdateTickEvent({ state: this._state }));
         }
     }
 
@@ -62,17 +62,19 @@ export class AreaManager extends MudEventEmitter {
             return this._placeholder;
         }
 
-        this._placeholder = new Area(
-            ADAMANTIA_INTERNAL_BUNDLE,
-            'placeholder',
-            {name: 'Placeholder'}
-        );
+        this._placeholder = new Area(ADAMANTIA_INTERNAL_BUNDLE, 'placeholder', {
+            name: 'Placeholder',
+        });
 
-        const placeholderRoom = new Room({
-            id: 'placeholder',
-            title: 'Placeholder',
-            description: 'You are not in a valid room. Please contact an administrator.',
-        }, this._placeholder);
+        const placeholderRoom = new Room(
+            {
+                id: 'placeholder',
+                title: 'Placeholder',
+                description:
+                    'You are not in a valid room. Please contact an administrator.',
+            },
+            this._placeholder
+        );
 
         this._placeholder.addRoom(placeholderRoom);
 

@@ -3,7 +3,7 @@ import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
 
-import {hasValue, noop} from './functions.js';
+import { hasValue, noop } from './functions.js';
 
 let dataPath: string | null = null;
 
@@ -14,7 +14,8 @@ export const Data = {
     /**
      * Check if a data file exists
      */
-    exists: (type: string, id: string): boolean => fs.existsSync(Data.getDataFilePath(type, id)),
+    exists: (type: string, id: string): boolean =>
+        fs.existsSync(Data.getDataFilePath(type, id)),
 
     /**
      * get the file path for a given data file by type (player/account)
@@ -54,7 +55,8 @@ export const Data = {
     /**
      * load/parse a data file (player/account)
      */
-    load: (type: string, id: string): string => Data.parseFile(Data.getDataFilePath(type, id)),
+    load: (type: string, id: string): string =>
+        Data.parseFile(Data.getDataFilePath(type, id)),
 
     /**
      * load the MOTD for the intro screen
@@ -76,7 +78,9 @@ export const Data = {
             throw new Error(`File [${filepath}] does not exist!`);
         }
 
-        const contents = fs.readFileSync(fs.realpathSync(filepath)).toString('utf8');
+        const contents = fs
+            .readFileSync(fs.realpathSync(filepath))
+            .toString('utf8');
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const parsers: Record<string, (...args: any[]) => unknown> = {
             '.yml': yaml.load,
@@ -96,7 +100,12 @@ export const Data = {
     /**
      * Save data file (player/account) data to disk
      */
-    save: (type: string, id: string, data: unknown, callback: () => void = noop): void => {
+    save: (
+        type: string,
+        id: string,
+        data: unknown,
+        callback: () => void = noop
+    ): void => {
         fs.writeFileSync(
             Data.getDataFilePath(type, id),
             Data.stringify(data),
@@ -109,7 +118,11 @@ export const Data = {
     /**
      * Write data to a file
      */
-    saveFile: (filepath: string, data: unknown, callback: () => void = noop): void => {
+    saveFile: (
+        filepath: string,
+        data: unknown,
+        callback: () => void = noop
+    ): void => {
         if (!fs.existsSync(filepath)) {
             throw new Error(`File [${filepath}] does not exist!`);
         }
@@ -124,7 +137,9 @@ export const Data = {
         const ext = path.extname(filepath);
 
         if (!(ext in serializers)) {
-            throw new Error(`File [${filepath}] does not have a valid serializer!`);
+            throw new Error(
+                `File [${filepath}] does not have a valid serializer!`
+            );
         }
 
         const dataToWrite = serializers[ext](data);

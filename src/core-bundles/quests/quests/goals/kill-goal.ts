@@ -1,6 +1,6 @@
 import QuestGoal from '../../../../lib/quests/quest-goal.js';
-import {CharacterDeathblowEvent} from '../../../../lib/characters/events/index.js';
-import {QuestProgressEvent} from '../../../../lib/quests/events/index.js';
+import { CharacterDeathblowEvent } from '../../../../lib/characters/events/index.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
 
 import type Character from '../../../../lib/characters/character.js';
 import type Player from '../../../../lib/players/player.js';
@@ -25,26 +25,32 @@ export class KillGoal extends QuestGoal<KillGoalConfig, KillGoalState> {
     public constructor(quest: Quest, config: KillGoalConfig, player: Player) {
         super(quest, config, player);
 
-        this.state = {count: 0};
+        this.state = { count: 0 };
 
-        this.listen(CharacterDeathblowEvent.getName(), this._targetKilled.bind(this));
+        this.listen(
+            CharacterDeathblowEvent.getName(),
+            this._targetKilled.bind(this)
+        );
     }
 
     public getProgress(): QuestProgress {
         const percent = (this.state.count / this.config.count) * 100;
         const display = `${this.config.title}: [${this.state.count}/${this.config.count}]`;
 
-        return {percent, display};
+        return { percent, display };
     }
 
     private _targetKilled(target: Character): void {
-        if (target.entityReference !== this.config.npc || this.state.count > this.config.count) {
+        if (
+            target.entityReference !== this.config.npc ||
+            this.state.count > this.config.count
+        ) {
             return;
         }
 
         this.state.count += 1;
 
-        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
+        this.dispatch(new QuestProgressEvent({ progress: this.getProgress() }));
     }
 }
 

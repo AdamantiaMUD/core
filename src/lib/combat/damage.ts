@@ -1,5 +1,8 @@
-import {CharacterDamagedEvent, CharacterHitEvent} from '../characters/events/index.js';
-import {hasValue} from '../util/functions.js';
+import {
+    CharacterDamagedEvent,
+    CharacterHitEvent,
+} from '../characters/events/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type Ability from '../abilities/ability.js';
 import type Character from '../characters/character.js';
@@ -28,7 +31,9 @@ export class Damage {
         metadata: SimpleMap = {}
     ) {
         if (!Number.isFinite(amount)) {
-            throw new TypeError(`Damage amount must be a finite Number, got ${amount}.`);
+            throw new TypeError(
+                `Damage amount must be a finite Number, got ${amount}.`
+            );
         }
 
         this.attacker = attacker;
@@ -49,10 +54,18 @@ export class Damage {
         target.attributes.modify(this.attribute, -1 * finalAmount);
 
         if (hasValue(this.attacker)) {
-            this.attacker.dispatch(new CharacterHitEvent({amount: finalAmount, source: this, target: target}));
+            this.attacker.dispatch(
+                new CharacterHitEvent({
+                    amount: finalAmount,
+                    source: this,
+                    target: target,
+                })
+            );
         }
 
-        target.dispatch(new CharacterDamagedEvent({amount: finalAmount, source: this}));
+        target.dispatch(
+            new CharacterDamagedEvent({ amount: finalAmount, source: this })
+        );
     }
 
     /**

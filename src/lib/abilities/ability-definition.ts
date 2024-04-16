@@ -11,7 +11,7 @@ import type SimpleMap from '../util/simple-map.js';
 export interface AbilityDefinition {
     canTargetSelf: boolean;
     configureEffect?: ((effect: Effect) => Effect) | null;
-    cooldown?: number | {group: string; length: number} | null;
+    cooldown?: number | { group: string; length: number } | null;
     effect?: string | null;
     flags?: AbilityFlag[] | null;
     info?: ((ability: Ability, player: Player) => string) | null;

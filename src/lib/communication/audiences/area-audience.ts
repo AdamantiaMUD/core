@@ -1,5 +1,5 @@
 import ChannelAudience from './channel-audience.js';
-import {hasValue} from '../../util/functions.js';
+import { hasValue } from '../../util/functions.js';
 
 import type Broadcastable from '../broadcastable.js';
 
@@ -12,9 +12,11 @@ export class AreaAudience extends ChannelAudience {
             return [];
         }
 
-        const {area} = this.sender!.room;
+        const { area } = this.sender!.room;
 
-        return area.getBroadcastTargets().filter((target: Broadcastable) => target !== this.sender);
+        return area
+            .getBroadcastTargets()
+            .filter((target: Broadcastable) => target !== this.sender);
     }
 }
 

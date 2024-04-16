@@ -1,6 +1,6 @@
-import {Chance} from 'chance';
+import { Chance } from 'chance';
 
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type GameStateData from '../game-state-data.js';
 import type SimpleMap from '../util/simple-map.js';
@@ -45,7 +45,10 @@ export class LootTable {
     private readonly _chance: Chance.Chance = new Chance();
     private readonly _loading: Promise<void>;
     private readonly _currencyRanges: Record<string, CurrencyDefinition> | null;
-    private readonly _options: {maxItems: number; [key: string]: number | string};
+    private readonly _options: {
+        maxItems: number;
+        [key: string]: number | string;
+    };
     private readonly _poolData: PoolReference[];
 
     private _pools: PoolDefinition[] = [];
@@ -55,11 +58,14 @@ export class LootTable {
      * See bundles/ranvier-areas/areas/limbo/npcs.yml for example of usage
      * @param {Array<PoolReference|Object>} config.pools List of pool references or pool definitions
      */
-    public constructor(state: GameStateData, config: LootTableConfig = DEFAULT_CONFIG) {
+    public constructor(
+        state: GameStateData,
+        config: LootTableConfig = DEFAULT_CONFIG
+    ) {
         this._poolData = config.pools ?? [];
         this._currencyRanges = config.currencies ?? null;
 
-        this._options = {maxItems: 5, ...config.options ?? {}};
+        this._options = { maxItems: 5, ...(config.options ?? {}) };
 
         this._loading = this.load(state);
     }
@@ -68,20 +74,20 @@ export class LootTable {
      * Find out how much of the different currencies this NPC will drop
      * @return {Array<{{name: string, amount: number}}>}
      */
-    public currencies(): Array<{amount: number; name: string}> {
+    public currencies(): Array<{ amount: number; name: string }> {
         if (!hasValue(this._currencyRanges)) {
             return [];
         }
 
-        const result: Array<{amount: number; name: string}> = [];
+        const result: Array<{ amount: number; name: string }> = [];
 
         for (const [currency, entry] of Object.entries(this._currencyRanges)) {
-            const {max, min} = entry;
+            const { max, min } = entry;
 
-            const amount: number = this._chance.integer({min, max});
+            const amount: number = this._chance.integer({ min, max });
 
             if (amount > 0) {
-                result.push({amount: amount, name: currency});
+                result.push({ amount: amount, name: currency });
             }
         }
 
@@ -99,7 +105,10 @@ export class LootTable {
         this._pools = resolved.flat();
     }
 
-    public async resolvePool(state: GameStateData, ref: PoolReference): Promise<PoolDefinition[]> {
+    public async resolvePool(
+        state: GameStateData,
+        ref: PoolReference
+    ): Promise<PoolDefinition[]> {
         return [];
 
         // if (typeof ref !== 'string') {
@@ -178,7 +187,7 @@ export class LootTable {
             }
 
             for (const [item, chance] of pool) {
-                if (this._chance.bool({likelihood: chance})) {
+                if (this._chance.bool({ likelihood: chance })) {
                     items.push(item);
                 }
 

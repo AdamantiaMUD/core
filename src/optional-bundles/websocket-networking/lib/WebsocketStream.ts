@@ -1,8 +1,8 @@
 import type WebSocket from 'ws';
-import type {AddressInfo} from 'net';
+import type { AddressInfo } from 'net';
 
 import TransportStream from '../../../lib/communication/transport-stream.js';
-import {colorize} from '../../../lib/util/communication.js';
+import { colorize } from '../../../lib/util/communication.js';
 
 /**
  * Essentially we want to look at the methods of WebSocket and match them to the
@@ -39,11 +39,13 @@ export class WebsocketStream extends TransportStream<WebSocket> {
             return;
         }
 
-        this.socket.send(JSON.stringify({
-            type: 'data',
-            group: group,
-            data: data,
-        }));
+        this.socket.send(
+            JSON.stringify({
+                type: 'data',
+                group: group,
+                data: data,
+            })
+        );
     }
 
     public pause(): this {
@@ -61,7 +63,11 @@ export class WebsocketStream extends TransportStream<WebSocket> {
     }
 
     /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-    public write(message: string, encoding: string = 'ignored', includeNewline: boolean = true): boolean {
+    public write(
+        message: string,
+        encoding: string = 'ignored',
+        includeNewline: boolean = true
+    ): boolean {
         if (!this.writable) {
             return false;
         }
@@ -69,10 +75,12 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         const msg = includeNewline ? `${message}\n` : message;
 
         // this.socket will be set when we do `ourWebsocketStream.attach(websocket)`
-        this.socket.send(JSON.stringify({
-            type: 'message',
-            message: colorize(msg),
-        }));
+        this.socket.send(
+            JSON.stringify({
+                type: 'message',
+                message: colorize(msg),
+            })
+        );
 
         return true;
     }

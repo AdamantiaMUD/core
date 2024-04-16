@@ -5,7 +5,10 @@ import type GameEntityDefinition from './game-entity-definition.js';
 import type Behavior from '../behaviors/behavior.js';
 
 /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
-export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntityDefinition> {
+export abstract class EntityFactory<
+    T extends GameEntity,
+    TDef extends GameEntityDefinition,
+> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected _entities: Map<string, TDef> = new Map<string, TDef>();
     protected _scripts: BehaviorManager = new BehaviorManager();
@@ -19,7 +22,11 @@ export abstract class EntityFactory<T extends GameEntity, TDef extends GameEntit
         return this._entities;
     }
 
-    public addScriptListener(ref: string, event: string, listener: Behavior): void {
+    public addScriptListener(
+        ref: string,
+        event: string,
+        listener: Behavior
+    ): void {
         this._scripts.addListener(ref, event, listener);
     }
 

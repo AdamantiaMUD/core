@@ -1,6 +1,6 @@
 import EntityFactory from '../entities/entity-factory.js';
 import Room from './room.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type Area from './area.js';
 import type RoomDefinition from './room-definition.js';

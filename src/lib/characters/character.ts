@@ -1,4 +1,4 @@
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
 import CharacterAttributes from '../attributes/character-attributes.js';
 import CharacterCombat from '../combat/character-combat.js';
@@ -6,7 +6,7 @@ import CommandQueue from '../commands/command-queue.js';
 import EffectList from '../effects/effect-list.js';
 import Inventory from '../equipment/inventory.js';
 import ScriptableEntity from '../entities/scriptable-entity.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 import {
     CharacterAttributeUpdateEvent,
     CharacterEquipItemEvent,
@@ -16,8 +16,15 @@ import {
     CharacterUnequipItemEvent,
     CharacterUnfollowedTargetEvent,
 } from './events/index.js';
-import {AlreadyEquippedError, SlotTakenError, InventoryFullError} from '../equipment/errors/index.js';
-import {ItemEquippedEvent, ItemUnequippedEvent} from '../equipment/events/index.js';
+import {
+    AlreadyEquippedError,
+    SlotTakenError,
+    InventoryFullError,
+} from '../equipment/errors/index.js';
+import {
+    ItemEquippedEvent,
+    ItemUnequippedEvent,
+} from '../equipment/events/index.js';
 
 import type Broadcastable from '../communication/broadcastable.js';
 import type Effect from '../effects/effect.js';
@@ -27,7 +34,7 @@ import type Room from '../locations/room.js';
 import type Serializable from '../data/serializable.js';
 import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity.js';
 import type TransportStream from '../communication/transport-stream.js';
-import type {SerializedCharacterAttributes} from '../attributes/character-attributes.js';
+import type { SerializedCharacterAttributes } from '../attributes/character-attributes.js';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;
@@ -36,7 +43,10 @@ export interface SerializedCharacter extends SerializedScriptableEntity {
     room: string;
 }
 
-export abstract class Character extends ScriptableEntity implements Serializable {
+export abstract class Character
+    extends ScriptableEntity
+    implements Serializable
+{
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected readonly _attributes: CharacterAttributes;
     protected readonly _combat: CharacterCombat;
@@ -108,7 +118,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         follower.setFollowing(this);
 
-        this.dispatch(new CharacterGainedFollowerEvent({follower}));
+        this.dispatch(new CharacterGainedFollowerEvent({ follower }));
     }
 
     public addItem(item: Item): void {
@@ -127,8 +137,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         if (hasValue(data.room)) {
             this._room = state.roomManager.getRoom(data.room);
-        }
-        else {
+        } else {
             const startingRoom = state.config.getStartingRoom();
 
             this._room = state.roomManager.getRoom(startingRoom);
@@ -151,9 +160,9 @@ export abstract class Character extends ScriptableEntity implements Serializable
         this._equipment.set(slot, item);
         item.setMeta('equippedBy', this);
 
-        item.dispatch(new ItemEquippedEvent({wearer: this}));
+        item.dispatch(new ItemEquippedEvent({ wearer: this }));
 
-        this.dispatch(new CharacterEquipItemEvent({item, slot}));
+        this.dispatch(new CharacterEquipItemEvent({ item, slot }));
     }
 
     public follow(target: Character): void {
@@ -166,13 +175,16 @@ export abstract class Character extends ScriptableEntity implements Serializable
         this._following = target;
         target.addFollower(this);
 
-        this.dispatch(new CharacterFollowedTargetEvent({target}));
+        this.dispatch(new CharacterFollowedTargetEvent({ target }));
     }
 
     /**
      * Get the current value of an attribute (base modified by delta)
      */
-    public getAttribute(attr: string, defaultValue: number | null = null): number {
+    public getAttribute(
+        attr: string,
+        defaultValue: number | null = null
+    ): number {
         if (!this._attributes.has(attr)) {
             if (defaultValue !== null) {
                 return defaultValue;
@@ -222,9 +234,11 @@ export abstract class Character extends ScriptableEntity implements Serializable
             return currentVal;
         }
 
-        const {formula} = attribute;
+        const { formula } = attribute;
 
-        const requiredValues = formula.requires.map((att: string) => this.getMaxAttribute(att));
+        const requiredValues = formula.requires.map((att: string) =>
+            this.getMaxAttribute(att)
+        );
 
         return formula.evaluate(this, currentVal, ...requiredValues);
     }
@@ -248,7 +262,12 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         this._attributes.get(attr)!.modify(amount);
 
-        this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
+        this.dispatch(
+            new CharacterAttributeUpdateEvent({
+                attr: attr,
+                value: this.getAttribute(attr),
+            })
+        );
     }
 
     public removeEffect(effect: Effect): void {
@@ -260,7 +279,7 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         follower.setFollowing(null);
 
-        this.dispatch(new CharacterLostFollowerEvent({follower}));
+        this.dispatch(new CharacterLostFollowerEvent({ follower }));
     }
 
     /**
@@ -291,7 +310,12 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         this._attributes.get(attr)!.reset();
 
-        this.dispatch(new CharacterAttributeUpdateEvent({attr: attr, value: this.getAttribute(attr)}));
+        this.dispatch(
+            new CharacterAttributeUpdateEvent({
+                attr: attr,
+                value: this.getAttribute(attr),
+            })
+        );
     }
 
     public serialize(): SerializedCharacter {
@@ -331,9 +355,9 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         this.equipment.delete(slot);
 
-        item.dispatch(new ItemUnequippedEvent({wearer: this}));
+        item.dispatch(new ItemUnequippedEvent({ wearer: this }));
 
-        this.dispatch(new CharacterUnequipItemEvent({item, slot}));
+        this.dispatch(new CharacterUnequipItemEvent({ item, slot }));
 
         this.addItem(item);
     }
@@ -348,7 +372,9 @@ export abstract class Character extends ScriptableEntity implements Serializable
 
         this._following.removeFollower(this);
 
-        this.dispatch(new CharacterUnfollowedTargetEvent({target: this._following}));
+        this.dispatch(
+            new CharacterUnfollowedTargetEvent({ target: this._following })
+        );
         this._following = null;
     }
 }

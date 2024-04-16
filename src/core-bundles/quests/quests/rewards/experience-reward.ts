@@ -1,6 +1,6 @@
 import LevelUtil from '../../../../lib/util/level-util.js';
-import {PlayerExperienceEvent} from '../../../../lib/players/events/index.js';
-import {hasValue} from '../../../../lib/util/functions.js';
+import { PlayerExperienceEvent } from '../../../../lib/players/events/index.js';
+import { hasValue } from '../../../../lib/util/functions.js';
 
 import type GameStateData from '../../../../lib/game-state-data.js';
 import type Player from '../../../../lib/players/player.js';
@@ -38,13 +38,18 @@ const DEFAULT_CONFIG: ExperienceRewardConfig = {
  *     amount: 500
  */
 export class ExperienceReward implements QuestReward<ExperienceRewardConfig> {
-    private static _getAmount(quest: Quest, config: ExperienceRewardConfig, player: Player): number {
+    private static _getAmount(
+        quest: Quest,
+        config: ExperienceRewardConfig,
+        player: Player
+    ): number {
         let amount = config.amount;
 
         if (hasValue(config.leveledTo)) {
-            const level = config.leveledTo === 'PLAYER'
-                ? player.level
-                : quest.config.level;
+            const level =
+                config.leveledTo === 'PLAYER'
+                    ? player.level
+                    : quest.config.level;
 
             amount *= LevelUtil.mobExp(level ?? 1);
         }
@@ -71,7 +76,7 @@ export class ExperienceReward implements QuestReward<ExperienceRewardConfig> {
     ): void {
         const amount = ExperienceReward._getAmount(quest, config, player);
 
-        player.dispatch(new PlayerExperienceEvent({amount}));
+        player.dispatch(new PlayerExperienceEvent({ amount }));
     }
 }
 

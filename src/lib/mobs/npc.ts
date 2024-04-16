@@ -1,11 +1,14 @@
-import {v4 as uuid} from 'uuid';
+import { v4 as uuid } from 'uuid';
 
 import Character from '../characters/character.js';
 import Inventory from '../equipment/inventory.js';
 import Logger from '../common/logger.js';
-import {NpcEnterRoomEvent} from './events/index.js';
-import {RoomNpcEnterEvent, RoomNpcLeaveEvent} from '../locations/events/index.js';
-import {hasValue, noop} from '../util/functions.js';
+import { NpcEnterRoomEvent } from './events/index.js';
+import {
+    RoomNpcEnterEvent,
+    RoomNpcLeaveEvent,
+} from '../locations/events/index.js';
+import { hasValue, noop } from '../util/functions.js';
 
 import type Area from '../locations/area.js';
 import type GameStateData from '../game-state-data.js';
@@ -79,7 +82,9 @@ export class Npc extends Character implements Serializable {
         state.mobManager.add(this);
 
         for (const defaultItemId of this.defaultItems) {
-            Logger.verbose(`DIST: Adding item [${defaultItemId}] to npc [${this.name}]`);
+            Logger.verbose(
+                `DIST: Adding item [${defaultItemId}] to npc [${this.name}]`
+            );
             const newItem = state.itemFactory.create(defaultItemId, this.area);
 
             if (hasValue(newItem)) {
@@ -89,8 +94,12 @@ export class Npc extends Character implements Serializable {
             }
         }
 
-        for (const [slot, defaultEqId] of Object.entries(this.defaultEquipment)) {
-            Logger.verbose(`DIST: Equipping item [${defaultEqId}] to npc [${this.name}] in slot [${slot}]`);
+        for (const [slot, defaultEqId] of Object.entries(
+            this.defaultEquipment
+        )) {
+            Logger.verbose(
+                `DIST: Equipping item [${defaultEqId}] to npc [${this.name}] in slot [${slot}]`
+            );
 
             const newItem = state.itemFactory.create(defaultEqId, this.area);
 
@@ -121,7 +130,9 @@ export class Npc extends Character implements Serializable {
             /**
              * @event Room#npcLeave
              */
-            this.room.dispatch(new RoomNpcLeaveEvent({npc: this, nextRoom: nextRoom}));
+            this.room.dispatch(
+                new RoomNpcLeaveEvent({ npc: this, nextRoom: nextRoom })
+            );
             this.room.removeNpc(this);
         }
 
@@ -130,9 +141,11 @@ export class Npc extends Character implements Serializable {
 
         onMoved();
 
-        nextRoom.dispatch(new RoomNpcEnterEvent({npc: this, prevRoom: prevRoom}));
+        nextRoom.dispatch(
+            new RoomNpcEnterEvent({ npc: this, prevRoom: prevRoom })
+        );
 
-        this.dispatch(new NpcEnterRoomEvent({nextRoom}));
+        this.dispatch(new NpcEnterRoomEvent({ nextRoom }));
     }
 }
 

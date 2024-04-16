@@ -5,8 +5,8 @@ import {
     EffectDeactivatedEvent,
     EffectRemovedEvent,
 } from './events/index.js';
-import {clone} from '../util/objects.js';
-import {hasValue, isPositiveNumber} from '../util/functions.js';
+import { clone } from '../util/objects.js';
+import { hasValue, isPositiveNumber } from '../util/functions.js';
 
 import type Ability from '../abilities/ability.js';
 import type Character from '../characters/character.js';
@@ -17,7 +17,7 @@ import type EffectFlag from './effect-flag.js';
 import type EffectState from './effect-state.js';
 import type GameStateData from '../game-state-data.js';
 import type SerializedEffect from './serialized-effect.js';
-import type {EffectModifiers} from './modifiers/index.js';
+import type { EffectModifiers } from './modifiers/index.js';
 
 export class Effect extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -57,8 +57,16 @@ export class Effect extends MudEventEmitter {
 
         this.modifiers = {
             attributes: {},
-            incomingDamage: (effect: Effect, damage: Damage, current: number): number => current,
-            outgoingDamage: (effect: Effect, damage: Damage, current: number): number => current,
+            incomingDamage: (
+                effect: Effect,
+                damage: Damage,
+                current: number
+            ): number => current,
+            outgoingDamage: (
+                effect: Effect,
+                damage: Damage,
+                current: number
+            ): number => current,
             ...clone(def.modifiers),
         };
 
@@ -74,7 +82,10 @@ export class Effect extends MudEventEmitter {
         }
 
         // If an effect has a tickInterval it should always apply when first activated
-        if (hasValue(this.config.tickInterval) && !hasValue(this.state.tickInterval)) {
+        if (
+            hasValue(this.config.tickInterval) &&
+            !hasValue(this.state.tickInterval)
+        ) {
             this.state.lastTick = -Infinity;
             this.state.ticks = 0;
         }
@@ -164,7 +175,8 @@ export class Effect extends MudEventEmitter {
     public hydrate(state: GameStateData, data: Effect): void {
         this.config = {
             ...data.config,
-            duration: data.config.duration === -1 ? Infinity : data.config.duration,
+            duration:
+                data.config.duration === -1 ? Infinity : data.config.duration,
         };
 
         if (hasValue(data.elapsed)) {
@@ -173,11 +185,15 @@ export class Effect extends MudEventEmitter {
 
         this.state = {
             ...data.state,
-            lastTick: hasValue(data.state.lastTick) ? Date.now() - data.state.lastTick : data.state.lastTick,
+            lastTick: hasValue(data.state.lastTick)
+                ? Date.now() - data.state.lastTick
+                : data.state.lastTick,
         };
 
         if (hasValue(data.ability)) {
-            this.ability = state.skillManager.get(data.ability.id) ?? state.spellManager.get(data.ability.id);
+            this.ability =
+                state.skillManager.get(data.ability.id) ??
+                state.spellManager.get(data.ability.id);
         }
     }
 
@@ -193,7 +209,10 @@ export class Effect extends MudEventEmitter {
             return this.modifiers.attributes(this, attrName, currentValue);
         }
 
-        if (hasValue(this.modifiers.attributes) && attrName in this.modifiers.attributes) {
+        if (
+            hasValue(this.modifiers.attributes) &&
+            attrName in this.modifiers.attributes
+        ) {
             return this.modifiers.attributes[attrName](this, currentValue);
         }
 
@@ -201,11 +220,17 @@ export class Effect extends MudEventEmitter {
     }
 
     public modifyIncomingDamage(damage: Damage, currentAmount: number): number {
-        return this.modifiers.incomingDamage?.(this, damage, currentAmount) ?? currentAmount;
+        return (
+            this.modifiers.incomingDamage?.(this, damage, currentAmount) ??
+            currentAmount
+        );
     }
 
     public modifyOutgoingDamage(damage: Damage, currentAmount: number): number {
-        return this.modifiers.outgoingDamage?.(this, damage, currentAmount) ?? currentAmount;
+        return (
+            this.modifiers.outgoingDamage?.(this, damage, currentAmount) ??
+            currentAmount
+        );
     }
 
     /**

@@ -3,7 +3,7 @@ import type EffectFlag from './effect-flag.js';
 import type EffectListenersDefinition from './effect-listeners-definition.js';
 import type EffectListenersDefinitionFactory from './effect-listeners-definition-factory.js';
 import type SimpleMap from '../util/simple-map.js';
-import type {EffectModifiers} from './modifiers/index.js';
+import type { EffectModifiers } from './modifiers/index.js';
 
 export interface EffectDefinition {
     config: EffectConfig;

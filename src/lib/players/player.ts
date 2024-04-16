@@ -3,12 +3,19 @@ import get from 'lodash.get';
 import Broadcast from '../communication/broadcast.js';
 import Character from '../characters/character.js';
 import Inventory from '../equipment/inventory.js';
-import {isNpc} from '../util/characters.js';
+import { isNpc } from '../util/characters.js';
 import PlayerRole from './player-role.js';
 import QuestTracker from '../quests/quest-tracker.js';
-import {PlayerCommandQueuedEvent, PlayerEnterRoomEvent, PlayerSaveEvent} from './events/index.js';
-import {RoomPlayerEnterEvent, RoomPlayerLeaveEvent} from '../locations/events/index.js';
-import {hasValue, noop} from '../util/functions.js';
+import {
+    PlayerCommandQueuedEvent,
+    PlayerEnterRoomEvent,
+    PlayerSaveEvent,
+} from './events/index.js';
+import {
+    RoomPlayerEnterEvent,
+    RoomPlayerLeaveEvent,
+} from '../locations/events/index.js';
+import { hasValue, noop } from '../util/functions.js';
 
 import type Broadcastable from '../communication/broadcastable.js';
 import type GameStateData from '../game-state-data.js';
@@ -17,7 +24,7 @@ import type PromptDefinition from '../communication/prompt-definition.js';
 import type Room from '../locations/room.js';
 import type SerializedPlayer from './serialized-player.js';
 import type SimpleMap from '../util/simple-map.js';
-import type {ExecutableCommand} from '../commands/command-queue.js';
+import type { ExecutableCommand } from '../commands/command-queue.js';
 
 const DEFAULT_MAX_INVENTORY = 20;
 
@@ -31,7 +38,10 @@ export class Player extends Character implements Broadcastable {
     private readonly _questTracker: QuestTracker;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public extraPrompts: Map<string, PromptDefinition> = new Map<string, PromptDefinition>();
+    public extraPrompts: Map<string, PromptDefinition> = new Map<
+        string,
+        PromptDefinition
+    >();
 
     public constructor() {
         super();
@@ -48,8 +58,11 @@ export class Player extends Character implements Broadcastable {
             this._inventory = new Inventory();
 
             if (!isNpc(this) && !isFinite(this._inventory.getMax())) {
-                const maxInv = this._state?.config
-                    .get<number>('maxPlayerInventory', DEFAULT_MAX_INVENTORY) ?? DEFAULT_MAX_INVENTORY;
+                const maxInv =
+                    this._state?.config.get<number>(
+                        'maxPlayerInventory',
+                        DEFAULT_MAX_INVENTORY
+                    ) ?? DEFAULT_MAX_INVENTORY;
 
                 this._inventory.setMax(maxInv);
             }
@@ -82,8 +95,12 @@ export class Player extends Character implements Broadcastable {
      * Add a line of text to be displayed immediately after the prompt when the
      * prompt is displayed
      */
-    public addPrompt(id: string, renderer: () => string, removeOnRender: boolean = false): void {
-        this.extraPrompts.set(id, {removeOnRender, renderer});
+    public addPrompt(
+        id: string,
+        renderer: () => string,
+        removeOnRender: boolean = false
+    ): void {
+        this.extraPrompts.set(id, { removeOnRender, renderer });
     }
 
     public deserialize(data: SerializedPlayer, state: GameStateData): void {
@@ -107,7 +124,10 @@ export class Player extends Character implements Broadcastable {
     /**
      * Convert prompt tokens into actual data
      */
-    public interpolatePrompt(promptStr: string, extraData: SimpleMap = {}): string {
+    public interpolatePrompt(
+        promptStr: string,
+        extraData: SimpleMap = {}
+    ): string {
         const attributeData = {};
 
         /*
@@ -156,7 +176,9 @@ export class Player extends Character implements Broadcastable {
         const prevRoom = this.room;
 
         if (hasValue(this.room) && this.room !== nextRoom) {
-            this.room.dispatch(new RoomPlayerLeaveEvent({player: this, nextRoom: nextRoom}));
+            this.room.dispatch(
+                new RoomPlayerLeaveEvent({ player: this, nextRoom: nextRoom })
+            );
             this.room.removePlayer(this);
         }
 
@@ -165,9 +187,11 @@ export class Player extends Character implements Broadcastable {
 
         onMoved();
 
-        nextRoom.dispatch(new RoomPlayerEnterEvent({player: this, prevRoom: prevRoom}));
+        nextRoom.dispatch(
+            new RoomPlayerEnterEvent({ player: this, prevRoom: prevRoom })
+        );
 
-        this.dispatch(new PlayerEnterRoomEvent({room: nextRoom}));
+        this.dispatch(new PlayerEnterRoomEvent({ room: nextRoom }));
     }
 
     /**
@@ -176,7 +200,7 @@ export class Player extends Character implements Broadcastable {
     public queueCommand(command: ExecutableCommand, lag: number): void {
         const idx = this.commandQueue.enqueue(command, lag);
 
-        this.dispatch(new PlayerCommandQueuedEvent({idx}));
+        this.dispatch(new PlayerCommandQueuedEvent({ idx }));
     }
 
     public removePrompt(id: string): void {
@@ -188,7 +212,7 @@ export class Player extends Character implements Broadcastable {
             return;
         }
 
-        this.dispatch(new PlayerSaveEvent({callback}));
+        this.dispatch(new PlayerSaveEvent({ callback }));
     }
 
     public serialize(): SerializedPlayer {

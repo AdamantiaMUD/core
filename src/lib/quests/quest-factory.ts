@@ -25,9 +25,17 @@ import Quest from './quest.js';
 import type SerializedQuestGoal from './serialized-quest-goal.js';
 
 export class QuestFactory {
-    private readonly _quests: Map<string, AbstractQuest> = new Map<string, AbstractQuest>();
+    private readonly _quests: Map<string, AbstractQuest> = new Map<
+        string,
+        AbstractQuest
+    >();
 
-    public add(ref: string, areaName: string, id: string, config: QuestDefinition): void {
+    public add(
+        ref: string,
+        areaName: string,
+        id: string,
+        config: QuestDefinition
+    ): void {
         const cfg = produce(config, (draft: Draft<QuestDefinition>) => {
             draft.entityReference = ref;
         });
@@ -60,15 +68,16 @@ export class QuestFactory {
             return true;
         }
 
-        return quest.config.requires
-            .every((requiresRef: string) => tracker.isComplete(requiresRef));
+        return quest.config.requires.every((requiresRef: string) =>
+            tracker.isComplete(requiresRef)
+        );
     }
 
     public create(
         state: GameStateData,
         qid: string,
         player: Player,
-        questState: SerializedQuestGoal[] = [],
+        questState: SerializedQuestGoal[] = []
     ): Quest {
         const questData = this._quests.get(qid);
 
@@ -93,14 +102,21 @@ export class QuestFactory {
         quest.listen<Quest, QuestProgressPayload>(
             QuestProgressEvent.getName(),
             (qst: Quest, { progress }: QuestProgressPayload) => {
-                player.dispatch(new PlayerQuestProgressEvent({ progress: progress, quest: qst }));
+                player.dispatch(
+                    new PlayerQuestProgressEvent({
+                        progress: progress,
+                        quest: qst,
+                    })
+                );
                 player.save();
-            },
+            }
         );
 
         quest.listen(QuestStartedEvent.getName(), (qst: Quest) => {
             player.dispatch(new PlayerQuestStartedEvent({ quest: qst }));
-            qst.dispatch(new QuestProgressEvent({ progress: qst.getProgress() }));
+            qst.dispatch(
+                new QuestProgressEvent({ progress: qst.getProgress() })
+            );
         });
 
         quest.listen(QuestTurnInReadyEvent.getName(), (qst: Quest) => {
@@ -111,7 +127,10 @@ export class QuestFactory {
             player.dispatch(new PlayerQuestCompletedEvent({ quest: qst }));
             player.questTracker.complete(qst.entityReference);
 
-            if (!hasValue(questData.config.rewards) || questData.config.rewards.length === 0) {
+            if (
+                !hasValue(questData.config.rewards) ||
+                questData.config.rewards.length === 0
+            ) {
                 player.save();
 
                 return;
@@ -124,7 +143,9 @@ export class QuestFactory {
                     rewardClass.reward(state, qst, player, reward.config);
                     player.dispatch(new QuestRewardEvent({ reward }));
                 } else {
-                    Logger.error(`Quest [${qid}] has invalid reward type ${reward.type}`);
+                    Logger.error(
+                        `Quest [${qid}] has invalid reward type ${reward.type}`
+                    );
                 }
             }
 

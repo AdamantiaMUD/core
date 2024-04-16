@@ -22,7 +22,12 @@ export class Command {
     public usage: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(bundle: string, name: string, def: CommandDefinition, file: string) {
+    public constructor(
+        bundle: string,
+        name: string,
+        def: CommandDefinition,
+        file: string
+    ) {
         this.bundle = bundle;
         this.type = def.type ?? CommandType.COMMAND;
         this.name = name;
@@ -34,7 +39,12 @@ export class Command {
         this.metadata = def.metadata ?? {};
     }
 
-    public execute(args: string | null, player: Player, alias: string = '', ...argV: unknown[]): void {
+    public execute(
+        args: string | null,
+        player: Player,
+        alias: string = '',
+        ...argV: unknown[]
+    ): void {
         this.func(args, player, alias, ...argV);
     }
 }

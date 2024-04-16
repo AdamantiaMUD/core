@@ -1,10 +1,10 @@
 ---
 command: equipment
 body: |
-  View currently worn equipment
+    View currently worn equipment
 related:
-  - inventory
-  - wear
-  - remove
+    - inventory
+    - wear
+    - remove
 keywords:
-- loot
+    - loot

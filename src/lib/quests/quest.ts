@@ -4,7 +4,7 @@ import {
     QuestProgressEvent,
     QuestTurnInReadyEvent,
 } from './events/index.js';
-import {clone} from '../util/objects.js';
+import { clone } from '../util/objects.js';
 
 import type GameStateData from '../game-state-data.js';
 import type Player from '../players/player.js';
@@ -14,7 +14,7 @@ import type QuestGoal from './quest-goal.js';
 import type QuestProgress from './quest-progress.js';
 import type SerializedQuest from './serialized-quest.js';
 import type SerializedQuestGoal from './serialized-quest-goal.js';
-import type {QuestProgressPayload} from './events/index.js';
+import type { QuestProgressPayload } from './events/index.js';
 
 export class Quest extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -52,7 +52,10 @@ export class Quest extends MudEventEmitter implements Serializable {
 
     public addGoal(goal: QuestGoal): void {
         this.goals.push(goal);
-        goal.listen<Quest, QuestProgressPayload>(QuestProgressEvent.getName(), this.onProgressUpdated.bind(this));
+        goal.listen<Quest, QuestProgressPayload>(
+            QuestProgressEvent.getName(),
+            this.onProgressUpdated.bind(this)
+        );
     }
 
     public complete(): void {
@@ -112,15 +115,14 @@ export class Quest extends MudEventEmitter implements Serializable {
         if (progress.percent >= 100) {
             if (this.config.autoComplete) {
                 this.complete();
-            }
-            else {
+            } else {
                 this.dispatch(new QuestTurnInReadyEvent());
             }
 
             return;
         }
 
-        this.dispatch(new QuestProgressEvent({progress}));
+        this.dispatch(new QuestProgressEvent({ progress }));
     }
 
     /**

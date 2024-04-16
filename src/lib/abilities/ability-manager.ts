@@ -6,7 +6,10 @@ import type Ability from './ability.js';
  * Keeps track of registered abilities
  */
 export class AbilityManager {
-    private readonly _abilities: Map<string, Ability> = new Map<string, Ability>();
+    private readonly _abilities: Map<string, Ability> = new Map<
+        string,
+        Ability
+    >();
 
     public add(ability: Ability): void {
         this._abilities.set(ability.id, ability);
@@ -15,12 +18,17 @@ export class AbilityManager {
     /**
      * Find executable abilities
      */
-    public find(search: string, includePassive: boolean = false): Ability | null {
+    public find(
+        search: string,
+        includePassive: boolean = false
+    ): Ability | null {
         for (const [id, ability] of this._abilities) {
-            if (!includePassive && ability.flags.includes(AbilityFlag.PASSIVE)) {
+            if (
+                !includePassive &&
+                ability.flags.includes(AbilityFlag.PASSIVE)
+            ) {
                 // no-op
-            }
-            else if (id.startsWith(search)) {
+            } else if (id.startsWith(search)) {
                 return ability;
             }
         }

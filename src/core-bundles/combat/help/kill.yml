@@ -1,10 +1,10 @@
 ---
 command: kill
 body: |
-  Initiate combat against a target
+    Initiate combat against a target
 related:
-  - flee
+    - flee
 keywords:
-  - attack
-  - kill
-  - combat
+    - attack
+    - kill
+    - combat

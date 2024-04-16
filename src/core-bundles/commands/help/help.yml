@@ -8,5 +8,5 @@ body: |
 
     Command usage will show arguments as either [optional] or <required>, e.g., look [thing] or get <item> [container]
 related:
-  - new
-  - commands
+    - new
+    - commands

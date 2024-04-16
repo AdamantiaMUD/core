@@ -1,22 +1,20 @@
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
-function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(
+function parseDot<
+    T extends { keywords?: string[]; name?: string; uuid?: string },
+>(
     search: string,
     list: Array<T | [string, T]>,
     returnKey: true
 ): [string, T] | null;
-function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(
-    search: string,
-    list: Array<T | [string, T]>,
-    returnKey?: false
-): T | null;
+function parseDot<
+    T extends { keywords?: string[]; name?: string; uuid?: string },
+>(search: string, list: Array<T | [string, T]>, returnKey?: false): T | null;
 
 /* eslint-disable-next-line @typescript-eslint/explicit-function-return-type, @typescript-eslint/explicit-module-boundary-types */
-function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>(
-    search: string,
-    list: Array<T | [string, T]>,
-    returnKey: boolean = false
-) {
+function parseDot<
+    T extends { keywords?: string[]; name?: string; uuid?: string },
+>(search: string, list: Array<T | [string, T]>, returnKey: boolean = false) {
     if (!hasValue(list)) {
         return null;
     }
@@ -31,8 +29,7 @@ function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>
 
     if (parts.length === 1) {
         keyword = parts[0];
-    }
-    else {
+    } else {
         findNth = parseInt(parts[0], 10);
         keyword = parts[1];
     }
@@ -45,8 +42,7 @@ function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>
 
         if (Array.isArray(entity)) {
             [key, entry] = entity;
-        }
-        else {
+        } else {
             entry = entity;
         }
 
@@ -55,14 +51,19 @@ function parseDot<T extends {keywords?: string[]; name?: string; uuid?: string}>
         }
 
         // prioritize keywords over item/player names
-        if (hasValue(entry.keywords) && (entry.keywords.includes(keyword) || entry.uuid === keyword)) {
+        if (
+            hasValue(entry.keywords) &&
+            (entry.keywords.includes(keyword) || entry.uuid === keyword)
+        ) {
             encountered += 1;
 
             if (encountered === findNth) {
                 return returnKey ? [key!, entry] : entry;
             }
-        }
-        else if (hasValue(entry.name) && entry.name.toLowerCase().includes(keyword.toLowerCase())) {
+        } else if (
+            hasValue(entry.name) &&
+            entry.name.toLowerCase().includes(keyword.toLowerCase())
+        ) {
             encountered += 1;
 
             if (encountered === findNth) {

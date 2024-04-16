@@ -1,13 +1,13 @@
 import Command from '../../../lib/commands/command.js';
 import CommandManager from '../../../lib/commands/command-manager.js';
-import {hasValue} from '../../../lib/util/functions.js';
-import {sayAt} from '../../../lib/communication/broadcast.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 
 import type CommandDefinition from '../../../lib/commands/command-definition.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type Player from '../../../lib/players/player.js';
 import type SimpleMap from '../../../lib/util/simple-map.js';
-import type {StatelessCommandBuilder} from '../../../lib/commands/command-definition-builder.js';
+import type { StatelessCommandBuilder } from '../../../lib/commands/command-definition-builder.js';
 
 const getAliases = (player: Player): SimpleMap<string> => {
     let aliases = player.getMeta<SimpleMap<string>>('aliases');
@@ -51,8 +51,7 @@ const checkLoader: StatelessCommandBuilder = (): CommandDefinition => ({
 
         if (hasValue(value)) {
             sayAt(player, `{${key}} : {${value}}`);
-        }
-        else {
+        } else {
             sayAt(player, `You have no alias for "${key}".`);
         }
     },
@@ -90,9 +89,11 @@ const removeLoader: StatelessCommandBuilder = (): CommandDefinition => ({
             const value = aliases[key];
             delete aliases[key];
             sayAt(player, `You have removed alias "${key}" for "${value}".`);
-        }
-        else {
-            sayAt(player, `You have no alias set for "${key}". It is already clear.`);
+        } else {
+            sayAt(
+                player,
+                `You have no alias set for "${key}". It is already clear.`
+            );
         }
 
         player.setMeta('aliases', aliases);
@@ -106,9 +107,15 @@ export const cmd: CommandDefinitionFactory = {
         const subcommands = new CommandManager();
 
         subcommands.add(new Command('command-aliases', 'add', addLoader(), ''));
-        subcommands.add(new Command('command-aliases', 'check', checkLoader(), ''));
-        subcommands.add(new Command('command-aliases', 'list', listLoader(), ''));
-        subcommands.add(new Command('command-aliases', 'remove', removeLoader(), ''));
+        subcommands.add(
+            new Command('command-aliases', 'check', checkLoader(), '')
+        );
+        subcommands.add(
+            new Command('command-aliases', 'list', listLoader(), '')
+        );
+        subcommands.add(
+            new Command('command-aliases', 'remove', removeLoader(), '')
+        );
 
         return (args: string | null, player: Player): void => {
             const [command, ...commandArgs] = (args ?? '').split(' ');
@@ -131,4 +138,3 @@ export const cmd: CommandDefinitionFactory = {
 };
 
 export default cmd;
-

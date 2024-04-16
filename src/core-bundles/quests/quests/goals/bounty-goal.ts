@@ -1,13 +1,13 @@
 import QuestGoal from '../../../../lib/quests/quest-goal.js';
-import {PlayerEnterRoomEvent} from '../../../../lib/players/events/index.js';
-import {QuestProgressEvent} from '../../../../lib/quests/events/index.js';
-import {hasValue} from '../../../../lib/util/functions.js';
+import { PlayerEnterRoomEvent } from '../../../../lib/players/events/index.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
+import { hasValue } from '../../../../lib/util/functions.js';
 
 import type Player from '../../../../lib/players/player.js';
 import type Quest from '../../../../lib/quests/quest.js';
 import type QuestProgress from '../../../../lib/quests/quest-progress.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
-import type {PlayerEnterRoomPayload} from '../../../../lib/players/events/index.js';
+import type { PlayerEnterRoomPayload } from '../../../../lib/players/events/index.js';
 
 interface BountyGoalConfig extends SimpleMap {
     title: string;
@@ -37,16 +37,17 @@ export class BountyGoal extends QuestGoal<BountyGoalConfig, BountyGoalState> {
     }
 
     private _enterRoom(player: Player, payload: PlayerEnterRoomPayload): void {
-        const {room} = payload;
+        const { room } = payload;
 
         if (this.state.found) {
             if (room.entityReference === this.config.home) {
                 // Check if we have taken the NPC home
                 this.state.delivered = true;
             }
-            this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
-        }
-        else {
+            this.dispatch(
+                new QuestProgressEvent({ progress: this.getProgress() })
+            );
+        } else {
             const goalNpcId = this.config.npc;
 
             let isLocated = false;
@@ -62,7 +63,9 @@ export class BountyGoal extends QuestGoal<BountyGoalConfig, BountyGoalState> {
                 this.state.found = true;
             }
 
-            this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
+            this.dispatch(
+                new QuestProgressEvent({ progress: this.getProgress() })
+            );
         }
     }
 
@@ -73,15 +76,14 @@ export class BountyGoal extends QuestGoal<BountyGoalConfig, BountyGoalState> {
         if (hasValue(this.config.home)) {
             // Has target been returned home?
             percent += this.state.delivered ? 50 : 0;
-        }
-        else {
+        } else {
             // No return location necessary.
             percent += 50;
         }
 
         const display = this.state.found ? 'Complete' : 'Not Complete';
 
-        return {percent, display};
+        return { percent, display };
     }
 }
 

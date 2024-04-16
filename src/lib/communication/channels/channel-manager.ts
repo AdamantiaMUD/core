@@ -11,7 +11,9 @@ export class ChannelManager {
     public add(channel: Channel): void {
         this.channels.set(channel.name, channel);
 
-        channel.aliases.forEach((alias: string) => this.channels.set(alias, channel));
+        channel.aliases.forEach((alias: string) =>
+            this.channels.set(alias, channel)
+        );
     }
 
     public find(search: string): Channel | null {

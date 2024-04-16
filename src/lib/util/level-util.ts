@@ -8,7 +8,7 @@
  */
 const reduction = (level: number): number => {
     if (level >= 11 && level <= 27) {
-        return 1 - ((level - 10) / 100);
+        return 1 - (level - 10) / 100;
     }
 
     if (level >= 28 && level <= 59) {
@@ -45,7 +45,7 @@ const diff = (level: number): number => {
     return 0;
 };
 
-const mobExp = (level: number): number => 45 + (5 * level);
+const mobExp = (level: number): number => 45 + 5 * level;
 
 export const LevelUtil = {
     /**
@@ -61,7 +61,7 @@ export const LevelUtil = {
         const mobXp = mobExp(level);
         const modifier = reduction(level);
 
-        return Math.floor(((4 * level) + levelDiff) * mobXp * modifier);
+        return Math.floor((4 * level + levelDiff) * mobXp * modifier);
     },
 };
 

@@ -1,6 +1,6 @@
 import cloneFactory from 'rfdc';
 
-import {hasValue} from './functions.js';
+import { hasValue } from './functions.js';
 
 /**
  * Check to see if a given object is iterable

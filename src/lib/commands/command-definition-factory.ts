@@ -6,7 +6,9 @@ import type SimpleMap from '../util/simple-map.js';
 
 export interface CommandDefinitionFactory {
     aliases?: string[];
-    command: (() => CommandExecutable) | ((state: GameStateData) => CommandExecutable);
+    command:
+        | (() => CommandExecutable)
+        | ((state: GameStateData) => CommandExecutable);
     metadata?: SimpleMap;
     name: string;
     requiredRole?: PlayerRole;

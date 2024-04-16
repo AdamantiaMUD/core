@@ -1,8 +1,8 @@
 import Logger from '../common/logger.js';
 import ScriptableEntity from '../entities/scriptable-entity.js';
-import {AreaRoomAddedEvent, RoomReadyEvent} from './events/index.js';
-import {UpdateTickEvent} from '../common/events/index.js';
-import {hasValue} from '../util/functions.js';
+import { AreaRoomAddedEvent, RoomReadyEvent } from './events/index.js';
+import { UpdateTickEvent } from '../common/events/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type AreaManifest from './area-manifest.js';
 import type Broadcastable from '../communication/broadcastable.js';
@@ -59,7 +59,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
     public addRoom(room: Room): void {
         this.rooms.set(room.id, room);
 
-        this.dispatch(new AreaRoomAddedEvent({room}));
+        this.dispatch(new AreaRoomAddedEvent({ room }));
     }
 
     /**
@@ -68,7 +68,8 @@ export class Area extends ScriptableEntity implements Broadcastable {
      */
     public getBroadcastTargets(): Broadcastable[] {
         const roomTargets = [...this.rooms].reduce(
-            (acc: Broadcastable[], [, room]: [string, Room]) => acc.concat(room.getBroadcastTargets()),
+            (acc: Broadcastable[], [, room]: [string, Room]) =>
+                acc.concat(room.getBroadcastTargets()),
             []
         );
 

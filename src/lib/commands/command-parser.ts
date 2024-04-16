@@ -1,6 +1,6 @@
 import CommandType from './command-type.js';
-import {InvalidCommandError} from './errors/index.js';
-import {hasValue} from '../util/functions.js';
+import { InvalidCommandError } from './errors/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type GameStateData from '../game-state-data.js';
 import type ParsedCommand from './parsed-command.js';
@@ -21,9 +21,12 @@ export const CommandParser = {
 
         const dir = CommandParser.checkDirection(player, direction);
 
-        return player.room
-            .getExits()
-            .find((exit: RoomExitDefinition) => exit.direction === dir) ?? null;
+        return (
+            player.room
+                .getExits()
+                .find((exit: RoomExitDefinition) => exit.direction === dir) ??
+            null
+        );
     },
 
     checkDirection: (player: Player, direction: string): string | null => {
@@ -43,10 +46,10 @@ export const CommandParser = {
         }
 
         const secondaryDirections = [
-            {abbr: 'ne', name: 'northeast'},
-            {abbr: 'nw', name: 'northwest'},
-            {abbr: 'se', name: 'southeast'},
-            {abbr: 'sw', name: 'southwest'},
+            { abbr: 'ne', name: 'northeast' },
+            { abbr: 'nw', name: 'northwest' },
+            { abbr: 'se', name: 'southeast' },
+            { abbr: 'sw', name: 'southwest' },
         ];
 
         for (const dir of secondaryDirections) {
@@ -69,8 +72,12 @@ export const CommandParser = {
             return exit;
         }
 
-        const otherExit = player.room?.getExits()
-            .find((roomExit: RoomExitDefinition) => roomExit.direction === direction);
+        const otherExit = player.room
+            ?.getExits()
+            .find(
+                (roomExit: RoomExitDefinition) =>
+                    roomExit.direction === direction
+            );
 
         return otherExit?.direction ?? null;
     },
@@ -78,7 +85,11 @@ export const CommandParser = {
     /**
      * Parse a given string to find the resulting command/arguments
      */
-    parse: (state: GameStateData, raw: string, player: Player): ParsedCommand => {
+    parse: (
+        state: GameStateData,
+        raw: string,
+        player: Player
+    ): ParsedCommand => {
         const data = raw.trim();
         const parts = data.split(' ');
         const command = parts.shift()?.toLowerCase();
@@ -123,7 +134,7 @@ export const CommandParser = {
                 type: CommandType.MOVEMENT,
                 args: args,
                 originalCommand: command,
-                payload: {roomExit},
+                payload: { roomExit },
             };
         }
 

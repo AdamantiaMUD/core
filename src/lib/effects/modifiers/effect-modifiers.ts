@@ -4,13 +4,18 @@ import type EffectAttributeModifier from './effect-attribute-modifier.js';
 import type EffectAttributeModifierFunction from './effect-attribute-modifier-function.js';
 import type EffectModifier from './effect-modifier.js';
 
-export type EffectModifiers = Record<string, EffectModifier | Record<string, EffectModifier>> & {
+export type EffectModifiers = Record<
+    string,
+    EffectModifier | Record<string, EffectModifier>
+> & {
     /*  eslint-disable-next-line lines-around-comment -- see https://github.com/typescript-eslint/typescript-eslint/issues/1150 */
     /**
      * The attributes sub-property lets you define which attributes are modified
      * by this effect.
      */
-    attributes?: EffectAttributeModifierFunction | Record<string, EffectAttributeModifier>;
+    attributes?:
+        | EffectAttributeModifierFunction
+        | Record<string, EffectAttributeModifier>;
 
     /**
      * the incomingDamage modifier, and its sibling property outgoingDamage, let you do

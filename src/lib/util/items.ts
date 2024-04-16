@@ -1,23 +1,23 @@
 /**
  * General functions used across the adamantia bundles
  */
-import {sprintf} from 'sprintf-js';
+import { sprintf } from 'sprintf-js';
 
 import Broadcast from '../communication/broadcast.js';
 import Item from '../equipment/item.js';
 import ItemQuality from '../equipment/item-quality.js';
 import ItemType from '../equipment/item-type.js';
-import {clone} from './objects.js';
-import {hasValue} from './functions.js';
+import { clone } from './objects.js';
+import { hasValue } from './functions.js';
 
 import type Character from '../characters/character.js';
 import type GameStateData from '../game-state-data.js';
 import type ItemStats from '../equipment/item-stats.js';
 import type Player from '../players/player.js';
 
-const {line, wrap} = Broadcast;
+const { line, wrap } = Broadcast;
 
-const qualityColors: {[key in ItemQuality]: [string, string?]} = {
+const qualityColors: { [key in ItemQuality]: [string, string?] } = {
     [ItemQuality.POOR]: ['bold', 'black'],
     [ItemQuality.COMMON]: ['bold', 'white'],
     [ItemQuality.UNCOMMON]: ['bold', 'green'],
@@ -49,7 +49,10 @@ export const findCarrier = (item: Item): Character | Item | null => {
  * Colorize the given string according to this item's quality
  */
 export const qualityColorize = (item: Item, string: string): string => {
-    const colors = qualityColors[item.getMeta<ItemQuality>('quality') ?? ItemQuality.COMMON];
+    const colors =
+        qualityColors[
+            item.getMeta<ItemQuality>('quality') ?? ItemQuality.COMMON
+        ];
 
     let open = '',
         close = '';
@@ -65,17 +68,25 @@ export const qualityColorize = (item: Item, string: string): string => {
 /**
  * Friendly display colorized by quality
  */
-export const display = (item: Item): string => qualityColorize(item, `[${item.name}]`);
+export const display = (item: Item): string =>
+    qualityColorize(item, `[${item.name}]`);
 
 /**
  * Render a pretty display of an item
  */
-export const renderItem = (state: GameStateData, item: Item, player: Player): string => {
+export const renderItem = (
+    state: GameStateData,
+    item: Item,
+    player: Player
+): string => {
     let buf = `${qualityColorize(item, `.${line(38)}.`)}\n`;
 
     buf += `| ${qualityColorize(item, sprintf('%-36s', item.name))} |\n`;
 
-    buf += sprintf('| %-36s |\n', item.type === ItemType.ARMOR ? 'Armor' : 'Weapon');
+    buf += sprintf(
+        '| %-36s |\n',
+        item.type === ItemType.ARMOR ? 'Armor' : 'Weapon'
+    );
 
     switch (item.type) {
         case ItemType.WEAPON: {
@@ -89,9 +100,12 @@ export const renderItem = (state: GameStateData, item: Item, player: Player): st
                 `Speed ${speed}`
             );
 
-            const dps = ((min + max) / 2) / speed;
+            const dps = (min + max) / 2 / speed;
 
-            buf += sprintf('| %-36s |\n', `(avg. ${dps.toPrecision(2)} damage per second)`);
+            buf += sprintf(
+                '| %-36s |\n',
+                `(avg. ${dps.toPrecision(2)} damage per second)`
+            );
             break;
         }
 

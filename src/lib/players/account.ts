@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 
 import Data from '../util/data.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type CharacterBrief from './character-brief.js';
 import type Serializable from '../data/serializable.js';
@@ -53,8 +53,9 @@ export class Account implements Serializable {
      * There is no un-delete because this can just be done by manually editing the account file
      */
     public deleteAccount(): void {
-        this.characters
-            .forEach((char: CharacterBrief) => this.deleteCharacter(char.username));
+        this.characters.forEach((char: CharacterBrief) =>
+            this.deleteCharacter(char.username)
+        );
 
         this.isDeleted = true;
 
@@ -62,8 +63,9 @@ export class Account implements Serializable {
     }
 
     public deleteCharacter(name: string): void {
-        const picked = this.characters
-            .find((char: CharacterBrief) => char.username === name);
+        const picked = this.characters.find(
+            (char: CharacterBrief) => char.username === name
+        );
 
         if (hasValue(picked)) {
             picked.isDeleted = true;
@@ -77,8 +79,11 @@ export class Account implements Serializable {
     }
 
     public hasCharacter(name: string): boolean {
-        return this.characters
-            .find((char: CharacterBrief) => char.username === name) !== undefined;
+        return (
+            this.characters.find(
+                (char: CharacterBrief) => char.username === name
+            ) !== undefined
+        );
     }
 
     public restore(data: SerializedAccount): void {
@@ -91,12 +96,7 @@ export class Account implements Serializable {
     }
 
     public save(callback?: () => void): void {
-        Data.save(
-            'account',
-            this.username,
-            this.serialize(),
-            callback
-        );
+        Data.save('account', this.username, this.serialize(), callback);
     }
 
     /**
@@ -128,8 +128,9 @@ export class Account implements Serializable {
     }
 
     public undeleteCharacter(name: string): void {
-        const picked = this.characters
-            .find((char: CharacterBrief) => char.username === name);
+        const picked = this.characters.find(
+            (char: CharacterBrief) => char.username === name
+        );
 
         if (hasValue(picked)) {
             picked.isDeleted = false;

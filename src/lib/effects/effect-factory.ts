@@ -1,7 +1,7 @@
 import Effect from './effect.js';
 import MudEventManager from '../events/mud-event-manager.js';
-import {clone} from '../util/objects.js';
-import {hasValue} from '../util/functions.js';
+import { clone } from '../util/objects.js';
+import { hasValue } from '../util/functions.js';
 
 import type EffectConfig from './effect-config.js';
 import type EffectDefinition from './effect-definition.js';
@@ -14,7 +14,11 @@ export class EffectFactory {
     public effects: Map<string, EffectInfo> = new Map<string, EffectInfo>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public add(id: string, config: EffectDefinition, state: GameStateData): void {
+    public add(
+        id: string,
+        config: EffectDefinition,
+        state: GameStateData
+    ): void {
         if (this.effects.has(id)) {
             return;
         }
@@ -36,7 +40,7 @@ export class EffectFactory {
             }
         }
 
-        this.effects.set(id, {definition, eventManager});
+        this.effects.set(id, { definition, eventManager });
     }
 
     public create(
@@ -47,13 +51,15 @@ export class EffectFactory {
         const entry = this.effects.get(id);
 
         if (!hasValue(entry) || !hasValue(entry.definition)) {
-            throw new Error(`No valid entry definition found for effect ${id}.`);
+            throw new Error(
+                `No valid entry definition found for effect ${id}.`
+            );
         }
 
         const def = clone(entry.definition);
 
-        def.config = {...def.config, ...config};
-        def.state = {...def.state, ...state};
+        def.config = { ...def.config, ...config };
+        def.state = { ...def.state, ...state };
 
         const effect = new Effect(id, def);
 

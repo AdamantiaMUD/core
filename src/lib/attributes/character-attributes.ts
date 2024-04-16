@@ -1,11 +1,11 @@
 import Logger from '../common/logger.js';
-import {CharacterAttributeUpdateEvent} from '../characters/events/index.js';
+import { CharacterAttributeUpdateEvent } from '../characters/events/index.js';
 
 import type Character from '../characters/character.js';
 import type GameStateData from '../game-state-data.js';
 import type Serializable from '../data/serializable.js';
 import type SimpleMap from '../util/simple-map.js';
-import type {Attribute, SerializedAttribute} from './attribute.js';
+import type { Attribute, SerializedAttribute } from './attribute.js';
 
 export interface SerializedCharacterAttributes extends SimpleMap {
     [key: string]: SerializedAttribute;
@@ -16,9 +16,13 @@ export interface SerializedCharacterAttributes extends SimpleMap {
  */
 export class CharacterAttributes implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _attributes: Map<string, Attribute> = new Map<string, Attribute>();
+    private readonly _attributes: Map<string, Attribute> = new Map<
+        string,
+        Attribute
+    >();
     private readonly _target: Character;
-    private readonly _unknownAttributes: Map<string, SerializedAttribute> = new Map<string, SerializedAttribute>();
+    private readonly _unknownAttributes: Map<string, SerializedAttribute> =
+        new Map<string, SerializedAttribute>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
     public constructor(target: Character) {
@@ -29,9 +33,12 @@ export class CharacterAttributes implements Serializable {
         this._attributes.set(attribute.name, attribute);
     }
 
-    public deserialize(data: SerializedCharacterAttributes, state: GameStateData): void {
-        Object.entries(data)
-            .forEach(([attr, config]: [string, SerializedAttribute]) => {
+    public deserialize(
+        data: SerializedCharacterAttributes,
+        state: GameStateData
+    ): void {
+        Object.entries(data).forEach(
+            ([attr, config]: [string, SerializedAttribute]) => {
                 const attrName = attr.replace('unknown:', '');
 
                 if (state.attributeFactory.has(attrName)) {
@@ -40,12 +47,14 @@ export class CharacterAttributes implements Serializable {
                     attribute!.deserialize(config);
 
                     this.add(attribute!);
-                }
-                else {
-                    Logger.warn(`Entity trying to deserialize with unknown attribute ${attrName}`);
+                } else {
+                    Logger.warn(
+                        `Entity trying to deserialize with unknown attribute ${attrName}`
+                    );
                     this._unknownAttributes.set(attrName, config);
                 }
-            });
+            }
+        );
     }
 
     public get(key: string): Attribute | null {
@@ -71,7 +80,12 @@ export class CharacterAttributes implements Serializable {
 
         this.get(key)!.modify(amount);
 
-        this._target.dispatch(new CharacterAttributeUpdateEvent({attr: key, value: this.get(key)!}));
+        this._target.dispatch(
+            new CharacterAttributeUpdateEvent({
+                attr: key,
+                value: this.get(key)!,
+            })
+        );
     }
 
     public reset(): void {
@@ -83,13 +97,17 @@ export class CharacterAttributes implements Serializable {
     public serialize(): SerializedCharacterAttributes {
         const data: Record<string, SerializedAttribute> = {};
 
-        [...this._attributes].forEach(([name, attribute]: [string, Attribute]) => {
-            data[name] = attribute.serialize();
-        });
+        [...this._attributes].forEach(
+            ([name, attribute]: [string, Attribute]) => {
+                data[name] = attribute.serialize();
+            }
+        );
 
-        [...this._unknownAttributes].forEach(([name, config]: [string, SerializedAttribute]) => {
-            data[`unknown:${name}`] = config;
-        });
+        [...this._unknownAttributes].forEach(
+            ([name, config]: [string, SerializedAttribute]) => {
+                data[`unknown:${name}`] = config;
+            }
+        );
 
         return data;
     }

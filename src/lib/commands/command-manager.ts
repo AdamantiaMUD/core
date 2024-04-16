@@ -27,10 +27,12 @@ export class CommandManager {
         return null;
     }
 
-    public findWithAlias(search: string): {command: Command; alias: string} | null {
+    public findWithAlias(
+        search: string
+    ): { command: Command; alias: string } | null {
         for (const [name, command] of this.commands.entries()) {
             if (name.startsWith(search)) {
-                return {command: command, alias: name};
+                return { command: command, alias: name };
             }
         }
 

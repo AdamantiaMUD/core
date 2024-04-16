@@ -1,5 +1,5 @@
-import {hasValue} from '../util/functions.js';
-import {isIterable} from '../util/objects.js';
+import { hasValue } from '../util/functions.js';
+import { isIterable } from '../util/objects.js';
 
 import type MudEventEmitter from './mud-event-emitter.js';
 import type MudEventListener from './mud-event-listener.js';
@@ -10,7 +10,10 @@ export class MudEventManager {
      * key: string - The name of the event
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
-    private readonly _events: Map<string, Set<MudEventListener>> = new Map<string, Set<MudEventListener>>();
+    private readonly _events: Map<string, Set<MudEventListener>> = new Map<
+        string,
+        Set<MudEventListener>
+    >();
 
     public get size(): number {
         return this._events.size;
@@ -47,20 +50,22 @@ export class MudEventManager {
      * Warning: This will remove _all_ listeners for a given event list, this includes
      * listeners not in this manager but attached to the same event
      */
-    public detach(emitter: MudEventEmitter, eventNames: string[] | string | null = null): void {
+    public detach(
+        emitter: MudEventEmitter,
+        eventNames: string[] | string | null = null
+    ): void {
         let events: string[] = [];
 
         if (typeof eventNames === 'string') {
             events = [eventNames];
-        }
-        else if (Array.isArray(eventNames)) {
+        } else if (Array.isArray(eventNames)) {
             events = eventNames;
-        }
-        else if (!hasValue(events)) {
+        } else if (!hasValue(events)) {
             events = [...this._events.keys()];
-        }
-        else if (!isIterable(events)) {
-            throw new TypeError('events list passed to detach() is not iterable');
+        } else if (!isIterable(events)) {
+            throw new TypeError(
+                'events list passed to detach() is not iterable'
+            );
         }
 
         for (const event of events) {

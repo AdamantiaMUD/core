@@ -3,9 +3,13 @@ import PartyAudience from '../audiences/party-audience.js';
 import Player from '../../players/player.js';
 import PrivateAudience from '../audiences/private-audience.js';
 import WorldAudience from '../audiences/world-audience.js';
-import {ChannelReceiveEvent} from './events/index.js';
-import {NoMessageError, NoPartyError, NoRecipientError} from './errors/index.js';
-import {cast, hasValue} from '../../util/functions.js';
+import { ChannelReceiveEvent } from './events/index.js';
+import {
+    NoMessageError,
+    NoPartyError,
+    NoRecipientError,
+} from './errors/index.js';
+import { cast, hasValue } from '../../util/functions.js';
 
 import type Broadcastable from '../broadcastable.js';
 import type ChannelAudience from '../audiences/channel-audience.js';
@@ -14,9 +18,9 @@ import type ChannelMessageFormatter from './channel-message-formatter.js';
 import type Character from '../../characters/character.js';
 import type GameStateData from '../../game-state-data.js';
 import type PlayerRole from '../../players/player-role.js';
-import type {Colorizer} from '../colorizer.js';
+import type { Colorizer } from '../colorizer.js';
 
-const {sayAt, sayAtFormatted} = Broadcast;
+const { sayAt, sayAtFormatted } = Broadcast;
 
 /**
  * @property {ChannelAudience} audience People who receive messages from this
@@ -34,7 +38,10 @@ export class Channel {
     public bundle: string | null;
     public color: string[] | string | null;
     public description: string | null;
-    public formatter: {sender: ChannelMessageFormatter; target: ChannelMessageFormatter};
+    public formatter: {
+        sender: ChannelMessageFormatter;
+        target: ChannelMessageFormatter;
+    };
     public minRequiredRole: PlayerRole | null;
     public name: string;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
@@ -54,9 +61,10 @@ export class Channel {
         this.name = config.name;
         this.description = config.description ?? null;
 
-        this.minRequiredRole = typeof config.minRequiredRole === 'undefined'
-            ? null
-            : config.minRequiredRole;
+        this.minRequiredRole =
+            typeof config.minRequiredRole === 'undefined'
+                ? null
+                : config.minRequiredRole;
 
         // for debugging purposes, which bundle it came from
         this.bundle = config.bundle ?? null;
@@ -155,7 +163,7 @@ export class Channel {
 
         let message = msg;
 
-        this.audience.configure({state, sender, message});
+        this.audience.configure({ state, sender, message });
         const targets = this.audience.getBroadcastTargets();
 
         if (this.audience instanceof PartyAudience && targets.length === 0) {
@@ -173,13 +181,22 @@ export class Channel {
                 }
                 sayAt(
                     sender,
-                    this.formatter.sender(sender, targets[0], message, this.colorify.bind(this))
+                    this.formatter.sender(
+                        sender,
+                        targets[0],
+                        message,
+                        this.colorify.bind(this)
+                    )
                 );
-            }
-            else {
+            } else {
                 sayAt(
                     sender,
-                    this.formatter.sender(sender, null, message, this.colorify.bind(this))
+                    this.formatter.sender(
+                        sender,
+                        null,
+                        message,
+                        this.colorify.bind(this)
+                    )
                 );
             }
         }
@@ -188,12 +205,13 @@ export class Channel {
         sayAtFormatted(
             this.audience,
             message,
-            (target: Broadcastable, mess: string) => this.formatter.target(
-                sender,
-                target,
-                mess,
-                this.colorify.bind(this)
-            )
+            (target: Broadcastable, mess: string) =>
+                this.formatter.target(
+                    sender,
+                    target,
+                    mess,
+                    this.colorify.bind(this)
+                )
         );
 
         // strip color tags
@@ -204,11 +222,13 @@ export class Channel {
              * Docs limit this to be for ScriptableEntity (Area/Room/Item), but
              * also applies to NPC and Player
              */
-            cast<Character>(target).dispatch(new ChannelReceiveEvent({
-                channel: this,
-                message: rawMessage,
-                sender: sender,
-            }));
+            cast<Character>(target).dispatch(
+                new ChannelReceiveEvent({
+                    channel: this,
+                    message: rawMessage,
+                    sender: sender,
+                })
+            );
         }
     }
 }

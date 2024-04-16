@@ -3,9 +3,9 @@ import Data from '../util/data.js';
 import MudEventEmitter from '../events/mud-event-emitter.js';
 import MudEventManager from '../events/mud-event-manager.js';
 import Player from './player.js';
-import {PlayerSavedEvent} from './events/index.js';
-import {UpdateTickEvent} from '../common/events/index.js';
-import {hasValue} from '../util/functions.js';
+import { PlayerSavedEvent } from './events/index.js';
+import { UpdateTickEvent } from '../common/events/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type GameStateData from '../game-state-data.js';
 import type MudEventListener from '../events/mud-event-listener.js';
@@ -35,7 +35,10 @@ export class PlayerManager extends MudEventEmitter {
         return this._players;
     }
 
-    public addListener(event: string | symbol, listener: MudEventListener): this {
+    public addListener(
+        event: string | symbol,
+        listener: MudEventListener
+    ): this {
         this.events.add(event as string, listener);
 
         return this;
@@ -68,15 +71,23 @@ export class PlayerManager extends MudEventEmitter {
     /**
      * Load a player for an account
      */
-    public async loadPlayer(username: string, force: boolean = false): Promise<Player> {
+    public async loadPlayer(
+        username: string,
+        force: boolean = false
+    ): Promise<Player> {
         if (this._players.has(username) && !force) {
             return this.getPlayer(username)!;
         }
 
-        const data: SerializedPlayer | null = await this._loader.loadPlayer(username, this._state.config);
+        const data: SerializedPlayer | null = await this._loader.loadPlayer(
+            username,
+            this._state.config
+        );
 
         if (!hasValue(data)) {
-            throw new Error('That player name does not exist... how did we get here?');
+            throw new Error(
+                'That player name does not exist... how did we get here?'
+            );
         }
 
         const player = new Player();
@@ -112,7 +123,11 @@ export class PlayerManager extends MudEventEmitter {
     }
 
     public async save(player: Player): Promise<void> {
-        await this._loader.savePlayer(player.name, player.serialize(), this._state.config);
+        await this._loader.savePlayer(
+            player.name,
+            player.serialize(),
+            this._state.config
+        );
 
         player.dispatch(new PlayerSavedEvent());
     }

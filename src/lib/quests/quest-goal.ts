@@ -1,6 +1,6 @@
 import MudEventEmitter from '../events/mud-event-emitter.js';
-import {cast} from '../util/functions.js';
-import {clone} from '../util/objects.js';
+import { cast } from '../util/functions.js';
+import { clone } from '../util/objects.js';
 
 import type Player from '../players/player.js';
 import type Quest from './quest.js';
@@ -15,9 +15,12 @@ import type SimpleMap from '../util/simple-map.js';
  * @extends EventEmitter
  */
 export class QuestGoal<
-    QuestConfig extends SimpleMap = SimpleMap,
-    QuestState extends SimpleMap = SimpleMap
-> extends MudEventEmitter implements Serializable {
+        QuestConfig extends SimpleMap = SimpleMap,
+        QuestState extends SimpleMap = SimpleMap,
+    >
+    extends MudEventEmitter
+    implements Serializable
+{
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public config: QuestConfig;
     public player: Player;
@@ -40,10 +43,11 @@ export class QuestGoal<
     /* eslint-disable-next-line @typescript-eslint/no-empty-function */
     public complete(): void {}
 
-    public getProgress(): {percent: number; display: string} {
+    public getProgress(): { percent: number; display: string } {
         return {
             percent: 0,
-            display: '[WARNING] Quest does not have progress display configured. Please tell an admin',
+            display:
+                '[WARNING] Quest does not have progress display configured. Please tell an admin',
         };
     }
 

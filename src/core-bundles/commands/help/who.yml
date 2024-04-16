@@ -1,7 +1,6 @@
 ---
 command: who
 body: |
-  List currently logged in players
+    List currently logged in players
 keywords:
-- online
-
+    - online

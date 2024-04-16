@@ -4,9 +4,9 @@ import Item from '../../../lib/equipment/item.js';
 import ItemType from '../../../lib/equipment/item-type.js';
 import Logger from '../../../lib/common/logger.js';
 import Player from '../../../lib/players/player.js';
-import {at, sayAt} from '../../../lib/communication/broadcast.js';
-import {hasValue} from '../../../lib/util/functions.js';
-import {humanize} from '../../../lib/util/time.js';
+import { at, sayAt } from '../../../lib/communication/broadcast.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import { humanize } from '../../../lib/util/time.js';
 
 import type Character from '../../../lib/characters/character.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
@@ -15,7 +15,7 @@ import type GameEntity from '../../../lib/entities/game-entity.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type Npc from '../../../lib/mobs/npc.js';
 import type RoomExitDefinition from '../../../lib/locations/room-exit-definition.js';
-import type {UsableConfig} from '../../behaviors/behaviors/item/usable.js';
+import type { UsableConfig } from '../../behaviors/behaviors/item/usable.js';
 
 const exitMap = new Map<string, string>();
 
@@ -33,25 +33,38 @@ exitMap.set('northeast', 'NE');
 const getEntity = (search: string, player: Player): GameEntity | null => {
     const room = player.room!;
 
-    let entity: GameEntity = ArgParser.parseDot(search, Array.from(room.items)) as GameEntity;
+    let entity: GameEntity = ArgParser.parseDot(
+        search,
+        Array.from(room.items)
+    ) as GameEntity;
 
-    entity ??= ArgParser.parseDot(search, Array.from(room.players)) as GameEntity;
+    entity ??= ArgParser.parseDot(
+        search,
+        Array.from(room.players)
+    ) as GameEntity;
     entity ??= ArgParser.parseDot(search, Array.from(room.npcs)) as GameEntity;
-    entity ??= ArgParser.parseDot(search, Array.from(player.inventory.items)) as GameEntity;
+    entity ??= ArgParser.parseDot(
+        search,
+        Array.from(player.inventory.items)
+    ) as GameEntity;
 
     return entity;
 };
 
 const getCombatantsDisplay = (entity: Character): string => {
-    const combatantsList = [...entity.combat.combatants.values()]
-        .map((combatant: Character) => combatant.name);
+    const combatantsList = [...entity.combat.combatants.values()].map(
+        (combatant: Character) => combatant.name
+    );
 
     return `, {red fighting} ${combatantsList.join('{red ,} ')}`;
 };
 
 const lookRoom = (state: GameStateData, player: Player): void => {
     if (!hasValue(player.room)) {
-        sayAt(player, 'You are floating in the nether, there is nothing to look at.');
+        sayAt(
+            player,
+            'You are floating in the nether, there is nothing to look at.'
+        );
 
         return;
     }
@@ -69,26 +82,35 @@ const lookRoom = (state: GameStateData, player: Player): void => {
 
     // prioritize explicit over inferred exits with the same name
     for (const exit of exits) {
-        if (!hasValue(foundExits.find((fex: RoomExitDefinition) => fex.direction === exit.direction))) {
+        if (
+            !hasValue(
+                foundExits.find(
+                    (fex: RoomExitDefinition) =>
+                        fex.direction === exit.direction
+                )
+            )
+        ) {
             foundExits.push(exit);
         }
     }
 
-    const exitList: string = foundExits.map((exit: RoomExitDefinition): string => {
-        const exitRoom = state.roomManager.getRoom(exit.roomId);
-        const door = room.getDoor(exitRoom) ?? exitRoom?.getDoor(room) ?? null;
+    const exitList: string = foundExits
+        .map((exit: RoomExitDefinition): string => {
+            const exitRoom = state.roomManager.getRoom(exit.roomId);
+            const door =
+                room.getDoor(exitRoom) ?? exitRoom?.getDoor(room) ?? null;
 
-        if (hasValue(door) && (door.locked || door.closed)) {
-            return `#${exitMap.get(exit.direction)!}`;
-        }
+            if (hasValue(door) && (door.locked || door.closed)) {
+                return `#${exitMap.get(exit.direction)!}`;
+            }
 
-        return exitMap.get(exit.direction)!;
-    }).join(' ');
+            return exitMap.get(exit.direction)!;
+        })
+        .join(' ');
 
     if (foundExits.length > 0) {
         at(player, `{green.bold Exits}: ${exitList}`);
-    }
-    else {
+    } else {
         at(player, '{green.bold Exits}: none');
     }
 
@@ -96,13 +118,19 @@ const lookRoom = (state: GameStateData, player: Player): void => {
 
     // show all the items in the rom
     room.items.forEach((item: Item) => {
-        const desc = item.roomDesc.length > 0 ? item.roomDesc : item.description;
+        const desc =
+            item.roomDesc.length > 0 ? item.roomDesc : item.description;
 
         if (item.hasBehavior('resource')) {
-            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Resource')}] {magenta ${desc}}`);
-        }
-        else {
-            sayAt(player, `[${ItemUtil.qualityColorize(item, 'Item')}] {magenta ${desc}}`);
+            sayAt(
+                player,
+                `[${ItemUtil.qualityColorize(item, 'Resource')}] {magenta ${desc}}`
+            );
+        } else {
+            sayAt(
+                player,
+                `[${ItemUtil.qualityColorize(item, 'Item')}] {magenta ${desc}}`
+            );
         }
     });
 
@@ -117,15 +145,29 @@ const lookRoom = (state: GameStateData, player: Player): void => {
             hasReadyQuest = false;
 
         if (hasValue(npc.quests)) {
-            hasNewQuest = hasValue(npc.quests
-                .find((questRef: string) => state.questFactory.canStart(player, questRef)));
+            hasNewQuest = hasValue(
+                npc.quests.find((questRef: string) =>
+                    state.questFactory.canStart(player, questRef)
+                )
+            );
 
-            hasReadyQuest = hasValue(npc.quests
-                .find((questRef: string) => player.questTracker.isActive(questRef)
-                    && player.questTracker.get(questRef)!.getProgress().percent >= 100));
+            hasReadyQuest = hasValue(
+                npc.quests.find(
+                    (questRef: string) =>
+                        player.questTracker.isActive(questRef) &&
+                        player.questTracker.get(questRef)!.getProgress()
+                            .percent >= 100
+                )
+            );
 
-            hasActiveQuest = hasValue(npc.quests.find((questRef: string) => player.questTracker.isActive(questRef)
-                    && player.questTracker.get(questRef)!.getProgress().percent < 100));
+            hasActiveQuest = hasValue(
+                npc.quests.find(
+                    (questRef: string) =>
+                        player.questTracker.isActive(questRef) &&
+                        player.questTracker.get(questRef)!.getProgress()
+                            .percent < 100
+                )
+            );
 
             let questString = '';
 
@@ -188,9 +230,12 @@ const lookRoom = (state: GameStateData, player: Player): void => {
     });
 };
 
-const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void => {
-    const args = rawArgs.split(' ')
-        .filter((arg: string) => arg !== 'in');
+const lookEntity = (
+    state: GameStateData,
+    player: Player,
+    rawArgs: string
+): void => {
+    const args = rawArgs.split(' ').filter((arg: string) => arg !== 'in');
 
     const entity: GameEntity | null = getEntity(args[0], player);
 
@@ -213,7 +258,10 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
     const decayTime = entity.getMeta<number>('time-until-decay');
 
     if (hasValue(decayTime)) {
-        sayAt(player, `You estimate that ${entity.name} will rot away in ${humanize(decayTime)}.`);
+        sayAt(
+            player,
+            `You estimate that ${entity.name} will rot away in ${humanize(decayTime)}.`
+        );
     }
 
     if (entity instanceof Item) {
@@ -230,7 +278,10 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
                 }
             }
 
-            if (hasValue(usable.effect) && hasValue(usable.config?.description)) {
+            if (
+                hasValue(usable.effect) &&
+                hasValue(usable.config?.description)
+            ) {
                 sayAt(player, usable.config!.description as string);
             }
 
@@ -247,7 +298,10 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
                 break;
 
             case ItemType.CONTAINER:
-                if (!hasValue(entity.inventory) || entity.inventory.size === 0) {
+                if (
+                    !hasValue(entity.inventory) ||
+                    entity.inventory.size === 0
+                ) {
                     sayAt(player, `${entity.name} is empty.`);
 
                     return;
@@ -261,7 +315,10 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
 
                 at(player, 'Contents');
                 if (isFinite(entity.inventory.getMax())) {
-                    at(player, ` (${entity.inventory.size}/${entity.inventory.getMax()})`);
+                    at(
+                        player,
+                        ` (${entity.inventory.size}/${entity.inventory.getMax()})`
+                    );
                 }
 
                 sayAt(player, ':');
@@ -280,24 +337,25 @@ const lookEntity = (state: GameStateData, player: Player, rawArgs: string): void
 export const cmd: CommandDefinitionFactory = {
     name: 'look',
     usage: 'look [thing]',
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
-        const args = rawArgs?.trim() ?? '';
+    command:
+        (state: GameStateData): CommandExecutable =>
+        (rawArgs: string | null, player: Player): void => {
+            const args = rawArgs?.trim() ?? '';
 
-        if (!hasValue(player.room)) {
-            Logger.error(`${player.name} is in limbo.`);
+            if (!hasValue(player.room)) {
+                Logger.error(`${player.name} is in limbo.`);
 
-            sayAt(player, 'You are in a deep, dark void.');
+                sayAt(player, 'You are in a deep, dark void.');
 
-            return;
-        }
+                return;
+            }
 
-        if (args.length > 0) {
-            lookEntity(state, player, args);
-        }
-        else {
-            lookRoom(state, player);
-        }
-    },
+            if (args.length > 0) {
+                lookEntity(state, player, args);
+            } else {
+                lookRoom(state, player);
+            }
+        },
 };
 
 export default cmd;

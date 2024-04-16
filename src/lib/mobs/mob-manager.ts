@@ -1,4 +1,4 @@
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type Npc from './npc.js';
 

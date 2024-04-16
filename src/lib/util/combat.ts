@@ -1,6 +1,6 @@
 import ItemType from '../equipment/item-type.js';
-import {isNpc} from './characters.js';
-import {hasValue} from './functions.js';
+import { isNpc } from './characters.js';
+import { hasValue } from './functions.js';
 
 import type Character from '../characters/character.js';
 import type ItemDefinition from '../equipment/item-definition.js';
@@ -8,7 +8,9 @@ import type Npc from '../mobs/npc.js';
 
 export const DEFAULT_WEAPON_SPEED = 2;
 
-export const getWeaponDamage = (character: Character): {max: number; min: number} => {
+export const getWeaponDamage = (
+    character: Character
+): { max: number; min: number } => {
     const weapon = character.equipment.get('wield');
 
     if (hasValue(weapon)) {
@@ -18,7 +20,7 @@ export const getWeaponDamage = (character: Character): {max: number; min: number
         };
     }
 
-    return {max: 0, min: 0};
+    return { max: 0, min: 0 };
 };
 
 export const getWeaponSpeed = (character: Character): number => {

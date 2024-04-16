@@ -1,8 +1,8 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
 import CommandParser from '../../../lib/commands/command-parser.js';
 import ItemUtil from '../../../lib/util/items.js';
-import {hasValue} from '../../../lib/util/functions.js';
-import {sayAt} from '../../../lib/communication/broadcast.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
@@ -152,13 +152,19 @@ const handleItem = (player: Player, item: Item, action: string): void => {
                 return;
             }
 
-            sayAt(player, `${itemName} is already open, you can't open it any farther.`);
+            sayAt(
+                player,
+                `${itemName} is already open, you can't open it any farther.`
+            );
 
             return;
         }
 
         case 'close': {
-            if (item.getMeta<boolean>('locked') || item.getMeta<boolean>('closed')) {
+            if (
+                item.getMeta<boolean>('locked') ||
+                item.getMeta<boolean>('closed')
+            ) {
                 sayAt(player, "It's already closed.");
 
                 return;
@@ -218,7 +224,10 @@ const handleItem = (player: Player, item: Item, action: string): void => {
                 if (player.hasItem(keyRef)) {
                     const key = player.getItem(keyRef);
 
-                    sayAt(player, `*click* You unlock ${itemName} with ${ItemUtil.display(key!)}.`);
+                    sayAt(
+                        player,
+                        `*click* You unlock ${itemName} with ${ItemUtil.display(key!)}.`
+                    );
 
                     item.setMeta('locked', false);
 
@@ -244,74 +253,71 @@ const handleItem = (player: Player, item: Item, action: string): void => {
 
 export const cmd: CommandDefinitionFactory = {
     name: 'open',
-    aliases: [
-        'close',
-        'lock',
-        'unlock',
-    ],
+    aliases: ['close', 'lock', 'unlock'],
     usage: '[open/close/lock/unlock] <item> / [open/close/lock/unlock] <door direction>/ [open/close/lock/unlock] <door direction>',
-    command: (state: GameStateData): CommandExecutable => (
-        rawArgs: string | null,
-        player: Player,
-        arg0: string
-    ): void => {
-        const action = arg0.toString().toLowerCase();
-        const args = rawArgs?.trim() ?? '';
+    command:
+        (state: GameStateData): CommandExecutable =>
+        (rawArgs: string | null, player: Player, arg0: string): void => {
+            const action = arg0.toString().toLowerCase();
+            const args = rawArgs?.trim() ?? '';
 
-        if (args.length === 0) {
-            sayAt(player, `What do you want to ${action}?`);
-
-            return;
-        }
-
-        if (!hasValue(player.room)) {
-            sayAt(player, 'You are floating in the nether.');
-
-            return;
-        }
-
-        const parts = args.split(' ');
-
-        let exitDirection = parts[0];
-
-        if (parts[0] === 'door' && parts.length >= 2) {
-            // Exit is in second parameter
-            exitDirection = parts[1];
-        }
-
-        const roomExit = CommandParser.canGo(player, exitDirection);
-
-        if (hasValue(roomExit)) {
-            const roomExitRoom = state.roomManager.getRoom(roomExit.roomId);
-
-            let doorRoom = player.room,
-                targetRoom = roomExitRoom,
-                door = doorRoom.getDoor(targetRoom);
-
-            if (!hasValue(door) && hasValue(roomExitRoom)) {
-                doorRoom = roomExitRoom;
-                targetRoom = player.room;
-
-                door = doorRoom.getDoor(targetRoom);
-            }
-
-            if (hasValue(door) && hasValue(targetRoom)) {
-                handleDoor(player, doorRoom, targetRoom, door, action);
+            if (args.length === 0) {
+                sayAt(player, `What do you want to ${action}?`);
 
                 return;
             }
-        }
 
-        const item = ArgParser.parseDot(args, [...player.inventory.items, ...player.room.items]);
+            if (!hasValue(player.room)) {
+                sayAt(player, 'You are floating in the nether.');
 
-        if (hasValue(item)) {
-            handleItem(player, item, action);
+                return;
+            }
 
-            return;
-        }
+            const parts = args.split(' ');
 
-        sayAt(player, `You don't see ${args} here.`);
-    },
+            let exitDirection = parts[0];
+
+            if (parts[0] === 'door' && parts.length >= 2) {
+                // Exit is in second parameter
+                exitDirection = parts[1];
+            }
+
+            const roomExit = CommandParser.canGo(player, exitDirection);
+
+            if (hasValue(roomExit)) {
+                const roomExitRoom = state.roomManager.getRoom(roomExit.roomId);
+
+                let doorRoom = player.room,
+                    targetRoom = roomExitRoom,
+                    door = doorRoom.getDoor(targetRoom);
+
+                if (!hasValue(door) && hasValue(roomExitRoom)) {
+                    doorRoom = roomExitRoom;
+                    targetRoom = player.room;
+
+                    door = doorRoom.getDoor(targetRoom);
+                }
+
+                if (hasValue(door) && hasValue(targetRoom)) {
+                    handleDoor(player, doorRoom, targetRoom, door, action);
+
+                    return;
+                }
+            }
+
+            const item = ArgParser.parseDot(args, [
+                ...player.inventory.items,
+                ...player.room.items,
+            ]);
+
+            if (hasValue(item)) {
+                handleItem(player, item, action);
+
+                return;
+            }
+
+            sayAt(player, `You don't see ${args} here.`);
+        },
 };
 
 export default cmd;

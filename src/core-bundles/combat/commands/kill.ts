@@ -1,8 +1,8 @@
 import Logger from '../../../lib/common/logger.js';
-import {CombatError} from '../../../lib/combat/errors/index.js';
-import {cast, hasValue} from '../../../lib/util/functions.js';
-import {isNpc} from '../../../lib/util/characters.js';
-import {sayAt, sayAtExcept} from '../../../lib/communication/broadcast.js';
+import { CombatError } from '../../../lib/combat/errors/index.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import { isNpc } from '../../../lib/util/characters.js';
+import { sayAt, sayAtExcept } from '../../../lib/communication/broadcast.js';
 
 import type Character from '../../../lib/characters/character.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
@@ -13,54 +13,59 @@ import type Player from '../../../lib/players/player.js';
 export const cmd: CommandDefinitionFactory = {
     name: 'kill',
     aliases: ['attack', 'slay'],
-    command: (state: GameStateData): CommandExecutable => (rawArgs: string | null, player: Player): void => {
-        const args = rawArgs?.trim() ?? '';
+    command:
+        (state: GameStateData): CommandExecutable =>
+        (rawArgs: string | null, player: Player): void => {
+            const args = rawArgs?.trim() ?? '';
 
-        if (args.length === 0) {
-            sayAt(player, 'Kill whom?');
-
-            return;
-        }
-
-        if (!hasValue(player.room)) {
-            // @TODO: throw?
-            return;
-        }
-
-        let target: Character | null = null;
-
-        try {
-            target = state.combat?.findCombatant(player, args) ?? null;
-        }
-        catch (err: unknown) {
-            if (err instanceof CombatError) {
-                sayAt(player, err.message);
+            if (args.length === 0) {
+                sayAt(player, 'Kill whom?');
 
                 return;
             }
 
-            Logger.error(cast<Error>(err).message);
-        }
+            if (!hasValue(player.room)) {
+                // @TODO: throw?
+                return;
+            }
 
-        if (!hasValue(target)) {
-            sayAt(player, "They aren't here.");
+            let target: Character | null = null;
 
-            return;
-        }
+            try {
+                target = state.combat?.findCombatant(player, args) ?? null;
+            } catch (err: unknown) {
+                if (err instanceof CombatError) {
+                    sayAt(player, err.message);
 
-        sayAt(player, `You attack ${target.name}.`);
+                    return;
+                }
 
-        player.combat.initiate(target);
+                Logger.error(cast<Error>(err).message);
+            }
 
-        const excludeList: Player[] = [player];
+            if (!hasValue(target)) {
+                sayAt(player, "They aren't here.");
 
-        if (!isNpc(target)) {
-            sayAt(cast<Player>(target), `${player.name} attacks you!`);
-            excludeList.push(cast<Player>(target));
-        }
+                return;
+            }
 
-        sayAtExcept(player.room, `${player.name} attacks ${target.name}!`, excludeList);
-    },
+            sayAt(player, `You attack ${target.name}.`);
+
+            player.combat.initiate(target);
+
+            const excludeList: Player[] = [player];
+
+            if (!isNpc(target)) {
+                sayAt(cast<Player>(target), `${player.name} attacks you!`);
+                excludeList.push(cast<Player>(target));
+            }
+
+            sayAtExcept(
+                player.room,
+                `${player.name} attacks ${target.name}!`,
+                excludeList
+            );
+        },
 };
 
 export default cmd;

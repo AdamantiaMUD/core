@@ -1,9 +1,9 @@
 ---
 command: wear
 body: |
-  Wear an item
+    Wear an item
 related:
-- equipment
-- remove
+    - equipment
+    - remove
 keywords:
-- loot
+    - loot

@@ -1,5 +1,5 @@
 import AttributeFormula from './attribute-formula.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type AttributeFormulaDefinition from './attribute-formula-definition.js';
 import type Serializable from '../data/serializable.js';
@@ -38,7 +38,11 @@ export class Attribute implements Serializable {
         this._delta = delta;
 
         this.formula = hasValue(formula)
-            ? new AttributeFormula(formula.requires, formula.fn, formula.metadata)
+            ? new AttributeFormula(
+                  formula.requires,
+                  formula.fn,
+                  formula.metadata
+              )
             : null;
 
         this.metadata = metadata;
@@ -71,9 +75,9 @@ export class Attribute implements Serializable {
     }
 
     public serialize(): SerializedAttribute {
-        const {delta, base} = this;
+        const { delta, base } = this;
 
-        return {delta, base};
+        return { delta, base };
     }
 
     public setBase(amount: number): void {

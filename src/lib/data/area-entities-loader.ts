@@ -2,7 +2,7 @@
 import fs from 'fs-extra';
 import path from 'path';
 
-import type {Dirent} from 'fs';
+import type { Dirent } from 'fs';
 
 import type Config from '../util/config.js';
 import BundleObjectLoader from './bundle-object-loader.js';
@@ -15,7 +15,11 @@ export class AreaEntitiesLoader extends BundleObjectLoader {
     private readonly _entityType: AreaEntityType;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(bundle: string, area: string, entityType: AreaEntityType) {
+    public constructor(
+        bundle: string,
+        area: string,
+        entityType: AreaEntityType
+    ) {
         super(bundle);
 
         this._area = area;
@@ -53,12 +57,16 @@ export class AreaEntitiesLoader extends BundleObjectLoader {
 
         const entities: Record<string, T> = {};
 
-        const files: Dirent[] = await fs.readdir(folder, {withFileTypes: true});
+        const files: Dirent[] = await fs.readdir(folder, {
+            withFileTypes: true,
+        });
 
         for (const file of files) {
             if (!file.isDirectory() && path.extname(file.name) === '.json') {
                 /* eslint-disable-next-line no-await-in-loop */
-                entities[file.name] = await AreaEntitiesLoader._loadEntity(path.join(folder, file.name));
+                entities[file.name] = await AreaEntitiesLoader._loadEntity(
+                    path.join(folder, file.name)
+                );
             }
         }
 

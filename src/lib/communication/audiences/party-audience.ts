@@ -1,5 +1,5 @@
 import ChannelAudience from './channel-audience.js';
-import {hasValue} from '../../util/functions.js';
+import { hasValue } from '../../util/functions.js';
 
 import type Player from '../../players/player.js';
 
@@ -12,8 +12,8 @@ export class PartyAudience extends ChannelAudience {
             return [];
         }
 
-        return (this.sender as Player).party!
-            .getBroadcastTargets()
+        return (this.sender as Player)
+            .party!.getBroadcastTargets()
             .filter((player: Player) => player !== this.sender);
     }
 }

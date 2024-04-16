@@ -2,6 +2,6 @@ import type MudEventListenerFactory from '../../events/mud-event-listener-factor
 
 const mockScript: {
     listeners: Record<string, MudEventListenerFactory<unknown[]>>;
-} = {listeners: {}};
+} = { listeners: {} };
 
 export default mockScript;

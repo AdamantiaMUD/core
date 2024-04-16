@@ -13,8 +13,14 @@ import type SimpleMap from '../util/simple-map.js';
  */
 export class QuestTracker implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _activeQuests: Map<string, Quest> = new Map<string, Quest>();
-    private readonly _completedQuests: Map<string, Quest> = new Map<string, Quest>();
+    private readonly _activeQuests: Map<string, Quest> = new Map<
+        string,
+        Quest
+    >();
+    private readonly _completedQuests: Map<string, Quest> = new Map<
+        string,
+        Quest
+    >();
     private readonly _player: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
@@ -62,7 +68,12 @@ export class QuestTracker implements Serializable {
 
     public hydrate(state: GameStateData): void {
         for (const [qid, data] of this._activeQuests) {
-            const quest = state.questFactory.create(state, qid, this._player, data.state);
+            const quest = state.questFactory.create(
+                state,
+                qid,
+                this._player,
+                data.state
+            );
 
             quest.started = data.started;
             quest.hydrate();
@@ -82,24 +93,20 @@ export class QuestTracker implements Serializable {
     public serialize(): SerializedQuestTracker {
         return {
             active: [...this._activeQuests]
-                .map<[string, SerializedQuest]>(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
-                .reduce<SimpleMap<SerializedQuest>>(
-                    (
-                        acc: SimpleMap<SerializedQuest>,
-                        [qid, quest]: [string, SerializedQuest]
-                    ) => ({...acc, [`${qid}`]: quest}),
-                    {}
-                ),
+                .map<
+                    [string, SerializedQuest]
+                >(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce<
+                    SimpleMap<SerializedQuest>
+                >((acc: SimpleMap<SerializedQuest>, [qid, quest]: [string, SerializedQuest]) => ({ ...acc, [`${qid}`]: quest }), {}),
 
             completed: [...this._completedQuests]
-                .map<[string, SerializedQuest]>(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
-                .reduce<SimpleMap<SerializedQuest>>(
-                    (
-                        acc: SimpleMap<SerializedQuest>,
-                        [qid, quest]: [string, SerializedQuest]
-                    ) => ({...acc, [`${qid}`]: quest}),
-                    {}
-                ),
+                .map<
+                    [string, SerializedQuest]
+                >(([qid, quest]: [string, Quest]) => [qid, quest.serialize()])
+                .reduce<
+                    SimpleMap<SerializedQuest>
+                >((acc: SimpleMap<SerializedQuest>, [qid, quest]: [string, SerializedQuest]) => ({ ...acc, [`${qid}`]: quest }), {}),
         };
     }
 

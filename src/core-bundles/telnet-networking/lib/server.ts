@@ -1,8 +1,8 @@
-import {createServer} from 'net';
+import { createServer } from 'net';
 
-import type {Server, Socket} from 'net';
+import type { Server, Socket } from 'net';
 
-import {cast} from '../../../lib/util/functions.js';
+import { cast } from '../../../lib/util/functions.js';
 
 import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
 
@@ -15,7 +15,7 @@ class TelnetServer {
      */
     public constructor(
         listener: (socket: AdamantiaSocket) => void,
-        options: {allowHalfOpen?: boolean; pauseOnConnect?: boolean} = {}
+        options: { allowHalfOpen?: boolean; pauseOnConnect?: boolean } = {}
     ) {
         this.netServer = createServer(options, (socket: Socket) => {
             const mySocket = cast<AdamantiaSocket>(socket);

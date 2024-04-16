@@ -5,9 +5,11 @@ import type Player from '../../../lib/players/player.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'credits',
-    command: (state: GameStateData): CommandExecutable => (args: string | null, player: Player): void => {
-        state.commandManager.get('help')?.execute('credits', player);
-    },
+    command:
+        (state: GameStateData): CommandExecutable =>
+        (args: string | null, player: Player): void => {
+            state.commandManager.get('help')?.execute('credits', player);
+        },
 };
 
 export default cmd;

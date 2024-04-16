@@ -1,9 +1,9 @@
-import {sprintf} from 'sprintf-js';
+import { sprintf } from 'sprintf-js';
 
 import GameEntity from './game-entity.js';
 import Logger from '../common/logger.js';
-import {clone} from '../util/objects.js';
-import {hasValue} from '../util/functions.js';
+import { clone } from '../util/objects.js';
+import { hasValue } from '../util/functions.js';
 
 import type BehaviorManager from '../behaviors/behavior-manager.js';
 import type GameStateData from '../game-state-data.js';
@@ -20,9 +20,12 @@ export class ScriptableEntity extends GameEntity {
     public constructor(def?: ScriptableEntityDefinition) {
         super(def);
 
-        this._behaviors = typeof def?.behaviors === 'undefined'
-            ? new Map<string, SimpleMap | true | null>()
-            : new Map<string, SimpleMap | true | null>(Object.entries(clone(def.behaviors)));
+        this._behaviors =
+            typeof def?.behaviors === 'undefined'
+                ? new Map<string, SimpleMap | true | null>()
+                : new Map<string, SimpleMap | true | null>(
+                      Object.entries(clone(def.behaviors))
+                  );
 
         this._script = def?.script ?? null;
     }
@@ -40,13 +43,14 @@ export class ScriptableEntity extends GameEntity {
                 // behavior may be a boolean in which case it will be `behaviorName: true`
                 config = config === true ? {} : config;
                 behavior.attach(this, config);
-            }
-            else {
-                Logger.warn(sprintf(
-                    'No script found for [%1$s] behavior `%2$s`',
-                    this.constructor.name,
-                    name
-                ));
+            } else {
+                Logger.warn(
+                    sprintf(
+                        'No script found for [%1$s] behavior `%2$s`',
+                        this.constructor.name,
+                        name
+                    )
+                );
             }
         }
     }

@@ -1,12 +1,12 @@
 /* eslint-disable-next-line id-length */
 import fs from 'fs';
 import path from 'path';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
-import {BeginLoginEvent, IntroEvent} from '../lib/events/index.js';
-import {hasValue} from '../../../lib/util/functions.js';
+import { BeginLoginEvent, IntroEvent } from '../lib/events/index.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 import type GameStateData from '../../../lib/game-state-data.js';
 import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
@@ -21,23 +21,33 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
  */
 export const evt: StreamEventListenerFactory<void> = {
     name: IntroEvent.getName(),
-    listener: (state: GameStateData): StreamEventListener<void> => (stream: TransportStream<EventEmitter>): void => {
-        /*
-         * MotD generated here:
-         * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
-         */
-        const defaultMotdUri: string = path.join(__dirname, '..', 'resources', 'motd');
-        const motdUri: string = state.config.get('motdUri', defaultMotdUri)!;
+    listener:
+        (state: GameStateData): StreamEventListener<void> =>
+        (stream: TransportStream<EventEmitter>): void => {
+            /*
+             * MotD generated here:
+             * http://patorjk.com/software/taag/#p=display&f=Caligraphy2&t=Adamantia%20MUD
+             */
+            const defaultMotdUri: string = path.join(
+                __dirname,
+                '..',
+                'resources',
+                'motd'
+            );
+            const motdUri: string = state.config.get(
+                'motdUri',
+                defaultMotdUri
+            )!;
 
-        const motd = fs.readFileSync(motdUri, 'utf8');
+            const motd = fs.readFileSync(motdUri, 'utf8');
 
-        if (hasValue(motd)) {
-            stream.write(motd);
-            stream.write('');
-        }
+            if (hasValue(motd)) {
+                stream.write(motd);
+                stream.write('');
+            }
 
-        stream.dispatch(new BeginLoginEvent());
-    },
+            stream.dispatch(new BeginLoginEvent());
+        },
 };
 
 export default evt;

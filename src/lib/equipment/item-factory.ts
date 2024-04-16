@@ -1,6 +1,6 @@
 import EntityFactory from '../entities/entity-factory.js';
 import Item from './item.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type Area from '../locations/area.js';
 import type ItemDefinition from './item-definition.js';

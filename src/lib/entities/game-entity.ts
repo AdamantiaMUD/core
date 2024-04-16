@@ -2,9 +2,9 @@ import get from 'lodash.get';
 import set from 'lodash.set';
 
 import MudEventEmitter from '../events/mud-event-emitter.js';
-import {MetadataUpdatedEvent} from '../data/events/index.js';
-import {clone} from '../util/objects.js';
-import {hasValue} from '../util/functions.js';
+import { MetadataUpdatedEvent } from '../data/events/index.js';
+import { clone } from '../util/objects.js';
+import { hasValue } from '../util/functions.js';
 
 import type GameEntityDefinition from './game-entity-definition.js';
 import type GameStateData from '../game-state-data.js';
@@ -13,7 +13,10 @@ import type Serializable from '../data/serializable.js';
 import type SerializedGameEntity from './serialized-game-entity.js';
 import type SimpleMap from '../util/simple-map.js';
 
-export abstract class GameEntity extends MudEventEmitter implements Metadatable, Serializable {
+export abstract class GameEntity
+    extends MudEventEmitter
+    implements Metadatable, Serializable
+{
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     public __hydrated: boolean = false;
@@ -42,7 +45,10 @@ export abstract class GameEntity extends MudEventEmitter implements Metadatable,
         return this._name;
     }
 
-    public deserialize(data?: SerializedGameEntity, state: GameStateData | null = null): void {
+    public deserialize(
+        data?: SerializedGameEntity,
+        state: GameStateData | null = null
+    ): void {
         this.entityReference = data?.entityReference ?? '';
         this._metadata = clone(data?.metadata ?? {});
         this._state = state;
@@ -102,7 +108,7 @@ export abstract class GameEntity extends MudEventEmitter implements Metadatable,
          * @param {*} newValue
          * @param {*} oldValue
          */
-        this.dispatch(new MetadataUpdatedEvent({key, newValue, oldValue}));
+        this.dispatch(new MetadataUpdatedEvent({ key, newValue, oldValue }));
     }
 
     public setPruned(isPruned: boolean = true): void {

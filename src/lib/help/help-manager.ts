@@ -15,8 +15,11 @@ export class HelpManager {
         for (const [name, help] of this.helps.entries()) {
             if (name.startsWith(search)) {
                 results.set(name, help);
-            }
-            else if (help.keywords.some((keyword: string) => keyword.includes(search))) {
+            } else if (
+                help.keywords.some((keyword: string) =>
+                    keyword.includes(search)
+                )
+            ) {
                 results.set(name, help);
             }
         }

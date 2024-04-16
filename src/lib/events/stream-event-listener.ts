@@ -1,7 +1,10 @@
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
 import type TransportStream from '../communication/transport-stream.js';
 
-export type StreamEventListener<T> = (socket: TransportStream<EventEmitter>, args: T) => void;
+export type StreamEventListener<T> = (
+    socket: TransportStream<EventEmitter>,
+    args: T
+) => void;
 
 export default StreamEventListener;

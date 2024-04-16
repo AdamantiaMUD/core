@@ -1,15 +1,15 @@
 import Broadcast from '../../../lib/communication/broadcast.js';
-import {CharacterDamagedEvent} from '../../../lib/characters/events/index.js';
-import {hasValue} from '../../../lib/util/functions.js';
+import { CharacterDamagedEvent } from '../../../lib/characters/events/index.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 import type Damage from '../../../lib/combat/damage.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type MudEventListener from '../../../lib/events/mud-event-listener.js';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
 import type Player from '../../../lib/players/player.js';
-import type {CharacterDamagedPayload} from '../../../lib/characters/events/index.js';
+import type { CharacterDamagedPayload } from '../../../lib/characters/events/index.js';
 
-const {sayAt} = Broadcast;
+const { sayAt } = Broadcast;
 
 const getSourceName = (source: Damage): string => {
     let buf = '';
@@ -24,49 +24,54 @@ const getSourceName = (source: Damage): string => {
 
     if (hasValue(source.source)) {
         buf += `{bold ${source.source.name}}`;
-    }
-    else if (!hasValue(source.attacker)) {
+    } else if (!hasValue(source.attacker)) {
         buf += 'Something';
     }
 
     return buf;
 };
 
-export const evt: MudEventListenerDefinition<[Player, CharacterDamagedPayload]> = {
+export const evt: MudEventListenerDefinition<
+    [Player, CharacterDamagedPayload]
+> = {
     name: CharacterDamagedEvent.getName(),
-    listener: (state: GameStateData): MudEventListener<[Player, CharacterDamagedPayload]> => (
-        player: Player,
-        {source, amount}: CharacterDamagedPayload
-    ): void => {
-        if (source.metadata.hidden as boolean || source.attribute !== 'hp') {
-            return;
-        }
+    listener:
+        (
+            state: GameStateData
+        ): MudEventListener<[Player, CharacterDamagedPayload]> =>
+        (player: Player, { source, amount }: CharacterDamagedPayload): void => {
+            if (
+                (source.metadata.hidden as boolean) ||
+                source.attribute !== 'hp'
+            ) {
+                return;
+            }
 
-        const sourceName = getSourceName(source);
+            const sourceName = getSourceName(source);
 
-        let playerMessage = `${sourceName} hit {bold you} for {red.bold ${amount}} damage.`;
+            let playerMessage = `${sourceName} hit {bold you} for {red.bold ${amount}} damage.`;
 
-        if (source.metadata.critical as boolean) {
-            playerMessage += ' {red.bold (Critical)}';
-        }
+            if (source.metadata.critical as boolean) {
+                playerMessage += ' {red.bold (Critical)}';
+            }
 
-        sayAt(player, playerMessage);
+            sayAt(player, playerMessage);
 
-        if (hasValue(player.party)) {
-            const partyMessage = `${sourceName} hit {bold ${player.name}} for {red.bold ${amount}} damage`;
+            if (hasValue(player.party)) {
+                const partyMessage = `${sourceName} hit {bold ${player.name}} for {red.bold ${amount}} damage`;
 
-            // show damage to party members
-            for (const member of player.party) {
-                if (!(member === player || member.room !== player.room)) {
-                    sayAt(member, partyMessage);
+                // show damage to party members
+                for (const member of player.party) {
+                    if (!(member === player || member.room !== player.room)) {
+                        sayAt(member, partyMessage);
+                    }
                 }
             }
-        }
 
-        if (player.getAttribute('hp') <= 0) {
-            state.combat?.handleDeath(state, player, source.attacker);
-        }
-    },
+            if (player.getAttribute('hp') <= 0) {
+                state.combat?.handleDeath(state, player, source.attacker);
+            }
+        },
 };
 
 export default evt;

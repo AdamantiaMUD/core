@@ -6,8 +6,15 @@ import type Config from '../util/config.js';
 import type SerializedPlayer from '../players/serialized-player.js';
 
 export class PlayerLoader {
-    public async loadPlayer(username: string, config: Config): Promise<SerializedPlayer | null> {
-        const uri = path.join(config.getPath('data'), 'player', `${username}.json`);
+    public async loadPlayer(
+        username: string,
+        config: Config
+    ): Promise<SerializedPlayer | null> {
+        const uri = path.join(
+            config.getPath('data'),
+            'player',
+            `${username}.json`
+        );
 
         if (!fs.existsSync(uri)) {
             return null;
@@ -18,8 +25,16 @@ export class PlayerLoader {
         return JSON.parse(player) as SerializedPlayer;
     }
 
-    public async savePlayer(username: string, data: SerializedPlayer, config: Config): Promise<void> {
-        const uri = path.join(config.getPath('data'), 'player', `${username}.json`);
+    public async savePlayer(
+        username: string,
+        data: SerializedPlayer,
+        config: Config
+    ): Promise<void> {
+        const uri = path.join(
+            config.getPath('data'),
+            'player',
+            `${username}.json`
+        );
 
         await fs.writeFile(uri, JSON.stringify(data, null, 4));
     }

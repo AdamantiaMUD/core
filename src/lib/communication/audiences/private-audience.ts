@@ -1,5 +1,5 @@
 import ChannelAudience from './channel-audience.js';
-import {hasValue} from '../../util/functions.js';
+import { hasValue } from '../../util/functions.js';
 
 import type Player from '../../players/player.js';
 
@@ -12,17 +12,13 @@ export class PrivateAudience extends ChannelAudience {
      * Strips target name from message
      */
     public alterMessage(message: string): string {
-        return message
-            .split(' ')
-            .slice(1)
-            .join(' ');
+        return message.split(' ').slice(1).join(' ');
     }
 
     public getBroadcastTargets(): Player[] {
         const targetPlayerName = this.message.split(' ')[0];
-        const targetPlayer = this.state
-            ?.playerManager
-            .getPlayer(targetPlayerName);
+        const targetPlayer =
+            this.state?.playerManager.getPlayer(targetPlayerName);
 
         if (hasValue(targetPlayer)) {
             return [targetPlayer];

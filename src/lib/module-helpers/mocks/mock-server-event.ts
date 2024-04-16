@@ -1,4 +1,4 @@
-import {noop} from '../../util/functions.js';
+import { noop } from '../../util/functions.js';
 
 import type MudEventListenerDefinition from '../../events/mud-event-listener-definition.js';
 

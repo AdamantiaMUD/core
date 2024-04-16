@@ -1,4 +1,4 @@
-import {UpdateTickEvent} from '../common/events/index.js';
+import { UpdateTickEvent } from '../common/events/index.js';
 
 import type Item from './item.js';
 
@@ -19,7 +19,9 @@ export class ItemManager {
     public remove(item: Item): void {
         item.room?.removeItem(item);
         item.carriedBy?.removeItem(item);
-        item.inventory?.items.forEach((childItem: Item) => this.remove(childItem));
+        item.inventory?.items.forEach((childItem: Item) =>
+            this.remove(childItem)
+        );
 
         item.stopListening();
 

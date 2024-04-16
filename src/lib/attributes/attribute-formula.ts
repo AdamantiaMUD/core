@@ -9,13 +9,21 @@ export class AttributeFormula {
     public requires: string[];
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(requires: string[], fn: AttributeFormulaDefinition['fn'], metadata: SimpleMap = {}) {
+    public constructor(
+        requires: string[],
+        fn: AttributeFormulaDefinition['fn'],
+        metadata: SimpleMap = {}
+    ) {
         this.requires = requires;
         this._formula = fn;
         this._metadata = metadata;
     }
 
-    public evaluate(character: Character, current: number, ...args: number[]): number {
+    public evaluate(
+        character: Character,
+        current: number,
+        ...args: number[]
+    ): number {
         return this._formula(character, current, ...args);
     }
 }

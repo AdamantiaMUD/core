@@ -1,14 +1,17 @@
-import {sprintf} from 'sprintf-js';
+import { sprintf } from 'sprintf-js';
 
 import Attribute from './attribute.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type AttributeDefinition from './attribute-definition.js';
 import type AttributeFormulaDefinition from './attribute-formula-definition.js';
 import type SimpleMap from '../util/simple-map.js';
 
 export class AttributeFactory {
-    private readonly _attributes: Map<string, AttributeDefinition> = new Map<string, AttributeDefinition>();
+    private readonly _attributes: Map<string, AttributeDefinition> = new Map<
+        string,
+        AttributeDefinition
+    >();
 
     private _hasCircularDependency(
         attr: string,
@@ -26,7 +29,11 @@ export class AttributeFactory {
         }
 
         for (const reqAttr of requires) {
-            const check = this._hasCircularDependency(reqAttr, references, stack.concat(attr));
+            const check = this._hasCircularDependency(
+                reqAttr,
+                references,
+                stack.concat(attr)
+            );
 
             if (check !== false) {
                 return check;
@@ -50,7 +57,11 @@ export class AttributeFactory {
         });
     }
 
-    public create(name: string, base: number | null = null, delta: number = 0): Attribute | null {
+    public create(
+        name: string,
+        base: number | null = null,
+        delta: number = 0
+    ): Attribute | null {
         if (!this.has(name)) {
             throw new RangeError(`No attribute definition found for [${name}]`);
         }
@@ -61,7 +72,13 @@ export class AttributeFactory {
             return null;
         }
 
-        return new Attribute(name, base ?? def.base, delta, def.formula, def.metadata);
+        return new Attribute(
+            name,
+            base ?? def.base,
+            delta,
+            def.formula,
+            def.metadata
+        );
     }
 
     /**
@@ -79,10 +96,12 @@ export class AttributeFactory {
      * Make sure there are no circular dependencies between attributes
      */
     public validateAttributes(): void {
-        const references = [...this._attributes].reduce<Record<string, string[]>>(
+        const references = [...this._attributes].reduce<
+            Record<string, string[]>
+        >(
             (
                 acc: Record<string, string[]>,
-                [attrName, {formula}]: [string, AttributeDefinition]
+                [attrName, { formula }]: [string, AttributeDefinition]
             ) => {
                 if (!hasValue(formula)) {
                     return acc;
@@ -104,11 +123,13 @@ export class AttributeFactory {
                 if (Array.isArray(check)) {
                     const path = check.concat(attrName).join(' -> ');
 
-                    throw new Error(sprintf(
-                        'Attribute formula for [%1$s] has circular dependency [%2$s]',
-                        attrName,
-                        path
-                    ));
+                    throw new Error(
+                        sprintf(
+                            'Attribute formula for [%1$s] has circular dependency [%2$s]',
+                            attrName,
+                            path
+                        )
+                    );
                 }
             }
         }

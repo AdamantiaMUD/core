@@ -1,6 +1,6 @@
 import Area from './area.js';
 import EntityFactory from '../entities/entity-factory.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type AreaDefinition from './area-definition.js';
 
@@ -24,7 +24,11 @@ export class AreaFactory extends EntityFactory<Area, AreaDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        const area = new Area(definition.bundle, entityRef, definition.manifest);
+        const area = new Area(
+            definition.bundle,
+            entityRef,
+            definition.manifest
+        );
 
         if (this._scripts.has(entityRef)) {
             this._scripts.get(entityRef).attach(area);

@@ -1,16 +1,20 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
 import ItemUtil from '../../../lib/util/items.js';
 import Logger from '../../../lib/common/logger.js';
-import {CooldownError, NotEnoughResourcesError, PassiveError} from '../../../lib/abilities/errors/index.js';
-import {cast, hasValue} from '../../../lib/util/functions.js';
-import {humanize} from '../../../lib/util/time.js';
-import {sayAt} from '../../../lib/communication/broadcast.js';
+import {
+    CooldownError,
+    NotEnoughResourcesError,
+    PassiveError,
+} from '../../../lib/abilities/errors/index.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import { humanize } from '../../../lib/util/time.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type Item from '../../../lib/equipment/item.js';
 import type Player from '../../../lib/players/player.js';
-import type {UsableConfig} from '../../behaviors/behaviors/item/usable.js';
+import type { UsableConfig } from '../../behaviors/behaviors/item/usable.js';
 
 const handleSpell = (
     state: GameStateData,
@@ -21,7 +25,9 @@ const handleSpell = (
     const useSpell = state.spellManager.get(usable.spell!);
 
     if (!hasValue(useSpell)) {
-        Logger.error(`Item: ${item.entityReference} has invalid usable configuration.`);
+        Logger.error(
+            `Item: ${item.entityReference} has invalid usable configuration.`
+        );
 
         sayAt(player, "You can't use that.");
 
@@ -36,10 +42,12 @@ const handleSpell = (
 
     try {
         useSpell.execute('', player);
-    }
-    catch (err: unknown) {
+    } catch (err: unknown) {
         if (err instanceof CooldownError) {
-            sayAt(player, `${useSpell.name} is on cooldown. ${humanize(err.effect.remaining)} remaining.`);
+            sayAt(
+                player,
+                `${useSpell.name} is on cooldown. ${humanize(err.effect.remaining)} remaining.`
+            );
 
             return;
         }
@@ -68,13 +76,19 @@ const handleEffect = (
     item: Item,
     usable: UsableConfig
 ): void => {
-    const effectConfig = {name: item.name, ...usable.config ?? {}};
+    const effectConfig = { name: item.name, ...(usable.config ?? {}) };
     const effectState = usable.state ?? {};
 
-    const useEffect = state.effectFactory.create(usable.effect!, effectConfig, effectState);
+    const useEffect = state.effectFactory.create(
+        usable.effect!,
+        effectConfig,
+        effectState
+    );
 
     if (!hasValue(useEffect)) {
-        Logger.error(`Item: ${item.entityReference} has invalid usable configuration.`);
+        Logger.error(
+            `Item: ${item.entityReference} has invalid usable configuration.`
+        );
 
         sayAt(player, "You can't use that.");
 
@@ -93,61 +107,72 @@ const handleEffect = (
 export const cmd: CommandDefinitionFactory = {
     name: 'use',
     aliases: ['quaff', 'recite'],
-    command: (state: GameStateData) => (rawArgs: string | null, player: Player): void => {
-        const args = rawArgs?.trim() ?? '';
+    command:
+        (state: GameStateData) =>
+        (rawArgs: string | null, player: Player): void => {
+            const args = rawArgs?.trim() ?? '';
 
-        if (args.length === 0) {
-            sayAt(player, 'Use what?');
+            if (args.length === 0) {
+                sayAt(player, 'Use what?');
 
-            return;
-        }
+                return;
+            }
 
-        const item = ArgParser.parseDot(args, Array.from(player.inventory.items));
+            const item = ArgParser.parseDot(
+                args,
+                Array.from(player.inventory.items)
+            );
 
-        if (!hasValue(item)) {
-            sayAt(player, "You don't have anything like that.");
+            if (!hasValue(item)) {
+                sayAt(player, "You don't have anything like that.");
 
-            return;
-        }
+                return;
+            }
 
-        const usable = item.getBehavior('usable') as UsableConfig | null;
+            const usable = item.getBehavior('usable') as UsableConfig | null;
 
-        if (!hasValue(usable)) {
-            sayAt(player, "You can't use that.");
+            if (!hasValue(usable)) {
+                sayAt(player, "You can't use that.");
 
-            return;
-        }
+                return;
+            }
 
-        if (hasValue(usable.charges) && usable.charges <= 0) {
-            sayAt(player, `You've used up all the magic in ${ItemUtil.display(item)}.`);
+            if (hasValue(usable.charges) && usable.charges <= 0) {
+                sayAt(
+                    player,
+                    `You've used up all the magic in ${ItemUtil.display(item)}.`
+                );
 
-            return;
-        }
+                return;
+            }
 
-        if (hasValue(usable.spell)) {
-            handleSpell(state, player, item, usable);
+            if (hasValue(usable.spell)) {
+                handleSpell(state, player, item, usable);
 
-            return;
-        }
+                return;
+            }
 
-        if (hasValue(usable.effect)) {
-            handleEffect(state, player, item, usable);
+            if (hasValue(usable.effect)) {
+                handleEffect(state, player, item, usable);
 
-            return;
-        }
+                return;
+            }
 
-        if (!hasValue(usable.charges)) {
-            return;
-        }
+            if (!hasValue(usable.charges)) {
+                return;
+            }
 
-        usable.charges -= 1;
+            usable.charges -= 1;
 
-        if (usable.destroyOnDepleted && usable.charges <= 0) {
-            sayAt(player, `You used up all the magic in ${ItemUtil.display(item)} and it disappears in a puff of smoke.`);
+            if (usable.destroyOnDepleted && usable.charges <= 0) {
+                sayAt(
+                    player,
+                    `You used up all the magic in ${ItemUtil.display(item)} and it disappears in a puff of smoke.`
+                );
 
-            state.itemManager.remove(item);
-        }
-    },
+                state.itemManager.remove(item);
+            }
+        },
 };
 
 export default cmd;

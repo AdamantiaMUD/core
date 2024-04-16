@@ -1,7 +1,7 @@
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
-import {hasValue} from '../util/functions.js';
-import {isIterable} from '../util/objects.js';
+import { hasValue } from '../util/functions.js';
+import { isIterable } from '../util/objects.js';
 
 import type TransportStream from '../communication/transport-stream.js';
 import type StreamEventListener from './stream-event-listener.js';
@@ -12,7 +12,8 @@ export class StreamEventManager {
      * value: Set<MudEventListener<unknown>> - The set of listeners to call when the event fires
      */
     /* eslint-disable-next-line max-len */
-    private readonly _events: Map<string, Set<StreamEventListener<unknown>>> = new Map<string, Set<StreamEventListener<unknown>>>();
+    private readonly _events: Map<string, Set<StreamEventListener<unknown>>> =
+        new Map<string, Set<StreamEventListener<unknown>>>();
 
     public get size(): number {
         return this._events.size;
@@ -57,15 +58,14 @@ export class StreamEventManager {
 
         if (typeof eventNames === 'string') {
             events = [eventNames];
-        }
-        else if (Array.isArray(eventNames)) {
+        } else if (Array.isArray(eventNames)) {
             events = eventNames;
-        }
-        else if (!hasValue(events)) {
+        } else if (!hasValue(events)) {
             events = [...this._events.keys()];
-        }
-        else if (!isIterable(events)) {
-            throw new TypeError('events list passed to detach() is not iterable');
+        } else if (!isIterable(events)) {
+            throw new TypeError(
+                'events list passed to detach() is not iterable'
+            );
         }
 
         for (const event of events) {

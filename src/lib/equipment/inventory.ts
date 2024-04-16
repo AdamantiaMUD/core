@@ -1,5 +1,5 @@
-import {InventoryFullError} from './errors/index.js';
-import {hasValue} from '../util/functions.js';
+import { InventoryFullError } from './errors/index.js';
+import { hasValue } from '../util/functions.js';
 
 import type Character from '../characters/character.js';
 import type GameStateData from '../game-state-data.js';
@@ -16,12 +16,21 @@ export class Inventory implements Serializable {
 
     public maxSize: number = Infinity;
 
-    public deserialize(data: SerializedInventory, carriedBy: Character | Item, state: GameStateData): void {
+    public deserialize(
+        data: SerializedInventory,
+        carriedBy: Character | Item,
+        state: GameStateData
+    ): void {
         for (const [uuid, itemData] of Object.entries(data)) {
-            const area = state.areaManager.getAreaByReference(itemData.entityReference);
+            const area = state.areaManager.getAreaByReference(
+                itemData.entityReference
+            );
 
             if (hasValue(area)) {
-                const newItem = state.itemFactory.create(itemData.entityReference, area);
+                const newItem = state.itemFactory.create(
+                    itemData.entityReference,
+                    area
+                );
 
                 if (hasValue(newItem)) {
                     newItem.setCarrier(carriedBy);
@@ -31,12 +40,10 @@ export class Inventory implements Serializable {
                     this._items.set(uuid, newItem);
 
                     state.itemManager.add(newItem);
-                }
-                else {
+                } else {
                     // @TODO: log warning
                 }
-            }
-            else {
+            } else {
                 // @TODO: log warning
             }
         }

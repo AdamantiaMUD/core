@@ -1,5 +1,5 @@
 import ItemUtil from '../../../lib/util/items.js';
-import {at, sayAt} from '../../../lib/communication/broadcast.js';
+import { at, sayAt } from '../../../lib/communication/broadcast.js';
 
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
@@ -9,26 +9,31 @@ export const cmd: CommandDefinitionFactory = {
     name: 'inventory',
     usage: 'inventory',
     aliases: ['i'],
-    command: (): CommandExecutable => (args: string | null, player: Player): void => {
-        if (player.inventory.size === 0) {
-            sayAt(player, "You aren't carrying anything.");
+    command:
+        (): CommandExecutable =>
+        (args: string | null, player: Player): void => {
+            if (player.inventory.size === 0) {
+                sayAt(player, "You aren't carrying anything.");
 
-            return;
-        }
+                return;
+            }
 
-        at(player, 'You are carrying');
+            at(player, 'You are carrying');
 
-        if (isFinite(player.inventory.getMax())) {
-            at(player, ` (${player.inventory.size}/${player.inventory.getMax()})`);
-        }
+            if (isFinite(player.inventory.getMax())) {
+                at(
+                    player,
+                    ` (${player.inventory.size}/${player.inventory.getMax()})`
+                );
+            }
 
-        sayAt(player, ':');
+            sayAt(player, ':');
 
-        // @TODO: Implement grouping
-        for (const [, item] of player.inventory.items) {
-            sayAt(player, ItemUtil.display(item));
-        }
-    },
+            // @TODO: Implement grouping
+            for (const [, item] of player.inventory.items) {
+                sayAt(player, ItemUtil.display(item));
+            }
+        },
 };
 
 export default cmd;

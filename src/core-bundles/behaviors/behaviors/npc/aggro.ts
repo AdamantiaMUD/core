@@ -1,15 +1,15 @@
 import Logger from '../../../../lib/common/logger.js';
-import {UpdateTickEvent} from '../../../../lib/common/events/index.js';
-import {sayAt} from '../../../../lib/communication/broadcast.js';
-import {hasValue} from '../../../../lib/util/functions.js';
-import {isNpc} from '../../../../lib/util/characters.js';
+import { UpdateTickEvent } from '../../../../lib/common/events/index.js';
+import { sayAt } from '../../../../lib/communication/broadcast.js';
+import { hasValue } from '../../../../lib/util/functions.js';
+import { isNpc } from '../../../../lib/util/characters.js';
 
 import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
 import type Character from '../../../../lib/characters/character.js';
 import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
 import type Npc from '../../../../lib/mobs/npc.js';
 import type Player from '../../../../lib/players/player.js';
-import type {UpdateTickPayload} from '../../../../lib/common/events/index.js';
+import type { UpdateTickPayload } from '../../../../lib/common/events/index.js';
 
 interface AggroConfig {
     delay: number;
@@ -36,7 +36,7 @@ const getConfig = (config: Record<string, unknown> | true): AggroConfig => {
         return defaultAggroConfig;
     }
 
-    return {...defaultAggroConfig, ...config};
+    return { ...defaultAggroConfig, ...config };
 };
 
 /**
@@ -76,90 +76,100 @@ const getConfig = (config: Record<string, unknown> | true): AggroConfig => {
  */
 export const aggro: BehaviorDefinition = {
     listeners: {
-        [UpdateTickEvent.getName()]: (): MudEventListener<[Npc, UpdateTickPayload]> => (
-            npc: Npc,
-            payload: UpdateTickPayload
-        ): void => {
-            if (npc.room === null) {
-                return;
-            }
+        [UpdateTickEvent.getName()]:
+            (): MudEventListener<[Npc, UpdateTickPayload]> =>
+            (npc: Npc, payload: UpdateTickPayload): void => {
+                if (npc.room === null) {
+                    return;
+                }
 
-            const config = getConfig(payload.config ?? {});
+                const config = getConfig(payload.config ?? {});
 
-            if (npc.combat.isFighting()) {
-                return;
-            }
+                if (npc.combat.isFighting()) {
+                    return;
+                }
 
-            const aggroTarget = npc.getMeta<Character>('aggroTarget');
+                const aggroTarget = npc.getMeta<Character>('aggroTarget');
 
-            if (hasValue(aggroTarget)) {
-                if (aggroTarget.room !== npc.room) {
-                    npc.setMeta('aggroTarget', null);
-                    npc.setMeta('aggroWarned', false);
+                if (hasValue(aggroTarget)) {
+                    if (aggroTarget.room !== npc.room) {
+                        npc.setMeta('aggroTarget', null);
+                        npc.setMeta('aggroWarned', false);
+
+                        return;
+                    }
+
+                    const sinceLastCheck =
+                        Date.now() - Number(npc.getMeta('aggroTimer'));
+                    const delayLength = config.delay * 1000;
+
+                    // attack
+                    if (sinceLastCheck >= delayLength) {
+                        if (isNpc(aggroTarget)) {
+                            Logger.verbose(
+                                `NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`
+                            );
+                        } else {
+                            sayAt(
+                                aggroTarget as Player,
+                                config.attackMessage.replace(
+                                    /%name%/u,
+                                    npc.name
+                                )
+                            );
+                        }
+
+                        npc.combat.initiate(aggroTarget);
+
+                        npc.setMeta('aggroTarget', null);
+                        npc.setMeta('aggroWarned', false);
+
+                        return;
+                    }
+
+                    // warn
+                    if (
+                        sinceLastCheck >= delayLength / 2 &&
+                        !isNpc(aggroTarget) &&
+                        !npc.getMeta<boolean>('aggroWarned')
+                    ) {
+                        sayAt(
+                            aggroTarget as Player,
+                            config.warnMessage.replace(/%name%/u, npc.name)
+                        );
+                        npc.setMeta('aggroWarned', true);
+                    }
 
                     return;
                 }
 
-                const sinceLastCheck = Date.now() - Number(npc.getMeta('aggroTimer'));
-                const delayLength = config.delay * 1000;
-
-                // attack
-                if (sinceLastCheck >= delayLength) {
-                    if (isNpc(aggroTarget)) {
-                        Logger.verbose(`NPC [${npc.uuid}/${npc.entityReference}] attacks NPC [${aggroTarget.uuid}/${aggroTarget.entityReference}] in room ${npc.room.entityReference}.`);
-                    }
-                    else {
-                        sayAt(aggroTarget as Player, config.attackMessage.replace(/%name%/u, npc.name));
-                    }
-
-                    npc.combat.initiate(aggroTarget);
-
-                    npc.setMeta('aggroTarget', null);
-                    npc.setMeta('aggroWarned', false);
+                // try to find a player to be aggressive towards first
+                if (config.towards.players && npc.room.players.size > 0) {
+                    npc.setMeta('aggroTarget', [...npc.room.players][0]);
+                    npc.setMeta('aggroTimer', Date.now());
 
                     return;
                 }
 
-                // warn
-                if (
-                    sinceLastCheck >= delayLength / 2
-                    && !isNpc(aggroTarget)
-                    && !npc.getMeta<boolean>('aggroWarned')
-                ) {
-                    sayAt(aggroTarget as Player, config.warnMessage.replace(/%name%/u, npc.name));
-                    npc.setMeta('aggroWarned', true);
-                }
+                if (hasValue(config.towards.npcs) && npc.room.npcs.size > 0) {
+                    for (const roomNpc of npc.room.npcs) {
+                        if (roomNpc !== npc) {
+                            if (
+                                config.towards.npcs === true ||
+                                (Array.isArray(config.towards.npcs) &&
+                                    config.towards.npcs.includes(
+                                        roomNpc.entityReference
+                                    ))
+                            ) {
+                                npc.setMeta('aggroTarget', roomNpc);
+                                npc.setMeta('aggroTimer', Date.now());
 
-                return;
-            }
-
-            // try to find a player to be aggressive towards first
-            if (config.towards.players && npc.room.players.size > 0) {
-                npc.setMeta('aggroTarget', [...npc.room.players][0]);
-                npc.setMeta('aggroTimer', Date.now());
-
-                return;
-            }
-
-            if (hasValue(config.towards.npcs) && npc.room.npcs.size > 0) {
-                for (const roomNpc of npc.room.npcs) {
-                    if (roomNpc !== npc) {
-                        if (
-                            config.towards.npcs === true
-                            || (
-                                Array.isArray(config.towards.npcs)
-                                && config.towards.npcs.includes(roomNpc.entityReference)
-                            )
-                        ) {
-                            npc.setMeta('aggroTarget', roomNpc);
-                            npc.setMeta('aggroTimer', Date.now());
-
-                            return;
+                                return;
+                            }
                         }
                     }
                 }
-            }
-        },
+            },
     },
 };
 

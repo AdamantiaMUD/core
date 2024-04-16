@@ -1,7 +1,7 @@
-import type {AddressInfo} from 'net';
-import type {EventEmitter} from 'events';
+import type { AddressInfo } from 'net';
+import type { EventEmitter } from 'events';
 
-import {cast, hasValue} from '../util/functions.js';
+import { cast, hasValue } from '../util/functions.js';
 
 import type StreamEvent from '../events/stream-event.js';
 import type StreamEventListener from '../events/stream-event-listener.js';
@@ -28,7 +28,11 @@ export abstract class TransportStream<T extends EventEmitter> {
 
     public abstract setEncoding(): this;
 
-    public abstract write(message: string, encoding?: string, includeNewline?: boolean): boolean;
+    public abstract write(
+        message: string,
+        encoding?: string,
+        includeNewline?: boolean
+    ): boolean;
 
     public get prompted(): boolean {
         return this._prompted;
@@ -64,7 +68,9 @@ export abstract class TransportStream<T extends EventEmitter> {
 
         if (typeof this[cmd as keyof this] === 'function') {
             /* eslint-disable-next-line @typescript-eslint/ban-types */
-            const func = cast<Function>(this[cmd as keyof this]).bind(this) as Function;
+            const func = cast<Function>(this[cmd as keyof this]).bind(
+                this
+            ) as Function;
             return func(...args);
         }
 

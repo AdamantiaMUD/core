@@ -1,7 +1,11 @@
 import QuestGoal from '../../../../lib/quests/quest-goal.js';
-import {PlayerGetItemEvent, PlayerDropItemEvent, PlayerQuestStartedEvent} from '../../../../lib/players/events/index.js';
-import {QuestProgressEvent} from '../../../../lib/quests/events/index.js';
-import {ItemDecayEvent} from '../../../behaviors/behaviors/item/decay.js';
+import {
+    PlayerGetItemEvent,
+    PlayerDropItemEvent,
+    PlayerQuestStartedEvent,
+} from '../../../../lib/players/events/index.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
+import { ItemDecayEvent } from '../../../behaviors/behaviors/item/decay.js';
 
 import type Item from '../../../../lib/equipment/item.js';
 import type Player from '../../../../lib/players/player.js';
@@ -27,12 +31,15 @@ export class FetchGoal extends QuestGoal<FetchGoalConfig, FetchGoalState> {
     public constructor(quest: Quest, config: FetchGoalConfig, player: Player) {
         super(quest, config, player);
 
-        this.state = {count: 0};
+        this.state = { count: 0 };
 
         this.listen(PlayerGetItemEvent.getName(), this._getItem.bind(this));
         this.listen(PlayerDropItemEvent.getName(), this._dropItem.bind(this));
         this.listen(ItemDecayEvent.getName(), this._dropItem.bind(this));
-        this.listen(PlayerQuestStartedEvent.getName(), this._checkInventory.bind(this));
+        this.listen(
+            PlayerQuestStartedEvent.getName(),
+            this._checkInventory.bind(this)
+        );
     }
 
     public getProgress(): QuestProgress {
@@ -40,7 +47,7 @@ export class FetchGoal extends QuestGoal<FetchGoalConfig, FetchGoalState> {
         const percent = (amount / this.config.count) * 100;
         const display = `${this.config.title}: [${amount}/${this.config.count}]`;
 
-        return {percent, display};
+        return { percent, display };
     }
 
     public complete(): void {
@@ -77,11 +84,14 @@ export class FetchGoal extends QuestGoal<FetchGoalConfig, FetchGoalState> {
             return;
         }
 
-        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
+        this.dispatch(new QuestProgressEvent({ progress: this.getProgress() }));
     }
 
     private _dropItem(emitter: Item | Player, item: Item): void {
-        if (this.state.count === 0 || item.entityReference !== this.config.item) {
+        if (
+            this.state.count === 0 ||
+            item.entityReference !== this.config.item
+        ) {
             return;
         }
 
@@ -91,7 +101,7 @@ export class FetchGoal extends QuestGoal<FetchGoalConfig, FetchGoalState> {
             return;
         }
 
-        this.dispatch(new QuestProgressEvent({progress: this.getProgress()}));
+        this.dispatch(new QuestProgressEvent({ progress: this.getProgress() }));
     }
 
     private _checkInventory(): void {

@@ -1,10 +1,10 @@
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 import Logger from '../common/logger.js';
 import ScriptableEntity from '../entities/scriptable-entity.js';
-import {ItemSpawnEvent} from '../equipment/events/index.js';
-import {NpcSpawnEvent} from '../mobs/events/index.js';
-import {RoomSpawnEvent} from './events/index.js';
-import {clone} from '../util/objects.js';
+import { ItemSpawnEvent } from '../equipment/events/index.js';
+import { NpcSpawnEvent } from '../mobs/events/index.js';
+import { RoomSpawnEvent } from './events/index.js';
+import { clone } from '../util/objects.js';
 
 import type Area from './area.js';
 import type Broadcastable from '../communication/broadcastable.js';
@@ -58,10 +58,9 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     private _setDoorsFromDef(doors: Record<string, Door>): void {
-        Object.entries(doors)
-            .forEach(([dest, door]: [string, Door]) => {
-                this._doors.set(dest, door);
-            });
+        Object.entries(doors).forEach(([dest, door]: [string, Door]) => {
+            this._doors.set(dest, door);
+        });
     }
 
     public get defaultItems(): RoomEntityDefinition[] {
@@ -152,8 +151,11 @@ export class Room extends ScriptableEntity implements Broadcastable {
      * Get the exit definition of a room's exit by searching the exit name
      */
     public findExit(exitName: string): RoomExitDefinition | null {
-        return this.getExits()
-            .find((exit: RoomExitDefinition) => exit.direction.startsWith(exitName)) ?? null;
+        return (
+            this.getExits().find((exit: RoomExitDefinition) =>
+                exit.direction.startsWith(exitName)
+            ) ?? null
+        );
     }
 
     public getBroadcastTargets(): Player[] {
@@ -176,8 +178,12 @@ export class Room extends ScriptableEntity implements Broadcastable {
      * Get the exit definition of a room's exit to a given room
      */
     public getExitToRoom(nextRoom: Room): RoomExitDefinition | null {
-        return this.getExits()
-            .find((exit: RoomExitDefinition) => exit.roomId === nextRoom.entityReference) ?? null;
+        return (
+            this.getExits().find(
+                (exit: RoomExitDefinition) =>
+                    exit.roomId === nextRoom.entityReference
+            ) ?? null
+        );
     }
 
     /**
@@ -272,7 +278,9 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     public spawnItem(state: GameStateData, entityRef: string): Item | null {
-        Logger.verbose(`SPAWN: Adding item [${entityRef}] to room [${this.title}]`);
+        Logger.verbose(
+            `SPAWN: Adding item [${entityRef}] to room [${this.title}]`
+        );
 
         const newItem = state.itemFactory.create(entityRef, this.area);
 
@@ -291,7 +299,9 @@ export class Room extends ScriptableEntity implements Broadcastable {
     }
 
     public spawnNpc(state: GameStateData, entityRef: string): Npc {
-        Logger.verbose(`SPAWN: Adding npc [${entityRef}] to room [${this.title}]`);
+        Logger.verbose(
+            `SPAWN: Adding npc [${entityRef}] to room [${this.title}]`
+        );
         const newNpc = state.mobFactory.create(entityRef, this.area);
 
         newNpc.hydrate(state);

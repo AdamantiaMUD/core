@@ -7,9 +7,11 @@ import type Player from '../../players/player.js';
  */
 export class WorldAudience extends ChannelAudience {
     public getBroadcastTargets(): Player[] {
-        return this.state
-            ?.playerManager
-            .filter((player: Player) => player !== this.sender) ?? [];
+        return (
+            this.state?.playerManager.filter(
+                (player: Player) => player !== this.sender
+            ) ?? []
+        );
     }
 }
 

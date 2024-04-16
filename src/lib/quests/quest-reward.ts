@@ -13,16 +13,28 @@ export interface QuestReward<T extends SimpleMap> {
     /**
      * Render the reward
      */
-    display: ((state: GameStateData, quest: Quest, player: Player, config: T) => string)
-    | ((state: GameStateData, quest: Quest, player: Player) => string)
-    | ((state: GameStateData, quest: Quest) => string);
+    display:
+        | ((
+              state: GameStateData,
+              quest: Quest,
+              player: Player,
+              config: T
+          ) => string)
+        | ((state: GameStateData, quest: Quest, player: Player) => string)
+        | ((state: GameStateData, quest: Quest) => string);
 
     /**
      * Assign the reward to the player
      */
-    reward: ((state: GameStateData, quest: Quest, player: Player, config: T) => void)
-    | ((state: GameStateData, quest: Quest, player: Player) => void)
-    | ((state: GameStateData, quest: Quest) => void);
+    reward:
+        | ((
+              state: GameStateData,
+              quest: Quest,
+              player: Player,
+              config: T
+          ) => void)
+        | ((state: GameStateData, quest: Quest, player: Player) => void)
+        | ((state: GameStateData, quest: Quest) => void);
 }
 
 export default QuestReward;

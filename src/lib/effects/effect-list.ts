@@ -1,11 +1,14 @@
-import {CharacterEffectAddedEvent, CharacterEffectRemovedEvent} from '../characters/events/index.js';
+import {
+    CharacterEffectAddedEvent,
+    CharacterEffectRemovedEvent,
+} from '../characters/events/index.js';
 import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
     EffectRemovedEvent,
     EffectAddedEvent,
 } from './events/index.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type Attribute from '../attributes/attribute.js';
 import type Character from '../characters/character.js';
@@ -51,16 +54,22 @@ export class EffectList implements Serializable {
                 const stacks = activeEffect.state.stacks ?? null;
                 const maxStacks = activeEffect.config.maxStacks ?? null;
 
-                if (hasValue(stacks) && hasValue(maxStacks) && stacks < maxStacks) {
+                if (
+                    hasValue(stacks) &&
+                    hasValue(maxStacks) &&
+                    stacks < maxStacks
+                ) {
                     activeEffect.state.stacks = Math.min(maxStacks, stacks + 1);
 
-                    activeEffect.dispatch(new EffectStackAddedEvent({effect}));
+                    activeEffect.dispatch(
+                        new EffectStackAddedEvent({ effect })
+                    );
 
                     return true;
                 }
 
                 if (activeEffect.config.refreshes) {
-                    activeEffect.dispatch(new EffectRefreshedEvent({effect}));
+                    activeEffect.dispatch(new EffectRefreshedEvent({ effect }));
 
                     return true;
                 }
@@ -76,9 +85,11 @@ export class EffectList implements Serializable {
 
         effect.dispatch(new EffectAddedEvent());
 
-        this._target.dispatch(new CharacterEffectAddedEvent({effect}));
+        this._target.dispatch(new CharacterEffectAddedEvent({ effect }));
 
-        effect.listen(EffectRemovedEvent.getName(), (eff: Effect) => this.remove(eff));
+        effect.listen(EffectRemovedEvent.getName(), (eff: Effect) =>
+            this.remove(eff)
+        );
 
         return true;
     }
@@ -195,7 +206,10 @@ export class EffectList implements Serializable {
         this._effects.clear();
 
         for (const newEffect of effects) {
-            const effect = state.effectFactory.create(newEffect.id, newEffect.config);
+            const effect = state.effectFactory.create(
+                newEffect.id,
+                newEffect.config
+            );
 
             effect.hydrate(state, newEffect);
             this.add(effect);
@@ -203,7 +217,11 @@ export class EffectList implements Serializable {
     }
 
     public getByType(type: string): Effect | null {
-        return [...this._effects].find((effect: Effect) => effect.config.type === type) ?? null;
+        return (
+            [...this._effects].find(
+                (effect: Effect) => effect.config.type === type
+            ) ?? null
+        );
     }
 
     /**
@@ -214,13 +232,15 @@ export class EffectList implements Serializable {
      */
     public remove(effect: Effect): void {
         if (!this._effects.has(effect)) {
-            throw new ReferenceError('Trying to remove effect that was void added');
+            throw new ReferenceError(
+                'Trying to remove effect that was void added'
+            );
         }
 
         effect.deactivate();
         this._effects.delete(effect);
 
-        this._target.dispatch(new CharacterEffectRemovedEvent({effect}));
+        this._target.dispatch(new CharacterEffectRemovedEvent({ effect }));
     }
 
     public serialize(): SerializedEffect[] {

@@ -2,22 +2,15 @@ import winston from 'winston';
 
 /* eslint-disable-next-line import/no-namespace */
 import type * as Transport from 'winston-transport';
-import type {Logger as WinstonLogger} from 'winston';
-import type {TransformableInfo} from 'logform';
+import type { Logger as WinstonLogger } from 'winston';
+import type { TransformableInfo } from 'logform';
 
-import {cast, hasValue} from '../util/functions.js';
+import { cast, hasValue } from '../util/functions.js';
 
 import type LogMessage from './log-message.js';
 
-const {createLogger, format, transports} = winston;
-const {
-    colorize,
-    combine,
-    padLevels,
-    printf,
-    simple,
-    timestamp,
-} = format;
+const { createLogger, format, transports } = winston;
+const { colorize, combine, padLevels, printf, simple, timestamp } = format;
 
 const logTransports: Record<string, Transport | null> = {
     console: new transports.Console({
@@ -31,7 +24,11 @@ const logTransports: Record<string, Transport | null> = {
             padLevels(),
             simple(),
             printf((data: TransformableInfo) => {
-                const {level, message, timestamp: lineTs} = data as LogMessage;
+                const {
+                    level,
+                    message,
+                    timestamp: lineTs,
+                } = data as LogMessage;
 
                 return `[${lineTs}] [${level}] ${message}`;
             })

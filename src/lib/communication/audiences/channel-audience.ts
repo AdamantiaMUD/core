@@ -19,7 +19,11 @@ export class ChannelAudience implements Broadcastable {
     /**
      * Configure the current state for the audience. Called by {@link Channel#send}
      */
-    public configure(options: {state: GameStateData; sender: Character; message: string}): void {
+    public configure(options: {
+        state: GameStateData;
+        sender: Character;
+        message: string;
+    }): void {
         this.state = options.state;
         this.sender = options.sender;
         this.message = options.message;

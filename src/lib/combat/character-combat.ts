@@ -1,4 +1,4 @@
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 import {
     CombatantAddedEvent,
     CombatantRemovedEvent,
@@ -47,7 +47,7 @@ export class CharacterCombat {
          * @event Character#combatantAdded
          * @param {Character} target
          */
-        this._character.dispatch(new CombatantAddedEvent({target}));
+        this._character.dispatch(new CombatantAddedEvent({ target }));
     }
 
     /**
@@ -65,12 +65,26 @@ export class CharacterCombat {
         this._reset();
     }
 
-    public evaluateIncomingDamage(damage: Damage, currentAmount: number): number {
-        return Math.floor(this._character.effects.evaluateIncomingDamage(damage, currentAmount));
+    public evaluateIncomingDamage(
+        damage: Damage,
+        currentAmount: number
+    ): number {
+        return Math.floor(
+            this._character.effects.evaluateIncomingDamage(
+                damage,
+                currentAmount
+            )
+        );
     }
 
-    public evaluateOutgoingDamage(damage: Damage, currentAmount: number): number {
-        return this._character.effects.evaluateOutgoingDamage(damage, currentAmount);
+    public evaluateOutgoingDamage(
+        damage: Damage,
+        currentAmount: number
+    ): number {
+        return this._character.effects.evaluateOutgoingDamage(
+            damage,
+            currentAmount
+        );
     }
 
     public initiate(target: Character | null, lag: number = 0): void {
@@ -124,7 +138,7 @@ export class CharacterCombat {
          * @event Character#combatantRemoved
          * @param {Character} target
          */
-        this._character.dispatch(new CombatantRemovedEvent({target}));
+        this._character.dispatch(new CombatantRemovedEvent({ target }));
 
         if (this._combatants.size === 0) {
             /**

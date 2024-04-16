@@ -1,55 +1,59 @@
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
-import {CharacterNameCheckEvent, CreateCharacterEvent} from '../lib/events/index.js';
-import {cast} from '../../../lib/util/functions.js';
-import {validateCharacterName} from '../../../lib/util/player.js';
+import {
+    CharacterNameCheckEvent,
+    CreateCharacterEvent,
+} from '../lib/events/index.js';
+import { cast } from '../../../lib/util/functions.js';
+import { validateCharacterName } from '../../../lib/util/player.js';
 
 import type GameStateData from '../../../lib/game-state-data.js';
 import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
 import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
 import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type {CreateCharacterPayload} from '../lib/events/index.js';
+import type { CreateCharacterPayload } from '../lib/events/index.js';
 
 /**
  * Player creation event
  */
 export const evt: StreamEventListenerFactory<CreateCharacterPayload> = {
     name: CreateCharacterEvent.getName(),
-    listener: (state: GameStateData): StreamEventListener<CreateCharacterPayload> => (
-        stream: TransportStream<EventEmitter>,
-        {account}: CreateCharacterPayload
-    ): void => {
-        stream.write('{bold What would you like to name your character?} ');
+    listener:
+        (state: GameStateData): StreamEventListener<CreateCharacterPayload> =>
+        (
+            stream: TransportStream<EventEmitter>,
+            { account }: CreateCharacterPayload
+        ): void => {
+            stream.write('{bold What would you like to name your character?} ');
 
-        stream.socket.once('data', (buf: Buffer) => {
-            stream.write('');
+            stream.socket.once('data', (buf: Buffer) => {
+                stream.write('');
 
-            const name = buf.toString().trim();
+                const name = buf.toString().trim();
 
-            try {
-                validateCharacterName(state.config, name);
-            }
-            catch (err: unknown) {
-                stream.write(cast<Error>(err).message);
+                try {
+                    validateCharacterName(state.config, name);
+                } catch (err: unknown) {
+                    stream.write(cast<Error>(err).message);
 
-                stream.dispatch(new CreateCharacterEvent({account}));
+                    stream.dispatch(new CreateCharacterEvent({ account }));
 
-                return;
-            }
+                    return;
+                }
 
-            const isTaken = state.playerManager.exists(name.toLowerCase());
+                const isTaken = state.playerManager.exists(name.toLowerCase());
 
-            if (isTaken) {
-                stream.write('That name is already taken.');
+                if (isTaken) {
+                    stream.write('That name is already taken.');
 
-                stream.dispatch(new CreateCharacterEvent({account}));
+                    stream.dispatch(new CreateCharacterEvent({ account }));
 
-                return;
-            }
+                    return;
+                }
 
-            stream.dispatch(new CharacterNameCheckEvent({account, name}));
-        });
-    },
+                stream.dispatch(new CharacterNameCheckEvent({ account, name }));
+            });
+        },
 };
 
 export default evt;

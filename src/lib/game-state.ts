@@ -1,21 +1,12 @@
 /* eslint-disable import/max-dependencies */
-import type {CommanderStatic} from 'commander';
-import type {EventEmitter} from 'events';
+import { type EventEmitter } from 'events';
+
+import { type Command } from 'commander';
 
 import AbilityManager from './abilities/ability-manager.js';
-import PartyManager from './groups/party-manager.js';
-import AccountManager from './players/account-manager.js';
-import AreaFactory from './locations/area-factory.js';
-import AreaManager from './locations/area-manager.js';
 import AttributeFactory from './attributes/attribute-factory.js';
 import BehaviorManager from './behaviors/behavior-manager.js';
-import ChannelManager from './communication/channels/channel-manager.js';
 import CharacterClassManager from './classes/character-class-manager.js';
-import CommandManager from './commands/command-manager.js';
-import Data from './util/data.js';
-import EffectFactory from './effects/effect-factory.js';
-import GameServer from './game-server.js';
-import HelpManager from './help/help-manager.js';
 import ItemFactory from './equipment/item-factory.js';
 import ItemManager from './equipment/item-manager.js';
 import MobFactory from './mobs/mob-factory.js';
@@ -28,13 +19,23 @@ import QuestRewardManager from './quests/quest-reward-manager.js';
 import RoomFactory from './locations/room-factory.js';
 import RoomManager from './locations/room-manager.js';
 import StreamEventManager from './events/stream-event-manager.js';
-import {UpdateTickEvent} from './common/events/index.js';
+import { UpdateTickEvent } from './common/events/index.js';
 
 import type CombatEngine from './combat/combat-engine.js';
-import type Config from './util/config.js';
-import type GameStateData from './game-state-data.js';
+import CommandManager from './commands/command-manager.js';
+import ChannelManager from './communication/channels/channel-manager.js';
 import type Timeout from './util/timeout.js';
 import type TransportStream from './communication/transport-stream.js';
+import EffectFactory from './effects/effect-factory.js';
+import GameServer from './game-server.js';
+import type GameStateData from './game-state-data.js';
+import PartyManager from './groups/party-manager.js';
+import HelpManager from './help/help-manager.js';
+import AreaFactory from './locations/area-factory.js';
+import AreaManager from './locations/area-manager.js';
+import AccountManager from './players/account-manager.js';
+import type Config from './util/config.js';
+import Data from './util/data.js';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 
@@ -44,36 +45,47 @@ export class GameState implements GameStateData {
 
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _accountManager: AccountManager;
-    private readonly _areaBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _areaBehaviorManager: BehaviorManager =
+        new BehaviorManager();
     private readonly _areaFactory: AreaFactory = new AreaFactory();
     private readonly _areaManager: AreaManager;
-    private readonly _attributeFactory: AttributeFactory = new AttributeFactory();
+    private readonly _attributeFactory: AttributeFactory =
+        new AttributeFactory();
     private readonly _channelManager: ChannelManager = new ChannelManager();
     private readonly _commandManager: CommandManager = new CommandManager();
     private readonly _config: Config;
     private readonly _effectFactory: EffectFactory = new EffectFactory();
     private readonly _helpManager: HelpManager = new HelpManager();
-    private readonly _itemBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _itemBehaviorManager: BehaviorManager =
+        new BehaviorManager();
     private readonly _itemManager: ItemManager = new ItemManager();
     private readonly _itemFactory: ItemFactory = new ItemFactory();
-    private readonly _mobBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _mobBehaviorManager: BehaviorManager =
+        new BehaviorManager();
     private readonly _mobFactory: MobFactory = new MobFactory();
     private readonly _mobManager: MobManager = new MobManager();
-    private readonly _npcClassManager: CharacterClassManager = new CharacterClassManager();
+    private readonly _npcClassManager: CharacterClassManager =
+        new CharacterClassManager();
     private readonly _partyManager: PartyManager = new PartyManager();
-    private readonly _playerClassManager: CharacterClassManager = new CharacterClassManager();
+    private readonly _playerClassManager: CharacterClassManager =
+        new CharacterClassManager();
     private readonly _playerManager: PlayerManager;
     private readonly _questFactory: QuestFactory = new QuestFactory();
-    private readonly _questGoalManager: QuestGoalManager = new QuestGoalManager();
-    private readonly _questRewardManager: QuestRewardManager = new QuestRewardManager();
-    private readonly _roomBehaviorManager: BehaviorManager = new BehaviorManager();
+    private readonly _questGoalManager: QuestGoalManager =
+        new QuestGoalManager();
+    private readonly _questRewardManager: QuestRewardManager =
+        new QuestRewardManager();
+    private readonly _roomBehaviorManager: BehaviorManager =
+        new BehaviorManager();
     private readonly _roomFactory: RoomFactory = new RoomFactory();
     private readonly _roomManager: RoomManager = new RoomManager();
     private readonly _server: GameServer = new GameServer();
-    private readonly _serverEventManager: MudEventManager = new MudEventManager();
+    private readonly _serverEventManager: MudEventManager =
+        new MudEventManager();
     private readonly _skillManager: AbilityManager = new AbilityManager();
     private readonly _spellManager: AbilityManager = new AbilityManager();
-    private readonly _streamEventManager: StreamEventManager = new StreamEventManager();
+    private readonly _streamEventManager: StreamEventManager =
+        new StreamEventManager();
 
     private _combat: CombatEngine | null = null;
     private _entityTickInterval: Timeout | null = null;
@@ -100,7 +112,10 @@ export class GameState implements GameStateData {
 
         this._entityTickInterval = setInterval(
             () => this.tickEntities(),
-            this._config.get<number>('entityTickFrequency', DEFAULT_TICK_FREQUENCY)!
+            this._config.get<number>(
+                'entityTickFrequency',
+                DEFAULT_TICK_FREQUENCY
+            )!
         );
     }
 
@@ -111,7 +126,10 @@ export class GameState implements GameStateData {
 
         this._playerTickInterval = setInterval(
             () => this.tickPlayers(),
-            this._config.get<number>('playerTickFrequency', DEFAULT_TICK_FREQUENCY)!
+            this._config.get<number>(
+                'playerTickFrequency',
+                DEFAULT_TICK_FREQUENCY
+            )!
         );
     }
 
@@ -239,7 +257,10 @@ export class GameState implements GameStateData {
         return this._streamEventManager;
     }
 
-    public attachServerStream<S extends TransportStream<T>, T extends EventEmitter>(stream: S): void {
+    public attachServerStream<
+        S extends TransportStream<T>,
+        T extends EventEmitter,
+    >(stream: S): void {
         this._streamEventManager.attach(stream);
     }
 
@@ -247,7 +268,7 @@ export class GameState implements GameStateData {
         this._combat = engine;
     }
 
-    public startServer(commander: CommanderStatic): void {
+    public startServer(commander: Command): void {
         this._attachServer();
 
         this._server.startup(commander);

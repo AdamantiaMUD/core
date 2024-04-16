@@ -1,4 +1,4 @@
-import {PlayerCurrencyGainedEvent} from '../../../../lib/players/events/index.js';
+import { PlayerCurrencyGainedEvent } from '../../../../lib/players/events/index.js';
 
 import type GameStateData from '../../../../lib/game-state-data.js';
 import type Player from '../../../../lib/players/player.js';
@@ -25,7 +25,7 @@ export class CurrencyReward implements QuestReward<CurrencyRewardConfig> {
         player: Player,
         config: CurrencyRewardConfig
     ): string {
-        const {amount} = config;
+        const { amount } = config;
         const friendlyName = config.currency
             .replace('_', ' ')
             .replace(/\b\w/gu, (str: string) => str.toUpperCase());
@@ -39,12 +39,14 @@ export class CurrencyReward implements QuestReward<CurrencyRewardConfig> {
         player: Player,
         config: CurrencyRewardConfig
     ): void {
-        const {amount} = config;
+        const { amount } = config;
 
-        player.dispatch(new PlayerCurrencyGainedEvent({
-            amount: amount,
-            denomination: config.currency,
-        }));
+        player.dispatch(
+            new PlayerCurrencyGainedEvent({
+                amount: amount,
+                denomination: config.currency,
+            })
+        );
     }
 }
 

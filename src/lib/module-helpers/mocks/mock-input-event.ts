@@ -1,4 +1,4 @@
-import {noop} from '../../util/functions.js';
+import { noop } from '../../util/functions.js';
 
 import type StreamEventListenerFactory from '../../events/stream-event-listener-factory.js';
 

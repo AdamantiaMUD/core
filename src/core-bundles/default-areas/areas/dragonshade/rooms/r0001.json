@@ -4,9 +4,7 @@
     "description": "This is the description for Room 1",
     "script": "r0001",
     "metadata": {
-        "commands": [
-            "begin"
-        ]
+        "commands": ["begin"]
     },
     "exits": [
         {

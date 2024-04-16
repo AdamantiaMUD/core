@@ -1,7 +1,7 @@
 import wrapAnsi from 'wrap-ansi';
-import {sprintf} from 'sprintf-js';
+import { sprintf } from 'sprintf-js';
 
-import {cast} from '../util/functions.js';
+import { cast } from '../util/functions.js';
 import {
     colorize,
     isBroadcastable,
@@ -26,10 +26,12 @@ export const at = (
     formatter: MessageFormatter = NOOP_FORMATTER
 ): void => {
     if (!isBroadcastable(source)) {
-        throw new Error(sprintf(
-            'Tried to broadcast message to non-broadcastable object: MESSAGE [%1$s]',
-            message
-        ));
+        throw new Error(
+            sprintf(
+                'Tried to broadcast message to non-broadcastable object: MESSAGE [%1$s]',
+                message
+            )
+        );
     }
 
     for (const target of source.getBroadcastTargets()) {
@@ -44,9 +46,10 @@ export const at = (
 
                 let targetMessage = formatter(playerTarget, message);
 
-                targetMessage = wrapWidth > 0
-                    ? wrapAnsi(targetMessage, Number(wrapWidth))
-                    : colorize(targetMessage);
+                targetMessage =
+                    wrapWidth > 0
+                        ? wrapAnsi(targetMessage, Number(wrapWidth))
+                        : colorize(targetMessage);
 
                 playerTarget.socket.write(targetMessage);
             }
@@ -66,15 +69,20 @@ export const atExcept = (
     formatter: MessageFormatter = NOOP_FORMATTER
 ): void => {
     if (!isBroadcastable(source)) {
-        throw new Error(sprintf(
-            'Tried to broadcast message to non-broadcastable object: MESSAGE [%1$s]',
-            message
-        ));
+        throw new Error(
+            sprintf(
+                'Tried to broadcast message to non-broadcastable object: MESSAGE [%1$s]',
+                message
+            )
+        );
     }
 
-    const excludesArr: Broadcastable[] = Array.isArray(excludes) ? excludes : [excludes];
+    const excludesArr: Broadcastable[] = Array.isArray(excludes)
+        ? excludes
+        : [excludes];
 
-    const targets = source.getBroadcastTargets()
+    const targets = source
+        .getBroadcastTargets()
         .filter((target: Broadcastable) => !excludesArr.includes(target));
 
     const newSource = {
@@ -98,7 +106,11 @@ export const atFormatted = (
 /**
  * Render a line of a specific width/color
  */
-export const line = (width: number, fillChar: string = '-', color: string = ''): string => {
+export const line = (
+    width: number,
+    fillChar: string = '-',
+    color: string = ''
+): string => {
     let openColor = '',
         closeColor = '';
 
@@ -121,7 +133,7 @@ export const center = (
     color: string = '',
     fillChar: string = ' '
 ): string => {
-    const padWidth = (width / 2) - (message.length / 2);
+    const padWidth = width / 2 - message.length / 2;
 
     let openColor = '',
         closeColor = '';
@@ -131,11 +143,13 @@ export const center = (
         closeColor = '}';
     }
 
-    return openColor
-        + line(Math.floor(padWidth), fillChar)
-        + message
-        + line(Math.ceil(padWidth), fillChar)
-        + closeColor;
+    return (
+        openColor +
+        line(Math.floor(padWidth), fillChar) +
+        message +
+        line(Math.ceil(padWidth), fillChar) +
+        closeColor
+    );
 };
 
 /**
@@ -190,12 +204,10 @@ export const sayAt = (
     message: string = '',
     wrapWidth: number = 0,
     formatter: MessageFormatter = NOOP_FORMATTER
-): void => at(
-    source,
-    message,
-    wrapWidth,
-    (target: Broadcastable, msg: string) => formatter(target, msg)
-);
+): void =>
+    at(source, message, wrapWidth, (target: Broadcastable, msg: string) =>
+        formatter(target, msg)
+    );
 
 /**
  * Render the player's prompt including any extra prompts
@@ -207,11 +219,7 @@ export const prompt = (
 ): void => {
     player.socket!.setPrompted(false);
 
-    at(
-        player,
-        `${player.interpolatePrompt(player.prompt, extra)} `,
-        wrapWidth
-    );
+    at(player, `${player.interpolatePrompt(player.prompt, extra)} `, wrapWidth);
 
     /* eslint-disable-next-line @typescript-eslint/naming-convention */
     const needsNewline = player.extraPrompts.size > 0;
@@ -239,7 +247,11 @@ export const prompt = (
     }
 };
 
-export const sayAtColumns = (target: Player, strings: string[], numCols: number): void => {
+export const sayAtColumns = (
+    target: Player,
+    strings: string[],
+    numCols: number
+): void => {
     // Build a 2D map of strings by col/row
     let col = 0,
         row = 0;
@@ -248,20 +260,23 @@ export const sayAtColumns = (target: Player, strings: string[], numCols: number)
     let rowCount = 0;
     const colWidth = Math.floor((3 * 20) / numCols);
 
-    const columnedStrings = strings.reduce((map: string[][], str: string) => {
-        if (rowCount >= perCol) {
-            rowCount = 0;
-            col += 1;
+    const columnedStrings = strings.reduce(
+        (map: string[][], str: string) => {
+            if (rowCount >= perCol) {
+                rowCount = 0;
+                col += 1;
 
-            map.push([]);
-        }
+                map.push([]);
+            }
 
-        map[col].push(str);
+            map[col].push(str);
 
-        rowCount += 1;
+            rowCount += 1;
 
-        return map;
-    }, [[]]);
+            return map;
+        },
+        [[]]
+    );
 
     const said: string[] = [];
 
@@ -299,13 +314,14 @@ export const sayAtExcept = (
     excludes: Player | Player[] = [],
     wrapWidth: number = 0,
     formatter: MessageFormatter = NOOP_FORMATTER
-): void => atExcept(
-    source,
-    message,
-    excludes,
-    wrapWidth,
-    (target: Broadcastable, mess: string) => formatter(target, mess)
-);
+): void =>
+    atExcept(
+        source,
+        message,
+        excludes,
+        wrapWidth,
+        (target: Broadcastable, mess: string) => formatter(target, mess)
+    );
 
 /**
  * `atFormatted` with a newline

@@ -1,5 +1,5 @@
 import path from 'path';
-import {fileURLToPath} from 'url';
+import { fileURLToPath } from 'url';
 
 import type Config from '../util/config.js';
 
@@ -15,11 +15,23 @@ export abstract class BundleObjectLoader {
 
     protected _getBundleFolder(config: Config): string {
         if (this._bundle.startsWith('core.')) {
-            return path.join(__dirname, '..', '..', 'core-bundles', this._bundle.replace('core.', ''));
+            return path.join(
+                __dirname,
+                '..',
+                '..',
+                'core-bundles',
+                this._bundle.replace('core.', '')
+            );
         }
 
         if (this._bundle.startsWith('adamantia.')) {
-            return path.join(__dirname, '..', '..', 'optional-bundles', this._bundle.replace('adamantia.', ''));
+            return path.join(
+                __dirname,
+                '..',
+                '..',
+                'optional-bundles',
+                this._bundle.replace('adamantia.', '')
+            );
         }
         return path.join(config.getPath('bundles'), this._bundle);
     }

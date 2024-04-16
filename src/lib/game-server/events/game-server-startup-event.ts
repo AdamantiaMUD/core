@@ -1,15 +1,15 @@
-import type {CommanderStatic} from 'commander';
+import type { Command } from 'commander';
 
 import MudEvent from '../../events/mud-event.js';
 
 export interface GameServerStartupPayload {
-    commander: CommanderStatic;
+    commander: Command;
 }
 
 export class GameServerStartupEvent extends MudEvent<GameServerStartupPayload> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     public NAME: string = 'startup';
-    public commander!: CommanderStatic;
+    public commander!: Command;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 }
 

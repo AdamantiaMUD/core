@@ -1,9 +1,9 @@
-import chalk from 'chalk';
-
-import {cast, hasValue} from './functions.js';
+import chalkTemplate from 'chalk-template';
 
 import type Broadcastable from '../communication/broadcastable.js';
 import type MessageFormatter from '../communication/message-formatter.js';
+
+import { cast, hasValue } from './functions.js';
 
 export const colorize = (msg: string): string => {
     const tplStr: string[] = [];
@@ -11,7 +11,7 @@ export const colorize = (msg: string): string => {
     // @ts-expect-error -- This is a workaround to make this behave like a tagged template literal
     tplStr.raw = [msg];
 
-    return chalk(cast<TemplateStringsArray>(tplStr));
+    return chalkTemplate(cast<TemplateStringsArray>(tplStr));
 };
 
 export const isBroadcastable = (source: unknown): source is Broadcastable => {

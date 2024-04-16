@@ -1,19 +1,21 @@
 import Broadcast from '../../../lib/communication/broadcast.js';
-import {PlayerKilledEvent} from '../../../lib/players/events/index.js';
-import {cast, hasValue} from '../../../lib/util/functions.js';
-import {isNpc} from '../../../lib/util/characters.js';
+import { PlayerKilledEvent } from '../../../lib/players/events/index.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import { isNpc } from '../../../lib/util/characters.js';
 
 import type GameStateData from '../../../lib/game-state-data.js';
 import type MudEventListener from '../../../lib/events/mud-event-listener.js';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
 import type Player from '../../../lib/players/player.js';
-import type {PlayerKilledPayload} from '../../../lib/players/events/index.js';
+import type { PlayerKilledPayload } from '../../../lib/players/events/index.js';
 
-const {prompt, sayAt, sayAtExcept} = Broadcast;
+const { prompt, sayAt, sayAtExcept } = Broadcast;
 
 export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
     name: PlayerKilledEvent.getName(),
-    listener: (state: GameStateData): MudEventListener<[Player, PlayerKilledPayload]> => {
+    listener: (
+        state: GameStateData
+    ): MudEventListener<[Player, PlayerKilledPayload]> => {
         const startingRoomRef = state.config.getStartingRoom();
 
         /**
@@ -29,9 +31,10 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
                 return;
             }
 
-            const othersDeathMessage = killer === null
-                ? `{red.bold ${player.name} collapses to the ground, dead}`
-                : `{red.bold ${player.name} collapses to the ground, dead at the hands of ${killer.name}.}`;
+            const othersDeathMessage =
+                killer === null
+                    ? `{red.bold ${player.name} collapses to the ground, dead}`
+                    : `{red.bold ${player.name} collapses to the ground, dead at the hands of ${killer.name}.}`;
 
             const excludeList: Player[] = [player];
 
@@ -49,7 +52,9 @@ export const evt: MudEventListenerDefinition<[Player, PlayerKilledPayload]> = {
 
             const waypoint = player.getMeta<string>('waypoint.home');
 
-            let home = hasValue(waypoint) ? state.roomManager.getRoom(waypoint) : null;
+            let home = hasValue(waypoint)
+                ? state.roomManager.getRoom(waypoint)
+                : null;
 
             if (!hasValue(home)) {
                 home = state.roomManager.getRoom(startingRoomRef);

@@ -1,61 +1,66 @@
-import type {EventEmitter} from 'events';
+import type { EventEmitter } from 'events';
 
-import {ChangePasswordEvent, ConfirmPasswordEvent} from '../lib/events/index.js';
-import {hasValue} from '../../../lib/util/functions.js';
+import {
+    ChangePasswordEvent,
+    ConfirmPasswordEvent,
+} from '../lib/events/index.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 import type GameStateData from '../../../lib/game-state-data.js';
 import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
 import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
 import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type {ChangePasswordPayload} from '../lib/events/index.js';
+import type { ChangePasswordPayload } from '../lib/events/index.js';
 
 /**
  * Change password event
  */
 export const evt: StreamEventListenerFactory<ChangePasswordPayload> = {
     name: ChangePasswordEvent.getName(),
-    listener: (state: GameStateData): StreamEventListener<ChangePasswordPayload> => (
-        stream: TransportStream<EventEmitter>,
-        args: ChangePasswordPayload
-    ): void => {
-        const {account} = args;
+    listener:
+        (state: GameStateData): StreamEventListener<ChangePasswordPayload> =>
+        (
+            stream: TransportStream<EventEmitter>,
+            args: ChangePasswordPayload
+        ): void => {
+            const { account } = args;
 
-        stream.write('Your password must be at least 8 characters.');
-        stream.write('{cyan Enter your account password:} ');
+            stream.write('Your password must be at least 8 characters.');
+            stream.write('{cyan Enter your account password:} ');
 
-        stream.command('toggleEcho');
-
-        stream.socket.once('data', (buf: Buffer) => {
             stream.command('toggleEcho');
 
-            stream.write('');
+            stream.socket.once('data', (buf: Buffer) => {
+                stream.command('toggleEcho');
 
-            const pass = buf.toString().trim();
+                stream.write('');
 
-            if (!hasValue(pass) || pass.length === 0) {
-                stream.write('You must use a password.');
+                const pass = buf.toString().trim();
 
-                stream.dispatch(new ChangePasswordEvent(args));
+                if (!hasValue(pass) || pass.length === 0) {
+                    stream.write('You must use a password.');
 
-                return;
-            }
+                    stream.dispatch(new ChangePasswordEvent(args));
 
-            if (pass.length < 8) {
-                stream.write('Your password is not long enough.');
+                    return;
+                }
 
-                stream.dispatch(new ChangePasswordEvent(args));
+                if (pass.length < 8) {
+                    stream.write('Your password is not long enough.');
 
-                return;
-            }
+                    stream.dispatch(new ChangePasswordEvent(args));
 
-            // setPassword handles hashing
-            account.setPassword(pass);
-            state.accountManager.setAccount(account.username, account);
-            account.save();
+                    return;
+                }
 
-            stream.dispatch(new ConfirmPasswordEvent(args));
-        });
-    },
+                // setPassword handles hashing
+                account.setPassword(pass);
+                state.accountManager.setAccount(account.username, account);
+                account.save();
+
+                stream.dispatch(new ConfirmPasswordEvent(args));
+            });
+        },
 };
 
 export default evt;

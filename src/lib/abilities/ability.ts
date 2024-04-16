@@ -3,8 +3,12 @@ import AbilityType from './ability-type.js';
 import Broadcast from '../communication/broadcast.js';
 import Damage from '../combat/damage.js';
 import Player from '../players/player.js';
-import {CooldownError, NotEnoughResourcesError, PassiveError} from './errors/index.js';
-import {hasValue, ident, noop} from '../util/functions.js';
+import {
+    CooldownError,
+    NotEnoughResourcesError,
+    PassiveError,
+} from './errors/index.js';
+import { hasValue, ident, noop } from '../util/functions.js';
 
 import type AbilityDefinition from './ability-definition.js';
 import type AbilityResource from './ability-resource.js';
@@ -15,7 +19,7 @@ import type EffectDefinition from '../effects/effect-definition.js';
 import type GameStateData from '../game-state-data.js';
 import type SimpleMap from '../util/simple-map.js';
 
-const {sayAt} = Broadcast;
+const { sayAt } = Broadcast;
 
 export const ABILITY_DEFAULTS: AbilityDefinition = {
     canTargetSelf: false,
@@ -54,7 +58,11 @@ export class Ability {
     public type: AbilityType;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 
-    public constructor(id: string, def: AbilityDefinition, state: GameStateData) {
+    public constructor(
+        id: string,
+        def: AbilityDefinition,
+        state: GameStateData
+    ) {
         const config: AbilityDefinition = {
             ...ABILITY_DEFAULTS,
             ...def,
@@ -84,12 +92,10 @@ export class Ability {
 
         if (typeof cooldown === 'number') {
             this.cooldownLength = cooldown;
-        }
-        else if (hasValue(cooldown)) {
+        } else if (hasValue(cooldown)) {
             this.cooldownGroup = cooldown.group;
             this.cooldownLength = cooldown.length;
-        }
-        else {
+        } else {
             this.cooldownLength = 0;
         }
 
@@ -117,16 +123,14 @@ export class Ability {
             throw new Error('Passive skill has no attached effect');
         }
 
-        let effect = this.state
-            .effectFactory
-            .create(
-                this.effect,
-                {
-                    name: this.name,
-                    description: this.info(this, character),
-                },
-                this.state
-            );
+        let effect = this.state.effectFactory.create(
+            this.effect,
+            {
+                name: this.name,
+                description: this.info(this, character),
+            },
+            this.state
+        );
 
         effect = this.configureEffect(effect);
         effect.ability = this;
@@ -152,21 +156,21 @@ export class Ability {
      */
     private _createCooldownEffect(): Effect {
         if (!this.state.effectFactory.has('cooldown')) {
-            this.state
-                .effectFactory
-                .add('cooldown', this.getDefaultCooldownConfig(), this.state);
+            this.state.effectFactory.add(
+                'cooldown',
+                this.getDefaultCooldownConfig(),
+                this.state
+            );
         }
 
-        const effect = this.state
-            .effectFactory
-            .create(
-                'cooldown',
-                {
-                    name: `Cooldown: ${this.name}`,
-                    duration: this.cooldownLength * 1000,
-                },
-                {cooldownId: this.getCooldownId()}
-            );
+        const effect = this.state.effectFactory.create(
+            'cooldown',
+            {
+                name: `Cooldown: ${this.name}`,
+                duration: this.cooldownLength * 1000,
+            },
+            { cooldownId: this.getCooldownId() }
+        );
 
         effect.ability = this;
 
@@ -176,7 +180,11 @@ export class Ability {
     /**
      * perform an active skill
      */
-    public execute(args: string, actor: Character, target: Character | null = null): void {
+    public execute(
+        args: string,
+        actor: Character,
+        target: Character | null = null
+    ): void {
         if (this.flags.includes(AbilityFlag.PASSIVE)) {
             throw new PassiveError();
         }
@@ -229,19 +237,25 @@ export class Ability {
             listeners: {
                 effectDeactivated: (effect: Effect): void => {
                     if (effect.target instanceof Player) {
-                        sayAt(effect.target, `You may now use {bold ${effect.ability!.name}} again.`);
+                        sayAt(
+                            effect.target,
+                            `You may now use {bold ${effect.ability!.name}} again.`
+                        );
                     }
                 },
             },
         };
     }
 
-    public hasEnoughResource(character: Character, resource: AbilityResource): boolean {
-        return resource.cost === 0
-            || (
-                character.attributes.has(resource.attribute)
-                && character.getAttribute(resource.attribute) >= resource.cost
-            );
+    public hasEnoughResource(
+        character: Character,
+        resource: AbilityResource
+    ): boolean {
+        return (
+            resource.cost === 0 ||
+            (character.attributes.has(resource.attribute) &&
+                character.getAttribute(resource.attribute) >= resource.cost)
+        );
     }
 
     public hasEnoughResources(character: Character): boolean {
@@ -250,8 +264,9 @@ export class Ability {
         }
 
         if (Array.isArray(this.resource)) {
-            return this.resource
-                .every((resource: AbilityResource) => this.hasEnoughResource(character, resource));
+            return this.resource.every((resource: AbilityResource) =>
+                this.hasEnoughResource(character, resource)
+            );
         }
 
         return this.hasEnoughResource(character, this.resource);
@@ -259,7 +274,10 @@ export class Ability {
 
     public onCooldown(character: Character): Effect | undefined {
         for (const effect of character.effects.entries()) {
-            if (effect.id === 'cooldown' && effect.state.cooldownId === this.getCooldownId()) {
+            if (
+                effect.id === 'cooldown' &&
+                effect.state.cooldownId === this.getCooldownId()
+            ) {
                 return effect;
             }
         }
@@ -268,7 +286,10 @@ export class Ability {
     }
 
     // Helper to pay a single resource cost.
-    public payResourceCost(character: Character, resource: AbilityResource): boolean {
+    public payResourceCost(
+        character: Character,
+        resource: AbilityResource
+    ): boolean {
         /*
          * Resource cost is calculated as the character damaging themselves, so
          * effects could potentially reduce resource costs
@@ -278,7 +299,7 @@ export class Ability {
             resource.cost,
             character,
             this,
-            {hidden: true}
+            { hidden: true }
         );
 
         damage.commit(character);

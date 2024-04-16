@@ -3,7 +3,7 @@ import merge from 'deepmerge';
 import set from 'lodash.set';
 
 import Logger from '../common/logger.js';
-import {hasValue} from './functions.js';
+import { hasValue } from './functions.js';
 
 export interface MudConfig {
     abilities?: {
@@ -45,7 +45,7 @@ const DEFAULT_CONFIG: MudConfig = {
             maxLength: 16,
             minLength: 4,
         },
-        inventory: {maxSize: 30},
+        inventory: { maxSize: 30 },
         startingRoom: 'dragonshade:r0001',
     },
     ports: {},

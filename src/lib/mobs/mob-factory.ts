@@ -1,6 +1,6 @@
 import EntityFactory from '../entities/entity-factory.js';
 import Npc from './npc.js';
-import {hasValue} from '../util/functions.js';
+import { hasValue } from '../util/functions.js';
 
 import type Area from '../locations/area.js';
 import type NpcDefinition from './npc-definition.js';
@@ -25,7 +25,10 @@ export class MobFactory extends EntityFactory<Npc, NpcDefinition> {
             throw new Error(`No Entity definition found for ${entityRef}`);
         }
 
-        const npc = new Npc(area, {...definition, entityReference: entityRef});
+        const npc = new Npc(area, {
+            ...definition,
+            entityReference: entityRef,
+        });
 
         if (this._scripts.has(entityRef)) {
             this._scripts.get(entityRef).attach(npc);

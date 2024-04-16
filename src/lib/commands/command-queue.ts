@@ -29,7 +29,7 @@ export class CommandQueue {
      * Milliseconds til the next command can be executed
      */
     public get msTilNextRun(): number {
-        return Math.max(0, (this._lastRun + this._lag) - Date.now());
+        return Math.max(0, this._lastRun + this._lag - Date.now());
     }
 
     public get queue(): ExecutableCommand[] {
@@ -46,7 +46,7 @@ export class CommandQueue {
     }
 
     public enqueue(executable: ExecutableCommand, lag: number): number {
-        return this._commands.push({...executable, lag}) - 1;
+        return this._commands.push({ ...executable, lag }) - 1;
     }
 
     /**

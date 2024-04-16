@@ -1,9 +1,9 @@
-import type {AddressInfo} from 'net';
-import type {ExecFileOptionsWithOtherEncoding} from 'child_process';
+import type { AddressInfo } from 'net';
+import type { ExecFileOptionsWithOtherEncoding } from 'child_process';
 
 import Sequences from './sequences.js';
 import TransportStream from '../../../lib/communication/transport-stream.js';
-import {colorize} from '../../../lib/util/communication.js';
+import { colorize } from '../../../lib/util/communication.js';
 
 import type TelnetSocket from './telnet-socket.js';
 
@@ -56,7 +56,11 @@ export class TelnetStream extends TransportStream<TelnetSocket> {
         return this.socket.writable;
     }
 
-    public write(message: string, encoding: BufferEncoding = 'utf8', includeNewline: boolean = true): boolean {
+    public write(
+        message: string,
+        encoding: BufferEncoding = 'utf8',
+        includeNewline: boolean = true
+    ): boolean {
         if (!this.writable) {
             return false;
         }
