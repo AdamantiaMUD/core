@@ -1,5 +1,3 @@
-/* eslint-disable array-bracket-newline, array-element-newline, import/no-commonjs, import/unambiguous */
-
 module.exports = {
     'extends': [
         '@chimericdream',
@@ -10,7 +8,6 @@ module.exports = {
     'parser': '@typescript-eslint/parser',
     'parserOptions': {
         ecmaVersion: 2020,
-        extraFileExtensions: ['.cjs', '.ts'],
         project: './tsconfig.eslint.json',
         sourceType: 'module',
     },
@@ -35,10 +32,14 @@ module.exports = {
             },
         },
     },
+    'ignorePatterns': ['**/*.json', '**/motd', '**/*.yml', '**/*.md', '**/*.txt'],
     'rules': {
         'max-params': ['warn', 8],
 
+        '@typescript-eslint/consistent-type-imports': 'off',
+        '@typescript-eslint/indent': 'off',
         '@typescript-eslint/no-magic-numbers': 'off',
+        '@typescript-eslint/typedef': 'off',
 
         'import/consistent-type-specifier-style': 'off',
         'import/dynamic-import-chunkname': 'off',
@@ -49,31 +50,5 @@ module.exports = {
         'no-sync': 'off',
 
         'no-underscore-dangle': 'off',
-
-        '@typescript-eslint/indent': [
-            'error',
-            4,
-            {
-                ArrayExpression: 1,
-                CallExpression: { arguments: 'first' },
-                flatTernaryExpressions: false,
-                FunctionDeclaration: {
-                    body: 1,
-                    parameters: 'first',
-                },
-                FunctionExpression: {
-                    body: 1,
-                    parameters: 'first',
-                },
-                ignoreComments: false,
-                ignoredNodes: ['TSTypeParameterInstantiation'],
-                ImportDeclaration: 1,
-                MemberExpression: 1,
-                ObjectExpression: 1,
-                outerIIFEBody: 1,
-                SwitchCase: 1,
-                VariableDeclarator: 1,
-            },
-        ],
     },
 };

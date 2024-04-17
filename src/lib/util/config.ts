@@ -1,8 +1,9 @@
-import get from 'lodash.get';
 import merge from 'deepmerge';
+import get from 'lodash.get';
 import set from 'lodash.set';
 
 import Logger from '../common/logger.js';
+
 import { hasValue } from './functions.js';
 
 export interface MudConfig {

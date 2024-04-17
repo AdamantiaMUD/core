@@ -1,16 +1,17 @@
+import {
+    type UpdateTickPayload,
+    UpdateTickEvent,
+} from '../../../lib/common/events/index.js';
 import Logger from '../../../lib/common/logger.js';
-import { UpdateTickEvent } from '../../../lib/common/events/index.js';
 import {
     prompt,
     sayAt,
     sayAtExcept,
 } from '../../../lib/communication/broadcast.js';
-
+import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type Player from '../../../lib/players/player.js';
-import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
-import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
-import type { UpdateTickPayload } from '../../../lib/common/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<UpdateTickPayload> = {
     name: UpdateTickEvent.getName(),

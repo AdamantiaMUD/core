@@ -1,13 +1,13 @@
-import Effect from './effect.js';
 import MudEventManager from '../events/mud-event-manager.js';
-import { clone } from '../util/objects.js';
+import type GameStateData from '../game-state-data.js';
 import { hasValue } from '../util/functions.js';
+import { clone } from '../util/objects.js';
+import type SimpleMap from '../util/simple-map.js';
 
 import type EffectConfig from './effect-config.js';
 import type EffectDefinition from './effect-definition.js';
 import type EffectInfo from './effect-info.js';
-import type GameStateData from '../game-state-data.js';
-import type SimpleMap from '../util/simple-map.js';
+import Effect from './effect.js';
 
 export class EffectFactory {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
@@ -35,7 +35,7 @@ export class EffectFactory {
         const eventManager = new MudEventManager();
 
         for (const event in listeners) {
-            if (Object.prototype.hasOwnProperty.call(listeners, event)) {
+            if (Object.hasOwn(listeners, event)) {
                 eventManager.add(event, listeners[event]);
             }
         }

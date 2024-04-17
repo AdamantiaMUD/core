@@ -1,16 +1,15 @@
 import type { EventEmitter } from 'events';
 
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type GameStateData from '../../../lib/game-state-data.js';
 import Player from '../../../lib/players/player.js';
 import {
+    type FinishCharacterPayload,
     FinishCharacterEvent,
     LoginCompleteEvent,
 } from '../lib/events/index.js';
-
-import type GameStateData from '../../../lib/game-state-data.js';
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
-import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type { FinishCharacterPayload } from '../lib/events/index.js';
 
 /**
  * Finish player creation. Add the character to the account then add the player

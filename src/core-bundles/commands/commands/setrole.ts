@@ -1,11 +1,10 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
-import PlayerRole from '../../../lib/players/player-role.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
+import PlayerRole from '../../../lib/players/player-role.js';
 import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'setrole',

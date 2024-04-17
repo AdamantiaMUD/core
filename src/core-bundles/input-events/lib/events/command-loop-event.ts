@@ -1,5 +1,4 @@
 import StreamEvent from '../../../../lib/events/stream-event.js';
-
 import type Player from '../../../../lib/players/player.js';
 
 export interface CommandLoopPayload {

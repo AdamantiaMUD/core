@@ -1,7 +1,10 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
-import Command from '../../../lib/commands/command.js';
+import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandDefinition from '../../../lib/commands/command-definition.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
 import CommandManager from '../../../lib/commands/command-manager.js';
-import { QuestProgressEvent } from '../../../lib/quests/events/index.js';
+import Command from '../../../lib/commands/command.js';
 import {
     at,
     center,
@@ -11,16 +14,12 @@ import {
     sayAt,
     wrap,
 } from '../../../lib/communication/broadcast.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type CommandDefinition from '../../../lib/commands/command-definition.js';
-import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder.js';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
-import type CommandExecutable from '../../../lib/commands/command-executable.js';
 import type GameStateData from '../../../lib/game-state-data.js';
+import type Room from '../../../lib/locations/room.js';
 import type Npc from '../../../lib/mobs/npc.js';
 import type Player from '../../../lib/players/player.js';
-import type Room from '../../../lib/locations/room.js';
+import { QuestProgressEvent } from '../../../lib/quests/events/index.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 const isPresent = (npcRef: string, room: Room): boolean =>
     hasValue([...room.npcs].find((npc: Npc) => npc.entityReference === npcRef));

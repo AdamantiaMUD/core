@@ -1,12 +1,12 @@
+import type Serializable from '../data/serializable.js';
 import MudEventEmitter from '../events/mud-event-emitter.js';
+import type Player from '../players/player.js';
 import { cast } from '../util/functions.js';
 import { clone } from '../util/objects.js';
-
-import type Player from '../players/player.js';
-import type Quest from './quest.js';
-import type Serializable from '../data/serializable.js';
-import type SerializedQuestGoal from './serialized-quest-goal.js';
 import type SimpleMap from '../util/simple-map.js';
+
+import type Quest from './quest.js';
+import type SerializedQuestGoal from './serialized-quest-goal.js';
 
 /**
  * Representation of a goal of a quest.

@@ -6,9 +6,7 @@ export const hasValue = <T>(thing: T | null | undefined): thing is T =>
 
 export const ident = <T = unknown>(obj: T): T => obj;
 
-export const isPositiveNumber = (
-    thing: unknown | null | undefined
-): thing is number => {
+export const isPositiveNumber = (thing: unknown): thing is number => {
     if (!hasValue(thing)) {
         return false;
     }

@@ -1,6 +1,5 @@
-import MudEvent from '../../events/mud-event.js';
-
 import type Character from '../../characters/character.js';
+import MudEvent from '../../events/mud-event.js';
 
 export interface CombatantAddedPayload {
     target: Character;

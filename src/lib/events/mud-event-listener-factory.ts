@@ -1,4 +1,5 @@
 import type GameStateData from '../game-state-data.js';
+
 import type MudEventListener from './mud-event-listener.js';
 
 export type StatefulListenerFactory<T extends unknown[]> = (

@@ -1,11 +1,11 @@
-import CommandType from './command-type.js';
-import { InvalidCommandError } from './errors/index.js';
+import type GameStateData from '../game-state-data.js';
+import type RoomExitDefinition from '../locations/room-exit-definition.js';
+import type Player from '../players/player.js';
 import { hasValue } from '../util/functions.js';
 
-import type GameStateData from '../game-state-data.js';
+import CommandType from './command-type.js';
+import { InvalidCommandError } from './errors/index.js';
 import type ParsedCommand from './parsed-command.js';
-import type Player from '../players/player.js';
-import type RoomExitDefinition from '../locations/room-exit-definition.js';
 
 /**
  * Interpreter.. you guessed it, interprets command input
@@ -76,7 +76,7 @@ export const CommandParser = {
             ?.getExits()
             .find(
                 (roomExit: RoomExitDefinition) =>
-                    roomExit.direction === direction
+                    direction === roomExit.direction.valueOf()
             );
 
         return otherExit?.direction ?? null;

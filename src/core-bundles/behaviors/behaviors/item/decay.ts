@@ -1,16 +1,17 @@
-import Logger from '../../../../lib/common/logger.js';
-import Player from '../../../../lib/players/player.js';
-import MudEvent from '../../../../lib/events/mud-event.js';
-import { UpdateTickEvent } from '../../../../lib/common/events/index.js';
-import { cast } from '../../../../lib/util/functions.js';
-import { findCarrier } from '../../../../lib/util/items.js';
-import { sayAt } from '../../../../lib/communication/broadcast.js';
-
 import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
-import type GameStateData from '../../../../lib/game-state-data.js';
+import {
+    type UpdateTickPayload,
+    UpdateTickEvent,
+} from '../../../../lib/common/events/index.js';
+import Logger from '../../../../lib/common/logger.js';
+import { sayAt } from '../../../../lib/communication/broadcast.js';
 import type Item from '../../../../lib/equipment/item.js';
 import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
-import type { UpdateTickPayload } from '../../../../lib/common/events/index.js';
+import MudEvent from '../../../../lib/events/mud-event.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import Player from '../../../../lib/players/player.js';
+import { cast } from '../../../../lib/util/functions.js';
+import { findCarrier } from '../../../../lib/util/items.js';
 
 export class ItemDecayEvent extends MudEvent<void> {
     public NAME: string = 'item-decay';

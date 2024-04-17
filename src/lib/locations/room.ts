@@ -1,18 +1,18 @@
-import { hasValue } from '../util/functions.js';
 import Logger from '../common/logger.js';
+import type Broadcastable from '../communication/broadcastable.js';
 import ScriptableEntity from '../entities/scriptable-entity.js';
 import { ItemSpawnEvent } from '../equipment/events/index.js';
+import type Item from '../equipment/item.js';
+import type GameStateData from '../game-state-data.js';
 import { NpcSpawnEvent } from '../mobs/events/index.js';
-import { RoomSpawnEvent } from './events/index.js';
+import type Npc from '../mobs/npc.js';
+import type Player from '../players/player.js';
+import { hasValue } from '../util/functions.js';
 import { clone } from '../util/objects.js';
 
 import type Area from './area.js';
-import type Broadcastable from '../communication/broadcastable.js';
 import type Door from './door.js';
-import type GameStateData from '../game-state-data.js';
-import type Item from '../equipment/item.js';
-import type Npc from '../mobs/npc.js';
-import type Player from '../players/player.js';
+import { RoomSpawnEvent } from './events/index.js';
 import type RoomDefinition from './room-definition.js';
 import type RoomEntityDefinition from './room-entity-definition.js';
 import type RoomExitDefinition from './room-exit-definition.js';

@@ -1,15 +1,14 @@
 import WebSocket from 'ws';
 
-import Logger from '../../../lib/common/logger.js';
-import { GameServerStartupEvent } from '../../../lib/game-server/events/index.js';
 import { IntroEvent } from '../../../core-bundles/input-events/lib/events/index.js';
-
-import type GameStateData from '../../../lib/game-state-data.js';
-import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import Logger from '../../../lib/common/logger.js';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
-import type { GameServerStartupPayload } from '../../../lib/game-server/events/index.js';
-
-// import our adapter
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import {
+    type GameServerStartupPayload,
+    GameServerStartupEvent,
+} from '../../../lib/game-server/events/index.js';
+import type GameStateData from '../../../lib/game-state-data.js';
 import WebsocketStream from '../lib/WebsocketStream';
 
 const DEFAULT_WEBSOCKET_PORT = 4001;

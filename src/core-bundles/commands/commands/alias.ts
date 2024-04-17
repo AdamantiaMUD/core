@@ -1,13 +1,12 @@
-import Command from '../../../lib/commands/command.js';
-import CommandManager from '../../../lib/commands/command-manager.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
-import type CommandDefinition from '../../../lib/commands/command-definition.js';
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
-import type Player from '../../../lib/players/player.js';
-import type SimpleMap from '../../../lib/util/simple-map.js';
 import type { StatelessCommandBuilder } from '../../../lib/commands/command-definition-builder.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandDefinition from '../../../lib/commands/command-definition.js';
+import CommandManager from '../../../lib/commands/command-manager.js';
+import Command from '../../../lib/commands/command.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
+import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import type SimpleMap from '../../../lib/util/simple-map.js';
 
 const getAliases = (player: Player): SimpleMap<string> => {
     let aliases = player.getMeta<SimpleMap<string>>('aliases');

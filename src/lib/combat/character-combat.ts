@@ -1,4 +1,7 @@
+import type Character from '../characters/character.js';
 import { hasValue } from '../util/functions.js';
+
+import type Damage from './damage.js';
 import {
     CombatantAddedEvent,
     CombatantRemovedEvent,
@@ -6,13 +9,10 @@ import {
     CombatStartEvent,
 } from './events/index.js';
 
-import type Character from '../characters/character.js';
-import type Damage from './damage.js';
-
 export class CharacterCombat {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     private readonly _character: Character;
-    private readonly _combatants: Set<Character> = new Set();
+    private readonly _combatants = new Set<Character>();
     private _killed: boolean = false;
     private _killedBy: Character | null = null;
     private _lag: number = 0;

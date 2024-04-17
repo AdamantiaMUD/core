@@ -1,16 +1,16 @@
 import { v4 as uuid } from 'uuid';
 
-import Inventory from './inventory.js';
-import ItemType from './item-type.js';
-import Logger from '../common/logger.js';
-import ScriptableEntity from '../entities/scriptable-entity.js';
-
-import type Area from '../locations/area.js';
 import type Character from '../characters/character.js';
-import type GameStateData from '../game-state-data.js';
-import type ItemDefinition from './item-definition.js';
-import type Room from '../locations/room.js';
+import Logger from '../common/logger.js';
 import type Serializable from '../data/serializable.js';
+import ScriptableEntity from '../entities/scriptable-entity.js';
+import type GameStateData from '../game-state-data.js';
+import type Area from '../locations/area.js';
+import type Room from '../locations/room.js';
+
+import Inventory from './inventory.js';
+import type ItemDefinition from './item-definition.js';
+import ItemType from './item-type.js';
 import type SerializedItem from './serialized-item.js';
 
 export class Item extends ScriptableEntity implements Serializable {

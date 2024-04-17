@@ -1,9 +1,9 @@
 import type { EventEmitter } from 'events';
 
+import type TransportStream from '../communication/transport-stream.js';
 import { hasValue } from '../util/functions.js';
 import { isIterable } from '../util/objects.js';
 
-import type TransportStream from '../communication/transport-stream.js';
 import type StreamEventListener from './stream-event-listener.js';
 
 export class StreamEventManager {

@@ -20,8 +20,8 @@
     "scripts": {
         "build": "tsc",
         "clean": "rimraf build",
-        "lint": "eslint",
-        "lint:fix": "eslint --fix",
+        "lint": "eslint src/**/*",
+        "lint:fix": "eslint src/**/* --fix",
         "lint:quiet": "eslint --quiet",
         "postbuild": "node scripts/copy-assets.cjs && npx copyfiles -u 1 src/**/*.yml build",
         "postlint:fix": "prettier --write src",
@@ -55,7 +55,7 @@
         "ws": "8.16.0"
     },
     "devDependencies": {
-        "@chimericdream/eslint-config": "7.0.2",
+        "@chimericdream/eslint-config": "7.0.3",
         "@chimericdream/eslint-config-import": "1.1.2",
         "@chimericdream/eslint-config-jest": "4.1.1",
         "@chimericdream/eslint-config-typescript": "6.0.0",

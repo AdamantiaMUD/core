@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience.js';
+import type Player from '../../players/player.js';
 import { hasValue } from '../../util/functions.js';
 
-import type Player from '../../players/player.js';
+import ChannelAudience from './channel-audience.js';
 
 /**
  * Audience class representing other players in the same group as the sender

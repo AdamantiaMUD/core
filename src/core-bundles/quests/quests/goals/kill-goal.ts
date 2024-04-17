@@ -1,11 +1,10 @@
-import QuestGoal from '../../../../lib/quests/quest-goal.js';
-import { CharacterDeathblowEvent } from '../../../../lib/characters/events/index.js';
-import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
-
 import type Character from '../../../../lib/characters/character.js';
+import { CharacterDeathblowEvent } from '../../../../lib/characters/events/index.js';
 import type Player from '../../../../lib/players/player.js';
-import type Quest from '../../../../lib/quests/quest.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
+import QuestGoal from '../../../../lib/quests/quest-goal.js';
 import type QuestProgress from '../../../../lib/quests/quest-progress.js';
+import type Quest from '../../../../lib/quests/quest.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
 
 interface KillGoalConfig extends SimpleMap {

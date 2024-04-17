@@ -1,14 +1,13 @@
+import type Ability from '../abilities/ability.js';
+import type Character from '../characters/character.js';
 import {
     CharacterDamagedEvent,
     CharacterHitEvent,
 } from '../characters/events/index.js';
-import { hasValue } from '../util/functions.js';
-
-import type Ability from '../abilities/ability.js';
-import type Character from '../characters/character.js';
 import type Effect from '../effects/effect.js';
 import type Item from '../equipment/item.js';
 import type Room from '../locations/room.js';
+import { hasValue } from '../util/functions.js';
 import type SimpleMap from '../util/simple-map.js';
 
 // @TODO: make this an interface rather than a hard-coded list

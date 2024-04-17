@@ -1,18 +1,17 @@
 import type { EventEmitter } from 'events';
 
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
 import Account from '../../../lib/players/account.js';
+import { hasValue } from '../../../lib/util/functions.js';
 import {
+    type CreateAccountPayload,
     BeginLoginEvent,
     ChangePasswordEvent,
     CreateAccountEvent,
     CreateCharacterEvent,
 } from '../lib/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
-import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type { CreateAccountPayload } from '../lib/events/index.js';
 
 /**
  * Account creation event

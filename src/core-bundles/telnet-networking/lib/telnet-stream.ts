@@ -1,10 +1,10 @@
-import type { AddressInfo } from 'net';
 import type { ExecFileOptionsWithOtherEncoding } from 'child_process';
+import type { AddressInfo } from 'net';
 
-import Sequences from './sequences.js';
 import TransportStream from '../../../lib/communication/transport-stream.js';
 import { colorize } from '../../../lib/util/communication.js';
 
+import Sequences from './sequences.js';
 import type TelnetSocket from './telnet-socket.js';
 
 type BufferEncoding = ExecFileOptionsWithOtherEncoding['encoding'];

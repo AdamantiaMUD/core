@@ -1,13 +1,13 @@
-import Logger from '../common/logger.js';
-import ScriptableEntity from '../entities/scriptable-entity.js';
-import { AreaRoomAddedEvent, RoomReadyEvent } from './events/index.js';
 import { UpdateTickEvent } from '../common/events/index.js';
+import Logger from '../common/logger.js';
+import type Broadcastable from '../communication/broadcastable.js';
+import ScriptableEntity from '../entities/scriptable-entity.js';
+import type GameStateData from '../game-state-data.js';
+import type Npc from '../mobs/npc.js';
 import { hasValue } from '../util/functions.js';
 
 import type AreaManifest from './area-manifest.js';
-import type Broadcastable from '../communication/broadcastable.js';
-import type GameStateData from '../game-state-data.js';
-import type Npc from '../mobs/npc.js';
+import { AreaRoomAddedEvent, RoomReadyEvent } from './events/index.js';
 import type Room from './room.js';
 
 export class Area extends ScriptableEntity implements Broadcastable {
@@ -16,7 +16,7 @@ export class Area extends ScriptableEntity implements Broadcastable {
 
     private readonly _manifest: AreaManifest;
 
-    private readonly _npcs: Set<Npc> = new Set();
+    private readonly _npcs = new Set<Npc>();
     private readonly _rooms: Map<string, Room> = new Map<string, Room>();
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 

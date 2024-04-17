@@ -1,9 +1,9 @@
-import { InventoryFullError } from './errors/index.js';
+import type Character from '../characters/character.js';
+import type Serializable from '../data/serializable.js';
+import type GameStateData from '../game-state-data.js';
 import { hasValue } from '../util/functions.js';
 
-import type Character from '../characters/character.js';
-import type GameStateData from '../game-state-data.js';
-import type Serializable from '../data/serializable.js';
+import { InventoryFullError } from './errors/index.js';
 import type Item from './item.js';
 import type SerializedInventory from './serialized-inventory.js';
 import type SerializedItem from './serialized-item.js';

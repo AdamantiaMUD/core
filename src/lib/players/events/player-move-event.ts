@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type RoomExitDefinition from '../../locations/room-exit-definition.js';
 
 export interface PlayerMovePayload {

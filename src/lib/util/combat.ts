@@ -1,10 +1,10 @@
-import ItemType from '../equipment/item-type.js';
-import { isNpc } from './characters.js';
-import { hasValue } from './functions.js';
-
 import type Character from '../characters/character.js';
 import type ItemDefinition from '../equipment/item-definition.js';
+import ItemType from '../equipment/item-type.js';
 import type Npc from '../mobs/npc.js';
+
+import { isNpc } from './characters.js';
+import { hasValue } from './functions.js';
 
 export const DEFAULT_WEAPON_SPEED = 2;
 

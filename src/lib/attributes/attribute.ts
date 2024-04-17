@@ -1,9 +1,9 @@
-import AttributeFormula from './attribute-formula.js';
+import type Serializable from '../data/serializable.js';
 import { hasValue } from '../util/functions.js';
+import type SimpleMap from '../util/simple-map.js';
 
 import type AttributeFormulaDefinition from './attribute-formula-definition.js';
-import type Serializable from '../data/serializable.js';
-import type SimpleMap from '../util/simple-map.js';
+import AttributeFormula from './attribute-formula.js';
 
 export interface SerializedAttribute extends SimpleMap {
     base: number;

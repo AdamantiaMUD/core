@@ -1,11 +1,12 @@
 /* eslint-disable-next-line id-length */
-import fs from 'fs-extra';
+import type { Dirent } from 'fs';
 import path from 'path';
 
-import type { Dirent } from 'fs';
+import fs from 'fs-extra';
 
 import type AreaManifest from '../locations/area-manifest.js';
 import type Config from '../util/config.js';
+
 import BundleObjectLoader from './bundle-object-loader.js';
 
 export class BundleAreasLoader extends BundleObjectLoader {
@@ -51,9 +52,10 @@ export class BundleAreasLoader extends BundleObjectLoader {
             );
 
             if (file.isDirectory() && fs.existsSync(manifestPath)) {
-                /* eslint-disable-next-line no-await-in-loop */
+                /* eslint-disable no-await-in-loop */
                 areas[file.name] =
                     await BundleAreasLoader._loadManifest(manifestPath);
+                /* eslint-enable no-await-in-loop */
             }
         }
 

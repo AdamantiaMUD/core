@@ -1,13 +1,14 @@
-import { EventEmitter } from 'events';
-import type { ExecFileOptionsWithOtherEncoding } from 'child_process';
+/* eslint no-param-reassign: ['warn', {props: true, ignorePropertyModificationsFor: ['connection']}] */
 
+import type { ExecFileOptionsWithOtherEncoding } from 'child_process';
+import { EventEmitter } from 'events';
 import type { AddressInfo } from 'net';
+
+import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 import Options from './options.js';
 import Sequences from './sequences.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type AdamantiaSocket from '../../../lib/communication/adamantia-socket.js';
 
 export type Willingness =
     | Sequences.DO
@@ -66,7 +67,7 @@ export class TelnetSocket extends EventEmitter {
         let iacs = 0;
 
         for (const val of dataBuf.values()) {
-            if (val === Sequences.IAC) {
+            if (val === Sequences.IAC.valueOf()) {
                 iacs += 1;
             }
         }
@@ -78,7 +79,7 @@ export class TelnetSocket extends EventEmitter {
                 buf[j] = dataBuf[i];
                 j += 1;
 
-                if (data[i] === Sequences.IAC) {
+                if (data[i] === Sequences.IAC.valueOf()) {
                     buf[j] = Sequences.IAC;
                     j += 1;
                 }
@@ -181,20 +182,17 @@ export class TelnetSocket extends EventEmitter {
              * immediately start consuming data if we begin receiving normal data
              * instead of telnet negotiation
              */
-            if (connection.fresh && dataBuf[0] !== Sequences.IAC) {
+            if (connection.fresh && dataBuf[0] !== Sequences.IAC.valueOf()) {
                 connection.fresh = false;
             }
 
-            dataBuf = inputBuf.slice(0, inputLen);
+            const buf = inputBuf.subarray(0, inputLen);
 
             /*
              * fresh makes sure that even if we haven't gotten a newline but the client
              * sent us some initial negotiations to still interpret them
              */
-            if (
-                !hasValue(/[\n]/u.exec(dataBuf.toString())) &&
-                !connection.fresh
-            ) {
+            if (!hasValue(/\n/u.exec(buf.toString())) && !connection.fresh) {
                 return;
             }
 
@@ -206,11 +204,11 @@ export class TelnetSocket extends EventEmitter {
 
             for (let i = 0; i < inputLen; i++) {
                 // LF character (`\n`)
-                if (dataBuf[i] === 10) {
+                if (buf[i] === 10) {
                     this.input(Buffer.from(bucket));
                     bucket = [];
                 } else {
-                    bucket.push(dataBuf[i]);
+                    bucket.push(buf[i]);
                 }
             }
 
@@ -255,13 +253,13 @@ export class TelnetSocket extends EventEmitter {
             subNegOpt: number | null = null;
 
         while (i < inputBuf.length) {
-            if (inputBuf[i] === Sequences.IAC) {
+            if (inputBuf[i] === Sequences.IAC.valueOf()) {
                 const cmd = inputBuf[i + 1];
                 const opt = inputBuf[i + 2];
 
                 switch (cmd) {
-                    case Sequences.DO:
-                        if (opt === Options.OPT_EOR) {
+                    case Sequences.DO.valueOf():
+                        if (opt === Options.OPT_EOR.valueOf()) {
                             this.gaMode = Sequences.EOR;
                         } else {
                             /**
@@ -274,8 +272,8 @@ export class TelnetSocket extends EventEmitter {
                         i += 3;
                         break;
 
-                    case Sequences.DONT:
-                        if (opt === Options.OPT_EOR) {
+                    case Sequences.DONT.valueOf():
+                        if (opt === Options.OPT_EOR.valueOf()) {
                             this.gaMode = Sequences.GA;
                         } else {
                             /**
@@ -288,7 +286,7 @@ export class TelnetSocket extends EventEmitter {
                         i += 3;
                         break;
 
-                    case Sequences.WILL:
+                    case Sequences.WILL.valueOf():
                         /**
                          * @event TelnetSocket#WILL
                          * @param {number} opt
@@ -299,7 +297,7 @@ export class TelnetSocket extends EventEmitter {
                         break;
 
                     /* falls through */
-                    case Sequences.WONT:
+                    case Sequences.WONT.valueOf():
                         /**
                          * @event TelnetSocket#WONT
                          * @param {number} opt
@@ -309,7 +307,7 @@ export class TelnetSocket extends EventEmitter {
                         i += 3;
                         break;
 
-                    case Sequences.SB: {
+                    case Sequences.SB.valueOf(): {
                         i += 2;
                         subNegOpt = inputBuf[i];
 
@@ -318,7 +316,7 @@ export class TelnetSocket extends EventEmitter {
 
                         let subLen = 0;
 
-                        while (inputBuf[i] !== Sequences.IAC) {
+                        while (inputBuf[i] !== Sequences.IAC.valueOf()) {
                             subNegBuffer[subLen] = inputBuf[i];
 
                             subLen += 1;
@@ -327,8 +325,8 @@ export class TelnetSocket extends EventEmitter {
                         break;
                     }
 
-                    case Sequences.SE:
-                        if (subNegOpt === Options.OPT_GMCP) {
+                    case Sequences.SE.valueOf():
+                        if (subNegOpt === Options.OPT_GMCP.valueOf()) {
                             const gmcpString =
                                 subNegBuffer?.toString().trim() ?? '';
                             const gmcpData = gmcpString.split(' ');
@@ -389,7 +387,7 @@ export class TelnetSocket extends EventEmitter {
          * @event TelnetSocket#data
          * @param {Buffer} data
          */
-        this.emit('data', cleanBuf.slice(0, cleanLen - 1));
+        this.emit('data', cleanBuf.subarray(0, cleanLen - 1));
     }
 }
 

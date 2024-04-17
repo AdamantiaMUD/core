@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience.js';
 import { hasValue } from '../../util/functions.js';
-
 import type Broadcastable from '../broadcastable.js';
+
+import ChannelAudience from './channel-audience.js';
 
 /**
  * Audience class representing characters in the same area as the sender
@@ -12,7 +12,7 @@ export class AreaAudience extends ChannelAudience {
             return [];
         }
 
-        const { area } = this.sender!.room;
+        const { area } = this.sender.room;
 
         return area
             .getBroadcastTargets()

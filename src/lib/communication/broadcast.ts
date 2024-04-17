@@ -1,14 +1,14 @@
-import wrapAnsi from 'wrap-ansi';
 import { sprintf } from 'sprintf-js';
+import wrapAnsi from 'wrap-ansi';
 
-import { cast } from '../util/functions.js';
+import type Player from '../players/player.js';
 import {
     colorize,
     isBroadcastable,
     NOOP_FORMATTER,
 } from '../util/communication.js';
+import { cast } from '../util/functions.js';
 
-import type Player from '../players/player.js';
 import type Broadcastable from './broadcastable.js';
 import type MessageFormatter from './message-formatter.js';
 

@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type Character from '../character.js';
 
 export interface CharacterDeathblowPayload {

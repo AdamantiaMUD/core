@@ -1,13 +1,12 @@
-import ArgParser from '../../../lib/commands/arg-parser.js';
-import ItemUtil from '../../../lib/util/items.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { isNpc } from '../../../lib/util/characters.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type Character from '../../../lib/characters/character.js';
+import ArgParser from '../../../lib/commands/arg-parser.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 import type Player from '../../../lib/players/player.js';
+import { isNpc } from '../../../lib/util/characters.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import ItemUtil from '../../../lib/util/items.js';
 import type SimpleMap from '../../../lib/util/simple-map.js';
 
 interface AcceptBehaviorConfig extends SimpleMap {

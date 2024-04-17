@@ -1,21 +1,21 @@
+import type Attribute from '../attributes/attribute.js';
+import type Character from '../characters/character.js';
 import {
     CharacterEffectAddedEvent,
     CharacterEffectRemovedEvent,
 } from '../characters/events/index.js';
+import type Damage from '../combat/damage.js';
+import type Serializable from '../data/serializable.js';
+import type GameStateData from '../game-state-data.js';
+import { hasValue } from '../util/functions.js';
+
+import type Effect from './effect.js';
 import {
     EffectStackAddedEvent,
     EffectRefreshedEvent,
     EffectRemovedEvent,
     EffectAddedEvent,
 } from './events/index.js';
-import { hasValue } from '../util/functions.js';
-
-import type Attribute from '../attributes/attribute.js';
-import type Character from '../characters/character.js';
-import type Damage from '../combat/damage.js';
-import type GameStateData from '../game-state-data.js';
-import type Effect from './effect.js';
-import type Serializable from '../data/serializable.js';
 import type SerializedEffect from './serialized-effect.js';
 
 /**
@@ -23,7 +23,7 @@ import type SerializedEffect from './serialized-effect.js';
  */
 export class EffectList implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    private readonly _effects: Set<Effect> = new Set();
+    private readonly _effects = new Set<Effect>();
     private readonly _target: Character;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 

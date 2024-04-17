@@ -5,7 +5,7 @@ import type Player from '../players/player.js';
  */
 export class Party extends Set<Player> {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
-    public invited: Set<Player> = new Set();
+    public invited = new Set<Player>();
     public leader: Player;
     /* eslint-enable @typescript-eslint/lines-between-class-members */
 

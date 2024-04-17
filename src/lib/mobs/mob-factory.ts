@@ -1,9 +1,9 @@
 import EntityFactory from '../entities/entity-factory.js';
-import Npc from './npc.js';
+import type Area from '../locations/area.js';
 import { hasValue } from '../util/functions.js';
 
-import type Area from '../locations/area.js';
 import type NpcDefinition from './npc-definition.js';
+import Npc from './npc.js';
 
 /**
  * Stores definitions of npcs to allow for easy creation/cloning

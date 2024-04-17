@@ -1,3 +1,5 @@
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandExecutable from '../../../lib/commands/command-executable.js';
 import Logger from '../../../lib/common/logger.js';
 import {
     center,
@@ -5,13 +7,10 @@ import {
     sayAt,
     wrap,
 } from '../../../lib/communication/broadcast.js';
-import { cast, hasValue } from '../../../lib/util/functions.js';
-
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
-import type CommandExecutable from '../../../lib/commands/command-executable.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type Helpfile from '../../../lib/help/helpfile.js';
 import type Player from '../../../lib/players/player.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
 
 const render = (state: GameStateData, helpFile: Helpfile): string => {
     const body = helpFile.body;

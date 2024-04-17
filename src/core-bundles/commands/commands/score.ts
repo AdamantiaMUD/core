@@ -1,17 +1,16 @@
 import { sprintf } from 'sprintf-js';
 
+import type PlayerClass from '../../../lib/classes/player-class.js';
+import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import {
     at,
     center,
     line,
     sayAt,
 } from '../../../lib/communication/broadcast.js';
+import type Player from '../../../lib/players/player.js';
 import { getWeaponDamage, getWeaponSpeed } from '../../../lib/util/combat.js';
 import { hasValue } from '../../../lib/util/functions.js';
-
-import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
-import type Player from '../../../lib/players/player.js';
-import type PlayerClass from '../../../lib/classes/player-class.js';
 
 type PlayerStats = Record<
     string,

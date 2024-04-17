@@ -1,7 +1,6 @@
-import MudEvent from '../../../events/mud-event.js';
-
-import type Channel from '../channel.js';
 import type Character from '../../../characters/character.js';
+import MudEvent from '../../../events/mud-event.js';
+import type Channel from '../channel.js';
 
 export interface ChannelReceivePayload {
     channel: Channel;

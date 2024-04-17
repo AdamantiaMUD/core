@@ -1,5 +1,4 @@
 import StreamEvent from '../../../../lib/events/stream-event.js';
-
 import type Account from '../../../../lib/players/account.js';
 
 export interface ChooseCharacterPayload {

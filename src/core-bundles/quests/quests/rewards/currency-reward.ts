@@ -1,9 +1,8 @@
-import { PlayerCurrencyGainedEvent } from '../../../../lib/players/events/index.js';
-
 import type GameStateData from '../../../../lib/game-state-data.js';
+import { PlayerCurrencyGainedEvent } from '../../../../lib/players/events/index.js';
 import type Player from '../../../../lib/players/player.js';
-import type Quest from '../../../../lib/quests/quest.js';
 import type QuestReward from '../../../../lib/quests/quest-reward.js';
+import type Quest from '../../../../lib/quests/quest.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
 
 interface CurrencyRewardConfig extends SimpleMap {

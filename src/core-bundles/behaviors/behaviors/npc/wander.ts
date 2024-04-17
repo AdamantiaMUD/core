@@ -1,16 +1,17 @@
-import Logger from '../../../../lib/common/logger.js';
-import random from '../../../../lib/util/random.js';
-import { UpdateTickEvent } from '../../../../lib/common/events/index.js';
-import { hasValue } from '../../../../lib/util/functions.js';
-import { sayAt } from '../../../../lib/communication/broadcast.js';
-
 import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
-import type Door from '../../../../lib/locations/door.js';
-import type GameStateData from '../../../../lib/game-state-data.js';
+import {
+    type UpdateTickPayload,
+    UpdateTickEvent,
+} from '../../../../lib/common/events/index.js';
+import Logger from '../../../../lib/common/logger.js';
+import { sayAt } from '../../../../lib/communication/broadcast.js';
 import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
-import type Npc from '../../../../lib/mobs/npc.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import type Door from '../../../../lib/locations/door.js';
 import type Room from '../../../../lib/locations/room.js';
-import type { UpdateTickPayload } from '../../../../lib/common/events/index.js';
+import type Npc from '../../../../lib/mobs/npc.js';
+import { hasValue } from '../../../../lib/util/functions.js';
+import random from '../../../../lib/util/random.js';
 
 interface WanderConfig {
     areaRestricted: boolean;

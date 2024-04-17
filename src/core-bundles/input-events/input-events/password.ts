@@ -1,15 +1,14 @@
 import type { EventEmitter } from 'events';
 
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import { hasValue } from '../../../lib/util/functions.js';
 import {
+    type InputPasswordPayload,
     ChooseCharacterEvent,
     InputPasswordEvent,
 } from '../lib/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
-import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type { InputPasswordPayload } from '../lib/events/index.js';
 
 const passwordAttempts: Record<string, number> = {};
 const maxFailedAttempts = 2;

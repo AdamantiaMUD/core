@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type QuestRewardDefinition from '../quest-reward-definition.js';
 
 export interface QuestRewardPayload {

@@ -1,18 +1,17 @@
 import type { EventEmitter } from 'events';
 
 import Logger from '../../../lib/common/logger.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type InputMenuOption from '../../../lib/events/input-menu-option.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type CharacterBrief from '../../../lib/players/character-brief.js';
+import { hasValue } from '../../../lib/util/functions.js';
 import {
+    type DeleteCharacterPayload,
     ChooseCharacterEvent,
     DeleteCharacterEvent,
 } from '../lib/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type CharacterBrief from '../../../lib/players/character-brief.js';
-import type InputMenuOption from '../../../lib/events/input-menu-option.js';
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
-import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type { DeleteCharacterPayload } from '../lib/events/index.js';
 
 /**
  * Delete character event
@@ -121,7 +120,8 @@ export const evt: StreamEventListenerFactory<DeleteCharacterPayload> = {
                 if (hasValue(selection)) {
                     Logger.log(`Selected ${selection.display}`);
 
-                    selection.onSelect!();
+                    /* eslint-disable-next-line no-void */
+                    void selection.onSelect!();
 
                     return;
                 }

@@ -1,17 +1,17 @@
 import get from 'lodash.get';
 import set from 'lodash.set';
 
-import MudEventEmitter from '../events/mud-event-emitter.js';
 import { MetadataUpdatedEvent } from '../data/events/index.js';
-import { clone } from '../util/objects.js';
-import { hasValue } from '../util/functions.js';
-
-import type GameEntityDefinition from './game-entity-definition.js';
-import type GameStateData from '../game-state-data.js';
 import type Metadatable from '../data/metadatable.js';
 import type Serializable from '../data/serializable.js';
-import type SerializedGameEntity from './serialized-game-entity.js';
+import MudEventEmitter from '../events/mud-event-emitter.js';
+import type GameStateData from '../game-state-data.js';
+import { hasValue } from '../util/functions.js';
+import { clone } from '../util/objects.js';
 import type SimpleMap from '../util/simple-map.js';
+
+import type GameEntityDefinition from './game-entity-definition.js';
+import type SerializedGameEntity from './serialized-game-entity.js';
 
 export abstract class GameEntity
     extends MudEventEmitter

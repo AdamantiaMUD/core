@@ -1,25 +1,24 @@
-import Logger from '../../../../lib/common/logger.js';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
 import {
+    type UpdateTickPayload,
+    UpdateTickEvent,
+} from '../../../../lib/common/events/index.js';
+import Logger from '../../../../lib/common/logger.js';
+import type Item from '../../../../lib/equipment/item.js';
+import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import type Area from '../../../../lib/locations/area.js';
+import {
+    type AreaRoomAddedPayload,
+    type RoomRespawnTickPayload,
     AreaRoomAddedEvent,
     RoomRespawnTickEvent,
 } from '../../../../lib/locations/events/index.js';
-import { UpdateTickEvent } from '../../../../lib/common/events/index.js';
+import type RoomEntityDefinition from '../../../../lib/locations/room-entity-definition.js';
+import type Room from '../../../../lib/locations/room.js';
+import type Npc from '../../../../lib/mobs/npc.js';
 import { cast, hasValue } from '../../../../lib/util/functions.js';
 import { probability } from '../../../../lib/util/random.js';
-
-import type Area from '../../../../lib/locations/area.js';
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
-import type GameStateData from '../../../../lib/game-state-data.js';
-import type Item from '../../../../lib/equipment/item.js';
-import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
-import type Npc from '../../../../lib/mobs/npc.js';
-import type Room from '../../../../lib/locations/room.js';
-import type RoomEntityDefinition from '../../../../lib/locations/room-entity-definition.js';
-import type {
-    AreaRoomAddedPayload,
-    RoomRespawnTickPayload,
-} from '../../../../lib/locations/events/index.js';
-import type { UpdateTickPayload } from '../../../../lib/common/events/index.js';
 
 /**
  * Behavior for having a constant respawn tick happening every [interval]

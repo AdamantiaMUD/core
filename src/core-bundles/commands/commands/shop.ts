@@ -1,21 +1,20 @@
 import { sprintf } from 'sprintf-js';
 
 import ArgParser from '../../../lib/commands/arg-parser.js';
-import Command from '../../../lib/commands/command.js';
-import CommandManager from '../../../lib/commands/command-manager.js';
-import ItemType from '../../../lib/equipment/item-type.js';
-import ItemUtils from '../../../lib/util/items.js';
-import { center, line, sayAt } from '../../../lib/communication/broadcast.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type CommandDefinition from '../../../lib/commands/command-definition.js';
 import type CommandDefinitionBuilder from '../../../lib/commands/command-definition-builder.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import type CommandDefinition from '../../../lib/commands/command-definition.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
-import type GameStateData from '../../../lib/game-state-data.js';
+import CommandManager from '../../../lib/commands/command-manager.js';
+import Command from '../../../lib/commands/command.js';
+import { center, line, sayAt } from '../../../lib/communication/broadcast.js';
+import ItemType from '../../../lib/equipment/item-type.js';
 import type Item from '../../../lib/equipment/item.js';
+import type GameStateData from '../../../lib/game-state-data.js';
 import type Npc from '../../../lib/mobs/npc.js';
 import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import ItemUtils from '../../../lib/util/items.js';
 
 interface VendorConfig {
     items: Record<

@@ -1,4 +1,4 @@
-import AttributeDefinition from '../../attributes/attribute-definition.js';
+import type AttributeDefinition from '../../attributes/attribute-definition.js';
 
 const attributes: AttributeDefinition[] = [];
 

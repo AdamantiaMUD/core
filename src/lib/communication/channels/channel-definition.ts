@@ -1,6 +1,7 @@
-import type ChannelAudience from '../audiences/channel-audience.js';
-import type ChannelMessageFormatter from './channel-message-formatter.js';
 import type PlayerRole from '../../players/player-role.js';
+import type ChannelAudience from '../audiences/channel-audience.js';
+
+import type ChannelMessageFormatter from './channel-message-formatter.js';
 
 export interface ChannelDefinition {
     aliases?: string[];

@@ -1,13 +1,14 @@
 import BehaviorManager from '../behaviors/behavior-manager.js';
-
-import type GameEntity from './game-entity.js';
-import type GameEntityDefinition from './game-entity-definition.js';
 import type Behavior from '../behaviors/behavior.js';
 
-/* eslint-disable-next-line @typescript-eslint/no-unused-vars */
+import type GameEntityDefinition from './game-entity-definition.js';
+import type GameEntity from './game-entity.js';
+
 export abstract class EntityFactory<
+    /* eslint-disable @typescript-eslint/no-unused-vars */
     T extends GameEntity,
     TDef extends GameEntityDefinition,
+    /* eslint-enable @typescript-eslint/no-unused-vars */
 > {
     /* eslint-disable @typescript-eslint/lines-between-class-members */
     protected _entities: Map<string, TDef> = new Map<string, TDef>();

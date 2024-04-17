@@ -1,10 +1,11 @@
-import { PlayerQuestTurnInReadyEvent } from '../../../lib/players/events/index.js';
 import { sayAt } from '../../../lib/communication/broadcast.js';
-
-import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
 import type PlayerEventListenerDefinition from '../../../lib/events/player-event-listener-definition.js';
+import type PlayerEventListener from '../../../lib/events/player-event-listener.js';
+import {
+    type PlayerQuestTurnInReadyPayload,
+    PlayerQuestTurnInReadyEvent,
+} from '../../../lib/players/events/index.js';
 import type Player from '../../../lib/players/player.js';
-import type { PlayerQuestTurnInReadyPayload } from '../../../lib/players/events/index.js';
 
 export const evt: PlayerEventListenerDefinition<PlayerQuestTurnInReadyPayload> =
     {

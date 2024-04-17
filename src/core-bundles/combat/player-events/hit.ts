@@ -1,12 +1,13 @@
-import { CharacterHitEvent } from '../../../lib/characters/events/index.js';
-import { ItemHitEvent } from '../../../lib/equipment/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
+import {
+    type CharacterHitPayload,
+    CharacterHitEvent,
+} from '../../../lib/characters/events/index.js';
 import { sayAt } from '../../../lib/communication/broadcast.js';
-
-import type MudEventListener from '../../../lib/events/mud-event-listener.js';
+import { ItemHitEvent } from '../../../lib/equipment/events/index.js';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
 import type Player from '../../../lib/players/player.js';
-import type { CharacterHitPayload } from '../../../lib/characters/events/index.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 export const evt: MudEventListenerDefinition<[Player, CharacterHitPayload]> = {
     name: CharacterHitEvent.getName(),

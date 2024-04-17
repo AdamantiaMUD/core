@@ -1,10 +1,11 @@
+import {
+    type CharacterHealPayload,
+    CharacterHealEvent,
+} from '../../../lib/characters/events/index.js';
 import Broadcast from '../../../lib/communication/broadcast.js';
-import { CharacterHealEvent } from '../../../lib/characters/events/index.js';
-
-import type MudEventListener from '../../../lib/events/mud-event-listener.js';
 import type MudEventListenerDefinition from '../../../lib/events/mud-event-listener-definition.js';
+import type MudEventListener from '../../../lib/events/mud-event-listener.js';
 import type Player from '../../../lib/players/player.js';
-import type { CharacterHealPayload } from '../../../lib/characters/events/index.js';
 import { hasValue } from '../../../lib/util/functions.js';
 
 const { sayAt } = Broadcast;

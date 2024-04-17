@@ -1,35 +1,38 @@
 import type { EventEmitter } from 'events';
 
+import type Ability from '../../../lib/abilities/ability.js';
+import { UseAbilityEvent } from '../../../lib/abilities/events/index.js';
 import CommandParser from '../../../lib/commands/command-parser.js';
 import CommandType from '../../../lib/commands/command-type.js';
-import Logger from '../../../lib/common/logger.js';
-import PlayerRole from '../../../lib/players/player-role.js';
-import { CommandLoopEvent } from '../lib/events/index.js';
 import {
     InvalidCommandError,
     RestrictedCommandError,
 } from '../../../lib/commands/errors/index.js';
+import Logger from '../../../lib/common/logger.js';
+import { prompt, sayAt } from '../../../lib/communication/broadcast.js';
+import type Channel from '../../../lib/communication/channels/channel.js';
 import {
     NoMessageError,
     NoPartyError,
     NoRecipientError,
     UnknownChannelError,
 } from '../../../lib/communication/channels/errors/index.js';
-import { PlayerMoveEvent } from '../../../lib/players/events/index.js';
-import { RoomCommandEvent } from '../../../lib/locations/events/index.js';
-import { UseAbilityEvent } from '../../../lib/abilities/events/index.js';
-import { cast, hasValue } from '../../../lib/util/functions.js';
-import { prompt, sayAt } from '../../../lib/communication/broadcast.js';
-
-import type Ability from '../../../lib/abilities/ability.js';
-import type Channel from '../../../lib/communication/channels/channel.js';
-import type GameStateData from '../../../lib/game-state-data.js';
-import type Player from '../../../lib/players/player.js';
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
 import type TransportStream from '../../../lib/communication/transport-stream.js';
-import type { CommandLoopPayload } from '../lib/events/index.js';
-import type { PlayerMovePayload } from '../../../lib/players/events/index.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import { RoomCommandEvent } from '../../../lib/locations/events/index.js';
+import {
+    type PlayerMovePayload,
+    PlayerMoveEvent,
+} from '../../../lib/players/events/index.js';
+import PlayerRole from '../../../lib/players/player-role.js';
+import type Player from '../../../lib/players/player.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import {
+    type CommandLoopPayload,
+    CommandLoopEvent,
+} from '../lib/events/index.js';
 
 const handleChannelError = (
     err: unknown,

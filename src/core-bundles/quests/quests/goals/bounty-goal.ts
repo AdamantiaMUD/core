@@ -1,13 +1,14 @@
-import QuestGoal from '../../../../lib/quests/quest-goal.js';
-import { PlayerEnterRoomEvent } from '../../../../lib/players/events/index.js';
-import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
-import { hasValue } from '../../../../lib/util/functions.js';
-
+import {
+    type PlayerEnterRoomPayload,
+    PlayerEnterRoomEvent,
+} from '../../../../lib/players/events/index.js';
 import type Player from '../../../../lib/players/player.js';
-import type Quest from '../../../../lib/quests/quest.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
+import QuestGoal from '../../../../lib/quests/quest-goal.js';
 import type QuestProgress from '../../../../lib/quests/quest-progress.js';
+import type Quest from '../../../../lib/quests/quest.js';
+import { hasValue } from '../../../../lib/util/functions.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
-import type { PlayerEnterRoomPayload } from '../../../../lib/players/events/index.js';
 
 interface BountyGoalConfig extends SimpleMap {
     title: string;

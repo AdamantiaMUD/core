@@ -1,10 +1,9 @@
-import type { AddressInfo } from 'net';
 import type { EventEmitter } from 'events';
+import type { AddressInfo } from 'net';
 
-import { cast, hasValue } from '../util/functions.js';
-
-import type StreamEvent from '../events/stream-event.js';
 import type StreamEventListener from '../events/stream-event-listener.js';
+import type StreamEvent from '../events/stream-event.js';
+import { cast, hasValue } from '../util/functions.js';
 
 /**
  * Base class for anything that should be sending or receiving data from the player
@@ -67,10 +66,12 @@ export abstract class TransportStream<T extends EventEmitter> {
         const cmd = `execute${command[0].toUpperCase()}${command.substr(1)}`;
 
         if (typeof this[cmd as keyof this] === 'function') {
-            /* eslint-disable-next-line @typescript-eslint/ban-types */
+            /* eslint-disable @typescript-eslint/ban-types */
             const func = cast<Function>(this[cmd as keyof this]).bind(
                 this
             ) as Function;
+            /* eslint-enable @typescript-eslint/ban-types */
+
             return func(...args);
         }
 
@@ -82,7 +83,8 @@ export abstract class TransportStream<T extends EventEmitter> {
     }
 
     public listen<S>(eventKey: string, listener: StreamEventListener<S>): void {
-        this.socket.on(eventKey, (data: S) => listener(this, data));
+        /* eslint-disable-next-line no-void */
+        this.socket.on(eventKey, (data: S) => void listener(this, data));
     }
 
     public setPrompted(prompted: boolean): void {

@@ -1,19 +1,18 @@
 import type { EventEmitter } from 'events';
 
 import Logger from '../../../lib/common/logger.js';
+import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Account from '../../../lib/players/account.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import { validateAccountName } from '../../../lib/util/player.js';
 import {
     BeginLoginEvent,
     CreateAccountEvent,
     InputPasswordEvent,
 } from '../lib/events/index.js';
-import { cast, hasValue } from '../../../lib/util/functions.js';
-import { validateAccountName } from '../../../lib/util/player.js';
-
-import type Account from '../../../lib/players/account.js';
-import type GameStateData from '../../../lib/game-state-data.js';
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
-import type TransportStream from '../../../lib/communication/transport-stream.js';
 
 export const evt: StreamEventListenerFactory<void> = {
     name: BeginLoginEvent.getName(),

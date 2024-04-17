@@ -6,7 +6,7 @@ import type Item from './item.js';
  * Keep track of all items in game
  */
 export class ItemManager {
-    private readonly _items: Set<Item> = new Set();
+    private readonly _items = new Set<Item>();
 
     public get items(): Set<Item> {
         return this._items;

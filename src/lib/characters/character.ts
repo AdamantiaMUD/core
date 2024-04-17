@@ -1,21 +1,17 @@
 import type { EventEmitter } from 'events';
 
-import CharacterAttributes from '../attributes/character-attributes.js';
+import CharacterAttributes, {
+    type SerializedCharacterAttributes,
+} from '../attributes/character-attributes.js';
 import CharacterCombat from '../combat/character-combat.js';
 import CommandQueue from '../commands/command-queue.js';
+import type Broadcastable from '../communication/broadcastable.js';
+import type TransportStream from '../communication/transport-stream.js';
+import type Serializable from '../data/serializable.js';
 import EffectList from '../effects/effect-list.js';
-import Inventory from '../equipment/inventory.js';
+import type Effect from '../effects/effect.js';
 import ScriptableEntity from '../entities/scriptable-entity.js';
-import { hasValue } from '../util/functions.js';
-import {
-    CharacterAttributeUpdateEvent,
-    CharacterEquipItemEvent,
-    CharacterFollowedTargetEvent,
-    CharacterGainedFollowerEvent,
-    CharacterLostFollowerEvent,
-    CharacterUnequipItemEvent,
-    CharacterUnfollowedTargetEvent,
-} from './events/index.js';
+import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity.js';
 import {
     AlreadyEquippedError,
     SlotTakenError,
@@ -25,16 +21,21 @@ import {
     ItemEquippedEvent,
     ItemUnequippedEvent,
 } from '../equipment/events/index.js';
-
-import type Broadcastable from '../communication/broadcastable.js';
-import type Effect from '../effects/effect.js';
-import type GameStateData from '../game-state-data.js';
+import Inventory from '../equipment/inventory.js';
 import type Item from '../equipment/item.js';
+import type GameStateData from '../game-state-data.js';
 import type Room from '../locations/room.js';
-import type Serializable from '../data/serializable.js';
-import type SerializedScriptableEntity from '../entities/serialized-scriptable-entity.js';
-import type TransportStream from '../communication/transport-stream.js';
-import type { SerializedCharacterAttributes } from '../attributes/character-attributes.js';
+import { hasValue } from '../util/functions.js';
+
+import {
+    CharacterAttributeUpdateEvent,
+    CharacterEquipItemEvent,
+    CharacterFollowedTargetEvent,
+    CharacterGainedFollowerEvent,
+    CharacterLostFollowerEvent,
+    CharacterUnequipItemEvent,
+    CharacterUnfollowedTargetEvent,
+} from './events/index.js';
 
 export interface SerializedCharacter extends SerializedScriptableEntity {
     attributes: SerializedCharacterAttributes;

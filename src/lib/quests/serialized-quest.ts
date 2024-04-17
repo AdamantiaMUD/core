@@ -1,5 +1,6 @@
-import type QuestProgress from './quest-progress.js';
 import type SimpleMap from '../util/simple-map.js';
+
+import type QuestProgress from './quest-progress.js';
 import type SerializedQuestGoal from './serialized-quest-goal.js';
 
 export interface SerializedQuest extends SimpleMap {

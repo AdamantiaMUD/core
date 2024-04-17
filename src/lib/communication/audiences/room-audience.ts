@@ -1,7 +1,7 @@
-import ChannelAudience from './channel-audience.js';
+import type Player from '../../players/player.js';
 import { hasValue } from '../../util/functions.js';
 
-import type Player from '../../players/player.js';
+import ChannelAudience from './channel-audience.js';
 
 /**
  * Audience class representing other players in the same room as the sender
@@ -14,11 +14,9 @@ export class RoomAudience extends ChannelAudience {
             return [];
         }
 
-        return (
-            this.sender?.room
-                .getBroadcastTargets()
-                .filter((target: Player) => target !== this.sender) ?? []
-        );
+        return this.sender.room
+            .getBroadcastTargets()
+            .filter((target: Player) => target !== this.sender);
     }
 }
 

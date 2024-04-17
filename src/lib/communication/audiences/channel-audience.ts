@@ -1,6 +1,6 @@
-import type Broadcastable from '../broadcastable.js';
 import type Character from '../../characters/character.js';
 import type GameStateData from '../../game-state-data.js';
+import type Broadcastable from '../broadcastable.js';
 
 /**
  * Base channel audience class

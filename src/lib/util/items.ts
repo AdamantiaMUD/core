@@ -3,17 +3,17 @@
  */
 import { sprintf } from 'sprintf-js';
 
-import Broadcast from '../communication/broadcast.js';
-import Item from '../equipment/item.js';
-import ItemQuality from '../equipment/item-quality.js';
-import ItemType from '../equipment/item-type.js';
-import { clone } from './objects.js';
-import { hasValue } from './functions.js';
-
 import type Character from '../characters/character.js';
-import type GameStateData from '../game-state-data.js';
+import Broadcast from '../communication/broadcast.js';
+import ItemQuality from '../equipment/item-quality.js';
 import type ItemStats from '../equipment/item-stats.js';
+import ItemType from '../equipment/item-type.js';
+import Item from '../equipment/item.js';
+import type GameStateData from '../game-state-data.js';
 import type Player from '../players/player.js';
+
+import { hasValue } from './functions.js';
+import { clone } from './objects.js';
 
 const { line, wrap } = Broadcast;
 
@@ -121,6 +121,13 @@ export const renderItem = (
 
         case ItemType.CONTAINER:
             buf += sprintf('| %-36s |\n', `Holds ${item.maxItems} items`);
+            break;
+
+        case ItemType.OBJECT:
+        case ItemType.POTION:
+        case ItemType.RESOURCE:
+        case ItemType.TRASH:
+            // no-op
             break;
 
         /* no default */

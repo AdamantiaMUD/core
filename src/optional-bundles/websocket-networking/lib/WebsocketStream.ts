@@ -1,5 +1,6 @@
-import type WebSocket from 'ws';
 import type { AddressInfo } from 'net';
+
+import type WebSocket from 'ws';
 
 import TransportStream from '../../../lib/communication/transport-stream.js';
 import { colorize } from '../../../lib/util/communication.js';
@@ -62,11 +63,12 @@ export class WebsocketStream extends TransportStream<WebSocket> {
         return this;
     }
 
-    /* eslint-disable-next-line @typescript-eslint/no-unused-vars */
     public write(
+        /* eslint-disable @typescript-eslint/no-unused-vars */
         message: string,
         encoding: string = 'ignored',
         includeNewline: boolean = true
+        /* eslint-enable @typescript-eslint/no-unused-vars */
     ): boolean {
         if (!this.writable) {
             return false;

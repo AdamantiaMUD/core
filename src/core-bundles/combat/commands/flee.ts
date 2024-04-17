@@ -1,14 +1,13 @@
-import CommandParser from '../../../lib/commands/command-parser.js';
-import random from '../../../lib/util/random.js';
-import { PlayerMoveEvent } from '../../../lib/players/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import CommandParser from '../../../lib/commands/command-parser.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 import type GameStateData from '../../../lib/game-state-data.js';
-import type Player from '../../../lib/players/player.js';
 import type RoomExitDefinition from '../../../lib/locations/room-exit-definition.js';
+import { PlayerMoveEvent } from '../../../lib/players/events/index.js';
+import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import random from '../../../lib/util/random.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'flee',

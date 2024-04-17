@@ -1,9 +1,10 @@
 /* eslint-disable-next-line id-length */
-import fs from 'fs-extra';
 import path from 'path';
 
-import type Config from '../util/config.js';
+import fs from 'fs-extra';
+
 import type SerializedPlayer from '../players/serialized-player.js';
+import type Config from '../util/config.js';
 
 export class PlayerLoader {
     public async loadPlayer(

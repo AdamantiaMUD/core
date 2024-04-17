@@ -1,17 +1,15 @@
 /* eslint-disable-next-line id-length */
+import type { EventEmitter } from 'events';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 
-import type { EventEmitter } from 'events';
-
-import { BeginLoginEvent, IntroEvent } from '../lib/events/index.js';
-import { hasValue } from '../../../lib/util/functions.js';
-
-import type GameStateData from '../../../lib/game-state-data.js';
-import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
-import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
 import type TransportStream from '../../../lib/communication/transport-stream.js';
+import type StreamEventListenerFactory from '../../../lib/events/stream-event-listener-factory.js';
+import type StreamEventListener from '../../../lib/events/stream-event-listener.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import { BeginLoginEvent, IntroEvent } from '../lib/events/index.js';
 
 /* eslint-disable-next-line @typescript-eslint/naming-convention, id-match */
 const __dirname = path.dirname(fileURLToPath(import.meta.url));

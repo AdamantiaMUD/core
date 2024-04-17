@@ -1,10 +1,11 @@
 /* eslint-disable-next-line id-length */
-import fs from 'fs-extra';
+import type { Dirent } from 'fs';
 import path from 'path';
 
-import type { Dirent } from 'fs';
+import fs from 'fs-extra';
 
 import type Config from '../util/config.js';
+
 import BundleObjectLoader from './bundle-object-loader.js';
 
 type AreaEntityType = 'items' | 'npcs' | 'quests' | 'rooms';

@@ -1,15 +1,15 @@
 import { sprintf } from 'sprintf-js';
 
-import GameEntity from './game-entity.js';
-import Logger from '../common/logger.js';
-import { clone } from '../util/objects.js';
-import { hasValue } from '../util/functions.js';
-
 import type BehaviorManager from '../behaviors/behavior-manager.js';
+import Logger from '../common/logger.js';
 import type GameStateData from '../game-state-data.js';
+import { hasValue } from '../util/functions.js';
+import { clone } from '../util/objects.js';
+import type SimpleMap from '../util/simple-map.js';
+
+import GameEntity from './game-entity.js';
 import type ScriptableEntityDefinition from './scriptable-entity-definition.js';
 import type SerializedScriptableEntity from './serialized-scriptable-entity.js';
-import type SimpleMap from '../util/simple-map.js';
 
 export class ScriptableEntity extends GameEntity {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

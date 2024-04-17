@@ -1,19 +1,20 @@
-import Item from '../../../../lib/equipment/item.js';
-import Logger from '../../../../lib/common/logger.js';
-import LootTable from '../../../../lib/combat/loot-table.js';
-import Player from '../../../../lib/players/player.js';
-import { NpcKilledEvent } from '../../../../lib/mobs/events/index.js';
-import { PlayerCurrencyGainedEvent } from '../../../../lib/players/events/index.js';
-import { hasValue } from '../../../../lib/util/functions.js';
-import { makeCorpse } from '../../../../lib/util/combat.js';
-
 import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
-import type GameStateData from '../../../../lib/game-state-data.js';
+import LootTable from '../../../../lib/combat/loot-table.js';
+import Logger from '../../../../lib/common/logger.js';
 import type ItemDefinition from '../../../../lib/equipment/item-definition.js';
+import Item from '../../../../lib/equipment/item.js';
 import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import {
+    NpcKilledEvent,
+    type NpcKilledPayload,
+} from '../../../../lib/mobs/events/index.js';
 import type Npc from '../../../../lib/mobs/npc.js';
+import { PlayerCurrencyGainedEvent } from '../../../../lib/players/events/index.js';
+import Player from '../../../../lib/players/player.js';
+import { makeCorpse } from '../../../../lib/util/combat.js';
+import { hasValue } from '../../../../lib/util/functions.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
-import type { NpcKilledPayload } from '../../../../lib/mobs/events/index.js';
 
 export const lootable: BehaviorDefinition = {
     listeners: {
@@ -82,7 +83,7 @@ export const lootable: BehaviorDefinition = {
                                 for (const recipient of recipients) {
                                     /*
                                      * Split currently evenly amount recipients. The way
-                                     * the math works out the leader  of the party will
+                                     * the math works out the leader of the party will
                                      * get any remainder if the currency isn't divisible
                                      * evenly
                                      */

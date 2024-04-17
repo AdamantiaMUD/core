@@ -1,6 +1,5 @@
-import MudEvent from '../../events/mud-event.js';
-
 import type Effect from '../../effects/effect.js';
+import MudEvent from '../../events/mud-event.js';
 
 export interface CharacterEffectAddedPayload {
     effect: Effect;

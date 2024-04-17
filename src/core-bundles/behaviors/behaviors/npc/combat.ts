@@ -1,27 +1,28 @@
-import Item from '../../../../lib/equipment/item.js';
-import Logger from '../../../../lib/common/logger.js';
+import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
 import {
     CharacterDamagedEvent,
     CharacterDeathblowEvent,
     CharacterHitEvent,
+    type CharacterDamagedPayload,
+    type CharacterDeathblowPayload,
+    type CharacterHitPayload,
 } from '../../../../lib/characters/events/index.js';
-import { NpcKilledEvent } from '../../../../lib/mobs/events/index.js';
-import { UpdateTickEvent } from '../../../../lib/common/events/index.js';
+import {
+    type UpdateTickPayload,
+    UpdateTickEvent,
+} from '../../../../lib/common/events/index.js';
+import Logger from '../../../../lib/common/logger.js';
+import type ItemDefinition from '../../../../lib/equipment/item-definition.js';
+import Item from '../../../../lib/equipment/item.js';
+import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
+import type GameStateData from '../../../../lib/game-state-data.js';
+import {
+    NpcKilledEvent,
+    type NpcKilledPayload,
+} from '../../../../lib/mobs/events/index.js';
+import type Npc from '../../../../lib/mobs/npc.js';
 import { makeCorpse } from '../../../../lib/util/combat.js';
 import { hasValue, noop } from '../../../../lib/util/functions.js';
-
-import type BehaviorDefinition from '../../../../lib/behaviors/behavior-definition.js';
-import type GameStateData from '../../../../lib/game-state-data.js';
-import type ItemDefinition from '../../../../lib/equipment/item-definition.js';
-import type MudEventListener from '../../../../lib/events/mud-event-listener.js';
-import type Npc from '../../../../lib/mobs/npc.js';
-import type {
-    CharacterDamagedPayload,
-    CharacterDeathblowPayload,
-    CharacterHitPayload,
-} from '../../../../lib/characters/events/index.js';
-import type { NpcKilledPayload } from '../../../../lib/mobs/events/index.js';
-import type { UpdateTickPayload } from '../../../../lib/common/events/index.js';
 
 /**
  * Example real-time combat behavior for NPCs that goes along with the player's

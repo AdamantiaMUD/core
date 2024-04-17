@@ -1,11 +1,11 @@
 import { sprintf } from 'sprintf-js';
 
-import Attribute from './attribute.js';
 import { hasValue } from '../util/functions.js';
+import type SimpleMap from '../util/simple-map.js';
 
 import type AttributeDefinition from './attribute-definition.js';
 import type AttributeFormulaDefinition from './attribute-formula-definition.js';
-import type SimpleMap from '../util/simple-map.js';
+import Attribute from './attribute.js';
 
 export class AttributeFactory {
     private readonly _attributes: Map<string, AttributeDefinition> = new Map<
@@ -117,7 +117,7 @@ export class AttributeFactory {
 
         for (const attrName in references) {
             /* eslint-disable-next-line @typescript-eslint/strict-boolean-expressions -- `hasOwnProperty` is boolean, but `call` doesn't know that */
-            if (Object.prototype.hasOwnProperty.call(references, attrName)) {
+            if (Object.hasOwn(references, attrName)) {
                 const check = this._hasCircularDependency(attrName, references);
 
                 if (Array.isArray(check)) {

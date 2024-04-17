@@ -1,10 +1,10 @@
 import { EventEmitter } from 'events';
 
 import { cast } from '../util/functions.js';
-
-import type MudEvent from './mud-event.js';
-import type MudEventListener from './mud-event-listener.js';
 import type SimpleMap from '../util/simple-map.js';
+
+import type MudEventListener from './mud-event-listener.js';
+import type MudEvent from './mud-event.js';
 
 export abstract class MudEventEmitter {
     protected _emitter: EventEmitter = new EventEmitter();

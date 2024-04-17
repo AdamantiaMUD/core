@@ -1,19 +1,16 @@
-import QuestGoal from '../../../../lib/quests/quest-goal.js';
+import type Character from '../../../../lib/characters/character.js';
 import {
+    type CharacterEquipItemPayload,
+    type CharacterUnequipItemPayload,
     CharacterEquipItemEvent,
     CharacterUnequipItemEvent,
 } from '../../../../lib/characters/events/index.js';
-import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
-
-import type Character from '../../../../lib/characters/character.js';
 import type Player from '../../../../lib/players/player.js';
-import type Quest from '../../../../lib/quests/quest.js';
+import { QuestProgressEvent } from '../../../../lib/quests/events/index.js';
+import QuestGoal from '../../../../lib/quests/quest-goal.js';
 import type QuestProgress from '../../../../lib/quests/quest-progress.js';
+import type Quest from '../../../../lib/quests/quest.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
-import type {
-    CharacterEquipItemPayload,
-    CharacterUnequipItemPayload,
-} from '../../../../lib/characters/events/index.js';
 
 interface EquipGoalConfig extends SimpleMap {
     title: string;

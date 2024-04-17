@@ -1,20 +1,20 @@
 import { v4 as uuid } from 'uuid';
 
 import Character from '../characters/character.js';
-import Inventory from '../equipment/inventory.js';
 import Logger from '../common/logger.js';
-import { NpcEnterRoomEvent } from './events/index.js';
+import type Serializable from '../data/serializable.js';
+import Inventory from '../equipment/inventory.js';
+import type GameStateData from '../game-state-data.js';
+import type Area from '../locations/area.js';
 import {
     RoomNpcEnterEvent,
     RoomNpcLeaveEvent,
 } from '../locations/events/index.js';
+import type Room from '../locations/room.js';
 import { hasValue, noop } from '../util/functions.js';
 
-import type Area from '../locations/area.js';
-import type GameStateData from '../game-state-data.js';
+import { NpcEnterRoomEvent } from './events/index.js';
 import type NpcDefinition from './npc-definition.js';
-import type Room from '../locations/room.js';
-import type Serializable from '../data/serializable.js';
 
 export class Npc extends Character implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

@@ -1,20 +1,19 @@
-import ArgParser from '../../../lib/commands/arg-parser.js';
-import ItemUtil from '../../../lib/util/items.js';
-import Item from '../../../lib/equipment/item.js';
-import ItemType from '../../../lib/equipment/item-type.js';
-import Logger from '../../../lib/common/logger.js';
-import Player from '../../../lib/players/player.js';
-import { at, sayAt } from '../../../lib/communication/broadcast.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { humanize } from '../../../lib/util/time.js';
-
 import type Character from '../../../lib/characters/character.js';
+import ArgParser from '../../../lib/commands/arg-parser.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import Logger from '../../../lib/common/logger.js';
+import { at, sayAt } from '../../../lib/communication/broadcast.js';
 import type GameEntity from '../../../lib/entities/game-entity.js';
+import ItemType from '../../../lib/equipment/item-type.js';
+import Item from '../../../lib/equipment/item.js';
 import type GameStateData from '../../../lib/game-state-data.js';
-import type Npc from '../../../lib/mobs/npc.js';
 import type RoomExitDefinition from '../../../lib/locations/room-exit-definition.js';
+import type Npc from '../../../lib/mobs/npc.js';
+import Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import ItemUtil from '../../../lib/util/items.js';
+import { humanize } from '../../../lib/util/time.js';
 import type { UsableConfig } from '../../behaviors/behaviors/item/usable.js';
 
 const exitMap = new Map<string, string>();
@@ -33,20 +32,14 @@ exitMap.set('northeast', 'NE');
 const getEntity = (search: string, player: Player): GameEntity | null => {
     const room = player.room!;
 
-    let entity: GameEntity = ArgParser.parseDot(
+    let entity: GameEntity | null = ArgParser.parseDot(
         search,
         Array.from(room.items)
-    ) as GameEntity;
+    );
 
-    entity ??= ArgParser.parseDot(
-        search,
-        Array.from(room.players)
-    ) as GameEntity;
-    entity ??= ArgParser.parseDot(search, Array.from(room.npcs)) as GameEntity;
-    entity ??= ArgParser.parseDot(
-        search,
-        Array.from(player.inventory.items)
-    ) as GameEntity;
+    entity ??= ArgParser.parseDot(search, Array.from(room.players));
+    entity ??= ArgParser.parseDot(search, Array.from(room.npcs));
+    entity ??= ArgParser.parseDot(search, Array.from(player.inventory.items));
 
     return entity;
 };
@@ -189,6 +182,7 @@ const lookRoom = (state: GameStateData, player: Player): void => {
         // color NPC label by difficulty
         let npcColor: string = 'green';
 
+        /* eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check */
         switch (true) {
             case player.level - npc.level > 4:
                 npcColor = 'cyan';
@@ -230,6 +224,89 @@ const lookRoom = (state: GameStateData, player: Player): void => {
     });
 };
 
+const lookAtItem = (
+    entity: Item,
+    state: GameStateData,
+    player: Player
+): void => {
+    const usable = entity.getBehavior('usable') as UsableConfig;
+
+    if (hasValue(usable)) {
+        if (hasValue(usable.spell)) {
+            const useSpell = state.spellManager.get(usable.spell);
+
+            if (hasValue(useSpell)) {
+                useSpell.options = usable.options ?? {};
+
+                sayAt(player, useSpell.info(useSpell, player));
+            }
+        }
+
+        if (hasValue(usable.effect) && hasValue(usable.config?.description)) {
+            sayAt(player, usable.config!.description as string);
+        }
+
+        if (hasValue(usable.charges)) {
+            sayAt(player, `There are ${usable.charges} charges remaining.`);
+        }
+    }
+
+    switch (entity.type) {
+        case ItemType.WEAPON:
+        case ItemType.ARMOR:
+            sayAt(player, ItemUtil.renderItem(state, entity, player));
+
+            break;
+
+        case ItemType.CONTAINER:
+            if (!hasValue(entity.inventory) || entity.inventory.size === 0) {
+                sayAt(player, `${entity.name} is empty.`);
+
+                return;
+            }
+
+            if (entity.getMeta<boolean>('closed')) {
+                sayAt(player, 'It is closed.');
+
+                return;
+            }
+
+            at(player, 'Contents');
+            if (isFinite(entity.inventory.getMax())) {
+                at(
+                    player,
+                    ` (${entity.inventory.size}/${entity.inventory.getMax()})`
+                );
+            }
+
+            sayAt(player, ':');
+
+            for (const [, item] of entity.inventory.items) {
+                sayAt(player, `  ${ItemUtil.display(item)}`);
+            }
+
+            break;
+
+        case ItemType.OBJECT:
+        case ItemType.POTION:
+        case ItemType.RESOURCE:
+        case ItemType.TRASH:
+            // no-op
+            break;
+
+        /* no default */
+    }
+};
+
+const lookAtPlayer = (
+    entity: Player,
+    state: GameStateData,
+    player: Player
+): void => {
+    // @TODO: Show player equipment
+    sayAt(player, `You see fellow player ${entity.name}.`);
+};
+
 const lookEntity = (
     state: GameStateData,
     player: Player,
@@ -246,8 +323,7 @@ const lookEntity = (
     }
 
     if (entity instanceof Player) {
-        // @TODO: Show player equipment
-        sayAt(player, `You see fellow player ${entity.name}.`);
+        lookAtPlayer(entity, state, player);
 
         return;
     }
@@ -265,72 +341,7 @@ const lookEntity = (
     }
 
     if (entity instanceof Item) {
-        const usable = entity.getBehavior('usable') as UsableConfig;
-
-        if (hasValue(usable)) {
-            if (hasValue(usable.spell)) {
-                const useSpell = state.spellManager.get(usable.spell);
-
-                if (hasValue(useSpell)) {
-                    useSpell.options = usable.options ?? {};
-
-                    sayAt(player, useSpell.info(useSpell, player));
-                }
-            }
-
-            if (
-                hasValue(usable.effect) &&
-                hasValue(usable.config?.description)
-            ) {
-                sayAt(player, usable.config!.description as string);
-            }
-
-            if (hasValue(usable.charges)) {
-                sayAt(player, `There are ${usable.charges} charges remaining.`);
-            }
-        }
-
-        switch (entity.type) {
-            case ItemType.WEAPON:
-            case ItemType.ARMOR:
-                sayAt(player, ItemUtil.renderItem(state, entity, player));
-
-                break;
-
-            case ItemType.CONTAINER:
-                if (
-                    !hasValue(entity.inventory) ||
-                    entity.inventory.size === 0
-                ) {
-                    sayAt(player, `${entity.name} is empty.`);
-
-                    return;
-                }
-
-                if (entity.getMeta<boolean>('closed')) {
-                    sayAt(player, 'It is closed.');
-
-                    return;
-                }
-
-                at(player, 'Contents');
-                if (isFinite(entity.inventory.getMax())) {
-                    at(
-                        player,
-                        ` (${entity.inventory.size}/${entity.inventory.getMax()})`
-                    );
-                }
-
-                sayAt(player, ':');
-
-                for (const [, item] of entity.inventory.items) {
-                    sayAt(player, `  ${ItemUtil.display(item)}`);
-                }
-
-                break;
-
-            /* no default */
-        }
+        lookAtItem(entity, state, player);
     }
 };
 

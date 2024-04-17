@@ -1,11 +1,11 @@
-import Damage from './damage.js';
+import type Character from '../characters/character.js';
 import {
     CharacterHealEvent,
     CharacterHealedEvent,
 } from '../characters/events/index.js';
 import { hasValue } from '../util/functions.js';
 
-import type Character from '../characters/character.js';
+import Damage from './damage.js';
 
 /**
  * Heal is `Damage` that raises an attribute instead of lowering it

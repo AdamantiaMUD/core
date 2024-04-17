@@ -1,14 +1,13 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
-import ItemUtil from '../../../lib/util/items.js';
-import Logger from '../../../lib/common/logger.js';
-import { SlotTakenError } from '../../../lib/equipment/errors/index.js';
-import { cast, hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import Logger from '../../../lib/common/logger.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
+import { SlotTakenError } from '../../../lib/equipment/errors/index.js';
 import type Item from '../../../lib/equipment/item.js';
 import type Player from '../../../lib/players/player.js';
+import { cast, hasValue } from '../../../lib/util/functions.js';
+import ItemUtil from '../../../lib/util/items.js';
 
 export const cmd: CommandDefinitionFactory = {
     name: 'wear',

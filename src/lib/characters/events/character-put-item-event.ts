@@ -1,6 +1,5 @@
-import MudEvent from '../../events/mud-event.js';
-
 import type Item from '../../equipment/item.js';
+import MudEvent from '../../events/mud-event.js';
 
 export interface CharacterPutItemPayload {
     container: Item;

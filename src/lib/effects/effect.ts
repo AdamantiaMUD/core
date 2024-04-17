@@ -1,23 +1,23 @@
+import type Ability from '../abilities/ability.js';
+import type Character from '../characters/character.js';
+import type Damage from '../combat/damage.js';
 import MudEventEmitter from '../events/mud-event-emitter.js';
+import type GameStateData from '../game-state-data.js';
+import { hasValue, isPositiveNumber } from '../util/functions.js';
+import { clone } from '../util/objects.js';
+
+import type EffectConfig from './effect-config.js';
+import type EffectDefinition from './effect-definition.js';
+import type EffectFlag from './effect-flag.js';
+import type EffectState from './effect-state.js';
 import {
     EffectActivatedEvent,
     EffectAddedEvent,
     EffectDeactivatedEvent,
     EffectRemovedEvent,
 } from './events/index.js';
-import { clone } from '../util/objects.js';
-import { hasValue, isPositiveNumber } from '../util/functions.js';
-
-import type Ability from '../abilities/ability.js';
-import type Character from '../characters/character.js';
-import type Damage from '../combat/damage.js';
-import type EffectConfig from './effect-config.js';
-import type EffectDefinition from './effect-definition.js';
-import type EffectFlag from './effect-flag.js';
-import type EffectState from './effect-state.js';
-import type GameStateData from '../game-state-data.js';
-import type SerializedEffect from './serialized-effect.js';
 import type { EffectModifiers } from './modifiers/index.js';
+import type SerializedEffect from './serialized-effect.js';
 
 export class Effect extends MudEventEmitter {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

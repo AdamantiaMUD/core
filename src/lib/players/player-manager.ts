@@ -1,14 +1,14 @@
-import PlayerLoader from '../data/player-loader.js';
-import Data from '../util/data.js';
-import MudEventEmitter from '../events/mud-event-emitter.js';
-import MudEventManager from '../events/mud-event-manager.js';
-import Player from './player.js';
-import { PlayerSavedEvent } from './events/index.js';
 import { UpdateTickEvent } from '../common/events/index.js';
+import PlayerLoader from '../data/player-loader.js';
+import MudEventEmitter from '../events/mud-event-emitter.js';
+import type MudEventListener from '../events/mud-event-listener.js';
+import MudEventManager from '../events/mud-event-manager.js';
+import type GameStateData from '../game-state-data.js';
+import Data from '../util/data.js';
 import { hasValue } from '../util/functions.js';
 
-import type GameStateData from '../game-state-data.js';
-import type MudEventListener from '../events/mud-event-listener.js';
+import { PlayerSavedEvent } from './events/index.js';
+import Player from './player.js';
 import type SerializedPlayer from './serialized-player.js';
 
 /**

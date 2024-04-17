@@ -1,9 +1,9 @@
-import winston from 'winston';
-
-/* eslint-disable-next-line import/no-namespace */
-import type * as Transport from 'winston-transport';
-import type { Logger as WinstonLogger } from 'winston';
+/* eslint-disable import/no-namespace */
 import type { TransformableInfo } from 'logform';
+import winston, { type Logger as WinstonLogger } from 'winston';
+import type * as Transport from 'winston-transport';
+
+/* eslint-enable import/no-namespace */
 
 import { cast, hasValue } from '../util/functions.js';
 
@@ -24,13 +24,15 @@ const logTransports: Record<string, Transport | null> = {
             padLevels(),
             simple(),
             printf((data: TransformableInfo) => {
+                /* eslint-disable @typescript-eslint/no-unsafe-assignment */
                 const {
                     level,
                     message,
                     timestamp: lineTs,
                 } = data as LogMessage;
+                /* eslint-enable @typescript-eslint/no-unsafe-assignment */
 
-                return `[${lineTs}] [${level}] ${message}`;
+                return `[${lineTs}] [${level}] ${message as string}`;
             })
         ),
     }),
@@ -81,7 +83,7 @@ export const Logger = {
         logTransports.console!.level = level;
 
         if (hasValue(logTransports.file)) {
-            logTransports.file!.level = level;
+            logTransports.file.level = level;
         }
     },
 

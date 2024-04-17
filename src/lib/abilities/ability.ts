@@ -1,23 +1,23 @@
-import AbilityFlag from './ability-flag.js';
-import AbilityType from './ability-type.js';
-import Broadcast from '../communication/broadcast.js';
+import type Character from '../characters/character.js';
 import Damage from '../combat/damage.js';
+import Broadcast from '../communication/broadcast.js';
+import type EffectDefinition from '../effects/effect-definition.js';
+import type Effect from '../effects/effect.js';
+import type GameStateData from '../game-state-data.js';
 import Player from '../players/player.js';
+import { hasValue, ident, noop } from '../util/functions.js';
+import type SimpleMap from '../util/simple-map.js';
+
+import type AbilityDefinition from './ability-definition.js';
+import AbilityFlag from './ability-flag.js';
+import type AbilityResource from './ability-resource.js';
+import type AbilityRunner from './ability-runner.js';
+import AbilityType from './ability-type.js';
 import {
     CooldownError,
     NotEnoughResourcesError,
     PassiveError,
 } from './errors/index.js';
-import { hasValue, ident, noop } from '../util/functions.js';
-
-import type AbilityDefinition from './ability-definition.js';
-import type AbilityResource from './ability-resource.js';
-import type AbilityRunner from './ability-runner.js';
-import type Character from '../characters/character.js';
-import type Effect from '../effects/effect.js';
-import type EffectDefinition from '../effects/effect-definition.js';
-import type GameStateData from '../game-state-data.js';
-import type SimpleMap from '../util/simple-map.js';
 
 const { sayAt } = Broadcast;
 

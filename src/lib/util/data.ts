@@ -1,6 +1,7 @@
 /* eslint-disable-next-line id-length */
 import fs from 'fs';
 import path from 'path';
+
 import yaml from 'js-yaml';
 
 import { hasValue, noop } from './functions.js';
@@ -81,12 +82,15 @@ export const Data = {
         const contents = fs
             .readFileSync(fs.realpathSync(filepath))
             .toString('utf8');
+
+        /* eslint-disable @typescript-eslint/naming-convention */
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const parsers: Record<string, (...args: any[]) => unknown> = {
             '.yml': yaml.load,
             '.yaml': yaml.load,
             '.json': JSON.parse,
         };
+        /* eslint-enable @typescript-eslint/naming-convention */
 
         const ext = path.extname(filepath);
 
@@ -127,12 +131,14 @@ export const Data = {
             throw new Error(`File [${filepath}] does not exist!`);
         }
 
+        /* eslint-disable @typescript-eslint/naming-convention */
         /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
         const serializers: Record<string, (...args: any[]) => string> = {
             '.yml': yaml.dump,
             '.yaml': yaml.dump,
             '.json': (json: unknown) => Data.stringify(json),
         };
+        /* eslint-enable @typescript-eslint/naming-convention */
 
         const ext = path.extname(filepath);
 

@@ -1,4 +1,5 @@
 import type GameEntityDefinition from '../entities/game-entity-definition.js';
+
 import type QuestGoalDefinition from './quest-goal-definition.js';
 import type QuestRewardDefinition from './quest-reward-definition.js';
 

@@ -1,10 +1,9 @@
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 import type GameStateData from '../../../lib/game-state-data.js';
 import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
 import type SimpleMap from '../../../lib/util/simple-map.js';
 
 export const cmd: CommandDefinitionFactory = {
@@ -42,7 +41,7 @@ export const cmd: CommandDefinitionFactory = {
                 const config = player.getMeta<SimpleMap<boolean>>('config');
 
                 for (const key in config) {
-                    if (Object.prototype.hasOwnProperty.call(config, key)) {
+                    if (Object.hasOwn(config, key)) {
                         const val = config[key] ? 'on' : 'off';
 
                         sayAt(player, `  ${key}: ${val}`);

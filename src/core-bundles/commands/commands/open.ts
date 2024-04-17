@@ -1,16 +1,15 @@
 import ArgParser from '../../../lib/commands/arg-parser.js';
-import CommandParser from '../../../lib/commands/command-parser.js';
-import ItemUtil from '../../../lib/util/items.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
 import type CommandExecutable from '../../../lib/commands/command-executable.js';
-import type Door from '../../../lib/locations/door.js';
-import type GameStateData from '../../../lib/game-state-data.js';
+import CommandParser from '../../../lib/commands/command-parser.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 import type Item from '../../../lib/equipment/item.js';
-import type Player from '../../../lib/players/player.js';
+import type GameStateData from '../../../lib/game-state-data.js';
+import type Door from '../../../lib/locations/door.js';
 import type Room from '../../../lib/locations/room.js';
+import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
+import ItemUtil from '../../../lib/util/items.js';
 
 const handleDoor = (
     player: Player,

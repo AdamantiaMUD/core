@@ -1,11 +1,10 @@
-import ArgParser from '../../../lib/commands/arg-parser.js';
-import { hasValue } from '../../../lib/util/functions.js';
-import { sayAt } from '../../../lib/communication/broadcast.js';
-
 import type Character from '../../../lib/characters/character.js';
+import ArgParser from '../../../lib/commands/arg-parser.js';
 import type CommandDefinitionFactory from '../../../lib/commands/command-definition-factory.js';
+import { sayAt } from '../../../lib/communication/broadcast.js';
 import type Item from '../../../lib/equipment/item.js';
 import type Player from '../../../lib/players/player.js';
+import { hasValue } from '../../../lib/util/functions.js';
 
 const findTarget = (
     player: Player,

@@ -1,20 +1,20 @@
+import type Serializable from '../data/serializable.js';
 import MudEventEmitter from '../events/mud-event-emitter.js';
+import type GameStateData from '../game-state-data.js';
+import type Player from '../players/player.js';
+import { clone } from '../util/objects.js';
+
 import {
+    type QuestProgressPayload,
     QuestCompletedEvent,
     QuestProgressEvent,
     QuestTurnInReadyEvent,
 } from './events/index.js';
-import { clone } from '../util/objects.js';
-
-import type GameStateData from '../game-state-data.js';
-import type Player from '../players/player.js';
-import type Serializable from '../data/serializable.js';
 import type QuestDefinition from './quest-definition.js';
 import type QuestGoal from './quest-goal.js';
 import type QuestProgress from './quest-progress.js';
-import type SerializedQuest from './serialized-quest.js';
 import type SerializedQuestGoal from './serialized-quest-goal.js';
-import type { QuestProgressPayload } from './events/index.js';
+import type SerializedQuest from './serialized-quest.js';
 
 export class Quest extends MudEventEmitter implements Serializable {
     /* eslint-disable @typescript-eslint/lines-between-class-members */

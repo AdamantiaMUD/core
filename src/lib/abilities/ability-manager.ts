@@ -1,5 +1,4 @@
 import AbilityFlag from './ability-flag.js';
-
 import type Ability from './ability.js';
 
 /**

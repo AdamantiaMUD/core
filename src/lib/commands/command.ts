@@ -1,10 +1,10 @@
-import CommandType from './command-type.js';
 import PlayerRole from '../players/player-role.js';
+import type Player from '../players/player.js';
+import type SimpleMap from '../util/simple-map.js';
 
 import type CommandDefinition from './command-definition.js';
 import type CommandExecutable from './command-executable.js';
-import type Player from '../players/player.js';
-import type SimpleMap from '../util/simple-map.js';
+import CommandType from './command-type.js';
 
 /**
  * In game command. See the {@link http://ranviermud.com/extending/commands/|Command guide}

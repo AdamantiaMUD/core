@@ -1,6 +1,5 @@
-import MudEventManager from '../events/mud-event-manager.js';
-
 import type MudEventListener from '../events/mud-event-listener.js';
+import MudEventManager from '../events/mud-event-manager.js';
 
 /**
  * BehaviorManager keeps a map of BehaviorName:EventManager which is used

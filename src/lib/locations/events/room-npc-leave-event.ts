@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type Npc from '../../mobs/npc.js';
 import type Room from '../room.js';
 

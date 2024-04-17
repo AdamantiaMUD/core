@@ -1,7 +1,8 @@
 import type Damage from '../../combat/damage.js';
 import type Effect from '../effect.js';
-import type EffectAttributeModifier from './effect-attribute-modifier.js';
+
 import type EffectAttributeModifierFunction from './effect-attribute-modifier-function.js';
+import type EffectAttributeModifier from './effect-attribute-modifier.js';
 import type EffectModifier from './effect-modifier.js';
 
 export type EffectModifiers = Record<

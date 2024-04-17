@@ -1,6 +1,5 @@
-import MudEvent from '../../events/mud-event.js';
-
 import type Heal from '../../combat/heal.js';
+import MudEvent from '../../events/mud-event.js';
 
 export interface CharacterHealedPayload {
     amount: number;

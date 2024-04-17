@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type Player from '../../players/player.js';
 
 export interface RoomCommandPayload {

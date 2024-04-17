@@ -14,7 +14,7 @@ create-character |
 character-name-check |
 | |
 finish-character |
-|****\*\*\*\*****\_\_****\*\*\*\*****done (add player to game world)
+|\***\*\*\*\*\*\*\***\_\_\***\*\*\*\*\*\*\***done (add player to game world)
 |
 commands
 (command prompt, all player input after login goes through this event)

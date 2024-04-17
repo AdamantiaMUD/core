@@ -1,41 +1,40 @@
 /* eslint-disable import/max-dependencies */
-import { type EventEmitter } from 'events';
+import type { EventEmitter } from 'events';
 
-import { type Command } from 'commander';
+import type { Command } from 'commander';
 
 import AbilityManager from './abilities/ability-manager.js';
 import AttributeFactory from './attributes/attribute-factory.js';
 import BehaviorManager from './behaviors/behavior-manager.js';
 import CharacterClassManager from './classes/character-class-manager.js';
-import ItemFactory from './equipment/item-factory.js';
-import ItemManager from './equipment/item-manager.js';
-import MobFactory from './mobs/mob-factory.js';
-import MobManager from './mobs/mob-manager.js';
-import MudEventManager from './events/mud-event-manager.js';
-import PlayerManager from './players/player-manager.js';
-import QuestFactory from './quests/quest-factory.js';
-import QuestGoalManager from './quests/quest-goal-manager.js';
-import QuestRewardManager from './quests/quest-reward-manager.js';
-import RoomFactory from './locations/room-factory.js';
-import RoomManager from './locations/room-manager.js';
-import StreamEventManager from './events/stream-event-manager.js';
-import { UpdateTickEvent } from './common/events/index.js';
-
 import type CombatEngine from './combat/combat-engine.js';
 import CommandManager from './commands/command-manager.js';
+import { UpdateTickEvent } from './common/events/index.js';
 import ChannelManager from './communication/channels/channel-manager.js';
-import type Timeout from './util/timeout.js';
 import type TransportStream from './communication/transport-stream.js';
 import EffectFactory from './effects/effect-factory.js';
+import ItemFactory from './equipment/item-factory.js';
+import ItemManager from './equipment/item-manager.js';
+import MudEventManager from './events/mud-event-manager.js';
+import StreamEventManager from './events/stream-event-manager.js';
 import GameServer from './game-server.js';
 import type GameStateData from './game-state-data.js';
 import PartyManager from './groups/party-manager.js';
 import HelpManager from './help/help-manager.js';
 import AreaFactory from './locations/area-factory.js';
 import AreaManager from './locations/area-manager.js';
+import RoomFactory from './locations/room-factory.js';
+import RoomManager from './locations/room-manager.js';
+import MobFactory from './mobs/mob-factory.js';
+import MobManager from './mobs/mob-manager.js';
 import AccountManager from './players/account-manager.js';
+import PlayerManager from './players/player-manager.js';
+import QuestFactory from './quests/quest-factory.js';
+import QuestGoalManager from './quests/quest-goal-manager.js';
+import QuestRewardManager from './quests/quest-reward-manager.js';
 import type Config from './util/config.js';
 import Data from './util/data.js';
+import type Timeout from './util/timeout.js';
 
 const DEFAULT_TICK_FREQUENCY = 100;
 

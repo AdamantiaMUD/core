@@ -1,11 +1,10 @@
-import LevelUtil from '../../../../lib/util/level-util.js';
-import { PlayerExperienceEvent } from '../../../../lib/players/events/index.js';
-import { hasValue } from '../../../../lib/util/functions.js';
-
 import type GameStateData from '../../../../lib/game-state-data.js';
+import { PlayerExperienceEvent } from '../../../../lib/players/events/index.js';
 import type Player from '../../../../lib/players/player.js';
-import type Quest from '../../../../lib/quests/quest.js';
 import type QuestReward from '../../../../lib/quests/quest-reward.js';
+import type Quest from '../../../../lib/quests/quest.js';
+import { hasValue } from '../../../../lib/util/functions.js';
+import LevelUtil from '../../../../lib/util/level-util.js';
 import type SimpleMap from '../../../../lib/util/simple-map.js';
 
 interface ExperienceRewardConfig extends SimpleMap {

@@ -1,5 +1,4 @@
 import MudEvent from '../../events/mud-event.js';
-
 import type Effect from '../effect.js';
 
 export interface EffectRefreshedPayload {
