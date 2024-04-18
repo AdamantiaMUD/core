@@ -233,5 +233,5 @@ export * as PlayerUtils from './util/player.js';
 export * as RandomUtils from './util/random.js';
 export * as TimeUtils from './util/time.js';
 
-export { Config } from './util/config.js';
+export { Config, type MudConfig } from './util/config.js';
 export type { SimpleMap } from './util/simple-map.js';
