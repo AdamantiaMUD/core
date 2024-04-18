@@ -1,6 +1,6 @@
 import merge from 'deepmerge';
-import get from 'lodash.get';
-import set from 'lodash.set';
+import get from 'dlv';
+import { dset as set } from 'dset';
 
 import Logger from '../common/logger.js';
 

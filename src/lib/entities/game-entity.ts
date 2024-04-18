@@ -1,5 +1,5 @@
-import get from 'lodash.get';
-import set from 'lodash.set';
+import get from 'dlv';
+import { dset as set } from 'dset';
 
 import { MetadataUpdatedEvent } from '../data/events/index.js';
 import type Metadatable from '../data/metadatable.js';
@@ -55,7 +55,7 @@ export abstract class GameEntity
     }
 
     /*
-     * Get metadata by any notation supported by lodash.get
+     * Get metadata by any notation supported by dlv
      */
     public getMeta<T = unknown>(key: string): T | null {
         const meta: unknown = get(this._metadata, key);
@@ -98,7 +98,7 @@ export abstract class GameEntity
      * @fires MetadataUpdatedEvent
      */
     public setMeta<T = unknown>(key: string, newValue: T): void {
-        const oldValue = get(this._metadata, key);
+        const oldValue = get(this._metadata, key) as T;
 
         set(this._metadata, key, newValue);
 

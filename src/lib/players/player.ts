@@ -1,4 +1,4 @@
-import get from 'lodash.get';
+import get from 'dlv';
 
 import Character from '../characters/character.js';
 import type { ExecutableCommand } from '../commands/command-queue.js';
