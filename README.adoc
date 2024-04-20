@@ -1,3 +1,5 @@
+> Archived and code moved to https://github.com/AdamantiaMUD/adamantia[monorepo]
+
 = AdamantiaMUD Core
 
 This repository contains the core libraries for the Adamantia MUD engine.
